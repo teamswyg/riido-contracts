@@ -1,0 +1,30 @@
+name: assignment-contract
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "assignment/**"
+      - "docs/20-domain/assignment-polling.md"
+      - ".github/workflows/assignment-contract.yml"
+      - "go.mod"
+  pull_request:
+    paths:
+      - "assignment/**"
+      - "docs/20-domain/assignment-polling.md"
+      - ".github/workflows/assignment-contract.yml"
+      - "go.mod"
+
+jobs:
+  contract:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: false
+      - name: Verify stdlib-only module
+        run: test "$(go list -m all | wc -l | tr -d ' ')" = "1"
+      - name: Verify assignment contract
+        run: go test ./assignment -run 'AssignmentContract|AssignmentTransition|AssignmentAPI' -count=1

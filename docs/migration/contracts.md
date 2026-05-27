@@ -34,7 +34,7 @@ If only one repository consumes the fact, keep it local to that repository.
 | Task lifecycle state and transition fixture | `internal/task`, `docs/20-domain/task-lifecycle.md` | Promoted by RIID-4641 into `task`; `task -> ir` remains one-way. |
 | Provider capability fingerprint schema | `internal/provider/capability`, `docs/20-domain/provider-capability.md` | Promoted by RIID-4642 into `provider/capability`; keep provider detect logic in daemon. |
 | Distribution channel + provider routing status vocabulary | `internal/hostintegration`, `docs/20-domain/distribution-host-integration.md` | Promoted by RIID-4670 into `hostintegration`; keep app data roots, IPC, grants, provider discovery, and review/demo mode in runtime repos. |
-| Assignment polling DTOs | `internal/riidoaiserver`, `assignment_contract.riido.json` | Promote request/response contract; keep server store logic in control-plane. |
+| Assignment polling DTOs | `internal/riidoaiserver`, `assignment_contract.riido.json` | Promoted by RIID-4687 into `assignment`; keep server store logic, health/metrics adapters, HTTP/SSE, authZ, and persistence in control-plane. |
 | RBAC scenario fixtures | `internal/riidoaiserver/*rbac*`, security docs | Promote black-box fixtures, not authorization implementation. |
 | Store distribution contract fixtures | `packaging/store`, `tools/storecontract` | Promote only if daemon and infra both validate the same fixture. |
 
@@ -67,6 +67,7 @@ version axis it affects:
 | Server API | `runtime-versioning.md` + SaaS docs | Control-plane imports tagged contract or generated fixture. |
 | Provider capability | `provider-capability.md` | Daemon imports contract only for shared schema. |
 | Distribution / provider routing vocabulary | `distribution-host-integration.md` | Daemon and control-plane import shared enum values before provider status migration. |
+| Assignment polling API | `assignment-polling.md` | Daemon and control-plane import tagged assignment DTOs before daemon SaaS adapter migration. |
 
 ## Migration Order
 

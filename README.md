@@ -31,6 +31,9 @@ This repository must not contain:
 
 ## Current Packages
 
+- `assignment`: C10 SaaS assignment polling DTOs, schema identifiers, state
+  transition predicates, poll action values, task event type values, and agent
+  runtime binding DTOs shared by daemon and control-plane repositories.
 - `ir`: C2 IR event log contract, event catalog, envelope validation, and pure
   reducer contract.
 - `hostintegration`: C11/C10 distribution channel and provider routing status
