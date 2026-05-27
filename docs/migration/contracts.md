@@ -32,7 +32,7 @@ If only one repository consumes the fact, keep it local to that repository.
 | --- | --- | --- |
 | IR event type names and envelope shape | `internal/ir`, `docs/20-domain/ir-event-log.md` | Promoted by RIID-4641 into `ir`; EventIngestor remains out of scope. |
 | Task lifecycle state and transition fixture | `internal/task`, `docs/20-domain/task-lifecycle.md` | Promoted by RIID-4641 into `task`; `task -> ir` remains one-way. |
-| Provider capability fingerprint schema | `internal/provider/capability`, `docs/20-domain/provider-capability.md` | Promote stable schema; keep provider detect logic in daemon. |
+| Provider capability fingerprint schema | `internal/provider/capability`, `docs/20-domain/provider-capability.md` | Promoted by RIID-4642 into `provider/capability`; keep provider detect logic in daemon. |
 | Assignment polling DTOs | `internal/riidoaiserver`, `assignment_contract.riido.json` | Promote request/response contract; keep server store logic in control-plane. |
 | RBAC scenario fixtures | `internal/riidoaiserver/*rbac*`, security docs | Promote black-box fixtures, not authorization implementation. |
 | Store distribution contract fixtures | `packaging/store`, `tools/storecontract` | Promote only if daemon and infra both validate the same fixture. |
