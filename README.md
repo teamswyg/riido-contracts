@@ -29,6 +29,13 @@ This repository must not contain:
 - Terraform state, AWS account details, or deployment secrets
 - provider CLI binaries
 
+## Current Packages
+
+- `ir`: C2 IR event log contract, event catalog, envelope validation, and pure
+  reducer contract.
+- `task`: C1 task lifecycle states and transition matrix. This package depends
+  on `ir`; `ir` must not depend on `task`.
+
 ## Verification
 
 ```bash
