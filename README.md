@@ -1,0 +1,41 @@
+# riido-contracts
+
+Shared Riido contracts, schemas, and cross-repository Go module.
+
+This repository is the public contract boundary between `riido-daemon`,
+`riido-control-plane`, and private deployment infrastructure. It should contain
+stable protocol/contract artifacts only when more than one repository needs the
+same fact.
+
+## Module
+
+```text
+github.com/teamswyg/riido-contracts
+```
+
+## Repository Boundary
+
+This repository may contain:
+
+- shared event and API contract versions
+- JSON schema or generated fixtures
+- cross-repository black-box contract test fixtures
+- small Go packages that are intentionally shared
+
+This repository must not contain:
+
+- daemon implementation details
+- control-plane implementation details
+- Terraform state, AWS account details, or deployment secrets
+- provider CLI binaries
+
+## Verification
+
+```bash
+go test ./...
+go list -m all
+```
+
+## License
+
+Apache-2.0.
