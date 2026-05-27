@@ -77,6 +77,30 @@ version axis it affects:
 4. Replace duplicated constants in daemon/control-plane with tagged imports.
 5. Add cross-repository black-box tests that consume the same fixture.
 
+## Current Migration Slices
+
+### RIID-4713 — architecture SSOT docs migration
+
+This slice restores the public architecture SSOT set for the split-repo
+contracts boundary.
+
+This slice does:
+
+- add `docs/20-domain/context-map.md` for public context ownership
+- add `docs/30-architecture/module-decomposition.md` for package/import rules
+- add `docs/30-architecture/contract-promotion-policy.md` for promotion,
+  tagging, and breaking-change policy
+- add `docs/30-architecture/integration-matrix.md` for public CI and
+  downstream compatibility gates
+- add `docs/50-roadmap/open-questions.md` for unresolved shared-contract
+  decisions
+- add a focused public architecture-docs GitHub Actions workflow
+- link README and domain docs to the new SSOT set
+
+This slice does not add a new public contract API, create a Go module tag, move
+runtime implementation, move Terraform/AWS/deployment evidence, or commit
+private fixtures.
+
 ## Validation Gates
 
 Required for this repository:
@@ -84,6 +108,17 @@ Required for this repository:
 ```bash
 go test ./...
 go list -m all
+```
+
+Architecture-doc migration PRs must also pass:
+
+```bash
+test -f docs/20-domain/context-map.md
+test -f docs/30-architecture/module-decomposition.md
+test -f docs/30-architecture/contract-promotion-policy.md
+test -f docs/30-architecture/integration-matrix.md
+test -f docs/50-roadmap/open-questions.md
+go test ./...
 ```
 
 When contract fixtures are added, public CI must also verify:
