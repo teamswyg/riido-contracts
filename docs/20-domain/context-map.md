@@ -1,0 +1,55 @@
+# Contracts Context Map
+
+> Riido task: RIID-4713 `[Contracts] Architecture SSOT docs migration`
+
+This file is the public context map for
+`github.com/teamswyg/riido-contracts`.
+
+## Role
+
+`riido-contracts` owns shared, versioned facts that more than one Riido
+repository must agree on at build time or black-box test time. It is a contract
+module, not a runtime module.
+
+## Owned Contexts
+
+| Context | Package | Responsibility |
+| --- | --- | --- |
+| C1 Task Lifecycle | `task` | task states, terminal/active classification, legal transition matrix, FSM schema version |
+| C2 IR Event Log | `ir` | canonical event envelope, actor/scope/event type catalog, envelope validation, pure reducer contract |
+| C3 Provider Capability | `provider/capability` | provider capability model, protocol vocabulary, compatibility status, protocol-critical args, capability fingerprint |
+| C10 Assignment Polling Contract | `assignment` | assignment state, poll action, heartbeat/event DTOs, task-event DTOs, service schema version |
+| C11/C10 Host Integration Vocabulary | `hostintegration` | distribution channel and provider routing status vocabulary shared by daemon/control-plane |
+
+## Non-Owned Contexts
+
+| Context | Owner | Boundary |
+| --- | --- | --- |
+| Daemon runtime | `riido-daemon` | provider process execution, local API, task DB, workspace projection, store-app helper behavior |
+| SaaS control plane | `riido-control-plane` | HTTP/SSE routes, authorization, assignment store actors, metrics, review seed, public AWS adapter behavior |
+| Infrastructure | `riido-infra` | Terraform, AWS accounts, deployment evidence, private release tooling |
+| CLI surface | `riido-daemon` | user-facing local commands and flags |
+
+Contracts may describe shared DTOs and state vocabulary. They must not import or
+redefine runtime adapters, stores, Terraform modules, credentials, provider CLI
+invocation, or deployment evidence.
+
+## Direction Rules
+
+- `task` may import `ir` because FSM transitions are driven by IR event types.
+- `ir` must not import `task`.
+- Runtime repositories may import tagged `riido-contracts` releases.
+- Contract packages must stay standard-library only.
+- A new shared package requires a promotion decision in
+  [`../30-architecture/contract-promotion-policy.md`](../30-architecture/contract-promotion-policy.md)
+  and `docs/migration/contracts.md`.
+
+## SSOT Links
+
+- Promotion policy:
+  [`../30-architecture/contract-promotion-policy.md`](../30-architecture/contract-promotion-policy.md)
+- Module decomposition:
+  [`../30-architecture/module-decomposition.md`](../30-architecture/module-decomposition.md)
+- Integration matrix:
+  [`../30-architecture/integration-matrix.md`](../30-architecture/integration-matrix.md)
+- Open questions: [`../50-roadmap/open-questions.md`](../50-roadmap/open-questions.md)

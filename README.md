@@ -29,6 +29,13 @@ This repository must not contain:
 - Terraform state, AWS account details, or deployment secrets
 - provider CLI binaries
 
+Architecture SSOT:
+
+- [`docs/20-domain/context-map.md`](docs/20-domain/context-map.md)
+- [`docs/30-architecture/module-decomposition.md`](docs/30-architecture/module-decomposition.md)
+- [`docs/30-architecture/contract-promotion-policy.md`](docs/30-architecture/contract-promotion-policy.md)
+- [`docs/30-architecture/integration-matrix.md`](docs/30-architecture/integration-matrix.md)
+
 ## Current Packages
 
 - `assignment`: C10 SaaS assignment polling DTOs, schema identifiers, state
