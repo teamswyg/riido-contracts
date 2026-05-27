@@ -1,0 +1,69 @@
+# Assignment Polling Contract
+
+> Riido task: RIID-4687 `[Contracts] assignment polling DTO contract migration`
+
+This document is the public SSOT for the C10 assignment polling contract that
+must be shared by `riido-daemon` and `riido-control-plane`.
+
+## Responsibility
+
+`riido-contracts/assignment` owns only the shared contract surface:
+
+- `riido-ai-server.v1` service schema version
+- `riido-ai-server-contract.v1` executable contract fixture
+- assignment state values and terminal/agent-active classification
+- legal assignment state transitions
+- daemon poll action values
+- task event type values
+- assignment, poll, heartbeat, agent-event, task-event, and agent runtime
+  binding DTOs
+
+The package does not own control-plane store actors, HTTP handlers, SSE fan-out,
+metrics routes, health routes, request authorization, provider status stores,
+daemon provider process execution, daemon local API behavior, Terraform,
+DynamoDB/EventBridge adapters, AWS account settings, secret values, or
+deployment evidence.
+
+## Executable Contract
+
+The executable fixture is
+[`assignment/assignment_contract.riido.json`](../../assignment/assignment_contract.riido.json).
+
+That fixture owns the canonical lists for:
+
+- assignment states
+- terminal and agent-active state flags
+- legal transitions from each state
+- poll actions
+- task event type values
+
+Markdown must link to the fixture instead of redefining the matrix.
+
+## DTO Surface
+
+The public shared DTOs are:
+
+- `AssignRequest`
+- `Assignment`
+- `PollRequest`
+- `PollResponse`
+- `AgentHeartbeatRequest`
+- `AgentHeartbeatResponse`
+- `AgentEventRequest`
+- `AgentEventResponse`
+- `TaskEvent`
+- `AgentRuntimeBinding`
+
+`Health` and `MetricsSnapshot` remain in `riido-control-plane` for now because
+they are control-plane adapter/read-model contracts rather than daemon polling
+contracts.
+
+## Handoff
+
+After this contract is tagged, `riido-control-plane` should replace duplicated
+assignment constants and DTO declarations with aliases or imports from
+`github.com/teamswyg/riido-contracts/assignment`.
+
+After the control-plane consumer is on the tagged contract, `riido-daemon` can
+migrate its control-plane SaaS adapter without importing private
+`internal/riidoaiserver` packages.

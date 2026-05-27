@@ -14,6 +14,12 @@ RIID-4670 migrates:
 - C11/C10 distribution channel and provider routing status vocabulary into
   `hostintegration`
 
+RIID-4687 migrates:
+
+- C10 assignment polling DTOs, service schema identifiers, assignment state
+  transition predicates, poll actions, task event type values, and agent runtime
+  binding DTOs into `assignment`
+
 The EventIngestor implementation, policy redaction catalog, provider adapters,
 server stores, and Terraform deployment code remain outside this repository.
 They may consume these contracts, but they do not become contract module
