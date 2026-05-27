@@ -33,6 +33,9 @@ This repository must not contain:
 
 - `ir`: C2 IR event log contract, event catalog, envelope validation, and pure
   reducer contract.
+- `hostintegration`: C11/C10 distribution channel and provider routing status
+  vocabulary shared by daemon metadata and control-plane provider status
+  contracts.
 - `provider/capability`: C3 provider capability model, protocol identifiers,
   compatibility status, protocol-critical args, and capability fingerprinting.
 - `task`: C1 task lifecycle states and transition matrix. This package depends
