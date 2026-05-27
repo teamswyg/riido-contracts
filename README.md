@@ -33,6 +33,8 @@ This repository must not contain:
 
 - `ir`: C2 IR event log contract, event catalog, envelope validation, and pure
   reducer contract.
+- `provider/capability`: C3 provider capability model, protocol identifiers,
+  compatibility status, protocol-critical args, and capability fingerprinting.
 - `task`: C1 task lifecycle states and transition matrix. This package depends
   on `ir`; `ir` must not depend on `task`.
 
