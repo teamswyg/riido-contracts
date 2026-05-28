@@ -15,6 +15,8 @@ contracts. It is intentionally small and standard-library only.
 | `provider/capability` | C3 provider capability and fingerprint vocabulary | provider detection, process launch, real CLI probing |
 | `hostintegration` | C11/C10 distribution and provider routing status vocabulary | app data roots, IPC, consent storage, store helper implementation |
 | `assignment` | C10 assignment polling DTOs and state vocabulary | control-plane store actor, HTTP/SSE handlers, authorization, persistence |
+| `apicontract` | C10 API DSL, API IR, and generated OpenAPI projection fixtures | control-plane handlers, frontend implementation, authorization/RBAC implementation |
+| `tools/apicontract` | deterministic fixture drift verifier/generator | runtime code generation output, network calls, third-party parser dependencies |
 
 ## Dependency Rules
 
@@ -42,6 +44,7 @@ A contract package may contain:
 - DTO structs with JSON tags
 - pure validation helpers
 - pure transition/classification helpers
+- generated projection fixtures
 - black-box fixture tests
 
 A contract package must not contain:

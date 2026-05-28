@@ -1,0 +1,365 @@
+{
+  "schema_version": "riido-api-ir.v1",
+  "contract_id": "control-plane-agent-catalog-api.v1",
+  "source_schema_version": "riido-api-dsl.v1",
+  "context": "agent_catalog",
+  "service": {
+    "name": "riido-control-plane",
+    "schema_version": "riido-ai-server.v1"
+  },
+  "resources": [
+    {
+      "name": "agent_catalog_record",
+      "owner_field": "owner_principal_id",
+      "visibility": [
+        {
+          "name": "public",
+          "read": [
+            "admin",
+            "owner",
+            "user"
+          ],
+          "write": [
+            "admin",
+            "owner"
+          ]
+        },
+        {
+          "name": "private",
+          "read": [
+            "admin",
+            "owner"
+          ],
+          "write": [
+            "admin",
+            "owner"
+          ]
+        }
+      ]
+    }
+  ],
+  "policies": [
+    {
+      "policy_id": "agent_catalog_visibility.v1",
+      "kind": "rbac",
+      "description": "Admin can read/mutate public and private agents; owner is admin-equivalent only for owned agents; non-admin users read owned agents plus other users' public agents.",
+      "rules": [
+        "admin: read all, update all, delete all",
+        "owner: read owned, update owned, delete owned",
+        "user: read owned and other public only"
+      ]
+    }
+  ],
+  "components": [
+    {
+      "name": "AgentCatalogRecord",
+      "schema": {
+        "name": "AgentCatalogRecord",
+        "type": "object",
+        "required": [
+          "agent_id",
+          "owner_principal_id",
+          "visibility"
+        ],
+        "properties": [
+          {
+            "name": "agent_id",
+            "type": "string"
+          },
+          {
+            "name": "owner_principal_id",
+            "type": "string"
+          },
+          {
+            "name": "visibility",
+            "type": "string",
+            "enum": [
+              "public",
+              "private"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "AgentCatalogListResponse",
+      "schema": {
+        "name": "AgentCatalogListResponse",
+        "type": "object",
+        "required": [
+          "schema_version",
+          "agents"
+        ],
+        "properties": [
+          {
+            "name": "schema_version",
+            "type": "string"
+          },
+          {
+            "name": "agents",
+            "type": "array",
+            "items": {
+              "ref": "AgentCatalogRecord"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "AgentCatalogRecordResponse",
+      "schema": {
+        "name": "AgentCatalogRecordResponse",
+        "type": "object",
+        "required": [
+          "schema_version",
+          "agent"
+        ],
+        "properties": [
+          {
+            "name": "schema_version",
+            "type": "string"
+          },
+          {
+            "name": "agent",
+            "ref": "AgentCatalogRecord"
+          }
+        ]
+      }
+    },
+    {
+      "name": "CreateAgentCatalogRequest",
+      "schema": {
+        "name": "CreateAgentCatalogRequest",
+        "type": "object",
+        "required": [
+          "agent_id",
+          "visibility"
+        ],
+        "properties": [
+          {
+            "name": "agent_id",
+            "type": "string"
+          },
+          {
+            "name": "visibility",
+            "type": "string",
+            "enum": [
+              "public",
+              "private"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "UpdateAgentCatalogRequest",
+      "schema": {
+        "name": "UpdateAgentCatalogRequest",
+        "type": "object",
+        "required": [
+          "visibility"
+        ],
+        "properties": [
+          {
+            "name": "visibility",
+            "type": "string",
+            "enum": [
+              "public",
+              "private"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "name": "DeleteAgentCatalogResponse",
+      "schema": {
+        "name": "DeleteAgentCatalogResponse",
+        "type": "object",
+        "required": [
+          "schema_version",
+          "deleted"
+        ],
+        "properties": [
+          {
+            "name": "schema_version",
+            "type": "string"
+          },
+          {
+            "name": "deleted",
+            "type": "boolean"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ErrorEnvelope",
+      "schema": {
+        "name": "ErrorEnvelope",
+        "type": "object",
+        "required": [
+          "schema_version",
+          "error"
+        ],
+        "properties": [
+          {
+            "name": "schema_version",
+            "type": "string"
+          },
+          {
+            "name": "error",
+            "type": "string"
+          }
+        ]
+      }
+    }
+  ],
+  "operations": [
+    {
+      "operation_id": "listAgents",
+      "kind": "query",
+      "method": "GET",
+      "path": "/v1/agent-catalog",
+      "resource": "agent_catalog_record",
+      "action": "read",
+      "summary": "List visible agent catalog records",
+      "auth": {
+        "scheme": "bearer",
+        "scopes": [
+          "agent-catalog:read"
+        ]
+      },
+      "rbac_policy": "agent_catalog_visibility.v1",
+      "response": {
+        "status": 200,
+        "ref": "AgentCatalogListResponse"
+      },
+      "scenario_ids": [
+        "listAgents.non-admin-list-visibility"
+      ]
+    },
+    {
+      "operation_id": "createAgent",
+      "kind": "command",
+      "method": "POST",
+      "path": "/v1/agent-catalog",
+      "resource": "agent_catalog_record",
+      "action": "create",
+      "summary": "Create an agent catalog record owned by the authorized principal",
+      "auth": {
+        "scheme": "bearer",
+        "scopes": [
+          "agent-catalog:create"
+        ]
+      },
+      "rbac_policy": "agent_catalog_visibility.v1",
+      "request": {
+        "ref": "CreateAgentCatalogRequest",
+        "required": true
+      },
+      "response": {
+        "status": 201,
+        "ref": "AgentCatalogRecordResponse"
+      },
+      "scenario_ids": [
+        "createAgent.server-stamps-owner"
+      ]
+    },
+    {
+      "operation_id": "getAgent",
+      "kind": "query",
+      "method": "GET",
+      "path": "/v1/agent-catalog/{agent_id}",
+      "resource": "agent_catalog_record",
+      "action": "read",
+      "summary": "Read a visible agent catalog record",
+      "auth": {
+        "scheme": "bearer",
+        "scopes": [
+          "agent-catalog:read",
+          "agent-catalog:{agent_id}:read"
+        ]
+      },
+      "rbac_policy": "agent_catalog_visibility.v1",
+      "response": {
+        "status": 200,
+        "ref": "AgentCatalogRecordResponse"
+      }
+    },
+    {
+      "operation_id": "updateAgent",
+      "kind": "command",
+      "method": "PATCH",
+      "path": "/v1/agent-catalog/{agent_id}",
+      "resource": "agent_catalog_record",
+      "action": "update",
+      "summary": "Update an owned or admin-visible agent catalog record",
+      "auth": {
+        "scheme": "bearer",
+        "scopes": [
+          "agent-catalog:write",
+          "agent-catalog:{agent_id}:update"
+        ]
+      },
+      "rbac_policy": "agent_catalog_visibility.v1",
+      "request": {
+        "ref": "UpdateAgentCatalogRequest",
+        "required": true
+      },
+      "response": {
+        "status": 200,
+        "ref": "AgentCatalogRecordResponse"
+      },
+      "scenario_ids": [
+        "updateAgent.public-read-does-not-grant-mutation"
+      ]
+    },
+    {
+      "operation_id": "deleteAgent",
+      "kind": "command",
+      "method": "DELETE",
+      "path": "/v1/agent-catalog/{agent_id}",
+      "resource": "agent_catalog_record",
+      "action": "delete",
+      "summary": "Delete an owned or admin-visible agent catalog record",
+      "auth": {
+        "scheme": "bearer",
+        "scopes": [
+          "agent-catalog:write",
+          "agent-catalog:{agent_id}:delete"
+        ]
+      },
+      "rbac_policy": "agent_catalog_visibility.v1",
+      "response": {
+        "status": 200,
+        "ref": "DeleteAgentCatalogResponse"
+      }
+    }
+  ],
+  "scenarios": [
+    {
+      "scenario_id": "listAgents.non-admin-list-visibility",
+      "operation_id": "listAgents",
+      "name": "non-admin list visibility",
+      "given": "a user owns one private agent and another user owns one public and one private agent",
+      "when": "the user lists the catalog",
+      "then": "the response contains the user's owned agents and the other user's public agent only"
+    },
+    {
+      "scenario_id": "createAgent.server-stamps-owner",
+      "operation_id": "createAgent",
+      "name": "server stamps owner",
+      "given": "an authorized principal creates a private agent",
+      "when": "the request omits owner_principal_id",
+      "then": "the saved record owner is the authorized principal"
+    },
+    {
+      "scenario_id": "updateAgent.public-read-does-not-grant-mutation",
+      "operation_id": "updateAgent",
+      "name": "public read does not grant mutation",
+      "given": "a non-admin user can read another user's public agent",
+      "when": "the user attempts to make that agent private",
+      "then": "the operation is forbidden by RBAC"
+    }
+  ]
+}

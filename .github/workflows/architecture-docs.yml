@@ -8,6 +8,7 @@ on:
       - "README.md"
       - "docs/20-domain/context-map.md"
       - "docs/20-domain/README.md"
+      - "docs/20-domain/api-contract-projection.md"
       - "docs/30-architecture/**"
       - "docs/50-roadmap/open-questions.md"
       - "docs/migration/contracts.md"
@@ -17,6 +18,7 @@ on:
       - "README.md"
       - "docs/20-domain/context-map.md"
       - "docs/20-domain/README.md"
+      - "docs/20-domain/api-contract-projection.md"
       - "docs/30-architecture/**"
       - "docs/50-roadmap/open-questions.md"
       - "docs/migration/contracts.md"
@@ -39,7 +41,7 @@ jobs:
           test -f docs/50-roadmap/open-questions.md
       - name: Verify package coverage
         run: |
-          for pkg in task ir provider/capability hostintegration assignment; do
+          for pkg in task ir provider/capability hostintegration assignment apicontract; do
             grep -R "$pkg" docs/20-domain/context-map.md docs/30-architecture/module-decomposition.md >/dev/null
           done
       - name: Verify architecture docs avoid runtime ownership drift
