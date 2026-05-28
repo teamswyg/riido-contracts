@@ -36,6 +36,7 @@ If only one repository consumes the fact, keep it local to that repository.
 | Distribution channel + provider routing status vocabulary | `internal/hostintegration`, `docs/20-domain/distribution-host-integration.md` | Promoted by RIID-4670 into `hostintegration`; keep app data roots, IPC, grants, provider discovery, and review/demo mode in runtime repos. |
 | Assignment polling DTOs | `internal/riidoaiserver`, `assignment_contract.riido.json` | Promoted by RIID-4687 into `assignment`; keep server store logic, health/metrics adapters, HTTP/SSE, authZ, and persistence in control-plane. |
 | API DSL / IR / OpenAPI projection | control-plane HTTP docs and web UI contract needs | Added by RIID-4718 as candidate shared projection fixtures; OpenAPI is generated from IR and is not SSOT. |
+| AI Agent policy and client API projection | v1.22 AI Agent Figma flow and control-plane client surface | Added by RIID-4720 as shared policy vocabulary and API projection fixtures; keep handlers, daemon probing, and generated client code in owner repos. |
 | RBAC scenario fixtures | `internal/riidoaiserver/*rbac*`, security docs | Promote black-box fixtures, not authorization implementation. |
 | Store distribution contract fixtures | `packaging/store`, `tools/storecontract` | Promote only if daemon and infra both validate the same fixture. |
 
@@ -120,6 +121,26 @@ This slice does not move control-plane HTTP handlers, authorization/RBAC
 implementation, frontend implementation, generated frontend client code,
 production bearer tokens, IdP config, Terraform, AWS data, or deployment
 evidence.
+
+### RIID-4720 — AI Agent policy vocabulary and client API projection
+
+This slice adds the v1.22 AI Agent policy contract for web and desktop webview
+clients.
+
+This slice does:
+
+- document the shared vocabulary for runtime, agent, control plane, device,
+  daemon, and client
+- document agent deletion, runtime deletion, daemon detection, agent editing,
+  and runtime-output parsing policy
+- extend API DSL/IR with top-level enum and sum-type definitions
+- add `control-plane-ai-agent-client-api.v1` fixtures for bootstrap,
+  device/runtime listing, editability checks, mutation, deletion, and SSE
+  client events
+- keep OpenAPI as generated projection for Orval or compatible client codegen
+
+This slice does not implement control-plane handlers, daemon runtime detection,
+desktop/web UI code, generated client code, or provider runtime parsing.
 
 ## Validation Gates
 

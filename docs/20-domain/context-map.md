@@ -20,6 +20,7 @@ module, not a runtime module.
 | C3 Provider Capability | `provider/capability` | provider capability model, protocol vocabulary, compatibility status, protocol-critical args, capability fingerprint |
 | C10 Assignment Polling Contract | `assignment` | assignment state, poll action, heartbeat/event DTOs, task-event DTOs, service schema version |
 | C10 API Contract Projection | `apicontract` | shared API DSL, canonical API IR, generated OpenAPI projection fixtures, drift verification |
+| C10 AI Agent Policy | docs + `apicontract` | AI Agent ubiquitous language, agent/runtime/device lifecycle policy, client-facing API enum and sum-type vocabulary |
 | C11/C10 Host Integration Vocabulary | `hostintegration` | distribution channel and provider routing status vocabulary shared by daemon/control-plane |
 
 ## Non-Owned Contexts
@@ -56,4 +57,6 @@ invocation, or deployment evidence.
   [`../30-architecture/integration-matrix.md`](../30-architecture/integration-matrix.md)
 - API contract projection:
   [`api-contract-projection.md`](api-contract-projection.md)
+- AI Agent policy:
+  [`ai-agent-policy.md`](ai-agent-policy.md)
 - Open questions: [`../50-roadmap/open-questions.md`](../50-roadmap/open-questions.md)

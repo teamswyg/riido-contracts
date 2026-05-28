@@ -12,9 +12,7 @@ import (
 )
 
 const (
-	dslPath     = "apicontract/fixtures/control-plane-agent-catalog.dsl.riido.json"
-	irPath      = "apicontract/fixtures/control-plane-agent-catalog.ir.riido.json"
-	openAPIPath = "apicontract/fixtures/control-plane-agent-catalog.openapi.json"
+	dslGlob = "apicontract/fixtures/*.dsl.riido.json"
 )
 
 func main() {
@@ -70,30 +68,40 @@ func verify() error {
 }
 
 func generatedFixtures() (map[string][]byte, error) {
-	dsl, err := loadDSL(dslPath)
+	dslPaths, err := filepath.Glob(dslGlob)
 	if err != nil {
 		return nil, err
 	}
-	ir, err := apicontract.GenerateIR(dsl)
-	if err != nil {
-		return nil, err
+	if len(dslPaths) == 0 {
+		return nil, fmt.Errorf("no DSL fixtures match %s", dslGlob)
 	}
-	openAPI, err := apicontract.GenerateOpenAPI(ir)
-	if err != nil {
-		return nil, err
+	generated := map[string][]byte{}
+	for _, dslPath := range dslPaths {
+		dsl, err := loadDSL(dslPath)
+		if err != nil {
+			return nil, err
+		}
+		ir, err := apicontract.GenerateIR(dsl)
+		if err != nil {
+			return nil, err
+		}
+		openAPI, err := apicontract.GenerateOpenAPI(ir)
+		if err != nil {
+			return nil, err
+		}
+		irJSON, err := apicontract.MarshalCanonical(ir)
+		if err != nil {
+			return nil, fmt.Errorf("marshal IR: %w", err)
+		}
+		openAPIJSON, err := apicontract.MarshalCanonical(openAPI)
+		if err != nil {
+			return nil, fmt.Errorf("marshal OpenAPI: %w", err)
+		}
+		stem := filepath.Clean(dslPath[:len(dslPath)-len(".dsl.riido.json")])
+		generated[stem+".ir.riido.json"] = irJSON
+		generated[stem+".openapi.json"] = openAPIJSON
 	}
-	irJSON, err := apicontract.MarshalCanonical(ir)
-	if err != nil {
-		return nil, fmt.Errorf("marshal IR: %w", err)
-	}
-	openAPIJSON, err := apicontract.MarshalCanonical(openAPI)
-	if err != nil {
-		return nil, fmt.Errorf("marshal OpenAPI: %w", err)
-	}
-	return map[string][]byte{
-		filepath.Clean(irPath):      irJSON,
-		filepath.Clean(openAPIPath): openAPIJSON,
-	}, nil
+	return generated, nil
 }
 
 func loadDSL(path string) (apicontract.DSLDocument, error) {

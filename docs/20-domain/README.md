@@ -32,6 +32,12 @@ RIID-4718 adds:
 - C10 API contract projection fixtures into `apicontract`, where Domain DSL and
   API IR are SSOT and OpenAPI is generated
 
+RIID-4720 adds:
+
+- C10 AI Agent policy vocabulary in [`ai-agent-policy.md`](ai-agent-policy.md)
+- `control-plane-ai-agent-client-api.v1` API projection fixtures, including
+  top-level enum and sum-type definitions for client codegen safety
+
 The EventIngestor implementation, policy redaction catalog, provider adapters,
 server stores, and Terraform deployment code remain outside this repository.
 They may consume these contracts, but they do not become contract module
