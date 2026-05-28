@@ -50,6 +50,7 @@ OpenAPI는 사람이 직접 고치는 SSOT가 아닙니다. Domain DSL이 원본
 | bounded context와 각 package 책임 | [`docs/20-domain/context-map.md`](docs/20-domain/context-map.md) |
 | AI Agent 보편언어와 정책 단언 | [`docs/20-domain/ai-agent-policy.md`](docs/20-domain/ai-agent-policy.md) |
 | API DSL -> IR -> OpenAPI projection 규칙 | [`docs/20-domain/api-contract-projection.md`](docs/20-domain/api-contract-projection.md) |
+| SSOT 간 의존 방향과 top-down / bottom-up 작업 루프 | [`docs/30-architecture/ssot-dependency-map.md`](docs/30-architecture/ssot-dependency-map.md) |
 | 계약을 언제 public module로 승격할지 | [`docs/30-architecture/contract-promotion-policy.md`](docs/30-architecture/contract-promotion-policy.md) |
 | 레포 간 어떤 artifact를 주고받는지 | [`docs/30-architecture/integration-matrix.md`](docs/30-architecture/integration-matrix.md) |
 | 마이그레이션 중 남은 맥락 | [`docs/migration/contracts.md`](docs/migration/contracts.md) |

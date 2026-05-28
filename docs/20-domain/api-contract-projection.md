@@ -21,6 +21,12 @@ and black-box HTTP checks.
 OpenAPI is not the SSOT. If an OpenAPI artifact disagrees with the API IR, the
 OpenAPI artifact is regenerated or rejected.
 
+This projection is downstream of domain policy. When API schema text repeats an
+AI Agent setting fact, such as `profile_thumbnail_url` or `instruction`, it is a
+projection of [`ai-agent-policy.md`](ai-agent-policy.md). The dependency rule is
+recorded in
+[`../30-architecture/ssot-dependency-map.md`](../30-architecture/ssot-dependency-map.md).
+
 ## Current Fixture
 
 Current fixtures:

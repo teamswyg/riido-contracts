@@ -39,6 +39,24 @@ The client command contract also includes explicit task-thread comment submit
 and stop actions so web and desktop webview clients do not infer AI Agent work
 from generic task comments alone.
 
+## SSOT Dependency Direction
+
+This document owns the shared AI Agent mental model. Downstream repositories may
+repeat these terms only as local execution or projection behavior. The cross-SSOT
+dependency direction and the top-down / bottom-up harness loop are defined in
+[`../30-architecture/ssot-dependency-map.md`](../30-architecture/ssot-dependency-map.md).
+
+For agent settings specifically:
+
+- `profile_thumbnail_url` and `instruction` meaning starts here and in the
+  `control-plane-ai-agent-client-api.v1` DSL fixture.
+- `riido-control-plane` owns HTTP validation, save/update behavior, mock data,
+  and generated-client handoff.
+- `riido-daemon` owns only runtime consumption of an assigned instruction value;
+  it does not own thumbnail presentation, storage, RBAC, or API shape.
+- `riido-infra` owns deployment/storage changes only when a future media,
+  secret, durability, or topology requirement appears.
+
 ## Ubiquitous Language
 
 | Term | Meaning |
