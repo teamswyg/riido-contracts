@@ -71,6 +71,10 @@ discriminated event union rather than ad hoc strings. Runtime progress intended
 for task threads is carried by the `agent_thread_progress` event variant with
 ordered line batches, not by provider raw output text.
 
+Agent records also carry optional profile presentation fields:
+`profile_thumbnail_url` is an HTTPS image URL string, and `instruction` is
+client-authored text capped at 1000 characters by the contract projection.
+
 ## Boundary
 
 This contract owns:

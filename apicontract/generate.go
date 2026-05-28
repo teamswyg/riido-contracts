@@ -215,6 +215,9 @@ func validateDSL(dsl DSLDocument) error {
 			if strings.TrimSpace(property.Name) == "" {
 				return fmt.Errorf("apicontract: schema %q has blank property name", schema.Name)
 			}
+			if property.MaxLength != nil && *property.MaxLength <= 0 {
+				return fmt.Errorf("apicontract: schema %q property %q max_length must be positive", schema.Name, property.Name)
+			}
 			if err := validatePropertyRef(schema.Name, property, components); err != nil {
 				return err
 			}
@@ -416,6 +419,9 @@ func propertyToOpenAPI(property Property) map[string]any {
 	}
 	if property.Format != "" {
 		out["format"] = property.Format
+	}
+	if property.MaxLength != nil {
+		out["maxLength"] = *property.MaxLength
 	}
 	if len(property.Enum) > 0 {
 		out["enum"] = append([]string(nil), property.Enum...)

@@ -106,6 +106,19 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	if !ok || len(commentValues) == 0 || commentValues[0] != "queued_by_busy_agent" {
 		t.Fatalf("AgentTaskCommentKind enum = %#v", commentKind["enum"])
 	}
+	agentRecord := openAPI.Components.Schemas["AgentClientRecord"]
+	recordProps, ok := agentRecord["properties"].(map[string]any)
+	if !ok {
+		t.Fatalf("AgentClientRecord properties missing: %#v", agentRecord)
+	}
+	thumbnail, ok := recordProps["profile_thumbnail_url"].(map[string]any)
+	if !ok || thumbnail["format"] != "uri" {
+		t.Fatalf("profile_thumbnail_url schema = %#v", recordProps["profile_thumbnail_url"])
+	}
+	instruction, ok := recordProps["instruction"].(map[string]any)
+	if !ok || instruction["maxLength"] != 1000 {
+		t.Fatalf("instruction schema = %#v", recordProps["instruction"])
+	}
 }
 
 func TestAIAgentClientGeneratedFixturesDoNotDrift(t *testing.T) {

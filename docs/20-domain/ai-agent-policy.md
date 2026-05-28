@@ -90,6 +90,25 @@ stream.
 
 Agent names are mutable and not unique.
 
+### Agent Profile Configuration
+
+Agent profile presentation belongs to the agent configuration, not to a task
+thread or runtime. The client-facing agent record therefore carries optional
+`profile_thumbnail_url` and `instruction` fields wherever agents are returned.
+
+The thumbnail value is an HTTPS image URL string. Binary upload, image
+resizing, CDN storage, and moderation are outside this contract until a separate
+media/storage contract owns them.
+
+The instruction value is client-authored text that is saved with the agent and
+used by the control plane/daemon when composing runtime prompts. Empty text is
+allowed. The current client API limit is 1000 characters. Longer values are
+rejected by the control plane before the agent configuration is saved.
+
+Profile field updates follow the same RBAC and mutation safety rules as name,
+visibility, and runtime binding updates: admin may mutate all agents, owner may
+mutate owned agents, and no agent can be edited while it has assigned tasks.
+
 ### Runtime Output Parsing
 
 Assigning an agent may instruct its runtime to emit parseable progress markers.
