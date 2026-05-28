@@ -314,7 +314,64 @@
         "x-riido-operation-kind": "query",
         "x-riido-scenarios": [
           "streamAIAgentClientEvents.editability-updates-before-mutation",
-          "streamAIAgentClientEvents.runtime-parse-status"
+          "streamAIAgentClientEvents.runtime-parse-status",
+          "streamAIAgentClientEvents.task-comment-status-update"
+        ]
+      }
+    },
+    "/v1/client/ai-agent/tasks/{task_id}/assignable-agents": {
+      "get": {
+        "operationId": "listAIAgentTaskAssignableAgents",
+        "summary": "List agents assignable from a task participant dropdown",
+        "tags": [
+          "ai_agent_client"
+        ],
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentClientListResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-riido-auth-scopes": [
+          "ai-agent:read",
+          "task:{task_id}:read"
+        ],
+        "x-riido-rbac-policy": "ai_agent_rbac.v1",
+        "x-riido-operation-kind": "query",
+        "x-riido-scenarios": [
+          "listAIAgentTaskAssignableAgents.participant-dropdown-visible-agents",
+          "listAIAgentTaskAssignableAgents.participant-dropdown-owned-first-ordering"
         ]
       }
     }
@@ -363,6 +420,9 @@
           "editability": {
             "$ref": "#/components/schemas/AgentEditability"
           },
+          "is_owned_by_viewer": {
+            "type": "boolean"
+          },
           "name": {
             "type": "string"
           },
@@ -385,6 +445,7 @@
         "required": [
           "agent_id",
           "owner_principal_id",
+          "is_owned_by_viewer",
           "name",
           "visibility",
           "work_status",
@@ -471,6 +532,18 @@
         ],
         "type": "object"
       },
+      "AgentTaskCommentKind": {
+        "description": "Typed task-thread status update emitted for Figma comment communication flows.",
+        "enum": [
+          "queued_by_busy_agent",
+          "stopped_by_agent_deleted",
+          "stopped_by_user_request",
+          "runtime_progress",
+          "task_completed",
+          "task_failed"
+        ],
+        "type": "string"
+      },
       "AgentVisibility": {
         "description": "Workspace visibility for an agent.",
         "enum": [
@@ -500,13 +573,22 @@
           "assignment_state": {
             "$ref": "#/components/schemas/AgentAssignmentState"
           },
+          "comment_kind": {
+            "$ref": "#/components/schemas/AgentTaskCommentKind"
+          },
           "event_type": {
             "enum": [
               "agent_work_status_changed"
             ],
             "type": "string"
           },
+          "run_id": {
+            "type": "string"
+          },
           "schema_version": {
+            "type": "string"
+          },
+          "task_id": {
             "type": "string"
           },
           "work_status": {

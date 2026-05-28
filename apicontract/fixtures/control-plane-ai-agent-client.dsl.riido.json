@@ -157,6 +157,19 @@
       ]
     },
     {
+      "name": "AgentTaskCommentKind",
+      "type": "string",
+      "description": "Typed task-thread status update emitted for Figma comment communication flows.",
+      "values": [
+        {"value": "queued_by_busy_agent", "description": "Assignment is queued because the selected agent is already working."},
+        {"value": "stopped_by_agent_deleted", "description": "Assigned work was stopped because the agent was deleted."},
+        {"value": "stopped_by_user_request", "description": "Assigned work was stopped by an explicit user action."},
+        {"value": "runtime_progress", "description": "Runtime output produced a progress update."},
+        {"value": "task_completed", "description": "Runtime output produced a terminal completion update."},
+        {"value": "task_failed", "description": "Runtime or validation produced a failure update."}
+      ]
+    },
+    {
       "name": "ClientKind",
       "type": "string",
       "description": "Client consuming the AI Agent control-plane surface.",
@@ -209,10 +222,11 @@
     {
       "name": "AgentClientRecord",
       "type": "object",
-      "required": ["agent_id", "owner_principal_id", "name", "visibility", "work_status", "editability", "assigned_task_count"],
+      "required": ["agent_id", "owner_principal_id", "is_owned_by_viewer", "name", "visibility", "work_status", "editability", "assigned_task_count"],
       "properties": [
         {"name": "agent_id", "type": "string"},
         {"name": "owner_principal_id", "type": "string"},
+        {"name": "is_owned_by_viewer", "type": "boolean"},
         {"name": "name", "type": "string"},
         {"name": "visibility", "ref": "AgentVisibility"},
         {"name": "runtime_id", "type": "string"},
@@ -323,8 +337,11 @@
         {"name": "event_type", "type": "string", "enum": ["agent_work_status_changed"]},
         {"name": "schema_version", "type": "string"},
         {"name": "agent_id", "type": "string"},
+        {"name": "task_id", "type": "string"},
+        {"name": "run_id", "type": "string"},
         {"name": "work_status", "ref": "AgentWorkStatus"},
-        {"name": "assignment_state", "ref": "AgentAssignmentState"}
+        {"name": "assignment_state", "ref": "AgentAssignmentState"},
+        {"name": "comment_kind", "ref": "AgentTaskCommentKind"}
       ]
     },
     {
@@ -381,6 +398,32 @@
           "given": "a runtime was deleted on a device and no assigned agent references it",
           "when": "daemon scan reports the runtime missing",
           "then": "the client list omits the runtime as if it never existed"
+        }
+      ]
+    },
+    {
+      "operation_id": "listAIAgentTaskAssignableAgents",
+      "kind": "query",
+      "summary": "List agents assignable from a task participant dropdown",
+      "method": "GET",
+      "path": "/v1/client/ai-agent/tasks/{task_id}/assignable-agents",
+      "resource": "agent",
+      "action": "read",
+      "auth": {"scheme": "bearer", "scopes": ["ai-agent:read", "task:{task_id}:read"]},
+      "rbac_policy": "ai_agent_rbac.v1",
+      "response": {"status": 200, "ref": "AgentClientListResponse"},
+      "scenarios": [
+        {
+          "name": "participant dropdown visible agents",
+          "given": "a web or desktop webview client opens the Figma task participant dropdown",
+          "when": "the client requests assignable AI agents for the task",
+          "then": "the response includes the viewer's owned agents and other users' public agents only"
+        },
+        {
+          "name": "participant dropdown owned-first ordering",
+          "given": "visible agents include owned agents and other users' public agents",
+          "when": "the assignable-agent response is returned",
+          "then": "owned agents appear first and names are ordered inside each ownership group"
         }
       ]
     },
@@ -474,6 +517,12 @@
           "given": "an assigned runtime output is parsed for task progress and may include a task-end marker",
           "when": "the parsed status changes",
           "then": "the event stream emits agent_work_status_changed with a typed AgentWorkStatus value"
+        },
+        {
+          "name": "task comment status update",
+          "given": "the Figma comment communication flow shows a queued or stopped agent update in a task thread",
+          "when": "the assignment state changes",
+          "then": "the event stream includes task_id, assignment_state, and a typed comment_kind for the client thread"
         }
       ]
     }

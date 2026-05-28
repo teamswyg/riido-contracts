@@ -10,13 +10,31 @@ This document is the SSOT for the AI Agent policy vocabulary shared by
 The client surface follows the Figma v1.22 AI Agent flow:
 
 - file: `v.1.22 AI Agent`
-- node: `42:3014`
-- URL:
+- planning node: `42:3014`
+- UI dev handoff node: `129:5215`
+- planning URL:
   `https://www.figma.com/design/MUOd9lctoEHASUStN3vUuK/v.1.22-AI-Agent?node-id=42-3014&p=f&m=dev`
+- UI dev handoff URL:
+  `https://www.figma.com/design/MUOd9lctoEHASUStN3vUuK/v.1.22-AI-Agent?node-id=129-5215&p=f&m=dev`
 
-The visible flow includes onboarding, workspace selection, agent selection,
+The planning flow includes onboarding, workspace selection, agent selection,
 manual agent configuration, desktop-app prompting, and agent setting screens.
-Those screens are consumed by both Riido web and the desktop app webview.
+Those screens are consumed by both Riido web and the desktop app webview. The
+UI dev handoff page adds Ready-for-dev surfaces for:
+
+- task participant dropdowns where agents appear beside members
+- task comment communication for queued, running, and stopped agent work
+- menu placement for Riido AI, runtime, and agent management routes
+
+The participant dropdown policy shown in the handoff is:
+
+- member sorting belongs to the existing Riido member/client surface
+- agent sorting belongs to this contract: owned agents first, then public
+  agents visible through RBAC, with name ordering inside each group
+
+The comment communication flow shows agent queue and stop states as task-thread
+updates. The control-plane event contract therefore carries task context and a
+typed comment-status value instead of asking clients to parse rendered text.
 
 ## Ubiquitous Language
 
@@ -100,6 +118,7 @@ It covers:
 
 - `GET /v1/client/ai-agent/bootstrap`
 - `GET /v1/client/ai-agent/devices`
+- `GET /v1/client/ai-agent/tasks/{task_id}/assignable-agents`
 - `GET /v1/client/ai-agent/agents/{agent_id}/editability`
 - `PATCH /v1/client/ai-agent/agents/{agent_id}`
 - `DELETE /v1/client/ai-agent/agents/{agent_id}`

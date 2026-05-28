@@ -55,6 +55,7 @@ webview:
 
 - `GET /v1/client/ai-agent/bootstrap`
 - `GET /v1/client/ai-agent/devices`
+- `GET /v1/client/ai-agent/tasks/{task_id}/assignable-agents`
 - `GET /v1/client/ai-agent/agents/{agent_id}/editability`
 - `PATCH /v1/client/ai-agent/agents/{agent_id}`
 - `DELETE /v1/client/ai-agent/agents/{agent_id}`
@@ -62,9 +63,9 @@ webview:
 
 The fixture includes explicit DSL/IR enums for runtime kind, runtime
 availability, runtime detection state, agent editability, agent work status,
-assignment state, client kind, and agent visibility. It also includes the
-`ClientStreamEvent` sum type so client codegen receives a discriminated event
-union rather than ad hoc strings.
+assignment state, task comment status, client kind, and agent visibility. It
+also includes the `ClientStreamEvent` sum type so client codegen receives a
+discriminated event union rather than ad hoc strings.
 
 ## Boundary
 

@@ -70,7 +70,7 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GenerateIR: %v", err)
 	}
-	if got, want := len(ir.Enums), 8; got != want {
+	if got, want := len(ir.Enums), 9; got != want {
 		t.Fatalf("IR enums = %d, want %d", got, want)
 	}
 	if got, want := len(ir.SumTypes), 1; got != want {
@@ -96,6 +96,15 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	editability := openAPI.Paths["/v1/client/ai-agent/agents/{agent_id}/editability"]["get"]
 	if editability.RiidoRBAC != "agent_mutation_safety.v1" {
 		t.Fatalf("editability rbac = %q", editability.RiidoRBAC)
+	}
+	assignable := openAPI.Paths["/v1/client/ai-agent/tasks/{task_id}/assignable-agents"]["get"]
+	if len(assignable.Parameters) != 1 || assignable.Parameters[0].Name != "task_id" {
+		t.Fatalf("assignable-agent parameters = %#v", assignable.Parameters)
+	}
+	commentKind := openAPI.Components.Schemas["AgentTaskCommentKind"]
+	commentValues, ok := commentKind["enum"].([]string)
+	if !ok || len(commentValues) == 0 || commentValues[0] != "queued_by_busy_agent" {
+		t.Fatalf("AgentTaskCommentKind enum = %#v", commentKind["enum"])
 	}
 }
 
