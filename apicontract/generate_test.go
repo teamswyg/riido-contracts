@@ -70,7 +70,7 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GenerateIR: %v", err)
 	}
-	if got, want := len(ir.Enums), 9; got != want {
+	if got, want := len(ir.Enums), 10; got != want {
 		t.Fatalf("IR enums = %d, want %d", got, want)
 	}
 	if got, want := len(ir.SumTypes), 1; got != want {
@@ -100,6 +100,14 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	assignable := openAPI.Paths["/v1/client/ai-agent/tasks/{task_id}/assignable-agents"]["get"]
 	if len(assignable.Parameters) != 1 || assignable.Parameters[0].Name != "task_id" {
 		t.Fatalf("assignable-agent parameters = %#v", assignable.Parameters)
+	}
+	threads := openAPI.Paths["/v1/client/ai-agent/tasks/{task_id}/threads"]["get"]
+	if threads.RiidoRBAC != "task_thread_stream_handoff.v1" {
+		t.Fatalf("threads rbac = %q", threads.RiidoRBAC)
+	}
+	threadStream := openAPI.Paths["/v1/client/ai-agent/tasks/{task_id}/threads/{thread_id}/events"]["get"]
+	if _, ok := threadStream.Responses["200"].Content["text/event-stream"]; !ok || len(threadStream.Parameters) != 2 {
+		t.Fatalf("thread stream operation = %#v", threadStream)
 	}
 	commentKind := openAPI.Components.Schemas["AgentTaskCommentKind"]
 	commentValues, ok := commentKind["enum"].([]string)

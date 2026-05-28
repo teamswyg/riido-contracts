@@ -112,6 +112,25 @@ the client event stream as the typed `agent_thread_progress` variant of
 Clients render task-thread progress from that typed payload and never parse
 provider output text.
 
+### Task Thread Stream Handoff
+
+A task can have multiple AI Agent task threads over time. For example, an agent
+can finish work on a task and another agent assignment can later start on the
+same task. The client-visible task thread surface therefore reads a cold
+collection first instead of assuming that one task has exactly one stream.
+
+At one moment, a task can have only one active agent assignment. The cold
+collection response may contain many historical `thread_id` values, but it must
+expose at most one `active_stream` HATEOAS link. If every thread is completed,
+failed, stopped, or otherwise terminal, the response omits `active_stream` and
+the client does not open SSE.
+
+The generated client should encode the sequence as HTTP GET -> HATEOAS ->
+stream. UI code should not decide on its own when to open a stream, because
+unnecessary SSE connections create server cost. When an active stream is opened,
+every streamed progress event must carry `thread_id` so the client updates only
+the targeted thread.
+
 ## API Codegen Rule
 
 Control-plane API enum values and sum-type variants are contract values, not
@@ -137,17 +156,20 @@ It covers:
 - `GET /v1/client/ai-agent/bootstrap`
 - `GET /v1/client/ai-agent/devices`
 - `GET /v1/client/ai-agent/tasks/{task_id}/assignable-agents`
+- `GET /v1/client/ai-agent/tasks/{task_id}/threads`
 - `POST /v1/client/ai-agent/tasks/{task_id}/comments`
 - `POST /v1/client/ai-agent/tasks/{task_id}/stop`
 - `GET /v1/client/ai-agent/agents/{agent_id}/editability`
 - `PATCH /v1/client/ai-agent/agents/{agent_id}`
 - `DELETE /v1/client/ai-agent/agents/{agent_id}`
+- `GET /v1/client/ai-agent/tasks/{task_id}/threads/{thread_id}/events`
 - `GET /v1/client/ai-agent/events`
 
 The event stream uses a discriminated sum type, `ClientStreamEvent`, so client
 codegen can produce safe branches for runtime snapshots, agent editability, and
 agent work-status updates. Runtime progress intended for the task thread is the
-`agent_thread_progress` variant and carries ordered progress lines.
+`agent_thread_progress` variant and carries `thread_id` plus ordered progress
+lines.
 
 ## Boundary
 

@@ -56,11 +56,13 @@ webview:
 - `GET /v1/client/ai-agent/bootstrap`
 - `GET /v1/client/ai-agent/devices`
 - `GET /v1/client/ai-agent/tasks/{task_id}/assignable-agents`
+- `GET /v1/client/ai-agent/tasks/{task_id}/threads`
 - `POST /v1/client/ai-agent/tasks/{task_id}/comments`
 - `POST /v1/client/ai-agent/tasks/{task_id}/stop`
 - `GET /v1/client/ai-agent/agents/{agent_id}/editability`
 - `PATCH /v1/client/ai-agent/agents/{agent_id}`
 - `DELETE /v1/client/ai-agent/agents/{agent_id}`
+- `GET /v1/client/ai-agent/tasks/{task_id}/threads/{thread_id}/events`
 - `GET /v1/client/ai-agent/events`
 
 The fixture includes explicit DSL/IR enums for runtime kind, runtime
@@ -69,7 +71,10 @@ assignment state, task comment status, client kind, and agent visibility. It
 also includes the `ClientStreamEvent` sum type so client codegen receives a
 discriminated event union rather than ad hoc strings. Runtime progress intended
 for task threads is carried by the `agent_thread_progress` event variant with
-ordered line batches, not by provider raw output text.
+`thread_id` and ordered line batches, not by provider raw output text. The task
+thread collection endpoint owns the HTTP GET -> HATEOAS -> stream handoff rule:
+historical threads are returned as cold records, and an active stream link is
+present only when one current assignment can produce live updates.
 
 ## Boundary
 
