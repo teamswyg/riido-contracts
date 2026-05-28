@@ -35,6 +35,9 @@ The participant dropdown policy shown in the handoff is:
 The comment communication flow shows agent queue and stop states as task-thread
 updates. The control-plane event contract therefore carries task context and a
 typed comment-status value instead of asking clients to parse rendered text.
+The client command contract also includes explicit task-thread comment submit
+and stop actions so web and desktop webview clients do not infer AI Agent work
+from generic task comments alone.
 
 ## Ubiquitous Language
 

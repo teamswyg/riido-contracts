@@ -136,7 +136,8 @@ This slice does:
 - extend API DSL/IR with top-level enum and sum-type definitions
 - add `control-plane-ai-agent-client-api.v1` fixtures for bootstrap,
   device/runtime listing, task assignable-agent listing, editability checks,
-  mutation, deletion, and SSE client events
+  task-thread comment submit, task-thread stop, mutation, deletion, and SSE
+  client events
 - keep OpenAPI as generated projection for Orval or compatible client codegen
 
 This slice does not implement control-plane handlers, daemon runtime detection,

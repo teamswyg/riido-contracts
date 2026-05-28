@@ -56,6 +56,8 @@ webview:
 - `GET /v1/client/ai-agent/bootstrap`
 - `GET /v1/client/ai-agent/devices`
 - `GET /v1/client/ai-agent/tasks/{task_id}/assignable-agents`
+- `POST /v1/client/ai-agent/tasks/{task_id}/comments`
+- `POST /v1/client/ai-agent/tasks/{task_id}/stop`
 - `GET /v1/client/ai-agent/agents/{agent_id}/editability`
 - `PATCH /v1/client/ai-agent/agents/{agent_id}`
 - `DELETE /v1/client/ai-agent/agents/{agent_id}`

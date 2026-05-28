@@ -308,6 +308,39 @@
       ]
     },
     {
+      "name": "SubmitAIAgentTaskCommentRequest",
+      "type": "object",
+      "required": ["agent_id", "body"],
+      "properties": [
+        {"name": "agent_id", "type": "string"},
+        {"name": "body", "type": "string"},
+        {"name": "source_comment_id", "type": "string"}
+      ]
+    },
+    {
+      "name": "StopAIAgentTaskRequest",
+      "type": "object",
+      "properties": [
+        {"name": "agent_id", "type": "string"},
+        {"name": "reason", "type": "string"}
+      ]
+    },
+    {
+      "name": "AIAgentTaskActionResponse",
+      "type": "object",
+      "required": ["schema_version", "task_id", "agent_id", "run_id", "work_status", "assignment_state", "comment_kind", "message"],
+      "properties": [
+        {"name": "schema_version", "type": "string"},
+        {"name": "task_id", "type": "string"},
+        {"name": "agent_id", "type": "string"},
+        {"name": "run_id", "type": "string"},
+        {"name": "work_status", "ref": "AgentWorkStatus"},
+        {"name": "assignment_state", "ref": "AgentAssignmentState"},
+        {"name": "comment_kind", "ref": "AgentTaskCommentKind"},
+        {"name": "message", "type": "string"}
+      ]
+    },
+    {
       "name": "DeviceRuntimeSnapshotEvent",
       "type": "object",
       "required": ["event_type", "schema_version", "device"],
@@ -424,6 +457,54 @@
           "given": "visible agents include owned agents and other users' public agents",
           "when": "the assignable-agent response is returned",
           "then": "owned agents appear first and names are ordered inside each ownership group"
+        }
+      ]
+    },
+    {
+      "operation_id": "submitAIAgentTaskComment",
+      "kind": "command",
+      "summary": "Submit a task-thread comment that should be routed to an assigned AI agent",
+      "method": "POST",
+      "path": "/v1/client/ai-agent/tasks/{task_id}/comments",
+      "resource": "agent",
+      "action": "create",
+      "auth": {"scheme": "bearer", "scopes": ["ai-agent:write", "task:{task_id}:comment"]},
+      "rbac_policy": "api_codegen_safety.v1",
+      "request": {"ref": "SubmitAIAgentTaskCommentRequest", "required": true},
+      "response": {"status": 202, "ref": "AIAgentTaskActionResponse"},
+      "scenarios": [
+        {
+          "name": "comment routes to running agent",
+          "given": "the Figma task comment box submits a user message to a selected AI agent",
+          "when": "the selected agent is idle and has an online runtime",
+          "then": "the response reports running work and the event stream emits runtime_progress for the task thread"
+        },
+        {
+          "name": "comment queues behind busy agent",
+          "given": "the selected AI agent is already running another task",
+          "when": "the Figma task comment box submits a new user message",
+          "then": "the response reports queued work and the event stream emits queued_by_busy_agent for the task thread"
+        }
+      ]
+    },
+    {
+      "operation_id": "stopAIAgentTask",
+      "kind": "command",
+      "summary": "Stop AI agent work from a task-thread stop action",
+      "method": "POST",
+      "path": "/v1/client/ai-agent/tasks/{task_id}/stop",
+      "resource": "agent",
+      "action": "stop",
+      "auth": {"scheme": "bearer", "scopes": ["ai-agent:write", "task:{task_id}:stop", "task:{task_id}:write"]},
+      "rbac_policy": "api_codegen_safety.v1",
+      "request": {"ref": "StopAIAgentTaskRequest"},
+      "response": {"status": 202, "ref": "AIAgentTaskActionResponse"},
+      "scenarios": [
+        {
+          "name": "task stop emits comment status",
+          "given": "the Figma task thread shows a running AI agent response",
+          "when": "the user presses the task stop action",
+          "then": "the response and event stream use stopped_by_user_request so the client can render the stopped agent comment"
         }
       ]
     },

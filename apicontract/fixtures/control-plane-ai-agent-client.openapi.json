@@ -374,10 +374,180 @@
           "listAIAgentTaskAssignableAgents.participant-dropdown-owned-first-ordering"
         ]
       }
+    },
+    "/v1/client/ai-agent/tasks/{task_id}/comments": {
+      "post": {
+        "operationId": "submitAIAgentTaskComment",
+        "summary": "Submit a task-thread comment that should be routed to an assigned AI agent",
+        "tags": [
+          "ai_agent_client"
+        ],
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SubmitAIAgentTaskCommentRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIAgentTaskActionResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-riido-auth-scopes": [
+          "ai-agent:write",
+          "task:{task_id}:comment"
+        ],
+        "x-riido-rbac-policy": "api_codegen_safety.v1",
+        "x-riido-operation-kind": "command",
+        "x-riido-scenarios": [
+          "submitAIAgentTaskComment.comment-routes-to-running-agent",
+          "submitAIAgentTaskComment.comment-queues-behind-busy-agent"
+        ]
+      }
+    },
+    "/v1/client/ai-agent/tasks/{task_id}/stop": {
+      "post": {
+        "operationId": "stopAIAgentTask",
+        "summary": "Stop AI agent work from a task-thread stop action",
+        "tags": [
+          "ai_agent_client"
+        ],
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/StopAIAgentTaskRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIAgentTaskActionResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-riido-auth-scopes": [
+          "ai-agent:write",
+          "task:{task_id}:stop",
+          "task:{task_id}:write"
+        ],
+        "x-riido-rbac-policy": "api_codegen_safety.v1",
+        "x-riido-operation-kind": "command",
+        "x-riido-scenarios": [
+          "stopAIAgentTask.task-stop-emits-comment-status"
+        ]
+      }
     }
   },
   "components": {
     "schemas": {
+      "AIAgentTaskActionResponse": {
+        "properties": {
+          "agent_id": {
+            "type": "string"
+          },
+          "assignment_state": {
+            "$ref": "#/components/schemas/AgentAssignmentState"
+          },
+          "comment_kind": {
+            "$ref": "#/components/schemas/AgentTaskCommentKind"
+          },
+          "message": {
+            "type": "string"
+          },
+          "run_id": {
+            "type": "string"
+          },
+          "schema_version": {
+            "type": "string"
+          },
+          "task_id": {
+            "type": "string"
+          },
+          "work_status": {
+            "$ref": "#/components/schemas/AgentWorkStatus"
+          }
+        },
+        "required": [
+          "schema_version",
+          "task_id",
+          "agent_id",
+          "run_id",
+          "work_status",
+          "assignment_state",
+          "comment_kind",
+          "message"
+        ],
+        "type": "object"
+      },
       "AgentAssignmentState": {
         "description": "Assignment state affected by agent deletion and runtime lifecycle.",
         "enum": [
@@ -835,6 +1005,35 @@
           "availability",
           "detection_state",
           "has_assigned_agent"
+        ],
+        "type": "object"
+      },
+      "StopAIAgentTaskRequest": {
+        "properties": {
+          "agent_id": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
+      "SubmitAIAgentTaskCommentRequest": {
+        "properties": {
+          "agent_id": {
+            "type": "string"
+          },
+          "body": {
+            "type": "string"
+          },
+          "source_comment_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "agent_id",
+          "body"
         ],
         "type": "object"
       },
