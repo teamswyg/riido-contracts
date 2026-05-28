@@ -13,6 +13,8 @@ type DSLDocument struct {
 	Service       Service        `json:"service"`
 	Resources     []Resource     `json:"resources,omitempty"`
 	Policies      []Policy       `json:"policies,omitempty"`
+	Enums         []Enum         `json:"enums,omitempty"`
+	SumTypes      []SumType      `json:"sum_types,omitempty"`
 	Schemas       []Schema       `json:"schemas"`
 	Operations    []DSLOperation `json:"operations"`
 }
@@ -39,6 +41,31 @@ type Policy struct {
 	Kind        string   `json:"kind"`
 	Description string   `json:"description"`
 	Rules       []string `json:"rules,omitempty"`
+}
+
+type Enum struct {
+	Name        string      `json:"name"`
+	Type        string      `json:"type"`
+	Description string      `json:"description,omitempty"`
+	Values      []EnumValue `json:"values"`
+}
+
+type EnumValue struct {
+	Value       string `json:"value"`
+	Description string `json:"description,omitempty"`
+}
+
+type SumType struct {
+	Name          string           `json:"name"`
+	Discriminator string           `json:"discriminator"`
+	Description   string           `json:"description,omitempty"`
+	Variants      []SumTypeVariant `json:"variants"`
+}
+
+type SumTypeVariant struct {
+	Kind        string `json:"kind"`
+	Schema      string `json:"schema"`
+	Description string `json:"description,omitempty"`
 }
 
 type Schema struct {
@@ -85,8 +112,9 @@ type MessageRef struct {
 }
 
 type ResponseRef struct {
-	Status int    `json:"status"`
-	Ref    string `json:"ref"`
+	Status      int    `json:"status"`
+	Ref         string `json:"ref"`
+	ContentType string `json:"content_type,omitempty"`
 }
 
 type Scenario struct {
@@ -104,6 +132,8 @@ type IRDocument struct {
 	Service             Service       `json:"service"`
 	Resources           []Resource    `json:"resources,omitempty"`
 	Policies            []Policy      `json:"policies,omitempty"`
+	Enums               []Enum        `json:"enums,omitempty"`
+	SumTypes            []SumType     `json:"sum_types,omitempty"`
 	Components          []IRComponent `json:"components"`
 	Operations          []IROperation `json:"operations"`
 	Scenarios           []IRScenario  `json:"scenarios,omitempty"`

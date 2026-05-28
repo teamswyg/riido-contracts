@@ -23,7 +23,9 @@ OpenAPI artifact is regenerated or rejected.
 
 ## Current Fixture
 
-The first fixture is `control-plane-agent-catalog-api.v1`:
+Current fixtures:
+
+### `control-plane-agent-catalog-api.v1`
 
 - DSL: `apicontract/fixtures/control-plane-agent-catalog.dsl.riido.json`
 - IR: `apicontract/fixtures/control-plane-agent-catalog.ir.riido.json`
@@ -42,6 +44,31 @@ The fixture includes the shared RBAC policy identifier
 owner is admin-equivalent only for owned agents, and non-admin users read owned
 agents plus other users' public agents.
 
+### `control-plane-ai-agent-client-api.v1`
+
+- DSL: `apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json`
+- IR: `apicontract/fixtures/control-plane-ai-agent-client.ir.riido.json`
+- OpenAPI: `apicontract/fixtures/control-plane-ai-agent-client.openapi.json`
+
+It covers the v1.22 AI Agent client surface used by Riido web and the desktop
+webview:
+
+- `GET /v1/client/ai-agent/bootstrap`
+- `GET /v1/client/ai-agent/devices`
+- `GET /v1/client/ai-agent/tasks/{task_id}/assignable-agents`
+- `POST /v1/client/ai-agent/tasks/{task_id}/comments`
+- `POST /v1/client/ai-agent/tasks/{task_id}/stop`
+- `GET /v1/client/ai-agent/agents/{agent_id}/editability`
+- `PATCH /v1/client/ai-agent/agents/{agent_id}`
+- `DELETE /v1/client/ai-agent/agents/{agent_id}`
+- `GET /v1/client/ai-agent/events`
+
+The fixture includes explicit DSL/IR enums for runtime kind, runtime
+availability, runtime detection state, agent editability, agent work status,
+assignment state, task comment status, client kind, and agent visibility. It
+also includes the `ClientStreamEvent` sum type so client codegen receives a
+discriminated event union rather than ad hoc strings.
+
 ## Boundary
 
 This contract owns:
@@ -51,6 +78,8 @@ This contract owns:
 - OpenAPI projection generation from the IR
 - shared operation ids, paths, methods, schema names, auth scope patterns, RBAC
   policy ids, and BDD scenario ids
+- top-level API enum and sum-type definitions that must survive DSL -> IR ->
+  OpenAPI projection for client codegen
 - deterministic fixture drift verification
 
 This contract does not own:
@@ -69,7 +98,7 @@ The deterministic gate is:
 
 ```bash
 go run ./tools/apicontract verify
-go test ./apicontract -run 'AgentCatalog' -count=1
+go test ./apicontract -run 'AgentCatalog|AIAgentClient' -count=1
 ```
 
 `verify` regenerates IR and OpenAPI in memory from the DSL and rejects any drift

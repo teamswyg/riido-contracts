@@ -8,7 +8,7 @@ import (
 )
 
 func TestAgentCatalogDSLGeneratesIRAndOpenAPI(t *testing.T) {
-	dsl := loadTestDSL(t)
+	dsl := loadTestDSL(t, "fixtures/control-plane-agent-catalog.dsl.riido.json")
 	ir, err := GenerateIR(dsl)
 	if err != nil {
 		t.Fatalf("GenerateIR: %v", err)
@@ -43,7 +43,7 @@ func TestAgentCatalogDSLGeneratesIRAndOpenAPI(t *testing.T) {
 }
 
 func TestAgentCatalogGeneratedFixturesDoNotDrift(t *testing.T) {
-	dsl := loadTestDSL(t)
+	dsl := loadTestDSL(t, "fixtures/control-plane-agent-catalog.dsl.riido.json")
 	ir, err := GenerateIR(dsl)
 	if err != nil {
 		t.Fatalf("GenerateIR: %v", err)
@@ -57,16 +57,74 @@ func TestAgentCatalogGeneratedFixturesDoNotDrift(t *testing.T) {
 }
 
 func TestGenerateIRRejectsInvalidDSL(t *testing.T) {
-	dsl := loadTestDSL(t)
+	dsl := loadTestDSL(t, "fixtures/control-plane-agent-catalog.dsl.riido.json")
 	dsl.SchemaVersion = "riido-api-dsl.v0"
 	if _, err := GenerateIR(dsl); err == nil {
 		t.Fatal("expected unsupported schema version error")
 	}
 }
 
-func loadTestDSL(t *testing.T) DSLDocument {
+func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
+	dsl := loadTestDSL(t, "fixtures/control-plane-ai-agent-client.dsl.riido.json")
+	ir, err := GenerateIR(dsl)
+	if err != nil {
+		t.Fatalf("GenerateIR: %v", err)
+	}
+	if got, want := len(ir.Enums), 9; got != want {
+		t.Fatalf("IR enums = %d, want %d", got, want)
+	}
+	if got, want := len(ir.SumTypes), 1; got != want {
+		t.Fatalf("IR sum types = %d, want %d", got, want)
+	}
+	openAPI, err := GenerateOpenAPI(ir)
+	if err != nil {
+		t.Fatalf("GenerateOpenAPI: %v", err)
+	}
+	runtimeAvailability := openAPI.Components.Schemas["RuntimeAvailability"]
+	values, ok := runtimeAvailability["enum"].([]string)
+	if !ok || len(values) != 2 || values[0] != "online" || values[1] != "offline" {
+		t.Fatalf("RuntimeAvailability enum = %#v", runtimeAvailability["enum"])
+	}
+	streamEvent := openAPI.Components.Schemas["ClientStreamEvent"]
+	if _, ok := streamEvent["oneOf"].([]map[string]any); !ok {
+		t.Fatalf("ClientStreamEvent oneOf missing: %#v", streamEvent)
+	}
+	streamOperation := openAPI.Paths["/v1/client/ai-agent/events"]["get"]
+	if _, ok := streamOperation.Responses["200"].Content["text/event-stream"]; !ok {
+		t.Fatalf("stream response content = %#v", streamOperation.Responses["200"].Content)
+	}
+	editability := openAPI.Paths["/v1/client/ai-agent/agents/{agent_id}/editability"]["get"]
+	if editability.RiidoRBAC != "agent_mutation_safety.v1" {
+		t.Fatalf("editability rbac = %q", editability.RiidoRBAC)
+	}
+	assignable := openAPI.Paths["/v1/client/ai-agent/tasks/{task_id}/assignable-agents"]["get"]
+	if len(assignable.Parameters) != 1 || assignable.Parameters[0].Name != "task_id" {
+		t.Fatalf("assignable-agent parameters = %#v", assignable.Parameters)
+	}
+	commentKind := openAPI.Components.Schemas["AgentTaskCommentKind"]
+	commentValues, ok := commentKind["enum"].([]string)
+	if !ok || len(commentValues) == 0 || commentValues[0] != "queued_by_busy_agent" {
+		t.Fatalf("AgentTaskCommentKind enum = %#v", commentKind["enum"])
+	}
+}
+
+func TestAIAgentClientGeneratedFixturesDoNotDrift(t *testing.T) {
+	dsl := loadTestDSL(t, "fixtures/control-plane-ai-agent-client.dsl.riido.json")
+	ir, err := GenerateIR(dsl)
+	if err != nil {
+		t.Fatalf("GenerateIR: %v", err)
+	}
+	openAPI, err := GenerateOpenAPI(ir)
+	if err != nil {
+		t.Fatalf("GenerateOpenAPI: %v", err)
+	}
+	assertFixture(t, "fixtures/control-plane-ai-agent-client.ir.riido.json", ir)
+	assertFixture(t, "fixtures/control-plane-ai-agent-client.openapi.json", openAPI)
+}
+
+func loadTestDSL(t *testing.T, path string) DSLDocument {
 	t.Helper()
-	data, err := os.ReadFile("fixtures/control-plane-agent-catalog.dsl.riido.json")
+	data, err := os.ReadFile(path)
 	if err != nil {
 		t.Fatalf("read DSL fixture: %v", err)
 	}

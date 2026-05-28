@@ -43,7 +43,8 @@ Architecture SSOT:
   runtime binding DTOs shared by daemon and control-plane repositories.
 - `apicontract`: shared API contract projection fixtures. Domain DSL and API
   IR are the source contracts; OpenAPI is generated for web clients, docs, mock
-  servers, and black-box tests.
+  servers, and black-box tests. It also carries AI Agent client-surface enum and
+  sum-type fixtures for codegen-safe web/desktop clients.
 - `ir`: C2 IR event log contract, event catalog, envelope validation, and pure
   reducer contract.
 - `hostintegration`: C11/C10 distribution channel and provider routing status
