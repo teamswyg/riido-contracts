@@ -23,7 +23,7 @@ Those screens are consumed by both Riido web and the desktop app webview. The
 UI dev handoff page adds Ready-for-dev surfaces for:
 
 - task participant dropdowns where agents appear beside members
-- task comment communication for queued, running, and stopped agent work
+- task thread communication for queued, running, and stopped agent work
 - menu placement for Riido AI, runtime, and agent management routes
 
 The participant dropdown policy shown in the handoff is:
@@ -32,7 +32,7 @@ The participant dropdown policy shown in the handoff is:
 - agent sorting belongs to this contract: owned agents first, then public
   agents visible through RBAC, with name ordering inside each group
 
-The comment communication flow shows agent queue and stop states as task-thread
+The task thread flow shows agent queue and stop states as task-thread
 updates. The control-plane event contract therefore carries task context and a
 typed comment-status value instead of asking clients to parse rendered text.
 The client command contract also includes explicit task-thread comment submit
@@ -97,6 +97,21 @@ The parser can derive client-visible agent work status from runtime output. A
 terminal marker such as `task-end` is allowed when it is owned by the runtime
 prompt/adapter contract rather than inferred by the client.
 
+### Task Thread Progress Batching
+
+Runtime progress visible in the client task thread is derived only from explicit
+runtime progress markers, such as `<riido_log>...<end>`. The daemon must not
+relay provider raw token streams directly to SaaS or clients.
+
+The daemon batches parsed progress lines before SaaS ingest. The default cadence
+is 10 seconds while a task is running, and pending progress is flushed before a
+terminal assignment event. The control plane fans accepted batches out through
+the client event stream as the typed `agent_thread_progress` variant of
+`ClientStreamEvent`.
+
+Clients render task-thread progress from that typed payload and never parse
+provider output text.
+
 ## API Codegen Rule
 
 Control-plane API enum values and sum-type variants are contract values, not
@@ -122,6 +137,8 @@ It covers:
 - `GET /v1/client/ai-agent/bootstrap`
 - `GET /v1/client/ai-agent/devices`
 - `GET /v1/client/ai-agent/tasks/{task_id}/assignable-agents`
+- `POST /v1/client/ai-agent/tasks/{task_id}/comments`
+- `POST /v1/client/ai-agent/tasks/{task_id}/stop`
 - `GET /v1/client/ai-agent/agents/{agent_id}/editability`
 - `PATCH /v1/client/ai-agent/agents/{agent_id}`
 - `DELETE /v1/client/ai-agent/agents/{agent_id}`
@@ -129,7 +146,8 @@ It covers:
 
 The event stream uses a discriminated sum type, `ClientStreamEvent`, so client
 codegen can produce safe branches for runtime snapshots, agent editability, and
-agent work-status updates.
+agent work-status updates. Runtime progress intended for the task thread is the
+`agent_thread_progress` variant and carries ordered progress lines.
 
 ## Boundary
 

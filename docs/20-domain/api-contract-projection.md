@@ -67,7 +67,9 @@ The fixture includes explicit DSL/IR enums for runtime kind, runtime
 availability, runtime detection state, agent editability, agent work status,
 assignment state, task comment status, client kind, and agent visibility. It
 also includes the `ClientStreamEvent` sum type so client codegen receives a
-discriminated event union rather than ad hoc strings.
+discriminated event union rather than ad hoc strings. Runtime progress intended
+for task threads is carried by the `agent_thread_progress` event variant with
+ordered line batches, not by provider raw output text.
 
 ## Boundary
 
