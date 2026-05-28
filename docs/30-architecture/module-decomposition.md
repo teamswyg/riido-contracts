@@ -17,6 +17,7 @@ contracts. It is intentionally small and standard-library only.
 | `assignment` | C10 assignment polling DTOs and state vocabulary | control-plane store actor, HTTP/SSE handlers, authorization, persistence |
 | `apicontract` | C10 API DSL, API IR, generated OpenAPI projection fixtures, API enum/sum-type vocabulary | control-plane handlers, frontend implementation, authorization/RBAC implementation, generated client code |
 | `tools/apicontract` | deterministic fixture drift verifier/generator | runtime code generation output, network calls, third-party parser dependencies |
+| `tools/ssotdeps` | deterministic verifier for the SSOT dependency manifest and acyclic repo dependency graph | downstream repository execution gates, live Riido task mutation, third-party graph parsers |
 
 ## Dependency Rules
 
