@@ -35,6 +35,7 @@ If only one repository consumes the fact, keep it local to that repository.
 | Provider capability fingerprint schema | `internal/provider/capability`, `docs/20-domain/provider-capability.md` | Promoted by RIID-4642 into `provider/capability`; keep provider detect logic in daemon. |
 | Distribution channel + provider routing status vocabulary | `internal/hostintegration`, `docs/20-domain/distribution-host-integration.md` | Promoted by RIID-4670 into `hostintegration`; keep app data roots, IPC, grants, provider discovery, and review/demo mode in runtime repos. |
 | Assignment polling DTOs | `internal/riidoaiserver`, `assignment_contract.riido.json` | Promoted by RIID-4687 into `assignment`; keep server store logic, health/metrics adapters, HTTP/SSE, authZ, and persistence in control-plane. |
+| API DSL / IR / OpenAPI projection | control-plane HTTP docs and web UI contract needs | Added by RIID-4718 as candidate shared projection fixtures; OpenAPI is generated from IR and is not SSOT. |
 | RBAC scenario fixtures | `internal/riidoaiserver/*rbac*`, security docs | Promote black-box fixtures, not authorization implementation. |
 | Store distribution contract fixtures | `packaging/store`, `tools/storecontract` | Promote only if daemon and infra both validate the same fixture. |
 
@@ -101,6 +102,25 @@ This slice does not add a new public contract API, create a Go module tag, move
 runtime implementation, move Terraform/AWS/deployment evidence, or commit
 private fixtures.
 
+### RIID-4718 — API DSL IR OpenAPI projection
+
+This slice adds the first shared API contract projection fixture for web
+frontend/control-plane compatibility.
+
+This slice does:
+
+- add `apicontract` with the Domain DSL -> API IR -> OpenAPI projection model
+- add `control-plane-agent-catalog-api.v1` as the first DSL fixture
+- generate `riido-api-ir.v1` and OpenAPI 3.1 JSON from the DSL
+- keep OpenAPI as a generated projection rather than the SSOT
+- add `tools/apicontract verify` for deterministic fixture drift checks
+- document the API projection boundary and add focused public CI
+
+This slice does not move control-plane HTTP handlers, authorization/RBAC
+implementation, frontend implementation, generated frontend client code,
+production bearer tokens, IdP config, Terraform, AWS data, or deployment
+evidence.
+
 ## Validation Gates
 
 Required for this repository:
@@ -108,6 +128,7 @@ Required for this repository:
 ```bash
 go test ./...
 go list -m all
+go run ./tools/apicontract verify
 ```
 
 Architecture-doc migration PRs must also pass:
@@ -126,6 +147,7 @@ When contract fixtures are added, public CI must also verify:
 - generated fixture drift
 - schema version string alignment
 - daemon/control-plane compatibility examples
+- API DSL / IR / OpenAPI projection drift
 
 ## Migration Work Map
 

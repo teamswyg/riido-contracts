@@ -1,0 +1,406 @@
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "control-plane-agent-catalog-api.v1",
+    "version": "riido-ai-server.v1"
+  },
+  "tags": [
+    {
+      "name": "agent_catalog"
+    }
+  ],
+  "paths": {
+    "/v1/agent-catalog": {
+      "get": {
+        "operationId": "listAgents",
+        "summary": "List visible agent catalog records",
+        "tags": [
+          "agent_catalog"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentCatalogListResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-riido-auth-scopes": [
+          "agent-catalog:read"
+        ],
+        "x-riido-rbac-policy": "agent_catalog_visibility.v1",
+        "x-riido-operation-kind": "query",
+        "x-riido-scenarios": [
+          "listAgents.non-admin-list-visibility"
+        ]
+      },
+      "post": {
+        "operationId": "createAgent",
+        "summary": "Create an agent catalog record owned by the authorized principal",
+        "tags": [
+          "agent_catalog"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAgentCatalogRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentCatalogRecordResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-riido-auth-scopes": [
+          "agent-catalog:create"
+        ],
+        "x-riido-rbac-policy": "agent_catalog_visibility.v1",
+        "x-riido-operation-kind": "command",
+        "x-riido-scenarios": [
+          "createAgent.server-stamps-owner"
+        ]
+      }
+    },
+    "/v1/agent-catalog/{agent_id}": {
+      "delete": {
+        "operationId": "deleteAgent",
+        "summary": "Delete an owned or admin-visible agent catalog record",
+        "tags": [
+          "agent_catalog"
+        ],
+        "parameters": [
+          {
+            "name": "agent_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeleteAgentCatalogResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-riido-auth-scopes": [
+          "agent-catalog:write",
+          "agent-catalog:{agent_id}:delete"
+        ],
+        "x-riido-rbac-policy": "agent_catalog_visibility.v1",
+        "x-riido-operation-kind": "command"
+      },
+      "get": {
+        "operationId": "getAgent",
+        "summary": "Read a visible agent catalog record",
+        "tags": [
+          "agent_catalog"
+        ],
+        "parameters": [
+          {
+            "name": "agent_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentCatalogRecordResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-riido-auth-scopes": [
+          "agent-catalog:read",
+          "agent-catalog:{agent_id}:read"
+        ],
+        "x-riido-rbac-policy": "agent_catalog_visibility.v1",
+        "x-riido-operation-kind": "query"
+      },
+      "patch": {
+        "operationId": "updateAgent",
+        "summary": "Update an owned or admin-visible agent catalog record",
+        "tags": [
+          "agent_catalog"
+        ],
+        "parameters": [
+          {
+            "name": "agent_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateAgentCatalogRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentCatalogRecordResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-riido-auth-scopes": [
+          "agent-catalog:write",
+          "agent-catalog:{agent_id}:update"
+        ],
+        "x-riido-rbac-policy": "agent_catalog_visibility.v1",
+        "x-riido-operation-kind": "command",
+        "x-riido-scenarios": [
+          "updateAgent.public-read-does-not-grant-mutation"
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AgentCatalogListResponse": {
+        "properties": {
+          "agents": {
+            "items": {
+              "$ref": "#/components/schemas/AgentCatalogRecord"
+            },
+            "type": "array"
+          },
+          "schema_version": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "schema_version",
+          "agents"
+        ],
+        "type": "object"
+      },
+      "AgentCatalogRecord": {
+        "properties": {
+          "agent_id": {
+            "type": "string"
+          },
+          "owner_principal_id": {
+            "type": "string"
+          },
+          "visibility": {
+            "enum": [
+              "public",
+              "private"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "agent_id",
+          "owner_principal_id",
+          "visibility"
+        ],
+        "type": "object"
+      },
+      "AgentCatalogRecordResponse": {
+        "properties": {
+          "agent": {
+            "$ref": "#/components/schemas/AgentCatalogRecord"
+          },
+          "schema_version": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "schema_version",
+          "agent"
+        ],
+        "type": "object"
+      },
+      "CreateAgentCatalogRequest": {
+        "properties": {
+          "agent_id": {
+            "type": "string"
+          },
+          "visibility": {
+            "enum": [
+              "public",
+              "private"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "agent_id",
+          "visibility"
+        ],
+        "type": "object"
+      },
+      "DeleteAgentCatalogResponse": {
+        "properties": {
+          "deleted": {
+            "type": "boolean"
+          },
+          "schema_version": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "schema_version",
+          "deleted"
+        ],
+        "type": "object"
+      },
+      "ErrorEnvelope": {
+        "properties": {
+          "error": {
+            "type": "string"
+          },
+          "schema_version": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "schema_version",
+          "error"
+        ],
+        "type": "object"
+      },
+      "UpdateAgentCatalogRequest": {
+        "properties": {
+          "visibility": {
+            "enum": [
+              "public",
+              "private"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "visibility"
+        ],
+        "type": "object"
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "opaque"
+      }
+    }
+  }
+}

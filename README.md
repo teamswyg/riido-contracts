@@ -41,6 +41,9 @@ Architecture SSOT:
 - `assignment`: C10 SaaS assignment polling DTOs, schema identifiers, state
   transition predicates, poll action values, task event type values, and agent
   runtime binding DTOs shared by daemon and control-plane repositories.
+- `apicontract`: shared API contract projection fixtures. Domain DSL and API
+  IR are the source contracts; OpenAPI is generated for web clients, docs, mock
+  servers, and black-box tests.
 - `ir`: C2 IR event log contract, event catalog, envelope validation, and pure
   reducer contract.
 - `hostintegration`: C11/C10 distribution channel and provider routing status
@@ -56,6 +59,7 @@ Architecture SSOT:
 ```bash
 go test ./...
 go list -m all
+go run ./tools/apicontract verify
 ```
 
 ## License

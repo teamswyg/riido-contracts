@@ -19,6 +19,7 @@ module, not a runtime module.
 | C2 IR Event Log | `ir` | canonical event envelope, actor/scope/event type catalog, envelope validation, pure reducer contract |
 | C3 Provider Capability | `provider/capability` | provider capability model, protocol vocabulary, compatibility status, protocol-critical args, capability fingerprint |
 | C10 Assignment Polling Contract | `assignment` | assignment state, poll action, heartbeat/event DTOs, task-event DTOs, service schema version |
+| C10 API Contract Projection | `apicontract` | shared API DSL, canonical API IR, generated OpenAPI projection fixtures, drift verification |
 | C11/C10 Host Integration Vocabulary | `hostintegration` | distribution channel and provider routing status vocabulary shared by daemon/control-plane |
 
 ## Non-Owned Contexts
@@ -40,6 +41,7 @@ invocation, or deployment evidence.
 - `ir` must not import `task`.
 - Runtime repositories may import tagged `riido-contracts` releases.
 - Contract packages must stay standard-library only.
+- OpenAPI artifacts are generated projections from `apicontract` IR, not SSOT.
 - A new shared package requires a promotion decision in
   [`../30-architecture/contract-promotion-policy.md`](../30-architecture/contract-promotion-policy.md)
   and `docs/migration/contracts.md`.
@@ -52,4 +54,6 @@ invocation, or deployment evidence.
   [`../30-architecture/module-decomposition.md`](../30-architecture/module-decomposition.md)
 - Integration matrix:
   [`../30-architecture/integration-matrix.md`](../30-architecture/integration-matrix.md)
+- API contract projection:
+  [`api-contract-projection.md`](api-contract-projection.md)
 - Open questions: [`../50-roadmap/open-questions.md`](../50-roadmap/open-questions.md)

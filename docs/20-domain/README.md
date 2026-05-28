@@ -27,6 +27,11 @@ RIID-4687 migrates:
   transition predicates, poll actions, task event type values, and agent runtime
   binding DTOs into `assignment`
 
+RIID-4718 adds:
+
+- C10 API contract projection fixtures into `apicontract`, where Domain DSL and
+  API IR are SSOT and OpenAPI is generated
+
 The EventIngestor implementation, policy redaction catalog, provider adapters,
 server stores, and Terraform deployment code remain outside this repository.
 They may consume these contracts, but they do not become contract module
