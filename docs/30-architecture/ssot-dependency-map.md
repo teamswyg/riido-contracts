@@ -30,6 +30,7 @@ regenerate or update downstream projections.
 | Admin/owner/public-private visibility vocabulary | [`../20-domain/ai-agent-policy.md`](../20-domain/ai-agent-policy.md) and API fixture policy ids | Control-plane owns the executable RBAC evaluator and request authorization boundary. |
 | DSL -> IR -> OpenAPI projection rules | [`../20-domain/api-contract-projection.md`](../20-domain/api-contract-projection.md) | Control-plane mirrors generated fixtures and owns local generator drift checks. |
 | AI Agent, runtime, and agent-management menu route affordance | Figma `node-id=156-19307` as cited by [`../20-domain/ai-agent-policy.md`](../20-domain/ai-agent-policy.md) | Client owns concrete menu rendering, ordering, selected state, and route wiring. Control-plane serves data after the route is opened. Daemon and infra do not change for menu placement alone. |
+| Task-thread progress stream and stop operation semantics | [`../20-domain/ai-agent-policy.md`](../20-domain/ai-agent-policy.md) plus the AI Agent API DSL fixture, with Figma annotation evidence at `node-id=153-15931` | Control-plane implements HTTP/SSE and generated-client call chains. Daemon produces parsed progress batches and consumes cancellation commands. Client owns scroll, hover, modal, animation, and rendered thread composition. Infra acts only if a future topology/cost/evidence SSOT changes deployment requirements. |
 | Runtime prompt/native-config consumption | `riido-daemon` C4/C6 SSOTs | Contracts own only the instruction value semantics, not process execution or provider files. |
 | Production deployment/storage topology | `riido-infra` Terraform/architecture SSOTs | Contracts do not create buckets, secrets, CDNs, or persistent stores. |
 
@@ -100,3 +101,7 @@ The current duplicated wording is intentional only in these forms:
 - Menu-placement docs may restate that Figma shows AI/runtime/agent-management
   route affordances. They must not turn client menu rendering into a new API,
   daemon runtime, or Terraform requirement without a separate owning SSOT.
+- Task-thread annotation docs may restate that Figma cites
+  `riido.aiAgent.events.stream` and `riido.aiAgent.tasks.stop`. They must not
+  turn generated client chain names, scroll behavior, hover states, modals, or
+  animation references into canonical API or daemon facts.

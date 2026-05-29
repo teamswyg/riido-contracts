@@ -26,6 +26,14 @@ UI dev handoff page adds Ready-for-dev surfaces for:
 - task thread communication for queued, running, and stopped agent work
 - menu placement for Riido AI, runtime, and agent management routes
 
+Task thread annotation evidence is `node-id=153-15931` (`댓글 소통`).
+The file contains Dev Mode annotation categories including `클라이언트 전달`.
+In that section, `node-id=153-8545` cites `riido.aiAgent.events.stream`
+and `node-id=236-20768` cites `riido.aiAgent.tasks.stop`. Those names are
+generated-client consumption hints for the existing client event stream and stop
+operation. The durable contract facts remain the API operation ids, paths,
+typed stream variants, and task-thread policy defined below.
+
 Menu placement evidence is `node-id=156-19307` (`메뉴바`). It shows
 `Menubar/default` and `Menubar/setting` in dark and light variants. The durable
 contract fact is only the route affordance: clients expose Riido AI, runtime,
@@ -67,6 +75,11 @@ For agent settings specifically:
   endpoint by itself. Route labels and visual selected state are client-owned;
   this contract owns only the vocabulary and API facts used after those routes
   are opened.
+- Figma task-thread annotations (`node-id=153-15931`) can cite generated-client
+  call paths such as `riido.aiAgent.events.stream` and
+  `riido.aiAgent.tasks.stop`, but this repo owns their canonical operation
+  ids/path/typed-event meaning through the DSL/IR/OpenAPI fixture, not the
+  client chain syntax or UI micro-interactions.
 
 ## Ubiquitous Language
 
