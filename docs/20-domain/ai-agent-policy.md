@@ -30,6 +30,21 @@ UI dev handoff page adds Ready-for-dev surfaces for:
 - agent settings where clients add, list owned/public agents by device, and edit
   profile, runtime binding, visibility, and instruction fields
 
+Onboarding evidence from `node-id=42-3014` includes:
+
+- `node-id=137-6746`: choose the runtime used to create the first agent
+- `node-id=138-7389`: choose an agent template or choose direct configuration
+- `node-id=164-26969`: direct configuration expands into name, description,
+  and instruction fields and scrolls when needed
+- `node-id=164-27719`: template descriptions show up to two lines before
+  ellipsis; this is client presentation only
+- `node-id=164-30206`: if no selectable AI runtime is installed/detected, the
+  flow skips later template-selection steps and shows the start state
+
+The durable contract fact is that onboarding agent templates are API data, not
+frontend hard-coded business copy. Runtime/no-runtime branching is still client
+composition over the existing device/runtime read model.
+
 Participant dropdown evidence is `node-id=153-12742`
 (`컴포넌트 참여자 드롭다운`). Its annotations state:
 
@@ -115,6 +130,10 @@ For agent settings specifically:
 
 - `profile_thumbnail_url`, `description`, and `instruction` meaning starts here
   and in the `control-plane-ai-agent-client-api.v1` DSL fixture.
+- onboarding template catalog meaning starts here and is projected through the
+  same client bootstrap fixture so clients can render template names,
+  descriptions, role labels, thumbnails, and copyable instructions without
+  owning the template source text.
 - `riido-control-plane` owns HTTP validation, save/update behavior, mock data,
   and generated-client handoff.
 - `riido-daemon` owns only runtime consumption of an assigned instruction value;
@@ -140,6 +159,10 @@ For agent settings specifically:
   daemon stop eventually makes affected runtimes offline through the existing
   liveness policy. Client hover/modal/animation behavior and local helper
   command composition are downstream facts.
+- Figma onboarding annotations (`node-id=42-3014`) can cite scroll, two-line
+  ellipsis, no-installed-AI skip behavior, and direct-setting expansion. This
+  repo owns only the onboarding template catalog data shape and the runtime
+  liveness facts used by clients to choose which step to show.
 
 ## Ubiquitous Language
 
@@ -199,6 +222,31 @@ Restart is not a distinct contract operation. A client or helper may compose it
 from local daemon lifecycle controls, while this contract only requires that the
 subsequent device/runtime read model converges to the current online/offline
 state.
+
+### Agent Onboarding
+
+The AI Agent onboarding flow is a client composition over bootstrap, device
+runtime data, and agent creation.
+
+The control-plane bootstrap response carries an ordered onboarding template
+catalog. A template is a copyable default for an agent configuration and
+contains `template_id`, `name`, optional `role_label`, optional
+`profile_thumbnail_url`, `description`, and `instruction`. Template text and
+instruction defaults are contract data so frontend clients do not hard-code the
+behavioral meaning of starter agents.
+
+Selecting a template does not create a separate domain entity. The client still
+creates an agent through `POST /v1/client/ai-agent/agents` with selected runtime,
+visibility, and copied profile fields. Direct configuration uses the same create
+operation without choosing a template.
+
+If no selectable runtime is online/detected for the viewer, the client skips the
+template-selection and direct-setting steps and shows the no-installed-AI start
+state from the planning screen. That branch does not introduce a new control
+plane command. It is derived from the existing runtime/device read model.
+
+Workspace selection, template row selection, scroll behavior, description
+ellipsis, and preview-popover layout remain client-owned presentation behavior.
 
 ### Agent Editing
 
@@ -315,6 +363,9 @@ It covers:
 - `PATCH /v1/client/ai-agent/agents/{agent_id}`
 - `DELETE /v1/client/ai-agent/agents/{agent_id}`
 - `GET /v1/client/ai-agent/events`
+
+`GET /v1/client/ai-agent/bootstrap` also carries the onboarding template
+catalog for the Figma onboarding template-selection screen.
 
 The event stream uses a discriminated sum type, `ClientStreamEvent`, so client
 codegen can produce safe branches for runtime snapshots, agent editability, and
