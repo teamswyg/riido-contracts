@@ -55,8 +55,8 @@ dependency direction and the top-down / bottom-up harness loop are defined in
 
 For agent settings specifically:
 
-- `profile_thumbnail_url` and `instruction` meaning starts here and in the
-  `control-plane-ai-agent-client-api.v1` DSL fixture.
+- `profile_thumbnail_url`, `description`, and `instruction` meaning starts here
+  and in the `control-plane-ai-agent-client-api.v1` DSL fixture.
 - `riido-control-plane` owns HTTP validation, save/update behavior, mock data,
   and generated-client handoff.
 - `riido-daemon` owns only runtime consumption of an assigned instruction value;

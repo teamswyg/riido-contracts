@@ -24,6 +24,7 @@ regenerate or update downstream projections.
 | --- | --- | --- |
 | Agent means a task-assignable abstraction of a configured runtime | [`../20-domain/ai-agent-policy.md`](../20-domain/ai-agent-policy.md) | Control-plane handlers, daemon runtime prompts, clients, and infra docs link to this language. |
 | `profile_thumbnail_url` is an optional HTTPS image URL string | [`../20-domain/ai-agent-policy.md`](../20-domain/ai-agent-policy.md) plus the AI Agent API DSL fixture | Control-plane validates/stores/projects it. Clients render it. Daemon ignores it. Infra acts only if a future media/storage SSOT replaces URL-only storage. |
+| `description` is optional client-authored one-line agent summary text capped at 160 characters | [`../20-domain/ai-agent-policy.md`](../20-domain/ai-agent-policy.md) plus the AI Agent API DSL fixture | Control-plane validates/stores/projects it. Clients render or truncate it. Daemon ignores it. Infra acts only if a future search, media, durability, or moderation SSOT changes storage requirements. |
 | `instruction` is optional client-authored agent guidance text capped at 1000 characters | [`../20-domain/ai-agent-policy.md`](../20-domain/ai-agent-policy.md) plus the AI Agent API DSL fixture | Control-plane validates/stores/projects it. Daemon may consume the assigned value for prompt/native-config materialization. Infra acts only if a future storage/secret/media requirement appears. |
 | Agent editability requires zero assigned tasks | [`../20-domain/ai-agent-policy.md`](../20-domain/ai-agent-policy.md) and the API DSL BDD scenarios | Control-plane implements the executable HTTP/store behavior and emits client events. |
 | Admin/owner/public-private visibility vocabulary | [`../20-domain/ai-agent-policy.md`](../20-domain/ai-agent-policy.md) and API fixture policy ids | Control-plane owns the executable RBAC evaluator and request authorization boundary. |
@@ -72,6 +73,8 @@ Examples:
   vocabulary or policy change must move up to `ai-agent-policy.md`.
 - A daemon prompt-placement limitation may enter through daemon C4/C6 docs, but
   changing the meaning or limit of `instruction` must move up to contracts.
+- A client rendering issue may enter through control-plane/client handoff, but
+  changing the meaning or limit of `description` must move up to contracts.
 - A storage or media moderation requirement may enter through infra, but
   replacing URL-only thumbnail storage must first create or update a media
   contract instead of silently changing the API fixture.
@@ -92,8 +95,8 @@ The current duplicated wording is intentional only in these forms:
   native config. They must not redefine storage, length, RBAC, or thumbnail
   policy.
 - Infra docs may explain that no Terraform diff is required for URL-only
-  thumbnails and normal instruction text. They must not redefine API shape or
-  daemon execution.
+  thumbnails, one-line descriptions, and normal instruction text. They must not
+  redefine API shape or daemon execution.
 - Menu-placement docs may restate that Figma shows AI/runtime/agent-management
   route affordances. They must not turn client menu rendering into a new API,
   daemon runtime, or Terraform requirement without a separate owning SSOT.
