@@ -143,14 +143,16 @@ restart-in-progress animation. The durable contract facts are:
   the viewer's device, not SaaS client API operations in this contract
 
 Agent settings evidence is `node-id=164-50215` (`에이전트 설정페이지`),
-`node-id=134-6542` (`에이전트 추가`), and `node-id=432-35713`
-(`에이전트` list). The settings annotations call out long one-line description
-UI, row/meatball edit entry points, absolute-time tooltip behavior, runtime
-dropdown, and model dropdown. The list screen adds created/update columns,
-optional-description rows, online/working/offline labels, and edit/delete menu
-entry points. The add screen shows profile photo, name, description, runtime,
-model, visibility, instruction, and save controls. The durable contract facts
-are:
+`node-id=134-6542` (`에이전트 추가`), `node-id=337-24001` (`에이전트`
+settings list), and `node-id=432-35713` (`에이전트` list). The settings
+annotations call out long one-line description UI, row/meatball edit entry
+points, absolute-time tooltip behavior, runtime dropdown, and model dropdown.
+The list screens add created/update columns, optional-description rows,
+online/working/offline labels, edit/delete menu entry points, and the
+`node-id=337-24013` rule that the `에이전트 추가` affordance is hidden when no
+member-visible runtime is selectable. The add screen shows profile photo, name,
+description, runtime, model, visibility, instruction, and save controls. The
+durable contract facts are:
 
 - the add screen needs a client-facing `POST /v1/client/ai-agent/agents`
   operation because the existing update/delete operations do not create an
@@ -162,6 +164,9 @@ are:
   are the current editable configuration fields
 - runtime dropdown candidates come from existing runtime/device read-model data;
   clients own the dropdown rendering
+- the add affordance visibility is client presentation over the authorized
+  device/runtime read model; hiding the button does not create a separate
+  eligibility endpoint and does not let clients bypass create validation
 - model dropdown candidates come from `RuntimeRecord.models` as runtime-scoped
   catalog records; `model_id` is opaque per runtime and model labels are
   display data, not generated enum values
@@ -462,8 +467,12 @@ rejected by the control plane before the agent configuration is saved.
 Profile field creation and updates follow the same RBAC and mutation safety
 rules as name, visibility, and runtime binding updates. Creation stamps
 `owner_principal_id` from the authorized principal and binds only a selected
-viewer-owned runtime. After creation, admin may mutate all agents, owner may
-mutate owned agents, and no agent can be edited while it has assigned tasks.
+runtime that is present in the authorized selectable device/runtime read model.
+For a non-admin viewer this normally means a viewer-owned runtime; an admin can
+use runtime rows made visible by workspace RBAC. Owner-only local daemon actions
+remain owned by the device/runtime owner. After creation, admin may mutate all
+agents, owner may mutate owned agents, and no agent can be edited while it has
+assigned tasks.
 
 ### Agent List Timestamps
 
