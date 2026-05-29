@@ -28,6 +28,7 @@ regenerate or update downstream projections.
 | Agent editability requires zero assigned tasks | [`../20-domain/ai-agent-policy.md`](../20-domain/ai-agent-policy.md) and the API DSL BDD scenarios | Control-plane implements the executable HTTP/store behavior and emits client events. |
 | Admin/owner/public-private visibility vocabulary | [`../20-domain/ai-agent-policy.md`](../20-domain/ai-agent-policy.md) and API fixture policy ids | Control-plane owns the executable RBAC evaluator and request authorization boundary. |
 | DSL -> IR -> OpenAPI projection rules | [`../20-domain/api-contract-projection.md`](../20-domain/api-contract-projection.md) | Control-plane mirrors generated fixtures and owns local generator drift checks. |
+| AI Agent, runtime, and agent-management menu route affordance | Figma `node-id=156-19307` as cited by [`../20-domain/ai-agent-policy.md`](../20-domain/ai-agent-policy.md) | Client owns concrete menu rendering, ordering, selected state, and route wiring. Control-plane serves data after the route is opened. Daemon and infra do not change for menu placement alone. |
 | Runtime prompt/native-config consumption | `riido-daemon` C4/C6 SSOTs | Contracts own only the instruction value semantics, not process execution or provider files. |
 | Production deployment/storage topology | `riido-infra` Terraform/architecture SSOTs | Contracts do not create buckets, secrets, CDNs, or persistent stores. |
 
@@ -93,3 +94,6 @@ The current duplicated wording is intentional only in these forms:
 - Infra docs may explain that no Terraform diff is required for URL-only
   thumbnails and normal instruction text. They must not redefine API shape or
   daemon execution.
+- Menu-placement docs may restate that Figma shows AI/runtime/agent-management
+  route affordances. They must not turn client menu rendering into a new API,
+  daemon runtime, or Terraform requirement without a separate owning SSOT.

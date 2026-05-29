@@ -26,6 +26,13 @@ UI dev handoff page adds Ready-for-dev surfaces for:
 - task thread communication for queued, running, and stopped agent work
 - menu placement for Riido AI, runtime, and agent management routes
 
+Menu placement evidence is `node-id=156-19307` (`메뉴바`). It shows
+`Menubar/default` and `Menubar/setting` in dark and light variants. The durable
+contract fact is only the route affordance: clients expose Riido AI, runtime,
+and agent management entry points, while this document owns the shared terms
+behind those entries. Visual menu state, ordering among unrelated product
+routes, and concrete client route rendering are client-owned.
+
 The participant dropdown policy shown in the handoff is:
 
 - member sorting belongs to the existing Riido member/client surface
@@ -56,6 +63,10 @@ For agent settings specifically:
   it does not own thumbnail presentation, storage, RBAC, or API shape.
 - `riido-infra` owns deployment/storage changes only when a future media,
   secret, durability, or topology requirement appears.
+- Figma menu placement (`node-id=156-19307`) does not introduce a new contract
+  endpoint by itself. Route labels and visual selected state are client-owned;
+  this contract owns only the vocabulary and API facts used after those routes
+  are opened.
 
 ## Ubiquitous Language
 
