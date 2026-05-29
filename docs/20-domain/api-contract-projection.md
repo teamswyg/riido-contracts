@@ -85,6 +85,13 @@ was on another screen, and may include one `active_stream` HATEOAS link. The
 link is omitted when the screen can render from cold history only, which keeps
 SSE connection decisions deterministic for generated clients.
 
+Runtime settings empty states from Figma `node-id=275-22731` are projected from
+the same device/runtime read model as `GET /v1/client/ai-agent/devices`.
+Provider install-card hover, external provider installation links, Windows app
+waitlist copy, and marketing-consent presentation are not generated operations
+in this fixture. They require a separate owning SSOT before the DSL adds a
+waitlist or marketing mutation.
+
 Agent records also carry optional profile presentation fields:
 `profile_thumbnail_url` is an HTTPS image URL string, `description` is a
 client-authored one-line summary capped at 160 characters, and `instruction` is

@@ -27,6 +27,8 @@ UI dev handoff page adds Ready-for-dev surfaces for:
 - menu placement for Riido AI, runtime, and agent management routes
 - runtime settings where clients show device/runtime liveness, attached agents,
   and local daemon lifecycle controls
+- runtime settings empty states where clients show missing-current-device
+  runtime, no daemon, provider install-card, and Windows app waitlist variants
 - agent settings where clients add, list owned/public agents by device, and edit
   profile, runtime binding, visibility, and instruction fields
 
@@ -165,6 +167,13 @@ For agent settings specifically:
   daemon stop eventually makes affected runtimes offline through the existing
   liveness policy. Client hover/modal/animation behavior and local helper
   command composition are downstream facts.
+- Figma runtime settings empty-state annotations (`node-id=275-22731`) can cite
+  provider install cards, hover states, Windows app waitlist copy, and marketing
+  consent presentation. This repo owns only the device/runtime liveness data
+  used to decide whether the current device, daemon, and runtime rows are
+  present. Provider installation URLs, waitlist subscription, and marketing
+  consent mutation need a separate owning SSOT before they become generated API
+  operations.
 - Figma onboarding annotations (`node-id=42-3014`) can cite scroll, two-line
   ellipsis, no-installed-AI skip behavior, and direct-setting expansion. This
   repo owns only the onboarding template catalog data shape and the runtime
@@ -250,6 +259,15 @@ If no selectable runtime is online/detected for the viewer, the client skips the
 template-selection and direct-setting steps and shows the no-installed-AI start
 state from the planning screen. That branch does not introduce a new control
 plane command. It is derived from the existing runtime/device read model.
+
+Runtime settings empty states from `node-id=275-22731` use the same read model.
+When the current device has no daemon, no runtime, or no selectable current
+runtime, the API does not add a provider-install command. Clients can render
+provider install cards and hover states from product copy and external provider
+links, but provider CLIs remain external user-installed tools. The Windows app
+waitlist and marketing-consent button states shown in the Figma section are not
+part of this AI Agent client API yet; they require a separate product/marketing
+SSOT before this contract can add a generated endpoint.
 
 Workspace selection, template row selection, scroll behavior, description
 ellipsis, and preview-popover layout remain client-owned presentation behavior.
