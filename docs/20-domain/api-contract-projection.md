@@ -65,6 +65,7 @@ webview:
 - `GET /v1/client/ai-agent/tasks/{task_id}/threads`
 - `POST /v1/client/ai-agent/tasks/{task_id}/comments`
 - `POST /v1/client/ai-agent/tasks/{task_id}/stop`
+- `POST /v1/client/ai-agent/agents`
 - `GET /v1/client/ai-agent/agents/{agent_id}/editability`
 - `PATCH /v1/client/ai-agent/agents/{agent_id}`
 - `DELETE /v1/client/ai-agent/agents/{agent_id}`
@@ -91,6 +92,14 @@ template-selection command and does not encode `직접 설정` as an
 `AgentOnboardingTemplate`. Clients render row selection, pre-selection disabled
 next state, and preview skeleton/popover state from the ordered template data
 and local selection state.
+
+Onboarding direct setting from Figma `node-id=164-26969` is projected through
+the existing `POST /v1/client/ai-agent/agents` command. The expanded `이름`,
+`설명`, and `지침` fields map to
+`CreateAgentConfigurationRequest.name`, `description`, and `instruction`.
+`runtime_id`, `visibility`, optional profile image, and optional model selection
+remain the normal create request fields. The DSL does not add a direct-setting
+command or a fifth template record.
 
 Task-thread history is projected as a cold collection at
 `GET /v1/client/ai-agent/tasks/{task_id}/threads`. The response contains

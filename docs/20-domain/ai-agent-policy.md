@@ -41,8 +41,13 @@ Onboarding evidence from `node-id=42-3014` includes:
   the inspected UI shows the starter template rows `리도`, `영실`, `홍도`,
   `지원`, followed by a `직접 설정` row, a pre-selection `다음` button, and a
   right-side preview skeleton
-- `node-id=164-26969`: direct configuration expands into name, description,
-  and instruction fields and scrolls when needed
+- `node-id=164-26969`: direct configuration is annotated `직접 설정 선택 시
+  스크롤`; it dims the starter template rows and expands `직접 설정` into
+  `이름` (`리도` placeholder), `설명` (`문제 정의부터 우선순위, 출시 계획까지
+  정리합니다.` placeholder), and `지침` (`기능 요청을 문제·목표·성공 기준으로
+  재정의하고 PRD, 우선순위, 로드맵, 출시 계획을 구조화합니다. 아이디어는
+  가설로 다루며 불확실한 내용은 [확인 필요]로 표시합니다.` placeholder) fields
+  with a scroll affordance
 - `node-id=164-30192`: workspace selection list shows the selected workspace,
   a scroll affordance, and a `새 워크스페이스` row
 - `node-id=164-27719`: template descriptions show up to two lines before
@@ -379,6 +384,14 @@ Selecting a template does not create a separate domain entity. The client still
 creates an agent through `POST /v1/client/ai-agent/agents` with selected runtime,
 visibility, and copied profile fields. Direct configuration uses the same create
 operation without choosing a template.
+
+The direct-configuration expansion from `node-id=164-26969` also does not create
+a separate command or template row. The expanded `이름`, `설명`, and `지침`
+fields project to `CreateAgentConfigurationRequest.name`, `description`, and
+`instruction`. The previously selected runtime continues to supply `runtime_id`,
+and visibility uses the create request policy/default chosen by the client. The
+dimmed starter-template rows, scroll bar, placeholder copy, and expanded-row
+layout are client presentation facts.
 
 If no selectable runtime is online/detected for the viewer, the client skips the
 template-selection and direct-setting steps and shows the no-installed-AI start
