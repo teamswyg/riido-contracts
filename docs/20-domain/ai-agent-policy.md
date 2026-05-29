@@ -47,6 +47,21 @@ The durable contract fact is that onboarding agent templates are API data, not
 frontend hard-coded business copy. Runtime/no-runtime branching is still client
 composition over the existing device/runtime read model.
 
+Web onboarding evidence is `node-id=236-29749` (`웹 온보딩`). Its frames and
+Dev Mode annotations cover macOS app download CTA, sign-up entry points, terms
+consent, email sign-up, member invite, Windows waitlist/marketing-consent
+variants, chat animation reference, and button progress-bar reference. Those
+screens do not add a new AI Agent contract operation by themselves:
+
+- sign-up, login, Google-auth terms consent, email/password validation, and
+  member invitation belong to existing auth/team/client product surfaces
+- macOS app download and Windows waitlist CTAs are distribution/product facts,
+  not runtime/provider install commands
+- terms row default-open/closed behavior, row click target, chat animation, and
+  progress-bar animation are client presentation facts
+- waitlist and marketing-consent mutation ownership remains unresolved in
+  `Q-CON-007`
+
 Participant dropdown evidence is `node-id=153-12742`
 (`컴포넌트 참여자 드롭다운`). Its annotations state:
 
@@ -178,6 +193,12 @@ For agent settings specifically:
   ellipsis, no-installed-AI skip behavior, and direct-setting expansion. This
   repo owns only the onboarding template catalog data shape and the runtime
   liveness facts used by clients to choose which step to show.
+- Figma web onboarding annotations (`node-id=236-29749`) can cite sign-up,
+  terms, member-invite, app-download, waitlist, and animation behavior. This repo
+  owns none of those as AI Agent contract facts until a separate owning SSOT
+  promotes a durable auth/team/distribution/waitlist operation. Current AI Agent
+  contract facts stay `agent_templates`, agent create/update/read models, and
+  device/runtime liveness.
 
 ## Ubiquitous Language
 
@@ -268,6 +289,14 @@ links, but provider CLIs remain external user-installed tools. The Windows app
 waitlist and marketing-consent button states shown in the Figma section are not
 part of this AI Agent client API yet; they require a separate product/marketing
 SSOT before this contract can add a generated endpoint.
+
+Web onboarding from `node-id=236-29749` reinforces that boundary. The macOS app
+download CTA is a product/distribution route to a desktop artifact, not a
+provider CLI install command. The Windows launch-notification and
+marketing-consent variants are the same unresolved waitlist/product question as
+`node-id=275-22731`. Google sign-up terms consent, email sign-up terms rows,
+member invite input/link-copy, and animation references are client/auth/team
+presentation surfaces and do not change the AI Agent DSL/IR/OpenAPI projection.
 
 Workspace selection, template row selection, scroll behavior, description
 ellipsis, and preview-popover layout remain client-owned presentation behavior.
