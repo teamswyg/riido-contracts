@@ -35,6 +35,7 @@ regenerate or update downstream projections.
 | `profile_thumbnail_url` is an optional HTTPS image URL string | [`../20-domain/ai-agent-policy.md`](../20-domain/ai-agent-policy.md) plus the AI Agent API DSL fixture | Control-plane validates/stores/projects it. Clients render it. Daemon ignores it. Infra acts only if a future media/storage SSOT replaces URL-only storage. |
 | `instruction` is optional client-authored agent guidance text capped at 1000 characters | [`../20-domain/ai-agent-policy.md`](../20-domain/ai-agent-policy.md) plus the AI Agent API DSL fixture | Control-plane validates/stores/projects it. Daemon may consume the assigned value for prompt/native-config materialization. Infra acts only if a future storage/secret/media requirement appears. |
 | Agent editability requires zero assigned tasks | [`../20-domain/ai-agent-policy.md`](../20-domain/ai-agent-policy.md) and the API DSL BDD scenarios | Control-plane implements the executable HTTP/store behavior and emits client events. |
+| Participant dropdown agent ordering is owned-first, display-name ordered, then `agent_id` tied | [`../20-domain/ai-agent-policy.md`](../20-domain/ai-agent-policy.md) and the API DSL BDD scenarios | Control-plane returns deterministic assignable-agent responses. Clients render that order and handle long names/pixel sizing locally. |
 | Admin/owner/public-private visibility vocabulary | [`../20-domain/ai-agent-policy.md`](../20-domain/ai-agent-policy.md) and API fixture policy ids | Control-plane owns the executable RBAC evaluator and request authorization boundary. |
 | DSL -> IR -> OpenAPI projection rules | [`../20-domain/api-contract-projection.md`](../20-domain/api-contract-projection.md) | Control-plane mirrors generated fixtures and owns local generator drift checks. |
 | Runtime prompt/native-config consumption | `riido-daemon` C4/C6 SSOTs | Contracts own only the instruction value semantics, not process execution or provider files. |
@@ -96,6 +97,10 @@ The current duplicated wording is intentional only in these forms:
 - Control-plane RBAC and editability docs may repeat visible behavior because
   they own the executable evaluator. They must not redefine the shared
   vocabulary without a contracts change.
+- Participant dropdown pixel constraints from Figma may appear in client-facing
+  notes only as presentation requirements. The API/SSOT fact is the
+  deterministic agent ordering and stable identity fields, not the rendered
+  dropdown size.
 - Daemon docs may describe how instruction text enters runtime prompts or
   native config. They must not redefine storage, length, RBAC, or thumbnail
   policy.
