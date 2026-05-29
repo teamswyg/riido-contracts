@@ -154,6 +154,17 @@ the typed status tuple `comment_kind=queued_by_busy_agent`,
 Figma is client presentation around that tuple. The visible `중지` affordance
 continues to use the explicit task stop operation and does not create a second
 cancel endpoint.
+In the stopped-by-deleted-agent screen (`node-id=227-19354`, `작업 중지`),
+Figma shows a Riido-authored task-thread row with the copy "에이전트가 삭제되어
+진행 중이던 작업이 중지됐어요." The contract fact is not that copy. The canonical
+fact is that deleting an agent with queued or running assignments force-stops
+those assignments and projects a typed task-thread status with
+`comment_kind=stopped_by_agent_deleted`, `assignment_state=stopped`, and a
+terminal agent work status. This reuses `DELETE
+/v1/client/ai-agent/agents/{agent_id}` as the command. It does not introduce a
+new client stop endpoint; the exact Korean message, `리도` actor label, "방금 전"
+timestamp, hidden stop affordance state, avatar, and row layout remain
+client/task presentation over the typed status.
 
 ## SSOT Dependency Direction
 
@@ -203,6 +214,13 @@ For agent settings specifically:
   `work_status=queued`, plus reuse of the existing stop action. The exact copy,
   timestamp wording, row layout, and agent avatar rendering are client/task
   presentation facts.
+- Figma stopped-by-deleted-agent task-thread screen (`node-id=227-19354`) can
+  cite the stopped row shown after an assigned agent is deleted. This repo owns
+  only the typed forced-stop semantics: `stopped_by_agent_deleted`,
+  `assignment_state=stopped`, and reuse of the existing agent delete operation.
+  The exact Korean copy, Riido actor label, timestamp wording, row layout,
+  hidden action state, and agent/avatar rendering are client/task presentation
+  facts.
 - Figma participant dropdown annotations (`node-id=153-12742`) can cite sort and
   overflow behavior, but this repo owns only AI Agent visibility and owned-first
   agent ordering. Member sorting and visual dropdown constraints are client
@@ -452,6 +470,14 @@ Completed, stopped, failed, or otherwise cold task-thread collections omit
 historical AI Agent comments. When a task was assigned, completed, and assigned
 again later, the collection can contain multiple thread records, while
 `active_stream`, if present, targets only the currently active `thread_id`.
+
+When an agent delete command force-stops queued or running assignments, the
+later cold collection still returns the stopped thread records. The
+client-visible reason is the typed `stopped_by_agent_deleted` comment kind, not
+a parsed Korean sentence. SSE may carry the same typed status while the task
+screen is open; if the viewer opens the task later, the cold collection alone is
+sufficient and `active_stream` stays absent unless a new active assignment
+exists.
 
 ## API Codegen Rule
 
