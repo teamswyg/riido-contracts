@@ -27,7 +27,7 @@ UI dev handoff page adds Ready-for-dev surfaces for:
 - menu placement for Riido AI, runtime, and agent management routes
 - runtime settings where clients show device/runtime liveness, attached agents,
   and local daemon lifecycle controls
-- agent settings where clients list owned/public agents by device and edit
+- agent settings where clients add, list owned/public agents by device, and edit
   profile, runtime binding, visibility, and instruction fields
 
 Participant dropdown evidence is `node-id=153-12742`
@@ -70,11 +70,16 @@ restart-in-progress animation. The durable contract facts are:
 - daemon stop/restart controls are local desktop/helper lifecycle controls for
   the viewer's device, not SaaS client API operations in this contract
 
-Agent settings evidence is `node-id=164-50215` (`에이전트 설정페이지`). Its
-Dev Mode annotations call out long one-line description UI, row/meatball edit
-entry points, absolute-time tooltip behavior, runtime dropdown, and model
-dropdown. The durable contract facts are:
+Agent settings evidence is `node-id=164-50215` (`에이전트 설정페이지`) and
+`node-id=134-6542` (`에이전트 추가`). The settings annotations call out long
+one-line description UI, row/meatball edit entry points, absolute-time tooltip
+behavior, runtime dropdown, and model dropdown. The add screen shows profile
+photo, name, description, runtime, model, visibility, instruction, and save
+controls. The durable contract facts are:
 
+- the add screen needs a client-facing `POST /v1/client/ai-agent/agents`
+  operation because the existing update/delete operations do not create an
+  owned agent record
 - agent rows need a server-authored `updated_at` date-time so clients can render
   list dates and absolute-time tooltips without inventing timestamps
 - profile image, name, description, runtime binding, visibility, and instruction
@@ -226,8 +231,10 @@ used by the control plane/daemon when composing runtime prompts. Empty text is
 allowed. The current client API limit is 1000 characters. Longer values are
 rejected by the control plane before the agent configuration is saved.
 
-Profile field updates follow the same RBAC and mutation safety rules as name,
-visibility, and runtime binding updates: admin may mutate all agents, owner may
+Profile field creation and updates follow the same RBAC and mutation safety
+rules as name, visibility, and runtime binding updates. Creation stamps
+`owner_principal_id` from the authorized principal and binds only a selected
+viewer-owned runtime. After creation, admin may mutate all agents, owner may
 mutate owned agents, and no agent can be edited while it has assigned tasks.
 
 ### Agent Update Timestamp
@@ -303,6 +310,7 @@ It covers:
 - `GET /v1/client/ai-agent/tasks/{task_id}/assignable-agents`
 - `POST /v1/client/ai-agent/tasks/{task_id}/comments`
 - `POST /v1/client/ai-agent/tasks/{task_id}/stop`
+- `POST /v1/client/ai-agent/agents`
 - `GET /v1/client/ai-agent/agents/{agent_id}/editability`
 - `PATCH /v1/client/ai-agent/agents/{agent_id}`
 - `DELETE /v1/client/ai-agent/agents/{agent_id}`
