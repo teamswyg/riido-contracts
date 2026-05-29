@@ -112,9 +112,12 @@ The current duplicated wording is intentional only in these forms:
   `riido.aiAgent.events.stream` and `riido.aiAgent.tasks.stop`. They may also
   restate that task screens read the cold thread collection before following an
   advertised active stream, and that assignment-created-while-viewer-away
-  records remain visible through that cold collection. They must not turn
-  generated client chain names, scroll/focus behavior, hover states, modals, or
-  animation references into canonical API or daemon facts.
+  records remain visible through that cold collection. They may restate that
+  Figma `node-id=153-8761` renders a busy-agent queued row, but only the typed
+  `queued_by_busy_agent`/`queued` status tuple is canonical here. They must not
+  turn generated client chain names, Korean display copy, scroll/focus behavior,
+  hover states, modals, row layout, avatar rendering, or animation references
+  into canonical API or daemon facts.
 - Participant-dropdown docs may restate that Figma shows member sorting,
   owned-first agent sorting, long-name states, and scroll/height constraints.
   They must not turn client presentation facts into API, daemon, or Terraform
