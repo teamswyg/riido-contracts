@@ -26,6 +26,20 @@ UI dev handoff page adds Ready-for-dev surfaces for:
 - task thread communication for queued, running, and stopped agent work
 - menu placement for Riido AI, runtime, and agent management routes
 
+Participant dropdown evidence is `node-id=153-12742`
+(`컴포넌트 참여자 드롭다운`). Its annotations state:
+
+- member sorting is 가나다 order and belongs to the existing member/client
+  surface
+- agent sorting places viewer-owned agents first, then sorts names inside each
+  ownership group
+- long member/agent names, maximum dropdown height, scrollbar width, and visual
+  overflow behavior are client UI composition details
+
+The durable AI Agent contract fact is therefore only the agent side of that
+dropdown: visible assignable agents are the viewer's owned agents plus other
+users' public agents, and owned agents are ordered first.
+
 Task thread annotation evidence is `node-id=153-15931` (`댓글 소통`).
 The file contains Dev Mode annotation categories including `클라이언트 전달`.
 In that section, `node-id=153-8545` cites `riido.aiAgent.events.stream`
@@ -80,6 +94,10 @@ For agent settings specifically:
   `riido.aiAgent.tasks.stop`, but this repo owns their canonical operation
   ids/path/typed-event meaning through the DSL/IR/OpenAPI fixture, not the
   client chain syntax or UI micro-interactions.
+- Figma participant dropdown annotations (`node-id=153-12742`) can cite sort and
+  overflow behavior, but this repo owns only AI Agent visibility and owned-first
+  agent ordering. Member sorting and visual dropdown constraints are client
+  surface facts.
 
 ## Ubiquitous Language
 
