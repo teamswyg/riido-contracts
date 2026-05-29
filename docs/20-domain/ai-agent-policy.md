@@ -137,10 +137,15 @@ restart-in-progress animation. The durable contract facts are:
 
 - the runtime settings route consumes the existing device/runtime read model,
   `GET /v1/client/ai-agent/devices`, plus `device_runtime_snapshot` events
+- `내 기기` and `다른 기기` groups are both composed from ordinary device and
+  runtime records; current-device grouping is a client/session selection, not a
+  new API resource class
 - the agent hover popover uses existing agent profile fields such as `name` and
   `description`; hover timing, layout, and truncation remain client-owned
 - daemon stop/restart controls are local desktop/helper lifecycle controls for
-  the viewer's device, not SaaS client API operations in this contract
+  the viewer's device, not SaaS client API operations in this contract; daemon
+  uptime, PID, daemon ID, profile, and device-name detail fields are local
+  daemon/helper facts unless a later SSOT promotes them into the SaaS read model
 
 Agent settings evidence is `node-id=164-50215` (`에이전트 설정페이지`),
 `node-id=134-6542` (`에이전트 추가`), `node-id=337-24001` (`에이전트`
@@ -361,10 +366,13 @@ device/runtime read model and, for the viewer's current desktop device, the
 local daemon/helper control surface.
 
 The control-plane client API exposes device/runtime liveness and attached agent
-metadata; it does not expose a SaaS command that stops or restarts a user's
-daemon. When a desktop client stops its local daemon, the resulting control-plane
-effect is represented through the same runtime liveness policy: affected
-runtimes become `offline` when heartbeat/detection state is missing or expired.
+metadata for both current-device and other-device groups; it does not expose a
+SaaS command that stops or restarts a user's daemon. Current-device daemon
+details such as uptime, PID, daemon ID, profile, and device name are
+desktop-local helper/daemon facts. When a desktop client stops its local daemon,
+the resulting control-plane effect is represented through the same runtime
+liveness policy: affected runtimes become `offline` when heartbeat/detection
+state is missing or expired.
 
 Restart is not a distinct contract operation. A client or helper may compose it
 from local daemon lifecycle controls, while this contract only requires that the
