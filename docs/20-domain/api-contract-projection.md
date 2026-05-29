@@ -78,6 +78,13 @@ discriminated event union rather than ad hoc strings. Runtime progress intended
 for task threads is carried by the `agent_thread_progress` event variant with
 `thread_id` and ordered line batches, not by provider raw output text.
 
+Onboarding runtime selection from Figma `node-id=137-6746` is projected from
+the same `DeviceRecord.runtimes` values: `runtime_id`,
+`RuntimeRecord.availability`, and `RuntimeRecord.detection_state`. The DSL does
+not add a runtime-selection command. The client renders detected/non-detected
+rows from the read model, and agent create/update mutations validate the
+selected `runtime_id`.
+
 Task-thread history is projected as a cold collection at
 `GET /v1/client/ai-agent/tasks/{task_id}/threads`. The response contains
 historical thread records, including visible threads created while the viewer

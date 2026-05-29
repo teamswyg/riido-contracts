@@ -34,7 +34,9 @@ UI dev handoff page adds Ready-for-dev surfaces for:
 
 Onboarding evidence from `node-id=42-3014` includes:
 
-- `node-id=137-6746`: choose the runtime used to create the first agent
+- `node-id=137-6746`: choose the runtime used to create the first agent; the
+  inspected UI shows Claude Code and Codex as `감지됨` selectable rows, while
+  OpenClaw and Cursor Agent are `감지 안 됨` non-selectable rows
 - `node-id=138-7389`: choose an agent template or choose direct configuration
 - `node-id=164-26969`: direct configuration expands into name, description,
   and instruction fields and scrolls when needed
@@ -345,6 +347,14 @@ state.
 
 The AI Agent onboarding flow is a client composition over bootstrap, device
 runtime data, and agent creation.
+
+The runtime selection step from `node-id=137-6746` is composed from
+`DeviceRecord.runtimes`. A runtime is selectable for onboarding only when the
+client can submit its `runtime_id` to agent creation and the read model marks
+that runtime `availability=online` and `detection_state=detected`. Korean
+labels such as `감지됨` / `감지 안 됨`, radio state, row dimming, and `다음` /
+`다음에 하기` button presentation are client-owned rendering. The control
+plane still validates the selected `runtime_id` at agent create/update time.
 
 The control-plane bootstrap response carries an ordered onboarding template
 catalog. A template is a copyable default for an agent configuration and
