@@ -83,6 +83,12 @@ and `node-id=236-20768` cites `riido.aiAgent.tasks.stop`. Those names are
 generated-client consumption hints for the existing client event stream and stop
 operation. The durable contract facts remain the API operation ids, paths,
 typed stream variants, and task-thread policy defined below.
+The normal task screen `node-id=236-21379` shows the same boundary in one task
+view: a generic task comment input, an AI Agent thread row, a thread reply
+input, and a `중지` action. That screen is evidence for composing the existing
+thread cold collection, explicit AI Agent comment submit, and explicit stop
+operation; it is not a second source for task details, sidebar fields, or client
+layout.
 
 Menu placement evidence is `node-id=156-19307` (`메뉴바`). It shows
 `Menubar/default` and `Menubar/setting` in dark and light variants. The durable
@@ -136,6 +142,11 @@ typed comment-status value instead of asking clients to parse rendered text.
 The client command contract also includes explicit task-thread comment submit
 and stop actions so web and desktop webview clients do not infer AI Agent work
 from generic task comments alone.
+In the normal active screen (`node-id=236-21379`), generic task comments and
+AI-Agent-directed thread replies are visually adjacent. The contract boundary is
+that AI-Agent-directed messages use the explicit comments operation with
+`agent_id` and optional `source_comment_id`; generic task comments remain the
+existing task product surface until routed through that operation.
 
 ## SSOT Dependency Direction
 
@@ -172,6 +183,13 @@ For agent settings specifically:
   client chain syntax or UI micro-interactions. Long-body scroll/focus,
   viewer-away notification rendering, hover buttons, stop modals, and progress
   animations are client presentation facts around returned thread records.
+- Figma normal task-thread screen (`node-id=236-21379`) can cite that a task
+  screen needs both user-to-agent comment submission and active-thread stop
+  affordances. This repo already owns those as
+  `POST /v1/client/ai-agent/tasks/{task_id}/comments` and
+  `POST /v1/client/ai-agent/tasks/{task_id}/stop`; the right-side task details
+  panel, reply input rendering, send button state, and agent row layout remain
+  client/task surface facts.
 - Figma participant dropdown annotations (`node-id=153-12742`) can cite sort and
   overflow behavior, but this repo owns only AI Agent visibility and owned-first
   agent ordering. Member sorting and visual dropdown constraints are client
