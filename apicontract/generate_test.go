@@ -101,6 +101,13 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	if len(assignable.Parameters) != 1 || assignable.Parameters[0].Name != "task_id" {
 		t.Fatalf("assignable-agent parameters = %#v", assignable.Parameters)
 	}
+	threads := openAPI.Paths["/v1/client/ai-agent/tasks/{task_id}/threads"]["get"]
+	if threads.RiidoRBAC != "task_thread_cold_collection.v1" {
+		t.Fatalf("task threads rbac = %q", threads.RiidoRBAC)
+	}
+	if len(threads.Parameters) != 1 || threads.Parameters[0].Name != "task_id" {
+		t.Fatalf("task threads parameters = %#v", threads.Parameters)
+	}
 	commentKind := openAPI.Components.Schemas["AgentTaskCommentKind"]
 	commentValues, ok := commentKind["enum"].([]string)
 	if !ok || len(commentValues) == 0 || commentValues[0] != "queued_by_busy_agent" {
@@ -122,6 +129,19 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	instruction, ok := recordProps["instruction"].(map[string]any)
 	if !ok || instruction["maxLength"] != 1000 {
 		t.Fatalf("instruction schema = %#v", recordProps["instruction"])
+	}
+	threadCollection := openAPI.Components.Schemas["AIAgentTaskThreadCollectionResponse"]
+	threadCollectionProps, ok := threadCollection["properties"].(map[string]any)
+	if !ok {
+		t.Fatalf("AIAgentTaskThreadCollectionResponse properties missing: %#v", threadCollection)
+	}
+	if _, ok := threadCollectionProps["active_stream"].(map[string]any); !ok {
+		t.Fatalf("active_stream schema missing: %#v", threadCollectionProps["active_stream"])
+	}
+	progressEvent := openAPI.Components.Schemas["AgentThreadProgressEvent"]
+	progressRequired, ok := progressEvent["required"].([]string)
+	if !ok || !contains(progressRequired, "thread_id") {
+		t.Fatalf("AgentThreadProgressEvent required = %#v", progressEvent["required"])
 	}
 }
 
@@ -167,4 +187,13 @@ func assertFixture(t *testing.T, path string, value any) {
 	if !bytes.Equal(got, want) {
 		t.Fatalf("%s drifted; run go run ./tools/apicontract generate", path)
 	}
+}
+
+func contains(values []string, needle string) bool {
+	for _, value := range values {
+		if value == needle {
+			return true
+		}
+	}
+	return false
 }

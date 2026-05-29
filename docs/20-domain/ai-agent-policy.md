@@ -326,10 +326,26 @@ The daemon batches parsed progress lines before SaaS ingest. The default cadence
 is 10 seconds while a task is running, and pending progress is flushed before a
 terminal assignment event. The control plane fans accepted batches out through
 the client event stream as the typed `agent_thread_progress` variant of
-`ClientStreamEvent`.
+`ClientStreamEvent`. Each progress event carries `thread_id`; clients must
+apply streamed progress to that thread id instead of inferring the target from a
+task id alone.
 
 Clients render task-thread progress from that typed payload and never parse
 provider output text.
+
+### Task Thread Cold Collection
+
+Task screens read AI Agent thread history through
+`GET /v1/client/ai-agent/tasks/{task_id}/threads` before opening an SSE
+connection. The response returns all visible historical AI Agent task threads
+for the task. It includes `active_stream` only when there is currently one
+active AI Agent assignment for the task.
+
+Completed, stopped, failed, or otherwise cold task-thread collections omit
+`active_stream`; clients must not connect the SSE stream just because a task has
+historical AI Agent comments. When a task was assigned, completed, and assigned
+again later, the collection can contain multiple thread records, while
+`active_stream`, if present, targets only the currently active `thread_id`.
 
 ## API Codegen Rule
 
@@ -356,6 +372,7 @@ It covers:
 - `GET /v1/client/ai-agent/bootstrap`
 - `GET /v1/client/ai-agent/devices`
 - `GET /v1/client/ai-agent/tasks/{task_id}/assignable-agents`
+- `GET /v1/client/ai-agent/tasks/{task_id}/threads`
 - `POST /v1/client/ai-agent/tasks/{task_id}/comments`
 - `POST /v1/client/ai-agent/tasks/{task_id}/stop`
 - `POST /v1/client/ai-agent/agents`
@@ -370,7 +387,8 @@ catalog for the Figma onboarding template-selection screen.
 The event stream uses a discriminated sum type, `ClientStreamEvent`, so client
 codegen can produce safe branches for runtime snapshots, agent editability, and
 agent work-status updates. Runtime progress intended for the task thread is the
-`agent_thread_progress` variant and carries ordered progress lines.
+`agent_thread_progress` variant and carries `thread_id` plus ordered progress
+lines.
 
 ## Boundary
 
