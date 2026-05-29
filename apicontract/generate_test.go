@@ -109,6 +109,13 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	if _, ok := threadStream.Responses["200"].Content["text/event-stream"]; !ok || len(threadStream.Parameters) != 2 {
 		t.Fatalf("thread stream operation = %#v", threadStream)
 	}
+	if len(openAPI.RiidoClientHelpers) != 1 {
+		t.Fatalf("client helpers = %#v", openAPI.RiidoClientHelpers)
+	}
+	helper := openAPI.RiidoClientHelpers[0]
+	if helper.Kind != "http_hateoas_stream" || helper.EntryOperationID != "getAIAgentTaskThreads" || helper.StreamOperationID != "streamAIAgentTaskThreadEvents" {
+		t.Fatalf("task thread client helper = %#v", helper)
+	}
 	commentKind := openAPI.Components.Schemas["AgentTaskCommentKind"]
 	commentValues, ok := commentKind["enum"].([]string)
 	if !ok || len(commentValues) == 0 || commentValues[0] != "queued_by_busy_agent" {

@@ -28,6 +28,7 @@ func GenerateIR(dsl DSLDocument) (IRDocument, error) {
 		SumTypes:            append([]SumType(nil), dsl.SumTypes...),
 		Components:          make([]IRComponent, 0, len(dsl.Schemas)),
 		Operations:          make([]IROperation, 0, len(dsl.Operations)),
+		ClientHelpers:       append([]ClientHelper(nil), dsl.ClientHelpers...),
 	}
 	for _, schema := range dsl.Schemas {
 		ir.Components = append(ir.Components, IRComponent{Name: schema.Name, Schema: schema})
@@ -114,8 +115,9 @@ func GenerateOpenAPI(ir IRDocument) (OpenAPISpec, error) {
 			Title:   ir.ContractID,
 			Version: ir.Service.SchemaVersion,
 		},
-		Tags:  []OpenAPITag{{Name: ir.Context}},
-		Paths: paths,
+		Tags:               []OpenAPITag{{Name: ir.Context}},
+		Paths:              paths,
+		RiidoClientHelpers: append([]ClientHelper(nil), ir.ClientHelpers...),
 		Components: OpenAPIComponents{
 			Schemas: components,
 			SecuritySchemes: map[string]OpenAPISecurityScheme{
@@ -260,6 +262,9 @@ func validateDSL(dsl DSLDocument) error {
 			}
 		}
 	}
+	if err := validateClientHelpers(dsl.ClientHelpers, ops); err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -289,7 +294,9 @@ func validateIR(ir IRDocument) error {
 			}
 		}
 	}
+	ops := map[string]struct{}{}
 	for _, op := range ir.Operations {
+		ops[op.OperationID] = struct{}{}
 		if _, ok := components[op.Response.Ref]; !ok {
 			return fmt.Errorf("apicontract: IR operation %q response schema %q is missing", op.OperationID, op.Response.Ref)
 		}
@@ -298,6 +305,45 @@ func validateIR(ir IRDocument) error {
 				return fmt.Errorf("apicontract: IR operation %q request schema %q is missing", op.OperationID, op.Request.Ref)
 			}
 		}
+	}
+	if err := validateClientHelpers(ir.ClientHelpers, ops); err != nil {
+		return err
+	}
+	return nil
+}
+
+func validateClientHelpers(helpers []ClientHelper, ops map[string]struct{}) error {
+	seen := map[string]struct{}{}
+	for _, helper := range helpers {
+		if strings.TrimSpace(helper.HelperID) == "" {
+			return errors.New("apicontract: client helper_id is required")
+		}
+		if _, exists := seen[helper.HelperID]; exists {
+			return fmt.Errorf("apicontract: duplicate client helper %q", helper.HelperID)
+		}
+		seen[helper.HelperID] = struct{}{}
+		if strings.TrimSpace(helper.Kind) == "" || strings.TrimSpace(helper.Name) == "" {
+			return fmt.Errorf("apicontract: client helper %q kind and name are required", helper.HelperID)
+		}
+		if strings.TrimSpace(helper.EntryOperationID) == "" {
+			return fmt.Errorf("apicontract: client helper %q entry_operation_id is required", helper.HelperID)
+		}
+		if _, ok := ops[helper.EntryOperationID]; !ok {
+			return fmt.Errorf("apicontract: client helper %q entry operation %q is missing", helper.HelperID, helper.EntryOperationID)
+		}
+		if helper.Kind == "http_hateoas_stream" {
+			if strings.TrimSpace(helper.StreamOperationID) == "" {
+				return fmt.Errorf("apicontract: client helper %q stream_operation_id is required", helper.HelperID)
+			}
+			if _, ok := ops[helper.StreamOperationID]; !ok {
+				return fmt.Errorf("apicontract: client helper %q stream operation %q is missing", helper.HelperID, helper.StreamOperationID)
+			}
+			if strings.TrimSpace(helper.ActiveLinkField) == "" || strings.TrimSpace(helper.ActiveIDField) == "" || strings.TrimSpace(helper.EventType) == "" || strings.TrimSpace(helper.TargetIDField) == "" {
+				return fmt.Errorf("apicontract: client helper %q active_link_field, active_id_field, event_type, and target_id_field are required", helper.HelperID)
+			}
+			continue
+		}
+		return fmt.Errorf("apicontract: client helper %q has unsupported kind %q", helper.HelperID, helper.Kind)
 	}
 	return nil
 }

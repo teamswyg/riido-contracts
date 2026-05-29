@@ -131,6 +131,18 @@ unnecessary SSE connections create server cost. When an active stream is opened,
 every streamed progress event must carry `thread_id` so the client updates only
 the targeted thread.
 
+The client helper is part of the contract metadata. The DSL declares
+`ai_agent_task_thread_handoff.v1`, the IR preserves it, and OpenAPI projects it
+through `x-riido-client-helpers`. A downstream generator may create
+`openAIAgentTaskThreads` only from that helper metadata.
+
+Figma `v.1.22 AI Agent` / UI / `댓글 소통` (`node-id=153:15931`) is the current
+design evidence for this policy. The annotations name
+`riido.aiAgent.events.stream`, `riido.aiAgent.tasks.stop`, the long-body
+auto-scroll requirement after assigning an agent, streamed thinking/reference
+lines, queued-by-busy-agent wording, stopped/deleted-agent comments, and the
+"assigned while viewing another screen" comment state.
+
 ## API Codegen Rule
 
 Control-plane API enum values and sum-type variants are contract values, not

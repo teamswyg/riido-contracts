@@ -76,6 +76,14 @@ thread collection endpoint owns the HTTP GET -> HATEOAS -> stream handoff rule:
 historical threads are returned as cold records, and an active stream link is
 present only when one current assignment can produce live updates.
 
+The generated helper for that sequence is also contract metadata, not a
+downstream generator heuristic. The DSL owns `client_helpers`, the IR preserves
+them, and OpenAPI projects them as `x-riido-client-helpers`. The current helper
+is `ai_agent_task_thread_handoff.v1` / `openAIAgentTaskThreads`, which points to
+`getAIAgentTaskThreads`, `streamAIAgentTaskThreadEvents`,
+`links.active_stream`, `active_thread_id`, `agent_thread_progress`, and
+`thread_id`.
+
 ## Boundary
 
 This contract owns:
@@ -87,6 +95,8 @@ This contract owns:
   policy ids, and BDD scenario ids
 - top-level API enum and sum-type definitions that must survive DSL -> IR ->
   OpenAPI projection for client codegen
+- top-level client helper metadata that must survive DSL -> IR -> OpenAPI
+  projection before a generated client may add helper code
 - deterministic fixture drift verification
 
 This contract does not own:

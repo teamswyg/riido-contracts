@@ -17,6 +17,7 @@ type DSLDocument struct {
 	SumTypes      []SumType      `json:"sum_types,omitempty"`
 	Schemas       []Schema       `json:"schemas"`
 	Operations    []DSLOperation `json:"operations"`
+	ClientHelpers []ClientHelper `json:"client_helpers,omitempty"`
 }
 
 type Service struct {
@@ -124,19 +125,33 @@ type Scenario struct {
 	Then  string `json:"then"`
 }
 
+type ClientHelper struct {
+	HelperID          string `json:"helper_id"`
+	Kind              string `json:"kind"`
+	Name              string `json:"name"`
+	EntryOperationID  string `json:"entry_operation_id"`
+	StreamOperationID string `json:"stream_operation_id,omitempty"`
+	ActiveLinkField   string `json:"active_link_field,omitempty"`
+	ActiveIDField     string `json:"active_id_field,omitempty"`
+	EventType         string `json:"event_type,omitempty"`
+	TargetIDField     string `json:"target_id_field,omitempty"`
+	Description       string `json:"description,omitempty"`
+}
+
 type IRDocument struct {
-	SchemaVersion       string        `json:"schema_version"`
-	ContractID          string        `json:"contract_id"`
-	SourceSchemaVersion string        `json:"source_schema_version"`
-	Context             string        `json:"context"`
-	Service             Service       `json:"service"`
-	Resources           []Resource    `json:"resources,omitempty"`
-	Policies            []Policy      `json:"policies,omitempty"`
-	Enums               []Enum        `json:"enums,omitempty"`
-	SumTypes            []SumType     `json:"sum_types,omitempty"`
-	Components          []IRComponent `json:"components"`
-	Operations          []IROperation `json:"operations"`
-	Scenarios           []IRScenario  `json:"scenarios,omitempty"`
+	SchemaVersion       string         `json:"schema_version"`
+	ContractID          string         `json:"contract_id"`
+	SourceSchemaVersion string         `json:"source_schema_version"`
+	Context             string         `json:"context"`
+	Service             Service        `json:"service"`
+	Resources           []Resource     `json:"resources,omitempty"`
+	Policies            []Policy       `json:"policies,omitempty"`
+	Enums               []Enum         `json:"enums,omitempty"`
+	SumTypes            []SumType      `json:"sum_types,omitempty"`
+	Components          []IRComponent  `json:"components"`
+	Operations          []IROperation  `json:"operations"`
+	Scenarios           []IRScenario   `json:"scenarios,omitempty"`
+	ClientHelpers       []ClientHelper `json:"client_helpers,omitempty"`
 }
 
 type IRComponent struct {
@@ -169,11 +184,12 @@ type IRScenario struct {
 }
 
 type OpenAPISpec struct {
-	OpenAPI    string                 `json:"openapi"`
-	Info       OpenAPIInfo            `json:"info"`
-	Tags       []OpenAPITag           `json:"tags,omitempty"`
-	Paths      map[string]OpenAPIPath `json:"paths"`
-	Components OpenAPIComponents      `json:"components"`
+	OpenAPI            string                 `json:"openapi"`
+	Info               OpenAPIInfo            `json:"info"`
+	Tags               []OpenAPITag           `json:"tags,omitempty"`
+	Paths              map[string]OpenAPIPath `json:"paths"`
+	Components         OpenAPIComponents      `json:"components"`
+	RiidoClientHelpers []ClientHelper         `json:"x-riido-client-helpers,omitempty"`
 }
 
 type OpenAPIInfo struct {
