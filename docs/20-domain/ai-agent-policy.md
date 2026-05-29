@@ -38,6 +38,8 @@ Onboarding evidence from `node-id=42-3014` includes:
 - `node-id=138-7389`: choose an agent template or choose direct configuration
 - `node-id=164-26969`: direct configuration expands into name, description,
   and instruction fields and scrolls when needed
+- `node-id=164-30192`: workspace selection list shows the selected workspace,
+  a scroll affordance, and a `새 워크스페이스` row
 - `node-id=164-27719`: template descriptions show up to two lines before
   ellipsis; this is client presentation only
 - `node-id=164-30206`: if no selectable AI runtime is installed/detected, the
@@ -45,7 +47,9 @@ Onboarding evidence from `node-id=42-3014` includes:
 
 The durable contract fact is that onboarding agent templates are API data, not
 frontend hard-coded business copy. Runtime/no-runtime branching is still client
-composition over the existing device/runtime read model.
+composition over the existing device/runtime read model. Workspace list
+selection and the `새 워크스페이스` row are workspace/team/client product
+surfaces; they do not add an AI Agent generated operation by themselves.
 
 Web onboarding evidence is `node-id=236-29749` (`웹 온보딩`). Its frames and
 Dev Mode annotations cover macOS app download CTA, sign-up entry points, terms
@@ -262,10 +266,11 @@ For agent settings specifically:
   present. Provider installation URLs, waitlist subscription, and marketing
   consent mutation need a separate owning SSOT before they become generated API
   operations.
-- Figma onboarding annotations (`node-id=42-3014`) can cite scroll, two-line
-  ellipsis, no-installed-AI skip behavior, and direct-setting expansion. This
-  repo owns only the onboarding template catalog data shape and the runtime
-  liveness facts used by clients to choose which step to show.
+- Figma onboarding annotations (`node-id=42-3014`) can cite scroll, workspace
+  selector list behavior (`node-id=164-30192`), two-line ellipsis,
+  no-installed-AI skip behavior, and direct-setting expansion. This repo owns
+  only the onboarding template catalog data shape and the runtime liveness
+  facts used by clients to choose which step to show.
 - Figma web onboarding annotations (`node-id=236-29749`) can cite sign-up,
   terms, member-invite, app-download, waitlist, and animation behavior. This repo
   owns none of those as AI Agent contract facts until a separate owning SSOT
@@ -371,8 +376,9 @@ marketing-consent variants are the same unresolved waitlist/product question as
 member invite input/link-copy, and animation references are client/auth/team
 presentation surfaces and do not change the AI Agent DSL/IR/OpenAPI projection.
 
-Workspace selection, template row selection, scroll behavior, description
-ellipsis, and preview-popover layout remain client-owned presentation behavior.
+Workspace selection, workspace creation entry points, template row selection,
+scroll behavior, description ellipsis, and preview-popover layout remain
+client-owned presentation behavior.
 
 ### Agent Editing
 
