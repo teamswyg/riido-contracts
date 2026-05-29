@@ -27,6 +27,8 @@ UI dev handoff page adds Ready-for-dev surfaces for:
 - menu placement for Riido AI, runtime, and agent management routes
 - runtime settings where clients show device/runtime liveness, attached agents,
   and local daemon lifecycle controls
+- agent settings where clients list owned/public agents by device and edit
+  profile, runtime binding, visibility, and instruction fields
 
 Participant dropdown evidence is `node-id=153-12742`
 (`컴포넌트 참여자 드롭다운`). Its annotations state:
@@ -67,6 +69,22 @@ restart-in-progress animation. The durable contract facts are:
   `description`; hover timing, layout, and truncation remain client-owned
 - daemon stop/restart controls are local desktop/helper lifecycle controls for
   the viewer's device, not SaaS client API operations in this contract
+
+Agent settings evidence is `node-id=164-50215` (`에이전트 설정페이지`). Its
+Dev Mode annotations call out long one-line description UI, row/meatball edit
+entry points, absolute-time tooltip behavior, runtime dropdown, and model
+dropdown. The durable contract facts are:
+
+- agent rows need a server-authored `updated_at` date-time so clients can render
+  list dates and absolute-time tooltips without inventing timestamps
+- profile image, name, description, runtime binding, visibility, and instruction
+  are the current editable configuration fields
+- runtime dropdown candidates come from existing runtime/device read-model data;
+  clients own the dropdown rendering
+- row click, meatball edit entry, description truncation/wrapping, and timestamp
+  formatting are client-owned
+- model dropdown labels shown in Figma are planning/UI evidence only until
+  `Q-CON-006` settles the runtime model catalog owner
 
 The participant dropdown policy shown in the handoff is:
 
@@ -211,6 +229,30 @@ rejected by the control plane before the agent configuration is saved.
 Profile field updates follow the same RBAC and mutation safety rules as name,
 visibility, and runtime binding updates: admin may mutate all agents, owner may
 mutate owned agents, and no agent can be edited while it has assigned tasks.
+
+### Agent Update Timestamp
+
+The agent client record carries a required `updated_at` date-time owned by the
+control plane. It changes when editable agent configuration is saved and is used
+by clients for agent-list update dates and absolute-time tooltips. Clients own
+relative/absolute formatting and tooltip presentation; they must not synthesize
+or rewrite the stored timestamp.
+
+The timestamp is distinct from runtime heartbeat, daemon liveness, and provider
+session progress time. Runtime freshness remains owned by the device/runtime
+read model.
+
+### Runtime Model Dropdown
+
+The Figma agent setting screen shows a model dropdown with provider-specific
+labels. Those labels are not contract enum values today. This contract does not
+add `model_id` to agent configuration until the runtime model catalog ownership
+question is resolved in
+[`../50-roadmap/open-questions.md#q-con-006`](../50-roadmap/open-questions.md#q-con-006).
+
+Daemon adapters may accept a model value only as part of an already-authorized
+runtime execution request. They do not own the catalog of values exposed to
+clients.
 
 ### Runtime Output Parsing
 
