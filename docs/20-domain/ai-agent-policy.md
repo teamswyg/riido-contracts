@@ -142,18 +142,22 @@ restart-in-progress animation. The durable contract facts are:
 - daemon stop/restart controls are local desktop/helper lifecycle controls for
   the viewer's device, not SaaS client API operations in this contract
 
-Agent settings evidence is `node-id=164-50215` (`에이전트 설정페이지`) and
-`node-id=134-6542` (`에이전트 추가`). The settings annotations call out long
-one-line description UI, row/meatball edit entry points, absolute-time tooltip
-behavior, runtime dropdown, and model dropdown. The add screen shows profile
-photo, name, description, runtime, model, visibility, instruction, and save
-controls. The durable contract facts are:
+Agent settings evidence is `node-id=164-50215` (`에이전트 설정페이지`),
+`node-id=134-6542` (`에이전트 추가`), and `node-id=432-35713`
+(`에이전트` list). The settings annotations call out long one-line description
+UI, row/meatball edit entry points, absolute-time tooltip behavior, runtime
+dropdown, and model dropdown. The list screen adds created/update columns,
+optional-description rows, online/working/offline labels, and edit/delete menu
+entry points. The add screen shows profile photo, name, description, runtime,
+model, visibility, instruction, and save controls. The durable contract facts
+are:
 
 - the add screen needs a client-facing `POST /v1/client/ai-agent/agents`
   operation because the existing update/delete operations do not create an
   owned agent record
-- agent rows need a server-authored `updated_at` date-time so clients can render
-  list dates and absolute-time tooltips without inventing timestamps
+- agent rows need server-authored `created_at` and `updated_at` date-times so
+  clients can render list dates and absolute-time tooltips without inventing
+  timestamps
 - profile image, name, description, runtime binding, visibility, and instruction
   are the current editable configuration fields
 - runtime dropdown candidates come from existing runtime/device read-model data;
@@ -161,8 +165,8 @@ controls. The durable contract facts are:
 - model dropdown candidates come from `RuntimeRecord.models` as runtime-scoped
   catalog records; `model_id` is opaque per runtime and model labels are
   display data, not generated enum values
-- row click, meatball edit entry, description truncation/wrapping, and timestamp
-  formatting are client-owned
+- row click, meatball edit entry, description truncation/wrapping, status-label
+  copy/color, and timestamp formatting are client-owned
 
 The participant dropdown policy shown in the handoff is:
 
@@ -461,17 +465,18 @@ rules as name, visibility, and runtime binding updates. Creation stamps
 viewer-owned runtime. After creation, admin may mutate all agents, owner may
 mutate owned agents, and no agent can be edited while it has assigned tasks.
 
-### Agent Update Timestamp
+### Agent List Timestamps
 
-The agent client record carries a required `updated_at` date-time owned by the
-control plane. It changes when editable agent configuration is saved and is used
-by clients for agent-list update dates and absolute-time tooltips. Clients own
-relative/absolute formatting and tooltip presentation; they must not synthesize
-or rewrite the stored timestamp.
+The agent client record carries required `created_at` and `updated_at`
+date-times owned by the control plane. `created_at` is immutable after agent
+creation. `updated_at` changes when editable agent configuration is saved. Both
+fields are used by clients for agent-list dates and absolute-time tooltips.
+Clients own relative/absolute formatting and tooltip presentation; they must
+not synthesize or rewrite the stored timestamps.
 
-The timestamp is distinct from runtime heartbeat, daemon liveness, and provider
-session progress time. Runtime freshness remains owned by the device/runtime
-read model.
+These timestamps are distinct from runtime heartbeat, daemon liveness, and
+provider session progress time. Runtime freshness remains owned by the
+device/runtime read model.
 
 ### Runtime Model Dropdown
 

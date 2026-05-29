@@ -115,6 +115,14 @@ waitlist copy, and marketing-consent presentation are not generated operations
 in this fixture. They require a separate owning SSOT before the DSL adds a
 waitlist or marketing mutation.
 
+Agent list timestamps from Figma `node-id=432-35713` are projected through
+`AgentClientRecord.created_at` and `AgentClientRecord.updated_at`.
+`created_at` is stamped when the agent is created and remains immutable;
+`updated_at` is refreshed when editable agent configuration is saved. Clients
+own shortened date formatting, absolute-time tooltip presentation, row-click /
+meatball edit entry, delete-menu placement, no-description row layout, and
+status-label copy/color.
+
 Agent records also carry optional profile presentation fields:
 `profile_thumbnail_url` is an HTTPS image URL string, `description` is a
 client-authored one-line summary capped at 160 characters, and `instruction` is
