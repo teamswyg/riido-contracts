@@ -130,6 +130,23 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	if !ok || instruction["maxLength"] != 1000 {
 		t.Fatalf("instruction schema = %#v", recordProps["instruction"])
 	}
+	if _, ok := recordProps["model_id"].(map[string]any); !ok {
+		t.Fatalf("model_id schema missing: %#v", recordProps)
+	}
+	runtimeRecord := openAPI.Components.Schemas["RuntimeRecord"]
+	runtimeProps, ok := runtimeRecord["properties"].(map[string]any)
+	if !ok {
+		t.Fatalf("RuntimeRecord properties missing: %#v", runtimeRecord)
+	}
+	models, ok := runtimeProps["models"].(map[string]any)
+	if !ok || models["type"] != "array" {
+		t.Fatalf("RuntimeRecord models schema = %#v", runtimeProps["models"])
+	}
+	runtimeModel := openAPI.Components.Schemas["RuntimeModelRecord"]
+	modelRequired, ok := runtimeModel["required"].([]string)
+	if !ok || !contains(modelRequired, "model_id") || !contains(modelRequired, "is_default") {
+		t.Fatalf("RuntimeModelRecord required = %#v", runtimeModel["required"])
+	}
 	threadCollection := openAPI.Components.Schemas["AIAgentTaskThreadCollectionResponse"]
 	threadCollectionProps, ok := threadCollection["properties"].(map[string]any)
 	if !ok {

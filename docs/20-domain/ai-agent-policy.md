@@ -101,10 +101,11 @@ controls. The durable contract facts are:
   are the current editable configuration fields
 - runtime dropdown candidates come from existing runtime/device read-model data;
   clients own the dropdown rendering
+- model dropdown candidates come from `RuntimeRecord.models` as runtime-scoped
+  catalog records; `model_id` is opaque per runtime and model labels are
+  display data, not generated enum values
 - row click, meatball edit entry, description truncation/wrapping, and timestamp
   formatting are client-owned
-- model dropdown labels shown in Figma are planning/UI evidence only until
-  `Q-CON-006` settles the runtime model catalog owner
 
 The participant dropdown policy shown in the handoff is:
 
@@ -130,6 +131,9 @@ For agent settings specifically:
 
 - `profile_thumbnail_url`, `description`, and `instruction` meaning starts here
   and in the `control-plane-ai-agent-client-api.v1` DSL fixture.
+- `model_id` meaning starts here and in the same DSL fixture. It is validated
+  against the selected runtime's `RuntimeModelRecord` catalog and defaults to
+  the selected runtime's default model when omitted.
 - onboarding template catalog meaning starts here and is projected through the
   same client bootstrap fixture so clients can render template names,
   descriptions, role labels, thumbnails, and copyable instructions without
@@ -300,14 +304,29 @@ read model.
 ### Runtime Model Dropdown
 
 The Figma agent setting screen shows a model dropdown with provider-specific
-labels. Those labels are not contract enum values today. This contract does not
-add `model_id` to agent configuration until the runtime model catalog ownership
-question is resolved in
-[`../50-roadmap/open-questions.md#q-con-006`](../50-roadmap/open-questions.md#q-con-006).
+labels. The owning contract decision is `runtime_model_catalog.v1`: model
+candidates are projected as `RuntimeModelRecord` values under each
+`RuntimeRecord`, not as top-level API enum values.
 
-Daemon adapters may accept a model value only as part of an already-authorized
-runtime execution request. They do not own the catalog of values exposed to
-clients.
+`model_id` is an opaque runtime-scoped identifier. A `model_id` that is valid
+for one runtime is not valid for another runtime unless that runtime's catalog
+also declares it. The client renders `RuntimeModelRecord.label` as display data
+and must not branch on labels or hard-code Figma sample labels as enum members.
+
+When an agent is created or updated:
+
+- if `model_id` is omitted, the control plane stores the selected runtime's
+  default model
+- if `model_id` is present, the control plane validates it against the selected
+  runtime catalog before saving
+- if `runtime_id` changes and `model_id` is omitted, the new runtime's default
+  model is selected
+- if `runtime_id` changes and `model_id` is present, the model must belong to
+  the new runtime
+
+Daemon adapters may accept the selected model value only as part of an
+already-authorized runtime execution request. They do not own the client-facing
+model catalog or dropdown labels.
 
 ### Runtime Output Parsing
 
