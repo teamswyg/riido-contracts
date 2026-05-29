@@ -146,7 +146,13 @@ Agent settings evidence is `node-id=164-50215` (`에이전트 설정페이지`),
 `node-id=134-6542` (`에이전트 추가`), `node-id=337-24001` (`에이전트`
 settings list), and `node-id=432-35713` (`에이전트` list). The settings
 annotations call out long one-line description UI, row/meatball edit entry
-points, absolute-time tooltip behavior, runtime dropdown, and model dropdown.
+points, absolute-time tooltip behavior, runtime dropdown, model dropdown,
+required add/edit form controls (`node-id=417-21803` / `node-id=432-35544`),
+instruction input scroll behavior (`node-id=432-23265` / `node-id=432-35595`),
+long device-name dropdown rows (`node-id=I432:22235;6885:15212` /
+`node-id=I432:35655;6885:15212`), delete confirmation modals
+(`node-id=432-37740` / `node-id=432-38683`), and disabled edit menu
+presentation for working agents (`node-id=432-37900` / `node-id=432-38853`).
 The list screens add created/update columns, optional-description rows,
 online/working/offline labels, edit/delete menu entry points, and the
 `node-id=337-24013` rule that the `에이전트 추가` affordance is hidden when no
@@ -162,6 +168,9 @@ durable contract facts are:
   timestamps
 - profile image, name, description, runtime binding, visibility, and instruction
   are the current editable configuration fields
+- Figma marks name, runtime, model, and visibility as required form controls;
+  API-level required fields are `name`, `runtime_id`, and `visibility`, while
+  omitted `model_id` resolves to the selected runtime's default model
 - runtime dropdown candidates come from existing runtime/device read-model data;
   clients own the dropdown rendering
 - the add affordance visibility is client presentation over the authorized
@@ -170,8 +179,10 @@ durable contract facts are:
 - model dropdown candidates come from `RuntimeRecord.models` as runtime-scoped
   catalog records; `model_id` is opaque per runtime and model labels are
   display data, not generated enum values
-- row click, meatball edit entry, description truncation/wrapping, status-label
-  copy/color, and timestamp formatting are client-owned
+- row click, meatball edit entry, delete-confirmation modals, disabled edit
+  tooltip/cursor behavior, input scroll limits, long device-name presentation,
+  description truncation/wrapping, status-label copy/color, and timestamp
+  formatting are client-owned
 
 The participant dropdown policy shown in the handoff is:
 
@@ -513,6 +524,12 @@ When an agent is created or updated:
 Daemon adapters may accept the selected model value only as part of an
 already-authorized runtime execution request. They do not own the client-facing
 model catalog or dropdown labels.
+
+Figma can still present the model dropdown as a required control because every
+selectable runtime must expose exactly one default model. That default is a
+deterministic selected value, not a new API required-field rule. This avoids a
+contract break for generated clients that omit `model_id` while still letting
+clients render a non-empty required model control.
 
 ### Runtime Output Parsing
 
