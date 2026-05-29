@@ -43,13 +43,17 @@ Onboarding evidence from `node-id=42-3014` includes:
 - `node-id=164-27719`: template descriptions show up to two lines before
   ellipsis; this is client presentation only
 - `node-id=164-30206`: if no selectable AI runtime is installed/detected, the
-  flow skips later template-selection steps and shows the start state
+  flow shows the no-runtime start state with Claude Code, Codex, OpenClaw, and
+  Cursor Agent all marked `연결 안 됨` and a `시작하기` CTA
 
 The durable contract fact is that onboarding agent templates are API data, not
 frontend hard-coded business copy. Runtime/no-runtime branching is still client
 composition over the existing device/runtime read model. Workspace list
 selection and the `새 워크스페이스` row are workspace/team/client product
 surfaces; they do not add an AI Agent generated operation by themselves.
+The all-disconnected provider list and start CTA are also presentation derived
+from device/runtime liveness; they do not create provider-install or
+provider-start commands in this contract.
 
 Web onboarding evidence is `node-id=236-29749` (`웹 온보딩`). Its frames and
 Dev Mode annotations cover macOS app download CTA, sign-up entry points, terms
@@ -268,9 +272,9 @@ For agent settings specifically:
   operations.
 - Figma onboarding annotations (`node-id=42-3014`) can cite scroll, workspace
   selector list behavior (`node-id=164-30192`), two-line ellipsis,
-  no-installed-AI skip behavior, and direct-setting expansion. This repo owns
-  only the onboarding template catalog data shape and the runtime liveness
-  facts used by clients to choose which step to show.
+  no-installed-AI start behavior (`node-id=164-30206`), and direct-setting
+  expansion. This repo owns only the onboarding template catalog data shape and
+  the runtime liveness facts used by clients to choose which step to show.
 - Figma web onboarding annotations (`node-id=236-29749`) can cite sign-up,
   terms, member-invite, app-download, waitlist, and animation behavior. This repo
   owns none of those as AI Agent contract facts until a separate owning SSOT
@@ -358,6 +362,10 @@ If no selectable runtime is online/detected for the viewer, the client skips the
 template-selection and direct-setting steps and shows the no-installed-AI start
 state from the planning screen. That branch does not introduce a new control
 plane command. It is derived from the existing runtime/device read model.
+In `node-id=164-30206`, the client can still show provider rows for Claude Code,
+Codex, OpenClaw, and Cursor Agent as `연결 안 됨` and let the user continue with
+`시작하기`; those rows and CTA are not executable provider install/start
+operations.
 
 Runtime settings empty states from `node-id=275-22731` use the same read model.
 When the current device has no daemon, no runtime, or no selectable current
