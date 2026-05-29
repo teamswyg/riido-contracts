@@ -76,6 +76,22 @@ The durable AI Agent contract fact is therefore only the agent side of that
 dropdown: visible assignable agents are the viewer's owned agents plus other
 users' public agents, and owned agents are ordered first.
 
+Additional planning evidence is `node-id=153-15935` (`추가 기획 내용`). The
+section has no annotation nodes; the visible planning text is the evidence. It
+confirms the cross-surface assignment target scope and several non-target
+surfaces:
+
+- AI Agent assignment is available only on Riido task and subtask surfaces.
+- Existing Riido AI property filling must not recommend or select agents.
+- Agent mention is not a supported command surface.
+- Device/runtime actions are owner-only.
+
+The durable contract fact is the target scope, not the page drawing. The
+`task_id` path parameter in AI Agent task APIs means a Riido task or subtask id.
+Projects, milestones, intakes, generic comments, AI property filling, and
+mention surfaces must not reuse task assignment/comment/stop/thread endpoints
+without a future owning SSOT and a newly generated operation.
+
 Task thread annotation evidence is `node-id=153-15931` (`댓글 소통`).
 The file contains Dev Mode annotation categories including `클라이언트 전달`.
 In that section, `node-id=153-8545` cites `riido.aiAgent.events.stream`
@@ -225,6 +241,14 @@ For agent settings specifically:
   overflow behavior, but this repo owns only AI Agent visibility and owned-first
   agent ordering. Member sorting and visual dropdown constraints are client
   surface facts.
+- Figma additional planning section (`node-id=153-15935`) can cite owner-only
+  device/runtime actions, no agent recommendation in existing AI property
+  filling, no agent mention command surface, and task/subtask-only assignment.
+  This repo owns only the target-scope contract fact: AI Agent assignment,
+  AI-Agent-directed comments, task-thread reads, and stop actions are generated
+  for task or subtask ids. Project, milestone, intake, property-filling, and
+  mention surfaces need a separate owning SSOT before they become generated AI
+  Agent operations.
 - Figma runtime settings annotations (`node-id=162-23090`) can cite runtime
   liveness, agent hover, daemon stop modal, and restart animation behavior. This
   repo owns only the device/runtime read-model policy and the fact that a local
