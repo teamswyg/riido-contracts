@@ -109,9 +109,10 @@ The current duplicated wording is intentional only in these forms:
 - Task-thread annotation docs may restate that Figma cites
   `riido.aiAgent.events.stream` and `riido.aiAgent.tasks.stop`. They may also
   restate that task screens read the cold thread collection before following an
-  advertised active stream. They must not turn generated client chain names,
-  scroll behavior, hover states, modals, or animation references into canonical
-  API or daemon facts.
+  advertised active stream, and that assignment-created-while-viewer-away
+  records remain visible through that cold collection. They must not turn
+  generated client chain names, scroll/focus behavior, hover states, modals, or
+  animation references into canonical API or daemon facts.
 - Participant-dropdown docs may restate that Figma shows member sorting,
   owned-first agent sorting, long-name states, and scroll/height constraints.
   They must not turn client presentation facts into API, daemon, or Terraform

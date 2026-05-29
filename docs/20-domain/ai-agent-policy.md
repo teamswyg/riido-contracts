@@ -152,7 +152,9 @@ For agent settings specifically:
   call paths such as `riido.aiAgent.events.stream` and
   `riido.aiAgent.tasks.stop`, but this repo owns their canonical operation
   ids/path/typed-event meaning through the DSL/IR/OpenAPI fixture, not the
-  client chain syntax or UI micro-interactions.
+  client chain syntax or UI micro-interactions. Long-body scroll/focus,
+  viewer-away notification rendering, hover buttons, stop modals, and progress
+  animations are client presentation facts around returned thread records.
 - Figma participant dropdown annotations (`node-id=153-12742`) can cite sort and
   overflow behavior, but this repo owns only AI Agent visibility and owned-first
   agent ordering. Member sorting and visual dropdown constraints are client
@@ -359,6 +361,13 @@ Task screens read AI Agent thread history through
 connection. The response returns all visible historical AI Agent task threads
 for the task. It includes `active_stream` only when there is currently one
 active AI Agent assignment for the task.
+
+If an agent assignment/comment was created while the viewer was on another
+screen, the control plane still persists the task thread and returns it in this
+cold collection when the viewer later opens the task. The client may scroll or
+focus the visible thread to match Figma, but the canonical API fact is only that
+the persisted `thread_id` record is visible and that `active_stream` is
+advertised only while that same thread is still active.
 
 Completed, stopped, failed, or otherwise cold task-thread collections omit
 `active_stream`; clients must not connect the SSE stream just because a task has

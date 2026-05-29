@@ -80,7 +80,8 @@ for task threads is carried by the `agent_thread_progress` event variant with
 
 Task-thread history is projected as a cold collection at
 `GET /v1/client/ai-agent/tasks/{task_id}/threads`. The response contains
-historical thread records and may include one `active_stream` HATEOAS link. The
+historical thread records, including visible threads created while the viewer
+was on another screen, and may include one `active_stream` HATEOAS link. The
 link is omitted when the screen can render from cold history only, which keeps
 SSE connection decisions deterministic for generated clients.
 
