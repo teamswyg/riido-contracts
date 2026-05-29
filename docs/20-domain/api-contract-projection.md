@@ -85,6 +85,13 @@ not add a runtime-selection command. The client renders detected/non-detected
 rows from the read model, and agent create/update mutations validate the
 selected `runtime_id`.
 
+Onboarding template selection from Figma `node-id=138-7389` is projected from
+`ClientBootstrapResponse.agent_templates`. The DSL does not add a
+template-selection command and does not encode `직접 설정` as an
+`AgentOnboardingTemplate`. Clients render row selection, pre-selection disabled
+next state, and preview skeleton/popover state from the ordered template data
+and local selection state.
+
 Task-thread history is projected as a cold collection at
 `GET /v1/client/ai-agent/tasks/{task_id}/threads`. The response contains
 historical thread records, including visible threads created while the viewer

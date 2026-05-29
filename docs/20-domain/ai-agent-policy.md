@@ -37,7 +37,10 @@ Onboarding evidence from `node-id=42-3014` includes:
 - `node-id=137-6746`: choose the runtime used to create the first agent; the
   inspected UI shows Claude Code and Codex as `감지됨` selectable rows, while
   OpenClaw and Cursor Agent are `감지 안 됨` non-selectable rows
-- `node-id=138-7389`: choose an agent template or choose direct configuration
+- `node-id=138-7389`: choose an agent template or choose direct configuration;
+  the inspected UI shows the starter template rows `리도`, `영실`, `홍도`,
+  `지원`, followed by a `직접 설정` row, a pre-selection `다음` button, and a
+  right-side preview skeleton
 - `node-id=164-26969`: direct configuration expands into name, description,
   and instruction fields and scrolls when needed
 - `node-id=164-30192`: workspace selection list shows the selected workspace,
@@ -363,6 +366,15 @@ contains `template_id`, `name`, optional `role_label`, optional
 instruction defaults are contract data so frontend clients do not hard-code the
 behavioral meaning of starter agents.
 
+The template-selection step from `node-id=138-7389` is projected from
+`ClientBootstrapResponse.agent_templates` in response order. Current Figma
+evidence shows four starter rows, `리도`, `영실`, `홍도`, and `지원`, but the
+rows are not frontend-owned copy. The `직접 설정` row is not an
+`AgentOnboardingTemplate`; it is a client presentation entry that lets the user
+continue to explicit agent configuration. The pre-selection disabled `다음`
+button and the right-side preview skeleton/popover are also client presentation
+over the selected or unselected template state.
+
 Selecting a template does not create a separate domain entity. The client still
 creates an agent through `POST /v1/client/ai-agent/agents` with selected runtime,
 visibility, and copied profile fields. Direct configuration uses the same create
@@ -395,8 +407,9 @@ member invite input/link-copy, and animation references are client/auth/team
 presentation surfaces and do not change the AI Agent DSL/IR/OpenAPI projection.
 
 Workspace selection, workspace creation entry points, template row selection,
-scroll behavior, description ellipsis, and preview-popover layout remain
-client-owned presentation behavior.
+`직접 설정` row rendering, disabled-next state before selection, scroll
+behavior, description ellipsis, and preview-popover layout remain client-owned
+presentation behavior.
 
 ### Agent Editing
 
