@@ -32,6 +32,7 @@ regenerate or update downstream projections.
 | Participant dropdown AI Agent visibility and ordering | [`../20-domain/ai-agent-policy.md`](../20-domain/ai-agent-policy.md) plus the AI Agent API DSL fixture, with Figma annotation evidence at `node-id=153-12742` | Control-plane implements `GET /v1/client/ai-agent/tasks/{task_id}/assignable-agents`. Client owns member sorting, long-name rendering, max height, scrollbar width, checkbox layout, and mixed member/agent visual composition. Daemon and infra do not change for dropdown presentation alone. |
 | AI Agent, runtime, and agent-management menu route affordance | Figma `node-id=156-19307` as cited by [`../20-domain/ai-agent-policy.md`](../20-domain/ai-agent-policy.md) | Client owns concrete menu rendering, ordering, selected state, and route wiring. Control-plane serves data after the route is opened. Daemon and infra do not change for menu placement alone. |
 | Task-thread progress stream and stop operation semantics | [`../20-domain/ai-agent-policy.md`](../20-domain/ai-agent-policy.md) plus the AI Agent API DSL fixture, with Figma annotation evidence at `node-id=153-15931` | Control-plane implements HTTP/SSE and generated-client call chains. Daemon produces parsed progress batches and consumes cancellation commands. Client owns scroll, hover, modal, animation, and rendered thread composition. Infra acts only if a future topology/cost/evidence SSOT changes deployment requirements. |
+| Runtime settings device/runtime read model and local daemon lifecycle boundary | [`../20-domain/ai-agent-policy.md`](../20-domain/ai-agent-policy.md) plus the AI Agent API DSL fixture, with Figma annotation evidence at `node-id=162-23090` | Control-plane implements `GET /v1/client/ai-agent/devices` and `device_runtime_snapshot` projection. Daemon owns local status/start/stop lifecycle behavior for the current desktop device. Client owns the agent hover popover, daemon stop modal, restart animation, and any local helper composition. Infra acts only if a future topology/storage/evidence SSOT changes deployment requirements. |
 | Runtime prompt/native-config consumption | `riido-daemon` C4/C6 SSOTs | Contracts own only the instruction value semantics, not process execution or provider files. |
 | Production deployment/storage topology | `riido-infra` Terraform/architecture SSOTs | Contracts do not create buckets, secrets, CDNs, or persistent stores. |
 
@@ -111,3 +112,8 @@ The current duplicated wording is intentional only in these forms:
   They must not turn client presentation facts into API, daemon, or Terraform
   requirements. Only agent visibility and owned-first agent ordering are
   canonical AI Agent contract facts.
+- Runtime-settings docs may restate that Figma shows runtime liveness, attached
+  agents, an agent hover popover, a daemon stop modal, and restart animation.
+  They must not turn hover/modal/animation presentation into API, daemon, or
+  Terraform requirements. Only the device/runtime read model and local daemon
+  lifecycle boundary are canonical cross-repo facts.

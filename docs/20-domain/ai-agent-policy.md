@@ -25,6 +25,8 @@ UI dev handoff page adds Ready-for-dev surfaces for:
 - task participant dropdowns where agents appear beside members
 - task thread communication for queued, running, and stopped agent work
 - menu placement for Riido AI, runtime, and agent management routes
+- runtime settings where clients show device/runtime liveness, attached agents,
+  and local daemon lifecycle controls
 
 Participant dropdown evidence is `node-id=153-12742`
 (`컴포넌트 참여자 드롭다운`). Its annotations state:
@@ -54,6 +56,17 @@ contract fact is only the route affordance: clients expose Riido AI, runtime,
 and agent management entry points, while this document owns the shared terms
 behind those entries. Visual menu state, ordering among unrelated product
 routes, and concrete client route rendering are client-owned.
+
+Runtime settings evidence is `node-id=162-23090` (`런타임 설정페이지`). Its
+Dev Mode annotations call out an agent hover popover, a daemon stop modal, and a
+restart-in-progress animation. The durable contract facts are:
+
+- the runtime settings route consumes the existing device/runtime read model,
+  `GET /v1/client/ai-agent/devices`, plus `device_runtime_snapshot` events
+- the agent hover popover uses existing agent profile fields such as `name` and
+  `description`; hover timing, layout, and truncation remain client-owned
+- daemon stop/restart controls are local desktop/helper lifecycle controls for
+  the viewer's device, not SaaS client API operations in this contract
 
 The participant dropdown policy shown in the handoff is:
 
@@ -98,6 +111,12 @@ For agent settings specifically:
   overflow behavior, but this repo owns only AI Agent visibility and owned-first
   agent ordering. Member sorting and visual dropdown constraints are client
   surface facts.
+- Figma runtime settings annotations (`node-id=162-23090`) can cite runtime
+  liveness, agent hover, daemon stop modal, and restart animation behavior. This
+  repo owns only the device/runtime read-model policy and the fact that a local
+  daemon stop eventually makes affected runtimes offline through the existing
+  liveness policy. Client hover/modal/animation behavior and local helper
+  command composition are downstream facts.
 
 ## Ubiquitous Language
 
@@ -140,6 +159,23 @@ Detection results are queued and reduced by the actor model. Locking is not
 needed per runtime because same-runtime edits are time-sliced by the actor.
 
 Detection errors or missed detections are client-visible as `offline`.
+
+### Runtime Settings
+
+The runtime settings surface is a client composition over the control-plane
+device/runtime read model and, for the viewer's current desktop device, the
+local daemon/helper control surface.
+
+The control-plane client API exposes device/runtime liveness and attached agent
+metadata; it does not expose a SaaS command that stops or restarts a user's
+daemon. When a desktop client stops its local daemon, the resulting control-plane
+effect is represented through the same runtime liveness policy: affected
+runtimes become `offline` when heartbeat/detection state is missing or expired.
+
+Restart is not a distinct contract operation. A client or helper may compose it
+from local daemon lifecycle controls, while this contract only requires that the
+subsequent device/runtime read model converges to the current online/offline
+state.
 
 ### Agent Editing
 
