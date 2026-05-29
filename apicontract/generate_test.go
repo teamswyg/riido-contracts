@@ -115,6 +115,10 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	if !ok || thumbnail["format"] != "uri" {
 		t.Fatalf("profile_thumbnail_url schema = %#v", recordProps["profile_thumbnail_url"])
 	}
+	description, ok := recordProps["description"].(map[string]any)
+	if !ok || description["maxLength"] != 160 {
+		t.Fatalf("description schema = %#v", recordProps["description"])
+	}
 	instruction, ok := recordProps["instruction"].(map[string]any)
 	if !ok || instruction["maxLength"] != 1000 {
 		t.Fatalf("instruction schema = %#v", recordProps["instruction"])

@@ -94,11 +94,18 @@ Agent names are mutable and not unique.
 
 Agent profile presentation belongs to the agent configuration, not to a task
 thread or runtime. The client-facing agent record therefore carries optional
-`profile_thumbnail_url` and `instruction` fields wherever agents are returned.
+`profile_thumbnail_url`, `description`, and `instruction` fields wherever
+agents are returned.
 
 The thumbnail value is an HTTPS image URL string. Binary upload, image
 resizing, CDN storage, and moderation are outside this contract until a separate
 media/storage contract owns them.
+
+The description value is client-authored text used as a short, one-line agent
+summary in agent list and edit surfaces. Empty text is allowed. The current
+client API limit is 160 characters. Longer values are rejected by the control
+plane before the agent configuration is saved. UI truncation/wrapping policy is
+owned by the client and must not change the stored value.
 
 The instruction value is client-authored text that is saved with the agent and
 used by the control plane/daemon when composing runtime prompts. Empty text is

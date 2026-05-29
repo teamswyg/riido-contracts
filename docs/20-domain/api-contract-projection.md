@@ -72,7 +72,8 @@ for task threads is carried by the `agent_thread_progress` event variant with
 ordered line batches, not by provider raw output text.
 
 Agent records also carry optional profile presentation fields:
-`profile_thumbnail_url` is an HTTPS image URL string, and `instruction` is
+`profile_thumbnail_url` is an HTTPS image URL string, `description` is a
+client-authored one-line summary capped at 160 characters, and `instruction` is
 client-authored text capped at 1000 characters by the contract projection.
 
 ## Boundary
