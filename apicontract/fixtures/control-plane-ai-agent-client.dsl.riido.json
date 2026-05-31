@@ -248,6 +248,7 @@
       "description": "Typed task-thread status update emitted for Figma task thread flows.",
       "values": [
         {"value": "queued_by_busy_agent", "description": "Assignment is queued because the selected agent is already working."},
+        {"value": "assignment_started", "description": "A task participant assignment created the first agent-authored thread row."},
         {"value": "stopped_by_agent_deleted", "description": "Assigned work was stopped because the agent was deleted."},
         {"value": "stopped_by_user_request", "description": "Assigned work was stopped by an explicit user action."},
         {"value": "runtime_progress", "description": "Runtime output produced a progress update."},
@@ -442,6 +443,23 @@
         {"name": "agent_id", "type": "string"},
         {"name": "queued_tasks_unassigned", "type": "integer"},
         {"name": "running_tasks_force_stopped", "type": "integer"}
+      ]
+    },
+    {
+      "name": "AssignAIAgentTaskRequest",
+      "type": "object",
+      "required": ["agent_id"],
+      "properties": [
+        {"name": "agent_id", "type": "string"}
+      ]
+    },
+    {
+      "name": "UnassignAIAgentTaskRequest",
+      "type": "object",
+      "required": ["agent_id"],
+      "properties": [
+        {"name": "agent_id", "type": "string"},
+        {"name": "reason", "type": "string"}
       ]
     },
     {
@@ -722,6 +740,54 @@
           "given": "the Figma additional planning section says only tasks and subtasks can receive Agent assignment",
           "when": "a client needs AI Agent candidates outside a task or subtask surface",
           "then": "no generated AI Agent assignable-agent operation exists for projects, milestones, intakes, AI property filler, or mention surfaces"
+        }
+      ]
+    },
+    {
+      "operation_id": "assignAIAgentTask",
+      "kind": "command",
+      "summary": "Assign an AI agent from the task participant dropdown",
+      "method": "POST",
+      "path": "/v1/client/ai-agent/tasks/{task_id}/assignment",
+      "resource": "agent",
+      "action": "assign",
+      "auth": {"scheme": "bearer", "scopes": ["ai-agent:write", "task:{task_id}:assign", "task:{task_id}:write"]},
+      "rbac_policy": "api_codegen_safety.v1",
+      "request": {"ref": "AssignAIAgentTaskRequest", "required": true},
+      "response": {"status": 202, "ref": "AIAgentTaskActionResponse"},
+      "scenarios": [
+        {
+          "name": "participant dropdown assigns agent",
+          "given": "the task participant dropdown shows visible AI agents split from human members",
+          "when": "the client assigns one visible agent to the task",
+          "then": "the response creates or returns the task's active AI Agent thread with comment_kind assignment_started unless the selected agent is busy"
+        },
+        {
+          "name": "only one active assigned agent per task",
+          "given": "a task already has an active AI Agent assignment",
+          "when": "the client assigns another visible agent from the participant dropdown",
+          "then": "the control plane preserves the single-active-agent invariant before exposing the new active thread"
+        }
+      ]
+    },
+    {
+      "operation_id": "unassignAIAgentTask",
+      "kind": "command",
+      "summary": "Unassign an AI agent from task participants and stop active work",
+      "method": "DELETE",
+      "path": "/v1/client/ai-agent/tasks/{task_id}/assignment",
+      "resource": "agent",
+      "action": "stop",
+      "auth": {"scheme": "bearer", "scopes": ["ai-agent:write", "task:{task_id}:stop", "task:{task_id}:write"]},
+      "rbac_policy": "api_codegen_safety.v1",
+      "request": {"ref": "UnassignAIAgentTaskRequest", "required": true},
+      "response": {"status": 202, "ref": "AIAgentTaskActionResponse"},
+      "scenarios": [
+        {
+          "name": "participant removal stops agent work",
+          "given": "an AI Agent is active or queued as a task participant",
+          "when": "the client removes that agent from the task participants",
+          "then": "the response and event stream use stopped_by_user_request and no additional participant-removal endpoint is needed"
         }
       ]
     },

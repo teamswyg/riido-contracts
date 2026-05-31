@@ -62,6 +62,8 @@ webview:
 - `GET /v1/client/ai-agent/bootstrap`
 - `GET /v1/client/ai-agent/devices`
 - `GET /v1/client/ai-agent/tasks/{task_id}/assignable-agents`
+- `POST /v1/client/ai-agent/tasks/{task_id}/assignment`
+- `DELETE /v1/client/ai-agent/tasks/{task_id}/assignment`
 - `GET /v1/client/ai-agent/tasks/{task_id}/threads`
 - `POST /v1/client/ai-agent/tasks/{task_id}/comments`
 - `POST /v1/client/ai-agent/tasks/{task_id}/stop`
@@ -133,6 +135,15 @@ projection preserves the participant-dropdown ordering contract: viewer-owned
 agents first, display-name order inside each ownership group, and `agent_id` as
 the stable tie-breaker when display names are equal. Pixel-level dropdown
 constraints from Figma are intentionally not API fields.
+
+Task participant assignment uses the same task-scoped API family. `POST
+/v1/client/ai-agent/tasks/{task_id}/assignment` assigns one visible agent and
+returns the task's AI Agent thread action response. The first agent-authored row
+uses typed `comment_kind=assignment_started` unless the selected agent is busy,
+in which case the existing queued tuple is returned. `DELETE
+/v1/client/ai-agent/tasks/{task_id}/assignment` is the participant-removal
+command and uses the existing stopped-by-user typed status; whether stopped rows
+are hidden in the task comment UI remains client presentation.
 
 ## Boundary
 

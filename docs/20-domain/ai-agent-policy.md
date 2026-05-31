@@ -211,6 +211,14 @@ typed comment-status value instead of asking clients to parse rendered text.
 The client command contract also includes explicit task-thread comment submit
 and stop actions so web and desktop webview clients do not infer AI Agent work
 from generic task comments alone.
+Selecting an agent from the task participant dropdown is a separate generated
+assignment command, not a generic task participant mutation. The command creates
+the initial AI Agent task-thread row with typed
+`comment_kind=assignment_started` unless the selected agent is already busy, in
+which case the existing queued tuple applies. Removing an active or queued agent
+from task participants uses the generated unassign command, which stops the
+agent work with `comment_kind=stopped_by_user_request`; hiding stopped content is
+client-owned presentation around the returned typed status.
 In the normal active screen (`node-id=236-21379`), generic task comments and
 AI-Agent-directed thread replies are visually adjacent. The contract boundary is
 that AI-Agent-directed messages use the explicit comments operation with
@@ -626,6 +634,8 @@ It covers:
 - `GET /v1/client/ai-agent/bootstrap`
 - `GET /v1/client/ai-agent/devices`
 - `GET /v1/client/ai-agent/tasks/{task_id}/assignable-agents`
+- `POST /v1/client/ai-agent/tasks/{task_id}/assignment`
+- `DELETE /v1/client/ai-agent/tasks/{task_id}/assignment`
 - `GET /v1/client/ai-agent/tasks/{task_id}/threads`
 - `POST /v1/client/ai-agent/tasks/{task_id}/comments`
 - `POST /v1/client/ai-agent/tasks/{task_id}/stop`
