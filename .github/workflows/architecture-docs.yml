@@ -13,6 +13,7 @@ on:
       - "docs/30-architecture/**"
       - "docs/50-roadmap/open-questions.md"
       - "docs/migration/contracts.md"
+      - "tools/ssotdeps/**"
   pull_request:
     paths:
       - ".github/workflows/architecture-docs.yml"
@@ -24,6 +25,7 @@ on:
       - "docs/30-architecture/**"
       - "docs/50-roadmap/open-questions.md"
       - "docs/migration/contracts.md"
+      - "tools/ssotdeps/**"
 
 jobs:
   docs:
@@ -54,6 +56,8 @@ jobs:
             printf 'Runtime/private ownership wording found:\n%s\n' "$stale"
             exit 1
           fi
+      - name: Verify SSOT dependency manifest
+        run: go run ./tools/ssotdeps verify
       - name: Verify stdlib-only module
         run: test "$(go list -m all | wc -l | tr -d ' ')" = "1"
       - name: Test
