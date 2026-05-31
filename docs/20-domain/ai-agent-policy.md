@@ -193,7 +193,17 @@ The participant dropdown policy shown in the handoff is:
 
 - member sorting belongs to the existing Riido member/client surface
 - agent sorting belongs to this contract: owned agents first, then public
-  agents visible through RBAC, with name ordering inside each group
+  agents visible through RBAC, with display-name ordering inside each group
+- agent names are mutable and non-unique, so equal display names use
+  `agent_id` as the stable tie-breaker. Clients render the display name, but
+  must not treat it as identity.
+
+The same handoff marks participant-dropdown presentation constraints at
+`node-id=153-12742`: long member/agent names must remain visually contained,
+the dropdown's visible height caps at 520px, and a visible scrollbar may expand
+the rendered width from 240px to 254px. These are client presentation
+constraints. The API contract only guarantees stable identifiers and the agent
+ordering above; it does not encode pixel sizes.
 
 The task thread flow shows agent queue and stop states as task-thread
 updates. The control-plane event contract therefore carries task context and a

@@ -117,6 +117,32 @@
       ]
     },
     {
+      "id": "participant-dropdown-agent-ordering",
+      "fact": "Participant dropdown agent ordering is owned-first, display-name ordered, then agent_id tied",
+      "human_doc_phrase": "Participant dropdown agent ordering is owned-first, display-name ordered, then `agent_id` tied",
+      "source_refs": [
+        {
+          "repo": "riido-contracts",
+          "path": "docs/20-domain/ai-agent-policy.md",
+          "required_phrase": "stable tie-breaker"
+        }
+      ],
+      "owner": {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/ai-agent-policy.md"
+      },
+      "downstreams": [
+        {
+          "repo": "riido-control-plane",
+          "local_scope": "assignable-agent response sorting and black-box HTTP coverage"
+        },
+        {
+          "repo": "riido-client",
+          "local_scope": "participant dropdown renders the returned order and handles long labels locally"
+        }
+      ]
+    },
+    {
       "id": "profile-thumbnail-url",
       "fact": "profile_thumbnail_url is an optional HTTPS image URL string",
       "human_doc_phrase": "`profile_thumbnail_url` is an optional HTTPS image URL string",
@@ -240,6 +266,7 @@
         "agent-editability",
         "api-projection",
         "instruction",
+        "participant-dropdown-agent-ordering",
         "profile-thumbnail-url",
         "rbac-vocabulary"
       ],

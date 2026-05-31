@@ -128,6 +128,12 @@ Agent records also carry optional profile presentation fields:
 client-authored one-line summary capped at 160 characters, and `instruction` is
 client-authored text capped at 1000 characters by the contract projection.
 
+For `GET /v1/client/ai-agent/tasks/{task_id}/assignable-agents`, the
+projection preserves the participant-dropdown ordering contract: viewer-owned
+agents first, display-name order inside each ownership group, and `agent_id` as
+the stable tie-breaker when display names are equal. Pixel-level dropdown
+constraints from Figma are intentionally not API fields.
+
 ## Boundary
 
 This contract owns:
