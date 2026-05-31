@@ -9,11 +9,63 @@
       "name": "ai_agent_client"
     }
   ],
+  "x-riido-client-modules": [
+    {
+      "module": "aiAgent",
+      "description": "AI Agent client API module입니다. 화면 구성을 소유하지 않고, client가 화면을 구성할 때 필요한 API 의미, 정책, lifecycle, cache 관계를 제공합니다.",
+      "namespaces": [
+        {
+          "path": [
+            "agents"
+          ],
+          "description": "agent 설정과 mutation을 다루는 namespace입니다. agent 이름은 중복될 수 있고 assigned task가 있으면 수정할 수 없습니다."
+        },
+        {
+          "path": [
+            "bootstrap"
+          ],
+          "description": "AI Agent 화면 진입 시 필요한 초기 read model입니다. viewer가 볼 수 있는 agent와 device runtime snapshot을 제공합니다."
+        },
+        {
+          "path": [
+            "devices"
+          ],
+          "description": "device와 runtime 상태를 다루는 namespace입니다."
+        },
+        {
+          "path": [
+            "devices",
+            "daemon"
+          ],
+          "description": "runtime 설정 화면에서 현재 device의 desktop local daemon 상세와 제어 command를 다루는 namespace입니다."
+        },
+        {
+          "path": [
+            "devices",
+            "runtimes"
+          ],
+          "description": "권한이 확인된 principal의 device runtime 목록입니다. assigned agent가 있는 runtime은 삭제되어도 offline 상태로 유지됩니다."
+        },
+        {
+          "path": [
+            "events"
+          ],
+          "description": "client가 SSE로 수신하는 상태 변경 stream namespace입니다."
+        },
+        {
+          "path": [
+            "tasks"
+          ],
+          "description": "task thread에서 AI Agent assignment와 comment action을 다루는 namespace입니다."
+        }
+      ]
+    }
+  ],
   "paths": {
     "/v1/client/ai-agent/agents": {
       "post": {
         "operationId": "createAIAgent",
-        "summary": "Create an AI agent configuration from the Figma agent-add screen",
+        "summary": "Figma agent 추가 화면에서 AI agent 설정을 생성합니다",
         "tags": [
           "ai_agent_client"
         ],
@@ -60,6 +112,18 @@
         ],
         "x-riido-rbac-policy": "agent_mutation_safety.v1",
         "x-riido-operation-kind": "command",
+        "x-riido-client": {
+          "module": "aiAgent",
+          "facade_path": [
+            "agents",
+            "create"
+          ],
+          "invalidates": [
+            "aiAgent.bootstrap",
+            "aiAgent.devices.runtimes",
+            "aiAgent.tasks.assignableAgents"
+          ]
+        },
         "x-riido-scenarios": [
           "createAIAgent.agent-add-screen-creates-owned-agent",
           "createAIAgent.onboarding-direct-setting-creates-explicit-configuration",
@@ -71,7 +135,7 @@
     "/v1/client/ai-agent/agents/{agent_id}": {
       "delete": {
         "operationId": "deleteAIAgent",
-        "summary": "Delete an agent and force-clear its queued/running assignments",
+        "summary": "agent를 삭제하고 queued/running assignment를 강제로 정리합니다",
         "tags": [
           "ai_agent_client"
         ],
@@ -118,13 +182,27 @@
         ],
         "x-riido-rbac-policy": "agent_mutation_safety.v1",
         "x-riido-operation-kind": "command",
+        "x-riido-client": {
+          "module": "aiAgent",
+          "facade_path": [
+            "agents",
+            "delete"
+          ],
+          "invalidates": [
+            "aiAgent.bootstrap",
+            "aiAgent.devices.runtimes",
+            "aiAgent.agents.editability",
+            "aiAgent.tasks.assignableAgents",
+            "aiAgent.tasks.threads"
+          ]
+        },
         "x-riido-scenarios": [
           "deleteAIAgent.delete-unassigns-and-stops"
         ]
       },
       "patch": {
         "operationId": "updateAIAgentConfiguration",
-        "summary": "Update agent display/configuration fields when no task is assigned",
+        "summary": "할당된 task가 없을 때 agent 표시/설정 필드를 수정합니다",
         "tags": [
           "ai_agent_client"
         ],
@@ -181,6 +259,18 @@
         ],
         "x-riido-rbac-policy": "agent_mutation_safety.v1",
         "x-riido-operation-kind": "command",
+        "x-riido-client": {
+          "module": "aiAgent",
+          "facade_path": [
+            "agents",
+            "updateConfiguration"
+          ],
+          "invalidates": [
+            "aiAgent.bootstrap",
+            "aiAgent.agents.editability",
+            "aiAgent.tasks.assignableAgents"
+          ]
+        },
         "x-riido-scenarios": [
           "updateAIAgentConfiguration.agent-name-is-not-unique",
           "updateAIAgentConfiguration.profile-fields-are-saved",
@@ -194,7 +284,7 @@
     "/v1/client/ai-agent/agents/{agent_id}/editability": {
       "get": {
         "operationId": "getAIAgentEditability",
-        "summary": "Read whether an agent can be edited before enabling client controls",
+        "summary": "client control 활성화 전에 agent 수정 가능 여부를 조회합니다",
         "tags": [
           "ai_agent_client"
         ],
@@ -241,6 +331,14 @@
         ],
         "x-riido-rbac-policy": "agent_mutation_safety.v1",
         "x-riido-operation-kind": "query",
+        "x-riido-client": {
+          "module": "aiAgent",
+          "facade_path": [
+            "agents",
+            "editability"
+          ],
+          "cache_tag": "aiAgent.agents.editability"
+        },
         "x-riido-scenarios": [
           "getAIAgentEditability.assigned-agent-blocks-editing"
         ]
@@ -249,7 +347,7 @@
     "/v1/client/ai-agent/bootstrap": {
       "get": {
         "operationId": "getAIAgentClientBootstrap",
-        "summary": "Read AI Agent screen bootstrap data for web or desktop webview clients",
+        "summary": "web 또는 desktop webview client의 AI Agent 화면 초기 데이터를 조회합니다",
         "tags": [
           "ai_agent_client"
         ],
@@ -285,6 +383,13 @@
         ],
         "x-riido-rbac-policy": "ai_agent_rbac.v1",
         "x-riido-operation-kind": "query",
+        "x-riido-client": {
+          "module": "aiAgent",
+          "facade_path": [
+            "bootstrap"
+          ],
+          "cache_tag": "aiAgent.bootstrap"
+        },
         "x-riido-scenarios": [
           "getAIAgentClientBootstrap.figma-client-bootstrap",
           "getAIAgentClientBootstrap.figma-agent-list-timestamps",
@@ -297,7 +402,7 @@
     "/v1/client/ai-agent/devices": {
       "get": {
         "operationId": "listAIAgentDeviceRuntimes",
-        "summary": "List device runtime availability for the authorized principal",
+        "summary": "권한이 확인된 principal의 device runtime 상태를 조회합니다",
         "tags": [
           "ai_agent_client"
         ],
@@ -333,20 +438,322 @@
         ],
         "x-riido-rbac-policy": "runtime_liveness.v1",
         "x-riido-operation-kind": "query",
+        "x-riido-client": {
+          "module": "aiAgent",
+          "facade_path": [
+            "devices",
+            "runtimes"
+          ],
+          "cache_tag": "aiAgent.devices.runtimes"
+        },
         "x-riido-scenarios": [
           "listAIAgentDeviceRuntimes.missing-runtime-with-assigned-agent-is-offline",
           "listAIAgentDeviceRuntimes.missing-runtime-without-assigned-agent-is-absent",
           "listAIAgentDeviceRuntimes.runtime-models-are-scoped-catalog-records",
           "listAIAgentDeviceRuntimes.figma-onboarding-runtime-selection",
           "listAIAgentDeviceRuntimes.runtime-settings-empty-state-from-read-model",
-          "listAIAgentDeviceRuntimes.runtime-settings-current-and-other-device-composition"
+          "listAIAgentDeviceRuntimes.runtime-settings-current-and-other-device-composition",
+          "listAIAgentDeviceRuntimes.runtime-settings-daemon-stop-makes-runtimes-offline"
+        ]
+      }
+    },
+    "/v1/client/ai-agent/devices/{device_id}/daemon": {
+      "get": {
+        "operationId": "getAIAgentDeviceDaemon",
+        "summary": "runtime 설정 화면에서 현재 device의 daemon 상세를 조회합니다",
+        "tags": [
+          "ai_agent_client"
+        ],
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceDaemonDetailResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-riido-auth-scopes": [
+          "ai-agent:device:read",
+          "ai-agent:device:{device_id}:read"
+        ],
+        "x-riido-rbac-policy": "runtime_liveness.v1",
+        "x-riido-operation-kind": "query",
+        "x-riido-client": {
+          "module": "aiAgent",
+          "facade_path": [
+            "devices",
+            "daemon",
+            "details"
+          ],
+          "cache_tag": "aiAgent.devices.daemon"
+        },
+        "x-riido-scenarios": [
+          "getAIAgentDeviceDaemon.figma-runtime-settings-daemon-details",
+          "getAIAgentDeviceDaemon.daemon-detail-is-current-device-owned"
+        ]
+      }
+    },
+    "/v1/client/ai-agent/devices/{device_id}/daemon/restart": {
+      "post": {
+        "operationId": "restartAIAgentDeviceDaemon",
+        "summary": "runtime 설정 화면에서 현재 device의 daemon 재시작을 요청합니다",
+        "tags": [
+          "ai_agent_client"
+        ],
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ControlDeviceDaemonRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceDaemonCommandResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-riido-auth-scopes": [
+          "ai-agent:device:write",
+          "ai-agent:device:{device_id}:write"
+        ],
+        "x-riido-rbac-policy": "runtime_liveness.v1",
+        "x-riido-operation-kind": "command",
+        "x-riido-client": {
+          "module": "aiAgent",
+          "facade_path": [
+            "devices",
+            "daemon",
+            "restart"
+          ],
+          "invalidates": [
+            "aiAgent.devices.daemon",
+            "aiAgent.devices.runtimes"
+          ]
+        },
+        "x-riido-scenarios": [
+          "restartAIAgentDeviceDaemon.figma-runtime-settings-daemon-restart"
+        ]
+      }
+    },
+    "/v1/client/ai-agent/devices/{device_id}/daemon/start": {
+      "post": {
+        "operationId": "startAIAgentDeviceDaemon",
+        "summary": "runtime 설정 화면에서 현재 device의 daemon 시작을 요청합니다",
+        "tags": [
+          "ai_agent_client"
+        ],
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ControlDeviceDaemonRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceDaemonCommandResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-riido-auth-scopes": [
+          "ai-agent:device:write",
+          "ai-agent:device:{device_id}:write"
+        ],
+        "x-riido-rbac-policy": "runtime_liveness.v1",
+        "x-riido-operation-kind": "command",
+        "x-riido-client": {
+          "module": "aiAgent",
+          "facade_path": [
+            "devices",
+            "daemon",
+            "start"
+          ],
+          "invalidates": [
+            "aiAgent.devices.daemon",
+            "aiAgent.devices.runtimes"
+          ]
+        },
+        "x-riido-scenarios": [
+          "startAIAgentDeviceDaemon.figma-runtime-settings-daemon-start"
+        ]
+      }
+    },
+    "/v1/client/ai-agent/devices/{device_id}/daemon/stop": {
+      "post": {
+        "operationId": "stopAIAgentDeviceDaemon",
+        "summary": "runtime 설정 화면에서 현재 device의 daemon 중지를 요청합니다",
+        "tags": [
+          "ai_agent_client"
+        ],
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ControlDeviceDaemonRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceDaemonCommandResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-riido-auth-scopes": [
+          "ai-agent:device:write",
+          "ai-agent:device:{device_id}:write"
+        ],
+        "x-riido-rbac-policy": "runtime_liveness.v1",
+        "x-riido-operation-kind": "command",
+        "x-riido-client": {
+          "module": "aiAgent",
+          "facade_path": [
+            "devices",
+            "daemon",
+            "stop"
+          ],
+          "invalidates": [
+            "aiAgent.devices.daemon",
+            "aiAgent.devices.runtimes"
+          ]
+        },
+        "x-riido-scenarios": [
+          "stopAIAgentDeviceDaemon.figma-runtime-settings-daemon-stop"
         ]
       }
     },
     "/v1/client/ai-agent/events": {
       "get": {
         "operationId": "streamAIAgentClientEvents",
-        "summary": "Stream AI Agent client updates for editability, work status, runtime snapshots, and task-thread progress",
+        "summary": "editability, work status, runtime snapshot, task-thread progress에 대한 AI Agent client update를 스트리밍합니다",
         "tags": [
           "ai_agent_client"
         ],
@@ -382,6 +789,14 @@
         ],
         "x-riido-rbac-policy": "api_codegen_safety.v1",
         "x-riido-operation-kind": "query",
+        "x-riido-client": {
+          "module": "aiAgent",
+          "facade_path": [
+            "events",
+            "stream"
+          ],
+          "cache_tag": "aiAgent.events.stream"
+        },
         "x-riido-scenarios": [
           "streamAIAgentClientEvents.editability-updates-before-mutation",
           "streamAIAgentClientEvents.runtime-parse-status",
@@ -393,7 +808,7 @@
     "/v1/client/ai-agent/tasks/{task_id}/assignable-agents": {
       "get": {
         "operationId": "listAIAgentTaskAssignableAgents",
-        "summary": "List agents assignable from a task participant dropdown",
+        "summary": "task participant dropdown에서 할당 가능한 agent 목록을 조회합니다",
         "tags": [
           "ai_agent_client"
         ],
@@ -440,6 +855,14 @@
         ],
         "x-riido-rbac-policy": "ai_agent_rbac.v1",
         "x-riido-operation-kind": "query",
+        "x-riido-client": {
+          "module": "aiAgent",
+          "facade_path": [
+            "tasks",
+            "assignableAgents"
+          ],
+          "cache_tag": "aiAgent.tasks.assignableAgents"
+        },
         "x-riido-scenarios": [
           "listAIAgentTaskAssignableAgents.participant-dropdown-visible-agents",
           "listAIAgentTaskAssignableAgents.participant-dropdown-owned-first-ordering",
@@ -450,7 +873,7 @@
     "/v1/client/ai-agent/tasks/{task_id}/assignment": {
       "delete": {
         "operationId": "unassignAIAgentTask",
-        "summary": "Unassign an AI agent from task participants and stop active work",
+        "summary": "task participant에서 AI agent를 제거하고 작업을 중단합니다",
         "tags": [
           "ai_agent_client"
         ],
@@ -476,7 +899,7 @@
         },
         "responses": {
           "202": {
-            "description": "response",
+            "description": "Accepted",
             "content": {
               "application/json": {
                 "schema": {
@@ -508,13 +931,25 @@
         ],
         "x-riido-rbac-policy": "api_codegen_safety.v1",
         "x-riido-operation-kind": "command",
+        "x-riido-client": {
+          "module": "aiAgent",
+          "facade_path": [
+            "tasks",
+            "unassign"
+          ],
+          "invalidates": [
+            "aiAgent.bootstrap",
+            "aiAgent.tasks.assignableAgents",
+            "aiAgent.tasks.threads"
+          ]
+        },
         "x-riido-scenarios": [
           "unassignAIAgentTask.participant-removal-stops-agent-work"
         ]
       },
       "post": {
         "operationId": "assignAIAgentTask",
-        "summary": "Assign an AI agent from the task participant dropdown",
+        "summary": "task participant dropdown에서 AI agent를 배정합니다",
         "tags": [
           "ai_agent_client"
         ],
@@ -540,7 +975,7 @@
         },
         "responses": {
           "202": {
-            "description": "response",
+            "description": "Accepted",
             "content": {
               "application/json": {
                 "schema": {
@@ -572,6 +1007,18 @@
         ],
         "x-riido-rbac-policy": "api_codegen_safety.v1",
         "x-riido-operation-kind": "command",
+        "x-riido-client": {
+          "module": "aiAgent",
+          "facade_path": [
+            "tasks",
+            "assign"
+          ],
+          "invalidates": [
+            "aiAgent.bootstrap",
+            "aiAgent.tasks.assignableAgents",
+            "aiAgent.tasks.threads"
+          ]
+        },
         "x-riido-scenarios": [
           "assignAIAgentTask.participant-dropdown-assigns-agent",
           "assignAIAgentTask.only-one-active-assigned-agent-per-task"
@@ -581,7 +1028,7 @@
     "/v1/client/ai-agent/tasks/{task_id}/comments": {
       "post": {
         "operationId": "submitAIAgentTaskComment",
-        "summary": "Submit a task-thread comment that should be routed to an assigned AI agent",
+        "summary": "task thread comment를 할당된 AI agent에게 전달합니다",
         "tags": [
           "ai_agent_client"
         ],
@@ -607,7 +1054,7 @@
         },
         "responses": {
           "202": {
-            "description": "response",
+            "description": "Accepted",
             "content": {
               "application/json": {
                 "schema": {
@@ -638,6 +1085,18 @@
         ],
         "x-riido-rbac-policy": "api_codegen_safety.v1",
         "x-riido-operation-kind": "command",
+        "x-riido-client": {
+          "module": "aiAgent",
+          "facade_path": [
+            "tasks",
+            "submitComment"
+          ],
+          "invalidates": [
+            "aiAgent.bootstrap",
+            "aiAgent.tasks.assignableAgents",
+            "aiAgent.tasks.threads"
+          ]
+        },
         "x-riido-scenarios": [
           "submitAIAgentTaskComment.comment-routes-to-running-agent",
           "submitAIAgentTaskComment.comment-queues-behind-busy-agent"
@@ -647,7 +1106,7 @@
     "/v1/client/ai-agent/tasks/{task_id}/stop": {
       "post": {
         "operationId": "stopAIAgentTask",
-        "summary": "Stop AI agent work from a task-thread stop action",
+        "summary": "task thread의 stop action으로 AI agent 작업을 중단합니다",
         "tags": [
           "ai_agent_client"
         ],
@@ -672,7 +1131,7 @@
         },
         "responses": {
           "202": {
-            "description": "response",
+            "description": "Accepted",
             "content": {
               "application/json": {
                 "schema": {
@@ -704,6 +1163,18 @@
         ],
         "x-riido-rbac-policy": "api_codegen_safety.v1",
         "x-riido-operation-kind": "command",
+        "x-riido-client": {
+          "module": "aiAgent",
+          "facade_path": [
+            "tasks",
+            "stop"
+          ],
+          "invalidates": [
+            "aiAgent.bootstrap",
+            "aiAgent.tasks.assignableAgents",
+            "aiAgent.tasks.threads"
+          ]
+        },
         "x-riido-scenarios": [
           "stopAIAgentTask.task-stop-emits-comment-status"
         ]
@@ -712,7 +1183,7 @@
     "/v1/client/ai-agent/tasks/{task_id}/threads": {
       "get": {
         "operationId": "listAIAgentTaskThreads",
-        "summary": "List AI Agent task threads before optionally following an active stream link",
+        "summary": "active stream link가 있을 때만 이어서 연결할 수 있도록 AI Agent task thread 목록을 조회합니다",
         "tags": [
           "ai_agent_client"
         ],
@@ -759,6 +1230,14 @@
         ],
         "x-riido-rbac-policy": "task_thread_cold_collection.v1",
         "x-riido-operation-kind": "query",
+        "x-riido-client": {
+          "module": "aiAgent",
+          "facade_path": [
+            "tasks",
+            "threads"
+          ],
+          "cache_tag": "aiAgent.tasks.threads"
+        },
         "x-riido-scenarios": [
           "listAIAgentTaskThreads.completed-task-does-not-open-stream",
           "listAIAgentTaskThreads.running-task-advertises-one-stream",
@@ -771,6 +1250,7 @@
   "components": {
     "schemas": {
       "AIAgentTaskActionResponse": {
+        "description": "task thread action 요청 이후 client가 즉시 반영할 agent 작업 상태 응답입니다.",
         "properties": {
           "agent_id": {
             "type": "string"
@@ -814,6 +1294,7 @@
         "type": "object"
       },
       "AIAgentTaskThreadCollectionResponse": {
+        "description": "task 화면 진입 시 먼저 읽는 AI Agent thread cold collection 응답입니다.",
         "properties": {
           "active_stream": {
             "$ref": "#/components/schemas/AIAgentTaskThreadStreamLink"
@@ -839,6 +1320,7 @@
         "type": "object"
       },
       "AIAgentTaskThreadRecord": {
+        "description": "task 화면에 표시할 AI Agent thread의 cold record입니다.",
         "properties": {
           "agent_id": {
             "type": "string"
@@ -896,6 +1378,7 @@
         "type": "object"
       },
       "AIAgentTaskThreadStreamLink": {
+        "description": "활성 task thread가 있을 때 client가 연결할 SSE stream handoff link입니다.",
         "properties": {
           "event_type": {
             "enum": [
@@ -933,7 +1416,7 @@
         "type": "object"
       },
       "AgentAssignmentState": {
-        "description": "Assignment state affected by agent deletion and runtime lifecycle.",
+        "description": "agent 삭제와 runtime lifecycle에 의해 변경되는 task assignment 상태입니다.",
         "enum": [
           "queued",
           "running",
@@ -946,6 +1429,7 @@
         "type": "string"
       },
       "AgentClientListResponse": {
+        "description": "task 또는 화면에서 표시할 agent 목록 응답입니다.",
         "properties": {
           "agents": {
             "items": {
@@ -964,6 +1448,7 @@
         "type": "object"
       },
       "AgentClientRecord": {
+        "description": "client 화면에 표시하는 agent 요약 record입니다.",
         "properties": {
           "agent_id": {
             "type": "string"
@@ -1037,6 +1522,7 @@
         "type": "object"
       },
       "AgentClientRecordResponse": {
+        "description": "단일 agent 변경 후 최신 agent record를 반환하는 응답입니다.",
         "properties": {
           "agent": {
             "$ref": "#/components/schemas/AgentClientRecord"
@@ -1052,7 +1538,7 @@
         "type": "object"
       },
       "AgentEditability": {
-        "description": "Whether an agent can currently be edited.",
+        "description": "agent를 현재 수정할 수 있는지 나타냅니다.",
         "enum": [
           "editable",
           "blocked_assigned_tasks"
@@ -1060,6 +1546,7 @@
         "type": "string"
       },
       "AgentEditabilityChangedEvent": {
+        "description": "agent 수정 가능 여부 변경을 전달하는 SSE event입니다.",
         "properties": {
           "agent_id": {
             "type": "string"
@@ -1089,6 +1576,7 @@
         "type": "object"
       },
       "AgentEditabilityResponse": {
+        "description": "agent 수정 가능 여부와 차단 사유를 알려주는 응답입니다.",
         "properties": {
           "agent_id": {
             "type": "string"
@@ -1115,6 +1603,7 @@
         "type": "object"
       },
       "AgentOnboardingTemplate": {
+        "description": "AI Agent 온보딩에서 선택할 수 있는 starter agent template입니다.",
         "properties": {
           "description": {
             "maxLength": 160,
@@ -1147,7 +1636,7 @@
         "type": "object"
       },
       "AgentTaskCommentKind": {
-        "description": "Typed task-thread status update emitted for Figma task thread flows.",
+        "description": "Figma comment 소통 흐름에서 task thread에 기록되는 상태 update 종류입니다.",
         "enum": [
           "queued_by_busy_agent",
           "assignment_started",
@@ -1160,6 +1649,7 @@
         "type": "string"
       },
       "AgentThreadProgressEvent": {
+        "description": "활성 task thread에 추가된 AI Agent 진행 상태를 client SSE로 전달하는 event입니다.",
         "properties": {
           "agent_id": {
             "type": "string"
@@ -1221,6 +1711,7 @@
         "type": "object"
       },
       "AgentThreadProgressLine": {
+        "description": "daemon이 batch로 보고한 runtime 진행 메시지 한 줄입니다.",
         "properties": {
           "message": {
             "type": "string"
@@ -1240,7 +1731,7 @@
         "type": "object"
       },
       "AgentVisibility": {
-        "description": "Workspace visibility for an agent.",
+        "description": "agent의 workspace 공개 범위입니다.",
         "enum": [
           "public",
           "private"
@@ -1248,7 +1739,7 @@
         "type": "string"
       },
       "AgentWorkStatus": {
-        "description": "Client-visible status derived from runtime output and task assignment state.",
+        "description": "runtime output과 task assignment state에서 파생된 client 표시용 agent 작업 상태입니다.",
         "enum": [
           "idle",
           "queued",
@@ -1261,6 +1752,7 @@
         "type": "string"
       },
       "AgentWorkStatusChangedEvent": {
+        "description": "agent 작업 상태와 task thread comment 상태 변경을 전달하는 SSE event입니다.",
         "properties": {
           "agent_id": {
             "type": "string"
@@ -1302,6 +1794,7 @@
         "type": "object"
       },
       "AssignAIAgentTaskRequest": {
+        "description": "task participant dropdown에서 agent를 배정하기 위한 요청입니다.",
         "properties": {
           "agent_id": {
             "type": "string"
@@ -1313,6 +1806,7 @@
         "type": "object"
       },
       "ClientBootstrapResponse": {
+        "description": "AI Agent 화면 진입 시 필요한 agent와 device runtime 초기 데이터입니다.",
         "properties": {
           "agent_templates": {
             "items": {
@@ -1353,7 +1847,7 @@
         "type": "object"
       },
       "ClientKind": {
-        "description": "Client consuming the AI Agent control-plane surface.",
+        "description": "AI Agent control-plane surface를 소비하는 client 종류입니다.",
         "enum": [
           "web",
           "desktop_webview"
@@ -1361,12 +1855,13 @@
         "type": "string"
       },
       "ClientStreamEvent": {
-        "description": "SSE event union consumed by web and desktop webview clients.",
+        "description": "web과 desktop webview client가 소비하는 SSE event union입니다.",
         "discriminator": {
           "mapping": {
             "agent_editability_changed": "#/components/schemas/AgentEditabilityChangedEvent",
             "agent_thread_progress": "#/components/schemas/AgentThreadProgressEvent",
             "agent_work_status_changed": "#/components/schemas/AgentWorkStatusChangedEvent",
+            "device_daemon_status_changed": "#/components/schemas/DeviceDaemonStatusEvent",
             "device_runtime_snapshot": "#/components/schemas/DeviceRuntimeSnapshotEvent"
           },
           "propertyName": "event_type"
@@ -1374,6 +1869,9 @@
         "oneOf": [
           {
             "$ref": "#/components/schemas/DeviceRuntimeSnapshotEvent"
+          },
+          {
+            "$ref": "#/components/schemas/DeviceDaemonStatusEvent"
           },
           {
             "$ref": "#/components/schemas/AgentEditabilityChangedEvent"
@@ -1386,7 +1884,17 @@
           }
         ]
       },
+      "ControlDeviceDaemonRequest": {
+        "description": "current-device daemon start/restart/stop command 요청입니다. reason은 audit 표시용이며 화면 표시 정책은 client가 결정합니다.",
+        "properties": {
+          "reason": {
+            "type": "string"
+          }
+        },
+        "type": "object"
+      },
       "CreateAgentConfigurationRequest": {
+        "description": "agent 이름, 공개 범위, runtime, model, profile field를 저장하기 위한 생성 요청입니다.",
         "properties": {
           "description": {
             "maxLength": 160,
@@ -1420,7 +1928,36 @@
         ],
         "type": "object"
       },
+      "DaemonAvailability": {
+        "description": "runtime 설정 화면에서 표시하는 desktop local daemon online/offline 상태입니다.",
+        "enum": [
+          "online",
+          "offline"
+        ],
+        "type": "string"
+      },
+      "DaemonControlAction": {
+        "description": "SaaS가 desktop local daemon에 전달할 수 있는 제어 command 종류입니다.",
+        "enum": [
+          "start",
+          "restart",
+          "stop"
+        ],
+        "type": "string"
+      },
+      "DaemonControlState": {
+        "description": "daemon command가 접수된 뒤 client가 버튼/상태를 표시할 때 사용하는 제어 상태입니다.",
+        "enum": [
+          "idle",
+          "starting",
+          "restarting",
+          "stopping",
+          "failed"
+        ],
+        "type": "string"
+      },
       "DeleteAgentResponse": {
+        "description": "agent 삭제로 정리된 queued/running task 수를 포함한 응답입니다.",
         "properties": {
           "agent_id": {
             "type": "string"
@@ -1443,7 +1980,152 @@
         ],
         "type": "object"
       },
+      "DeviceDaemonCommandResponse": {
+        "description": "daemon command가 SaaS에 접수된 뒤 client가 즉시 버튼과 runtime offline 상태를 갱신할 수 있도록 반환하는 응답입니다.",
+        "properties": {
+          "accepted_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "action": {
+            "$ref": "#/components/schemas/DaemonControlAction"
+          },
+          "availability": {
+            "$ref": "#/components/schemas/DaemonAvailability"
+          },
+          "command_id": {
+            "type": "string"
+          },
+          "control_state": {
+            "$ref": "#/components/schemas/DaemonControlState"
+          },
+          "device_id": {
+            "type": "string"
+          },
+          "message": {
+            "type": "string"
+          },
+          "schema_version": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "schema_version",
+          "command_id",
+          "device_id",
+          "action",
+          "availability",
+          "control_state",
+          "accepted_at",
+          "message"
+        ],
+        "type": "object"
+      },
+      "DeviceDaemonDetailResponse": {
+        "description": "runtime 설정 화면의 daemon 상세 row와 상세 패널을 위한 응답입니다.",
+        "properties": {
+          "daemon": {
+            "$ref": "#/components/schemas/DeviceDaemonRecord"
+          },
+          "schema_version": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "schema_version",
+          "daemon"
+        ],
+        "type": "object"
+      },
+      "DeviceDaemonRecord": {
+        "description": "runtime 설정 화면에서 현재 device의 daemon 상세 표시와 제어 버튼 상태를 구성하는 read model입니다.",
+        "properties": {
+          "availability": {
+            "$ref": "#/components/schemas/DaemonAvailability"
+          },
+          "control_state": {
+            "$ref": "#/components/schemas/DaemonControlState"
+          },
+          "daemon_id": {
+            "type": "string"
+          },
+          "device_display_name": {
+            "type": "string"
+          },
+          "device_id": {
+            "type": "string"
+          },
+          "last_command_action": {
+            "$ref": "#/components/schemas/DaemonControlAction"
+          },
+          "last_command_id": {
+            "type": "string"
+          },
+          "last_command_requested_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "last_seen_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "owner_principal_id": {
+            "type": "string"
+          },
+          "pid": {
+            "type": "integer"
+          },
+          "profile": {
+            "type": "string"
+          },
+          "started_at": {
+            "format": "date-time",
+            "type": "string"
+          },
+          "supported_actions": {
+            "items": {
+              "$ref": "#/components/schemas/DaemonControlAction"
+            },
+            "type": "array"
+          },
+          "uptime_seconds": {
+            "type": "integer"
+          }
+        },
+        "required": [
+          "device_id",
+          "owner_principal_id",
+          "availability",
+          "control_state",
+          "supported_actions"
+        ],
+        "type": "object"
+      },
+      "DeviceDaemonStatusEvent": {
+        "description": "current-device daemon 상세/제어 상태가 변경되었음을 client SSE로 전달하는 event입니다.",
+        "properties": {
+          "daemon": {
+            "$ref": "#/components/schemas/DeviceDaemonRecord"
+          },
+          "event_type": {
+            "enum": [
+              "device_daemon_status_changed"
+            ],
+            "type": "string"
+          },
+          "schema_version": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "event_type",
+          "schema_version",
+          "daemon"
+        ],
+        "type": "object"
+      },
       "DeviceRecord": {
+        "description": "데몬이 연결된 device와 해당 device에서 감지된 runtime 목록입니다.",
         "properties": {
           "daemon_last_seen_at": {
             "format": "date-time",
@@ -1473,6 +2155,7 @@
         "type": "object"
       },
       "DeviceRuntimeListResponse": {
+        "description": "권한이 있는 principal이 볼 수 있는 device runtime 목록 응답입니다.",
         "properties": {
           "devices": {
             "items": {
@@ -1491,6 +2174,7 @@
         "type": "object"
       },
       "DeviceRuntimeSnapshotEvent": {
+        "description": "device runtime 감지 결과가 갱신되었음을 알리는 SSE event입니다.",
         "properties": {
           "device": {
             "$ref": "#/components/schemas/DeviceRecord"
@@ -1513,6 +2197,7 @@
         "type": "object"
       },
       "ErrorEnvelope": {
+        "description": "control-plane API 오류 응답 envelope입니다.",
         "properties": {
           "error": {
             "type": "string"
@@ -1528,7 +2213,7 @@
         "type": "object"
       },
       "RuntimeAvailability": {
-        "description": "Client-visible runtime availability.",
+        "description": "client에 노출되는 runtime online/offline 상태입니다.",
         "enum": [
           "online",
           "offline"
@@ -1536,7 +2221,7 @@
         "type": "string"
       },
       "RuntimeDetectionState": {
-        "description": "Daemon detection result before actor-state reduction.",
+        "description": "actor state reduction 전에 데몬이 감지한 runtime 상태입니다.",
         "enum": [
           "detected",
           "missing",
@@ -1545,7 +2230,7 @@
         "type": "string"
       },
       "RuntimeKind": {
-        "description": "Runtime installed on a device and controlled by the device owner.",
+        "description": "device에 설치되어 device owner가 제어하는 runtime입니다.",
         "enum": [
           "codex",
           "claude_code",
@@ -1555,6 +2240,7 @@
         "type": "string"
       },
       "RuntimeModelRecord": {
+        "description": "runtime이 제공하는 model 후보 record입니다. model_id는 runtime 범위 안에서만 의미가 있는 opaque identifier입니다.",
         "properties": {
           "is_default": {
             "type": "boolean"
@@ -1574,6 +2260,7 @@
         "type": "object"
       },
       "RuntimeRecord": {
+        "description": "device에 설치되었거나 assignment 정책상 offline으로 유지되는 runtime record입니다.",
         "properties": {
           "availability": {
             "$ref": "#/components/schemas/RuntimeAvailability"
@@ -1619,6 +2306,7 @@
         "type": "object"
       },
       "StopAIAgentTaskRequest": {
+        "description": "task thread에서 agent 작업을 중단하기 위한 요청입니다.",
         "properties": {
           "agent_id": {
             "type": "string"
@@ -1630,6 +2318,7 @@
         "type": "object"
       },
       "SubmitAIAgentTaskCommentRequest": {
+        "description": "task thread comment를 agent에게 전달하기 위한 요청입니다.",
         "properties": {
           "agent_id": {
             "type": "string"
@@ -1648,6 +2337,7 @@
         "type": "object"
       },
       "UnassignAIAgentTaskRequest": {
+        "description": "task participant에서 agent를 제거하며 active/queued 작업을 중단하기 위한 요청입니다.",
         "properties": {
           "agent_id": {
             "type": "string"
@@ -1662,6 +2352,7 @@
         "type": "object"
       },
       "UpdateAgentConfigurationRequest": {
+        "description": "agent 이름, 공개 범위, runtime 연결을 수정하기 위한 요청입니다.",
         "properties": {
           "description": {
             "maxLength": 160,
