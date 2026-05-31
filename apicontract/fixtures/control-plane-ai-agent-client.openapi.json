@@ -447,6 +447,137 @@
         ]
       }
     },
+    "/v1/client/ai-agent/tasks/{task_id}/assignment": {
+      "delete": {
+        "operationId": "unassignAIAgentTask",
+        "summary": "Unassign an AI agent from task participants and stop active work",
+        "tags": [
+          "ai_agent_client"
+        ],
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UnassignAIAgentTaskRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIAgentTaskActionResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-riido-auth-scopes": [
+          "ai-agent:write",
+          "task:{task_id}:stop",
+          "task:{task_id}:write"
+        ],
+        "x-riido-rbac-policy": "api_codegen_safety.v1",
+        "x-riido-operation-kind": "command",
+        "x-riido-scenarios": [
+          "unassignAIAgentTask.participant-removal-stops-agent-work"
+        ]
+      },
+      "post": {
+        "operationId": "assignAIAgentTask",
+        "summary": "Assign an AI agent from the task participant dropdown",
+        "tags": [
+          "ai_agent_client"
+        ],
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AssignAIAgentTaskRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIAgentTaskActionResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-riido-auth-scopes": [
+          "ai-agent:write",
+          "task:{task_id}:assign",
+          "task:{task_id}:write"
+        ],
+        "x-riido-rbac-policy": "api_codegen_safety.v1",
+        "x-riido-operation-kind": "command",
+        "x-riido-scenarios": [
+          "assignAIAgentTask.participant-dropdown-assigns-agent",
+          "assignAIAgentTask.only-one-active-assigned-agent-per-task"
+        ]
+      }
+    },
     "/v1/client/ai-agent/tasks/{task_id}/comments": {
       "post": {
         "operationId": "submitAIAgentTaskComment",
@@ -1019,6 +1150,7 @@
         "description": "Typed task-thread status update emitted for Figma task thread flows.",
         "enum": [
           "queued_by_busy_agent",
+          "assignment_started",
           "stopped_by_agent_deleted",
           "stopped_by_user_request",
           "runtime_progress",
@@ -1166,6 +1298,17 @@
           "schema_version",
           "agent_id",
           "work_status"
+        ],
+        "type": "object"
+      },
+      "AssignAIAgentTaskRequest": {
+        "properties": {
+          "agent_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "agent_id"
         ],
         "type": "object"
       },
@@ -1501,6 +1644,20 @@
         "required": [
           "agent_id",
           "body"
+        ],
+        "type": "object"
+      },
+      "UnassignAIAgentTaskRequest": {
+        "properties": {
+          "agent_id": {
+            "type": "string"
+          },
+          "reason": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "agent_id"
         ],
         "type": "object"
       },
