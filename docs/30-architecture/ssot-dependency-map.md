@@ -7,6 +7,15 @@ between Riido SSOT documents and repositories. It does not replace the domain
 SSOTs. It defines the dependency direction between them so duplicated wording is
 either a linked projection or a defect.
 
+The executable projection is
+[`ssot-dependency-map.riido.json`](ssot-dependency-map.riido.json). It keeps
+stable fact ids, owner/downstream repository links, source phrases, and repo
+dependency edges that can be checked deterministically:
+
+```bash
+go run ./tools/ssotdeps verify
+```
+
 ## Rule
 
 One durable fact still has one owner. A downstream SSOT may repeat that fact

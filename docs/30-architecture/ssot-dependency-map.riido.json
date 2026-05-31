@@ -1,0 +1,271 @@
+{
+  "schema_version": "riido-ssot-dependency-map.v1",
+  "id": "ai-agent-setting-ssot-dependency-map",
+  "riido_task": "RIID-4754",
+  "human_doc": "docs/30-architecture/ssot-dependency-map.md",
+  "facts": [
+    {
+      "id": "agent-concept",
+      "fact": "Agent means a task-assignable abstraction of a configured runtime",
+      "human_doc_phrase": "Agent means a task-assignable abstraction of a configured runtime",
+      "source_refs": [
+        {
+          "repo": "riido-contracts",
+          "path": "docs/20-domain/ai-agent-policy.md",
+          "required_phrase": "Agent"
+        }
+      ],
+      "owner": {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/ai-agent-policy.md"
+      },
+      "downstreams": [
+        {
+          "repo": "riido-control-plane",
+          "local_scope": "HTTP handlers, stores, mock data, and generated client projection"
+        },
+        {
+          "repo": "riido-daemon",
+          "local_scope": "runtime execution after assignment"
+        },
+        {
+          "repo": "riido-infra",
+          "local_scope": "deployment requirement interpretation only"
+        }
+      ]
+    },
+    {
+      "id": "agent-editability",
+      "fact": "Agent editability requires zero assigned tasks",
+      "human_doc_phrase": "Agent editability requires zero assigned tasks",
+      "source_refs": [
+        {
+          "repo": "riido-contracts",
+          "path": "docs/20-domain/ai-agent-policy.md",
+          "required_phrase": "An agent is editable only when it has no assigned tasks"
+        }
+      ],
+      "owner": {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/ai-agent-policy.md"
+      },
+      "downstreams": [
+        {
+          "repo": "riido-control-plane",
+          "local_scope": "editability projection and HTTP write rejection"
+        },
+        {
+          "repo": "riido-client",
+          "local_scope": "button state and user-facing affordance"
+        }
+      ]
+    },
+    {
+      "id": "api-projection",
+      "fact": "DSL to IR to OpenAPI projection rules",
+      "human_doc_phrase": "DSL -> IR -> OpenAPI projection rules",
+      "source_refs": [
+        {
+          "repo": "riido-contracts",
+          "path": "docs/20-domain/api-contract-projection.md",
+          "required_phrase": "OpenAPI is not the SSOT"
+        }
+      ],
+      "owner": {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/api-contract-projection.md"
+      },
+      "downstreams": [
+        {
+          "repo": "riido-control-plane",
+          "local_scope": "checked-in OpenAPI copy, mock server behavior, and generated client handoff"
+        },
+        {
+          "repo": "riido-client",
+          "local_scope": "generated TypeScript/React Query consumer surface"
+        }
+      ]
+    },
+    {
+      "id": "instruction",
+      "fact": "instruction is optional client-authored agent guidance text capped at 1000 characters",
+      "human_doc_phrase": "`instruction` is optional client-authored agent guidance text capped at 1000 characters",
+      "source_refs": [
+        {
+          "repo": "riido-contracts",
+          "path": "docs/20-domain/ai-agent-policy.md",
+          "required_phrase": "limit is 1000 characters"
+        }
+      ],
+      "owner": {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/ai-agent-policy.md"
+      },
+      "downstreams": [
+        {
+          "repo": "riido-control-plane",
+          "local_scope": "PATCH validation, save/update behavior, and response projection"
+        },
+        {
+          "repo": "riido-daemon",
+          "local_scope": "assigned run prompt/native-config materialization"
+        },
+        {
+          "repo": "riido-infra",
+          "local_scope": "no Terraform diff unless future secret/media/durability policy appears"
+        }
+      ]
+    },
+    {
+      "id": "profile-thumbnail-url",
+      "fact": "profile_thumbnail_url is an optional HTTPS image URL string",
+      "human_doc_phrase": "`profile_thumbnail_url` is an optional HTTPS image URL string",
+      "source_refs": [
+        {
+          "repo": "riido-contracts",
+          "path": "docs/20-domain/ai-agent-policy.md",
+          "required_phrase": "HTTPS image URL string"
+        }
+      ],
+      "owner": {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/ai-agent-policy.md"
+      },
+      "downstreams": [
+        {
+          "repo": "riido-control-plane",
+          "local_scope": "PATCH validation, save/update behavior, and response projection"
+        },
+        {
+          "repo": "riido-client",
+          "local_scope": "avatar rendering"
+        },
+        {
+          "repo": "riido-daemon",
+          "local_scope": "ignored; not injected into native config"
+        },
+        {
+          "repo": "riido-infra",
+          "local_scope": "no Terraform diff until hosted media storage is required"
+        }
+      ]
+    },
+    {
+      "id": "rbac-vocabulary",
+      "fact": "Admin, owner, public, and private visibility vocabulary",
+      "human_doc_phrase": "Admin/owner/public-private visibility vocabulary",
+      "source_refs": [
+        {
+          "repo": "riido-contracts",
+          "path": "docs/20-domain/ai-agent-policy.md",
+          "required_phrase": "admin may mutate all agents"
+        }
+      ],
+      "owner": {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/ai-agent-policy.md"
+      },
+      "downstreams": [
+        {
+          "repo": "riido-control-plane",
+          "local_scope": "executable RBAC evaluator and request authorization"
+        },
+        {
+          "repo": "riido-client",
+          "local_scope": "visible list and edit/delete affordance"
+        }
+      ]
+    },
+    {
+      "id": "runtime-prompt-consumption",
+      "fact": "Runtime prompt and native-config consumption",
+      "human_doc_phrase": "Runtime prompt/native-config consumption",
+      "source_refs": [
+        {
+          "repo": "riido-daemon",
+          "path": "docs/20-domain/workspace.md",
+          "required_phrase": "agent instruction"
+        }
+      ],
+      "owner": {
+        "repo": "riido-daemon",
+        "path": "docs/20-domain/workspace.md"
+      },
+      "downstreams": [
+        {
+          "repo": "riido-control-plane",
+          "local_scope": "assignment payload carries the instruction value"
+        }
+      ]
+    },
+    {
+      "id": "storage-topology",
+      "fact": "Production deployment and storage topology",
+      "human_doc_phrase": "Production deployment/storage topology",
+      "source_refs": [
+        {
+          "repo": "riido-infra",
+          "path": "docs/architecture/terraform-authoring.md",
+          "required_phrase": "Terraform diff"
+        }
+      ],
+      "owner": {
+        "repo": "riido-infra",
+        "path": "docs/architecture/terraform-authoring.md"
+      },
+      "downstreams": [
+        {
+          "repo": "riido-control-plane",
+          "local_scope": "runtime config only after infra publishes deployment inputs"
+        }
+      ]
+    }
+  ],
+  "repo_dependencies": [
+    {
+      "id": "client-consumes-control-plane-generation",
+      "from_repo": "riido-client",
+      "to_repo": "riido-control-plane",
+      "fact_ids": [
+        "api-projection"
+      ],
+      "local_scope": "Generated React Query code and API history are delivered by the control-plane workflow."
+    },
+    {
+      "id": "control-plane-imports-contracts-policy",
+      "from_repo": "riido-control-plane",
+      "to_repo": "riido-contracts",
+      "fact_ids": [
+        "agent-concept",
+        "agent-editability",
+        "api-projection",
+        "instruction",
+        "profile-thumbnail-url",
+        "rbac-vocabulary"
+      ],
+      "local_scope": "Control-plane executes HTTP, mock, authorization, and generated-client behavior without redefining canonical policy."
+    },
+    {
+      "id": "daemon-imports-contracts-policy",
+      "from_repo": "riido-daemon",
+      "to_repo": "riido-contracts",
+      "fact_ids": [
+        "agent-concept",
+        "instruction",
+        "profile-thumbnail-url"
+      ],
+      "local_scope": "Daemon consumes assigned agent settings only at runtime boundaries."
+    },
+    {
+      "id": "infra-imports-contracts-policy",
+      "from_repo": "riido-infra",
+      "to_repo": "riido-contracts",
+      "fact_ids": [
+        "instruction",
+        "profile-thumbnail-url",
+        "storage-topology"
+      ],
+      "local_scope": "Infra decides whether contract facts require topology, secret, media, or evidence changes."
+    }
+  ]
+}
