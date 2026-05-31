@@ -489,9 +489,8 @@ rules as name, visibility, and runtime binding updates. Creation stamps
 runtime that is present in the authorized selectable device/runtime read model.
 For a non-admin viewer this normally means a viewer-owned runtime; an admin can
 use runtime rows made visible by workspace RBAC. Owner-only local daemon actions
-remain owned by the device/runtime owner. After creation, admin may mutate all
-agents, owner may mutate owned agents, and no agent can be edited while it has
-assigned tasks.
+remain owned by the device/runtime owner. After creation, admin may mutate all agents,
+owner may mutate owned agents, and no agent can be edited while it has assigned tasks.
 
 ### Agent List Timestamps
 
