@@ -101,10 +101,72 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	if len(assignable.Parameters) != 1 || assignable.Parameters[0].Name != "task_id" {
 		t.Fatalf("assignable-agent parameters = %#v", assignable.Parameters)
 	}
+	threads := openAPI.Paths["/v1/client/ai-agent/tasks/{task_id}/threads"]["get"]
+	if threads.RiidoRBAC != "task_thread_cold_collection.v1" {
+		t.Fatalf("task threads rbac = %q", threads.RiidoRBAC)
+	}
+	if len(threads.Parameters) != 1 || threads.Parameters[0].Name != "task_id" {
+		t.Fatalf("task threads parameters = %#v", threads.Parameters)
+	}
 	commentKind := openAPI.Components.Schemas["AgentTaskCommentKind"]
 	commentValues, ok := commentKind["enum"].([]string)
 	if !ok || len(commentValues) == 0 || commentValues[0] != "queued_by_busy_agent" {
 		t.Fatalf("AgentTaskCommentKind enum = %#v", commentKind["enum"])
+	}
+	agentRecord := openAPI.Components.Schemas["AgentClientRecord"]
+	recordProps, ok := agentRecord["properties"].(map[string]any)
+	if !ok {
+		t.Fatalf("AgentClientRecord properties missing: %#v", agentRecord)
+	}
+	thumbnail, ok := recordProps["profile_thumbnail_url"].(map[string]any)
+	if !ok || thumbnail["format"] != "uri" {
+		t.Fatalf("profile_thumbnail_url schema = %#v", recordProps["profile_thumbnail_url"])
+	}
+	description, ok := recordProps["description"].(map[string]any)
+	if !ok || description["maxLength"] != 160 {
+		t.Fatalf("description schema = %#v", recordProps["description"])
+	}
+	instruction, ok := recordProps["instruction"].(map[string]any)
+	if !ok || instruction["maxLength"] != 1000 {
+		t.Fatalf("instruction schema = %#v", recordProps["instruction"])
+	}
+	if _, ok := recordProps["model_id"].(map[string]any); !ok {
+		t.Fatalf("model_id schema missing: %#v", recordProps)
+	}
+	createdAt, ok := recordProps["created_at"].(map[string]any)
+	if !ok || createdAt["format"] != "date-time" {
+		t.Fatalf("created_at schema = %#v", recordProps["created_at"])
+	}
+	updatedAt, ok := recordProps["updated_at"].(map[string]any)
+	if !ok || updatedAt["format"] != "date-time" {
+		t.Fatalf("updated_at schema = %#v", recordProps["updated_at"])
+	}
+	runtimeRecord := openAPI.Components.Schemas["RuntimeRecord"]
+	runtimeProps, ok := runtimeRecord["properties"].(map[string]any)
+	if !ok {
+		t.Fatalf("RuntimeRecord properties missing: %#v", runtimeRecord)
+	}
+	models, ok := runtimeProps["models"].(map[string]any)
+	if !ok || models["type"] != "array" {
+		t.Fatalf("RuntimeRecord models schema = %#v", runtimeProps["models"])
+	}
+	runtimeModel := openAPI.Components.Schemas["RuntimeModelRecord"]
+	modelRequired, ok := runtimeModel["required"].([]string)
+	if !ok || !contains(modelRequired, "model_id") || !contains(modelRequired, "is_default") {
+		t.Fatalf("RuntimeModelRecord required = %#v", runtimeModel["required"])
+	}
+	threadCollection := openAPI.Components.Schemas["AIAgentTaskThreadCollectionResponse"]
+	threadCollectionProps, ok := threadCollection["properties"].(map[string]any)
+	if !ok {
+		t.Fatalf("AIAgentTaskThreadCollectionResponse properties missing: %#v", threadCollection)
+	}
+	if _, ok := threadCollectionProps["active_stream"].(map[string]any); !ok {
+		t.Fatalf("active_stream schema missing: %#v", threadCollectionProps["active_stream"])
+	}
+	progressEvent := openAPI.Components.Schemas["AgentThreadProgressEvent"]
+	progressRequired, ok := progressEvent["required"].([]string)
+	if !ok || !contains(progressRequired, "thread_id") {
+		t.Fatalf("AgentThreadProgressEvent required = %#v", progressEvent["required"])
 	}
 }
 
@@ -150,4 +212,13 @@ func assertFixture(t *testing.T, path string, value any) {
 	if !bytes.Equal(got, want) {
 		t.Fatalf("%s drifted; run go run ./tools/apicontract generate", path)
 	}
+}
+
+func contains(values []string, needle string) bool {
+	for _, value := range values {
+		if value == needle {
+			return true
+		}
+	}
+	return false
 }
