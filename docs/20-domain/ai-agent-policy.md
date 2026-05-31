@@ -41,8 +41,13 @@ Onboarding evidence from `node-id=42-3014` includes:
   the inspected UI shows the starter template rows `리도`, `영실`, `홍도`,
   `지원`, followed by a `직접 설정` row, a pre-selection `다음` button, and a
   right-side preview skeleton
-- `node-id=164-26969`: direct configuration expands into name, description,
-  and instruction fields and scrolls when needed
+- `node-id=164-26969`: direct configuration is annotated `직접 설정 선택 시
+  스크롤`; it dims the starter template rows and expands `직접 설정` into
+  `이름` (`리도` placeholder), `설명` (`문제 정의부터 우선순위, 출시 계획까지
+  정리합니다.` placeholder), and `지침` (`기능 요청을 문제·목표·성공 기준으로
+  재정의하고 PRD, 우선순위, 로드맵, 출시 계획을 구조화합니다. 아이디어는
+  가설로 다루며 불확실한 내용은 [확인 필요]로 표시합니다.` placeholder) fields
+  with a scroll affordance
 - `node-id=164-30192`: workspace selection list shows the selected workspace,
   a scroll affordance, and a `새 워크스페이스` row
 - `node-id=164-27719`: template descriptions show up to two lines before
@@ -132,31 +137,56 @@ restart-in-progress animation. The durable contract facts are:
 
 - the runtime settings route consumes the existing device/runtime read model,
   `GET /v1/client/ai-agent/devices`, plus `device_runtime_snapshot` events
+- `내 기기` and `다른 기기` groups are both composed from ordinary device and
+  runtime records; current-device grouping is a client/session selection, not a
+  new API resource class
 - the agent hover popover uses existing agent profile fields such as `name` and
   `description`; hover timing, layout, and truncation remain client-owned
 - daemon stop/restart controls are local desktop/helper lifecycle controls for
-  the viewer's device, not SaaS client API operations in this contract
+  the viewer's device, not SaaS client API operations in this contract; daemon
+  uptime, PID, daemon ID, profile, and device-name detail fields are local
+  daemon/helper facts unless a later SSOT promotes them into the SaaS read model
 
-Agent settings evidence is `node-id=164-50215` (`에이전트 설정페이지`) and
-`node-id=134-6542` (`에이전트 추가`). The settings annotations call out long
-one-line description UI, row/meatball edit entry points, absolute-time tooltip
-behavior, runtime dropdown, and model dropdown. The add screen shows profile
-photo, name, description, runtime, model, visibility, instruction, and save
-controls. The durable contract facts are:
+Agent settings evidence is `node-id=164-50215` (`에이전트 설정페이지`),
+`node-id=134-6542` (`에이전트 추가`), `node-id=337-24001` (`에이전트`
+settings list), and `node-id=432-35713` (`에이전트` list). The settings
+annotations call out long one-line description UI, row/meatball edit entry
+points, absolute-time tooltip behavior, runtime dropdown, model dropdown,
+required add/edit form controls (`node-id=417-21803` / `node-id=432-35544`),
+instruction input scroll behavior (`node-id=432-23265` / `node-id=432-35595`),
+long device-name dropdown rows (`node-id=I432:22235;6885:15212` /
+`node-id=I432:35655;6885:15212`), delete confirmation modals
+(`node-id=432-37740` / `node-id=432-38683`), and disabled edit menu
+presentation for working agents (`node-id=432-37900` / `node-id=432-38853`).
+The list screens add created/update columns, optional-description rows,
+online/working/offline labels, edit/delete menu entry points, and the
+`node-id=337-24013` rule that the `에이전트 추가` affordance is hidden when no
+member-visible runtime is selectable. The add screen shows profile photo, name,
+description, runtime, model, visibility, instruction, and save controls. The
+durable contract facts are:
 
 - the add screen needs a client-facing `POST /v1/client/ai-agent/agents`
   operation because the existing update/delete operations do not create an
   owned agent record
-- agent rows need a server-authored `updated_at` date-time so clients can render
-  list dates and absolute-time tooltips without inventing timestamps
+- agent rows need server-authored `created_at` and `updated_at` date-times so
+  clients can render list dates and absolute-time tooltips without inventing
+  timestamps
 - profile image, name, description, runtime binding, visibility, and instruction
   are the current editable configuration fields
+- Figma marks name, runtime, model, and visibility as required form controls;
+  API-level required fields are `name`, `runtime_id`, and `visibility`, while
+  omitted `model_id` resolves to the selected runtime's default model
 - runtime dropdown candidates come from existing runtime/device read-model data;
   clients own the dropdown rendering
+- the add affordance visibility is client presentation over the authorized
+  device/runtime read model; hiding the button does not create a separate
+  eligibility endpoint and does not let clients bypass create validation
 - model dropdown candidates come from `RuntimeRecord.models` as runtime-scoped
   catalog records; `model_id` is opaque per runtime and model labels are
   display data, not generated enum values
-- row click, meatball edit entry, description truncation/wrapping, and timestamp
+- row click, meatball edit entry, delete-confirmation modals, disabled edit
+  tooltip/cursor behavior, input scroll limits, long device-name presentation,
+  description truncation/wrapping, status-label copy/color, and timestamp
   formatting are client-owned
 
 The participant dropdown policy shown in the handoff is:
@@ -336,10 +366,13 @@ device/runtime read model and, for the viewer's current desktop device, the
 local daemon/helper control surface.
 
 The control-plane client API exposes device/runtime liveness and attached agent
-metadata; it does not expose a SaaS command that stops or restarts a user's
-daemon. When a desktop client stops its local daemon, the resulting control-plane
-effect is represented through the same runtime liveness policy: affected
-runtimes become `offline` when heartbeat/detection state is missing or expired.
+metadata for both current-device and other-device groups; it does not expose a
+SaaS command that stops or restarts a user's daemon. Current-device daemon
+details such as uptime, PID, daemon ID, profile, and device name are
+desktop-local helper/daemon facts. When a desktop client stops its local daemon,
+the resulting control-plane effect is represented through the same runtime
+liveness policy: affected runtimes become `offline` when heartbeat/detection
+state is missing or expired.
 
 Restart is not a distinct contract operation. A client or helper may compose it
 from local daemon lifecycle controls, while this contract only requires that the
@@ -379,6 +412,14 @@ Selecting a template does not create a separate domain entity. The client still
 creates an agent through `POST /v1/client/ai-agent/agents` with selected runtime,
 visibility, and copied profile fields. Direct configuration uses the same create
 operation without choosing a template.
+
+The direct-configuration expansion from `node-id=164-26969` also does not create
+a separate command or template row. The expanded `이름`, `설명`, and `지침`
+fields project to `CreateAgentConfigurationRequest.name`, `description`, and
+`instruction`. The previously selected runtime continues to supply `runtime_id`,
+and visibility uses the create request policy/default chosen by the client. The
+dimmed starter-template rows, scroll bar, placeholder copy, and expanded-row
+layout are client presentation facts.
 
 If no selectable runtime is online/detected for the viewer, the client skips the
 template-selection and direct-setting steps and shows the no-installed-AI start
@@ -445,20 +486,25 @@ rejected by the control plane before the agent configuration is saved.
 Profile field creation and updates follow the same RBAC and mutation safety
 rules as name, visibility, and runtime binding updates. Creation stamps
 `owner_principal_id` from the authorized principal and binds only a selected
-viewer-owned runtime. After creation, admin may mutate all agents, owner may
-mutate owned agents, and no agent can be edited while it has assigned tasks.
+runtime that is present in the authorized selectable device/runtime read model.
+For a non-admin viewer this normally means a viewer-owned runtime; an admin can
+use runtime rows made visible by workspace RBAC. Owner-only local daemon actions
+remain owned by the device/runtime owner. After creation, admin may mutate all
+agents, owner may mutate owned agents, and no agent can be edited while it has
+assigned tasks.
 
-### Agent Update Timestamp
+### Agent List Timestamps
 
-The agent client record carries a required `updated_at` date-time owned by the
-control plane. It changes when editable agent configuration is saved and is used
-by clients for agent-list update dates and absolute-time tooltips. Clients own
-relative/absolute formatting and tooltip presentation; they must not synthesize
-or rewrite the stored timestamp.
+The agent client record carries required `created_at` and `updated_at`
+date-times owned by the control plane. `created_at` is immutable after agent
+creation. `updated_at` changes when editable agent configuration is saved. Both
+fields are used by clients for agent-list dates and absolute-time tooltips.
+Clients own relative/absolute formatting and tooltip presentation; they must
+not synthesize or rewrite the stored timestamps.
 
-The timestamp is distinct from runtime heartbeat, daemon liveness, and provider
-session progress time. Runtime freshness remains owned by the device/runtime
-read model.
+These timestamps are distinct from runtime heartbeat, daemon liveness, and
+provider session progress time. Runtime freshness remains owned by the
+device/runtime read model.
 
 ### Runtime Model Dropdown
 
@@ -486,6 +532,12 @@ When an agent is created or updated:
 Daemon adapters may accept the selected model value only as part of an
 already-authorized runtime execution request. They do not own the client-facing
 model catalog or dropdown labels.
+
+Figma can still present the model dropdown as a required control because every
+selectable runtime must expose exactly one default model. That default is a
+deterministic selected value, not a new API required-field rule. This avoids a
+contract break for generated clients that omit `model_id` while still letting
+clients render a non-empty required model control.
 
 ### Runtime Output Parsing
 

@@ -65,6 +65,7 @@ webview:
 - `GET /v1/client/ai-agent/tasks/{task_id}/threads`
 - `POST /v1/client/ai-agent/tasks/{task_id}/comments`
 - `POST /v1/client/ai-agent/tasks/{task_id}/stop`
+- `POST /v1/client/ai-agent/agents`
 - `GET /v1/client/ai-agent/agents/{agent_id}/editability`
 - `PATCH /v1/client/ai-agent/agents/{agent_id}`
 - `DELETE /v1/client/ai-agent/agents/{agent_id}`
@@ -92,6 +93,14 @@ template-selection command and does not encode `직접 설정` as an
 next state, and preview skeleton/popover state from the ordered template data
 and local selection state.
 
+Onboarding direct setting from Figma `node-id=164-26969` is projected through
+the existing `POST /v1/client/ai-agent/agents` command. The expanded `이름`,
+`설명`, and `지침` fields map to
+`CreateAgentConfigurationRequest.name`, `description`, and `instruction`.
+`runtime_id`, `visibility`, optional profile image, and optional model selection
+remain the normal create request fields. The DSL does not add a direct-setting
+command or a fifth template record.
+
 Task-thread history is projected as a cold collection at
 `GET /v1/client/ai-agent/tasks/{task_id}/threads`. The response contains
 historical thread records, including visible threads created while the viewer
@@ -105,6 +114,14 @@ Provider install-card hover, external provider installation links, Windows app
 waitlist copy, and marketing-consent presentation are not generated operations
 in this fixture. They require a separate owning SSOT before the DSL adds a
 waitlist or marketing mutation.
+
+Agent list timestamps from Figma `node-id=432-35713` are projected through
+`AgentClientRecord.created_at` and `AgentClientRecord.updated_at`.
+`created_at` is stamped when the agent is created and remains immutable;
+`updated_at` is refreshed when editable agent configuration is saved. Clients
+own shortened date formatting, absolute-time tooltip presentation, row-click /
+meatball edit entry, delete-menu placement, no-description row layout, and
+status-label copy/color.
 
 Agent records also carry optional profile presentation fields:
 `profile_thumbnail_url` is an HTTPS image URL string, `description` is a

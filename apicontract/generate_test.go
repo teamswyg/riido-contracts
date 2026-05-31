@@ -133,6 +133,14 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	if _, ok := recordProps["model_id"].(map[string]any); !ok {
 		t.Fatalf("model_id schema missing: %#v", recordProps)
 	}
+	createdAt, ok := recordProps["created_at"].(map[string]any)
+	if !ok || createdAt["format"] != "date-time" {
+		t.Fatalf("created_at schema = %#v", recordProps["created_at"])
+	}
+	updatedAt, ok := recordProps["updated_at"].(map[string]any)
+	if !ok || updatedAt["format"] != "date-time" {
+		t.Fatalf("updated_at schema = %#v", recordProps["updated_at"])
+	}
 	runtimeRecord := openAPI.Components.Schemas["RuntimeRecord"]
 	runtimeProps, ok := runtimeRecord["properties"].(map[string]any)
 	if !ok {
