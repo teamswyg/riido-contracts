@@ -11,6 +11,7 @@ type DSLDocument struct {
 	ContractID    string         `json:"contract_id"`
 	Context       string         `json:"context"`
 	Service       Service        `json:"service"`
+	ClientModules []ClientModule `json:"client_modules,omitempty"`
 	Resources     []Resource     `json:"resources,omitempty"`
 	Policies      []Policy       `json:"policies,omitempty"`
 	Enums         []Enum         `json:"enums,omitempty"`
@@ -22,6 +23,17 @@ type DSLDocument struct {
 type Service struct {
 	Name          string `json:"name"`
 	SchemaVersion string `json:"schema_version"`
+}
+
+type ClientModule struct {
+	Module      string            `json:"module"`
+	Description string            `json:"description,omitempty"`
+	Namespaces  []ClientNamespace `json:"namespaces,omitempty"`
+}
+
+type ClientNamespace struct {
+	Path        []string `json:"path"`
+	Description string   `json:"description,omitempty"`
 }
 
 type Resource struct {
@@ -69,10 +81,11 @@ type SumTypeVariant struct {
 }
 
 type Schema struct {
-	Name       string     `json:"name"`
-	Type       string     `json:"type"`
-	Required   []string   `json:"required,omitempty"`
-	Properties []Property `json:"properties,omitempty"`
+	Name        string     `json:"name"`
+	Description string     `json:"description,omitempty"`
+	Type        string     `json:"type"`
+	Required    []string   `json:"required,omitempty"`
+	Properties  []Property `json:"properties,omitempty"`
 }
 
 type Property struct {
@@ -95,11 +108,19 @@ type DSLOperation struct {
 	Path        string      `json:"path"`
 	Resource    string      `json:"resource"`
 	Action      string      `json:"action"`
+	Client      *ClientMeta `json:"client,omitempty"`
 	Auth        Auth        `json:"auth"`
 	RBACPolicy  string      `json:"rbac_policy,omitempty"`
 	Request     *MessageRef `json:"request,omitempty"`
 	Response    ResponseRef `json:"response"`
 	Scenarios   []Scenario  `json:"scenarios,omitempty"`
+}
+
+type ClientMeta struct {
+	Module      string   `json:"module"`
+	FacadePath  []string `json:"facade_path"`
+	CacheTag    string   `json:"cache_tag,omitempty"`
+	Invalidates []string `json:"invalidates,omitempty"`
 }
 
 type Auth struct {
@@ -126,18 +147,19 @@ type Scenario struct {
 }
 
 type IRDocument struct {
-	SchemaVersion       string        `json:"schema_version"`
-	ContractID          string        `json:"contract_id"`
-	SourceSchemaVersion string        `json:"source_schema_version"`
-	Context             string        `json:"context"`
-	Service             Service       `json:"service"`
-	Resources           []Resource    `json:"resources,omitempty"`
-	Policies            []Policy      `json:"policies,omitempty"`
-	Enums               []Enum        `json:"enums,omitempty"`
-	SumTypes            []SumType     `json:"sum_types,omitempty"`
-	Components          []IRComponent `json:"components"`
-	Operations          []IROperation `json:"operations"`
-	Scenarios           []IRScenario  `json:"scenarios,omitempty"`
+	SchemaVersion       string         `json:"schema_version"`
+	ContractID          string         `json:"contract_id"`
+	SourceSchemaVersion string         `json:"source_schema_version"`
+	Context             string         `json:"context"`
+	Service             Service        `json:"service"`
+	ClientModules       []ClientModule `json:"client_modules,omitempty"`
+	Resources           []Resource     `json:"resources,omitempty"`
+	Policies            []Policy       `json:"policies,omitempty"`
+	Enums               []Enum         `json:"enums,omitempty"`
+	SumTypes            []SumType      `json:"sum_types,omitempty"`
+	Components          []IRComponent  `json:"components"`
+	Operations          []IROperation  `json:"operations"`
+	Scenarios           []IRScenario   `json:"scenarios,omitempty"`
 }
 
 type IRComponent struct {
@@ -152,6 +174,7 @@ type IROperation struct {
 	Path        string      `json:"path"`
 	Resource    string      `json:"resource"`
 	Action      string      `json:"action"`
+	Client      *ClientMeta `json:"client,omitempty"`
 	Summary     string      `json:"summary"`
 	Auth        Auth        `json:"auth"`
 	RBACPolicy  string      `json:"rbac_policy,omitempty"`
@@ -170,11 +193,12 @@ type IRScenario struct {
 }
 
 type OpenAPISpec struct {
-	OpenAPI    string                 `json:"openapi"`
-	Info       OpenAPIInfo            `json:"info"`
-	Tags       []OpenAPITag           `json:"tags,omitempty"`
-	Paths      map[string]OpenAPIPath `json:"paths"`
-	Components OpenAPIComponents      `json:"components"`
+	OpenAPI            string                 `json:"openapi"`
+	Info               OpenAPIInfo            `json:"info"`
+	Tags               []OpenAPITag           `json:"tags,omitempty"`
+	RiidoClientModules []ClientModule         `json:"x-riido-client-modules,omitempty"`
+	Paths              map[string]OpenAPIPath `json:"paths"`
+	Components         OpenAPIComponents      `json:"components"`
 }
 
 type OpenAPIInfo struct {
@@ -199,6 +223,7 @@ type OpenAPIOperation struct {
 	RiidoScopes    []string                   `json:"x-riido-auth-scopes,omitempty"`
 	RiidoRBAC      string                     `json:"x-riido-rbac-policy,omitempty"`
 	RiidoKind      string                     `json:"x-riido-operation-kind,omitempty"`
+	RiidoClient    *ClientMeta                `json:"x-riido-client,omitempty"`
 	RiidoScenarios []string                   `json:"x-riido-scenarios,omitempty"`
 }
 

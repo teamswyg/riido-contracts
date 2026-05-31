@@ -22,6 +22,7 @@ func GenerateIR(dsl DSLDocument) (IRDocument, error) {
 		SourceSchemaVersion: dsl.SchemaVersion,
 		Context:             dsl.Context,
 		Service:             dsl.Service,
+		ClientModules:       copyClientModules(dsl.ClientModules),
 		Resources:           append([]Resource(nil), dsl.Resources...),
 		Policies:            append([]Policy(nil), dsl.Policies...),
 		Enums:               append([]Enum(nil), dsl.Enums...),
@@ -53,6 +54,7 @@ func GenerateIR(dsl DSLDocument) (IRDocument, error) {
 			Path:        op.Path,
 			Resource:    op.Resource,
 			Action:      op.Action,
+			Client:      copyClientMeta(op.Client),
 			Summary:     op.Summary,
 			Auth:        op.Auth,
 			RBACPolicy:  op.RBACPolicy,
@@ -98,6 +100,7 @@ func GenerateOpenAPI(ir IRDocument) (OpenAPISpec, error) {
 			RiidoScopes:    append([]string(nil), op.Auth.Scopes...),
 			RiidoRBAC:      op.RBACPolicy,
 			RiidoKind:      op.Kind,
+			RiidoClient:    copyClientMeta(op.Client),
 			RiidoScenarios: append([]string(nil), op.ScenarioIDs...),
 		}
 		if op.Request != nil {
@@ -114,8 +117,9 @@ func GenerateOpenAPI(ir IRDocument) (OpenAPISpec, error) {
 			Title:   ir.ContractID,
 			Version: ir.Service.SchemaVersion,
 		},
-		Tags:  []OpenAPITag{{Name: ir.Context}},
-		Paths: paths,
+		Tags:               []OpenAPITag{{Name: ir.Context}},
+		RiidoClientModules: copyClientModules(ir.ClientModules),
+		Paths:              paths,
 		Components: OpenAPIComponents{
 			Schemas: components,
 			SecuritySchemes: map[string]OpenAPISecurityScheme{
@@ -146,6 +150,10 @@ func validateDSL(dsl DSLDocument) error {
 		if strings.TrimSpace(value) == "" {
 			return fmt.Errorf("apicontract: %s is required", name)
 		}
+	}
+	clientModules, err := validateClientModules(dsl.ClientModules)
+	if err != nil {
+		return err
 	}
 	components := map[string]struct{}{}
 	for _, enum := range dsl.Enums {
@@ -231,6 +239,7 @@ func validateDSL(dsl DSLDocument) error {
 		}
 	}
 	ops := map[string]struct{}{}
+	cacheTags := map[string]string{}
 	for _, op := range dsl.Operations {
 		if strings.TrimSpace(op.OperationID) == "" {
 			return errors.New("apicontract: operation_id is required")
@@ -260,6 +269,34 @@ func validateDSL(dsl DSLDocument) error {
 		if op.Request != nil {
 			if _, ok := components[op.Request.Ref]; !ok {
 				return fmt.Errorf("apicontract: operation %q request schema %q is missing", op.OperationID, op.Request.Ref)
+			}
+		}
+		if len(clientModules) > 0 {
+			if op.Client == nil {
+				return fmt.Errorf("apicontract: operation %q missing client metadata", op.OperationID)
+			}
+			if err := validateClientMeta(op.OperationID, strings.ToUpper(op.Method), *op.Client, clientModules); err != nil {
+				return err
+			}
+			if strings.EqualFold(op.Method, "GET") {
+				if prev, exists := cacheTags[op.Client.CacheTag]; exists {
+					return fmt.Errorf("apicontract: duplicate client cache_tag %q on %s and %s", op.Client.CacheTag, prev, op.OperationID)
+				}
+				cacheTags[op.Client.CacheTag] = op.OperationID
+			}
+		} else if op.Client != nil {
+			return fmt.Errorf("apicontract: operation %q declares client metadata without client_modules", op.OperationID)
+		}
+	}
+	if len(clientModules) > 0 {
+		for _, op := range dsl.Operations {
+			if op.Client == nil {
+				continue
+			}
+			for _, tag := range op.Client.Invalidates {
+				if _, ok := cacheTags[tag]; !ok {
+					return fmt.Errorf("apicontract: operation %q invalidates unknown client cache_tag %q", op.OperationID, tag)
+				}
 			}
 		}
 	}
@@ -301,6 +338,77 @@ func validateIR(ir IRDocument) error {
 				return fmt.Errorf("apicontract: IR operation %q request schema %q is missing", op.OperationID, op.Request.Ref)
 			}
 		}
+	}
+	if len(ir.ClientModules) > 0 {
+		clientModules, err := validateClientModules(ir.ClientModules)
+		if err != nil {
+			return err
+		}
+		cacheTags := map[string]string{}
+		for _, op := range ir.Operations {
+			if op.Client == nil {
+				return fmt.Errorf("apicontract: IR operation %q missing client metadata", op.OperationID)
+			}
+			if err := validateClientMeta(op.OperationID, op.Method, *op.Client, clientModules); err != nil {
+				return err
+			}
+			if strings.EqualFold(op.Method, "GET") {
+				if prev, exists := cacheTags[op.Client.CacheTag]; exists {
+					return fmt.Errorf("apicontract: duplicate IR client cache_tag %q on %s and %s", op.Client.CacheTag, prev, op.OperationID)
+				}
+				cacheTags[op.Client.CacheTag] = op.OperationID
+			}
+		}
+		for _, op := range ir.Operations {
+			for _, tag := range op.Client.Invalidates {
+				if _, ok := cacheTags[tag]; !ok {
+					return fmt.Errorf("apicontract: IR operation %q invalidates unknown client cache_tag %q", op.OperationID, tag)
+				}
+			}
+		}
+	}
+	return nil
+}
+
+func validateClientModules(modules []ClientModule) (map[string]struct{}, error) {
+	out := map[string]struct{}{}
+	for _, module := range modules {
+		name := strings.TrimSpace(module.Module)
+		if name == "" {
+			return nil, errors.New("apicontract: client module name is required")
+		}
+		if _, exists := out[name]; exists {
+			return nil, fmt.Errorf("apicontract: duplicate client module %q", name)
+		}
+		out[name] = struct{}{}
+		for _, namespace := range module.Namespaces {
+			if len(namespace.Path) == 0 {
+				return nil, fmt.Errorf("apicontract: client module %q has empty namespace path", name)
+			}
+			for _, segment := range namespace.Path {
+				if strings.TrimSpace(segment) == "" {
+					return nil, fmt.Errorf("apicontract: client module %q has blank namespace path segment", name)
+				}
+			}
+		}
+	}
+	return out, nil
+}
+
+func validateClientMeta(operationID, method string, meta ClientMeta, modules map[string]struct{}) error {
+	if _, ok := modules[meta.Module]; !ok {
+		return fmt.Errorf("apicontract: operation %q references unknown client module %q", operationID, meta.Module)
+	}
+	if len(meta.FacadePath) == 0 {
+		return fmt.Errorf("apicontract: operation %q missing client facade_path", operationID)
+	}
+	for _, segment := range meta.FacadePath {
+		if strings.TrimSpace(segment) == "" {
+			return fmt.Errorf("apicontract: operation %q has blank client facade_path segment", operationID)
+		}
+	}
+	if strings.EqualFold(method, "GET") && strings.TrimSpace(meta.CacheTag) == "" {
+		return fmt.Errorf("apicontract: operation %q missing client cache_tag", operationID)
 	}
 	return nil
 }
@@ -344,6 +452,8 @@ func statusDescription(status int) string {
 		return "OK"
 	case 201:
 		return "Created"
+	case 202:
+		return "Accepted"
 	default:
 		return "response"
 	}
@@ -361,6 +471,9 @@ func refSchema(name string) map[string]any {
 
 func schemaToOpenAPI(schema Schema) map[string]any {
 	out := map[string]any{"type": schema.Type}
+	if schema.Description != "" {
+		out["description"] = schema.Description
+	}
 	if len(schema.Required) > 0 {
 		out["required"] = append([]string(nil), schema.Required...)
 	}
@@ -448,6 +561,38 @@ func pathParameters(path string) []OpenAPIParameter {
 	}
 	sort.Slice(params, func(i, j int) bool { return params[i].Name < params[j].Name })
 	return params
+}
+
+func copyClientModules(modules []ClientModule) []ClientModule {
+	if len(modules) == 0 {
+		return nil
+	}
+	out := make([]ClientModule, 0, len(modules))
+	for _, module := range modules {
+		copied := ClientModule{
+			Module:      module.Module,
+			Description: module.Description,
+			Namespaces:  make([]ClientNamespace, 0, len(module.Namespaces)),
+		}
+		for _, namespace := range module.Namespaces {
+			copied.Namespaces = append(copied.Namespaces, ClientNamespace{
+				Path:        append([]string(nil), namespace.Path...),
+				Description: namespace.Description,
+			})
+		}
+		out = append(out, copied)
+	}
+	return out
+}
+
+func copyClientMeta(meta *ClientMeta) *ClientMeta {
+	if meta == nil {
+		return nil
+	}
+	out := *meta
+	out.FacadePath = append([]string(nil), meta.FacadePath...)
+	out.Invalidates = append([]string(nil), meta.Invalidates...)
+	return &out
 }
 
 func slugID(value string) string {

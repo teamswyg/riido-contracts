@@ -70,7 +70,7 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GenerateIR: %v", err)
 	}
-	if got, want := len(ir.Enums), 9; got != want {
+	if got, want := len(ir.Enums), 12; got != want {
 		t.Fatalf("IR enums = %d, want %d", got, want)
 	}
 	if got, want := len(ir.SumTypes), 1; got != want {
@@ -92,6 +92,20 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	streamOperation := openAPI.Paths["/v1/client/ai-agent/events"]["get"]
 	if _, ok := streamOperation.Responses["200"].Content["text/event-stream"]; !ok {
 		t.Fatalf("stream response content = %#v", streamOperation.Responses["200"].Content)
+	}
+	if len(openAPI.RiidoClientModules) != 1 || openAPI.RiidoClientModules[0].Module != "aiAgent" {
+		t.Fatalf("client modules = %#v", openAPI.RiidoClientModules)
+	}
+	daemonDetail := openAPI.Paths["/v1/client/ai-agent/devices/{device_id}/daemon"]["get"]
+	if daemonDetail.RiidoClient == nil || daemonDetail.RiidoClient.CacheTag != "aiAgent.devices.daemon" {
+		t.Fatalf("daemon detail client metadata = %#v", daemonDetail.RiidoClient)
+	}
+	if len(daemonDetail.Parameters) != 1 || daemonDetail.Parameters[0].Name != "device_id" {
+		t.Fatalf("daemon detail parameters = %#v", daemonDetail.Parameters)
+	}
+	daemonStop := openAPI.Paths["/v1/client/ai-agent/devices/{device_id}/daemon/stop"]["post"]
+	if daemonStop.RiidoClient == nil || !contains(daemonStop.RiidoClient.Invalidates, "aiAgent.devices.runtimes") {
+		t.Fatalf("daemon stop client metadata = %#v", daemonStop.RiidoClient)
 	}
 	editability := openAPI.Paths["/v1/client/ai-agent/agents/{agent_id}/editability"]["get"]
 	if editability.RiidoRBAC != "agent_mutation_safety.v1" {
@@ -149,6 +163,19 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	models, ok := runtimeProps["models"].(map[string]any)
 	if !ok || models["type"] != "array" {
 		t.Fatalf("RuntimeRecord models schema = %#v", runtimeProps["models"])
+	}
+	daemonRecord := openAPI.Components.Schemas["DeviceDaemonRecord"]
+	daemonRequired, ok := daemonRecord["required"].([]string)
+	if !ok || !contains(daemonRequired, "supported_actions") {
+		t.Fatalf("DeviceDaemonRecord required = %#v", daemonRecord["required"])
+	}
+	daemonStatusEvent := openAPI.Components.Schemas["DeviceDaemonStatusEvent"]
+	daemonStatusProps, ok := daemonStatusEvent["properties"].(map[string]any)
+	if !ok {
+		t.Fatalf("DeviceDaemonStatusEvent properties missing: %#v", daemonStatusEvent)
+	}
+	if _, ok := daemonStatusProps["daemon"].(map[string]any); !ok {
+		t.Fatalf("DeviceDaemonStatusEvent daemon schema missing: %#v", daemonStatusProps)
 	}
 	runtimeModel := openAPI.Components.Schemas["RuntimeModelRecord"]
 	modelRequired, ok := runtimeModel["required"].([]string)

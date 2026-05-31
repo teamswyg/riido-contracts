@@ -136,16 +136,22 @@ Dev Mode annotations call out an agent hover popover, a daemon stop modal, and a
 restart-in-progress animation. The durable contract facts are:
 
 - the runtime settings route consumes the existing device/runtime read model,
-  `GET /v1/client/ai-agent/devices`, plus `device_runtime_snapshot` events
+  `GET /v1/client/ai-agent/devices`, the current-device daemon detail endpoint,
+  daemon command endpoints, plus device/runtime and daemon status events
 - `내 기기` and `다른 기기` groups are both composed from ordinary device and
   runtime records; current-device grouping is a client/session selection, not a
   new API resource class
 - the agent hover popover uses existing agent profile fields such as `name` and
   `description`; hover timing, layout, and truncation remain client-owned
-- daemon stop/restart controls are local desktop/helper lifecycle controls for
-  the viewer's device, not SaaS client API operations in this contract; daemon
-  uptime, PID, daemon ID, profile, and device-name detail fields are local
-  daemon/helper facts unless a later SSOT promotes them into the SaaS read model
+- current-device daemon details are SaaS read-model facts exposed through
+  `riido.aiAgent.devices.daemon.details`; these include online/offline status,
+  uptime, PID, daemon ID, profile, device name, and control state
+- current-device daemon start/restart/stop are SaaS command requests exposed
+  through generated client endpoints under `riido.aiAgent.devices.daemon.*`;
+  the desktop daemon still executes local lifecycle behavior after reading the
+  accepted command
+- daemon stop acceptance makes that device's runtimes client-visible as
+  `offline` through the runtime read model and stream updates
 
 Agent settings evidence is `node-id=164-50215` (`에이전트 설정페이지`),
 `node-id=134-6542` (`에이전트 추가`), `node-id=337-24001` (`에이전트`
@@ -312,10 +318,11 @@ For agent settings specifically:
   Agent operations.
 - Figma runtime settings annotations (`node-id=162-23090`) can cite runtime
   liveness, agent hover, daemon stop modal, and restart animation behavior. This
-  repo owns only the device/runtime read-model policy and the fact that a local
-  daemon stop eventually makes affected runtimes offline through the existing
-  liveness policy. Client hover/modal/animation behavior and local helper
-  command composition are downstream facts.
+  repo owns the device/runtime read-model policy, current-device daemon detail
+  projection, current-device daemon start/restart/stop command contract, and the
+  fact that a daemon stop makes affected runtimes offline through the existing
+  liveness policy. Client hover/modal/animation behavior is downstream
+  presentation.
 - Figma runtime settings empty-state annotations (`node-id=275-22731`) can cite
   provider install cards, hover states, Windows app waitlist copy, and marketing
   consent presentation. This repo owns only the device/runtime liveness data
@@ -380,22 +387,38 @@ Detection errors or missed detections are client-visible as `offline`.
 ### Runtime Settings
 
 The runtime settings surface is a client composition over the control-plane
-device/runtime read model and, for the viewer's current desktop device, the
-local daemon/helper control surface.
+device/runtime read model and the current-device daemon read/command model.
 
-The control-plane client API exposes device/runtime liveness and attached agent
-metadata for both current-device and other-device groups; it does not expose a
-SaaS command that stops or restarts a user's daemon. Current-device daemon
-details such as uptime, PID, daemon ID, profile, and device name are
-desktop-local helper/daemon facts. When a desktop client stops its local daemon,
-the resulting control-plane effect is represented through the same runtime
-liveness policy: affected runtimes become `offline` when heartbeat/detection
-state is missing or expired.
+The control-plane client API exposes device/runtime liveness and attached-agent
+metadata for both current-device and other-device groups through
+`GET /v1/client/ai-agent/devices`. The runtime settings screen reads the
+viewer-owned current device's daemon detail through
+`GET /v1/client/ai-agent/devices/{device_id}/daemon`; this response owns the
+SaaS-visible daemon facts needed by the settings page: online/offline status,
+uptime, PID, daemon ID, profile, device name, supported actions, and current
+control state.
 
-Restart is not a distinct contract operation. A client or helper may compose it
-from local daemon lifecycle controls, while this contract only requires that the
-subsequent device/runtime read model converges to the current online/offline
-state.
+Start, restart, and stop are distinct SaaS command requests:
+
+- `POST /v1/client/ai-agent/devices/{device_id}/daemon/start`
+- `POST /v1/client/ai-agent/devices/{device_id}/daemon/restart`
+- `POST /v1/client/ai-agent/devices/{device_id}/daemon/stop`
+
+Those commands are not direct local socket calls from the frontend. The client
+asks the SaaS control plane, the daemon reads the accepted command, and the
+daemon performs local lifecycle control. The generated frontend path is
+`riido.aiAgent.devices.daemon.details/start/restart/stop`.
+
+Daemon detail and daemon commands follow the device-owner boundary. A workspace
+admin may have broad agent authority, but they do not gain the right to inspect
+or control another user's desktop local daemon. Other-device groups can still be
+composed from `DeviceRecord`/`RuntimeRecord` data according to workspace read
+policy.
+
+When a stop command is accepted, affected runtimes on that device become
+client-visible as `offline` through the same runtime liveness read model. The
+stream also includes typed daemon status changes so clients can render
+`재시작 중`, `중지`, or `시작` affordances without polling the local daemon.
 
 ### Agent Onboarding
 
