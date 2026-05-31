@@ -102,7 +102,9 @@ surfaces:
 - AI Agent assignment is available only on Riido task and subtask surfaces.
 - Existing Riido AI property filling must not recommend or select agents.
 - Agent mention is not a supported command surface.
-- Device/runtime actions are owner-only.
+- Device/runtime actions are mediated by the agent access model: public agents
+  delegate indirect daemon/runtime execution to workspace members, while private
+  agents delegate it only to admins and owners.
 
 The durable contract fact is the target scope, not the page drawing. The
 `task_id` path parameter in AI Agent task APIs means a Riido task or subtask id.
@@ -136,18 +138,18 @@ Dev Mode annotations call out an agent hover popover, a daemon stop modal, and a
 restart-in-progress animation. The durable contract facts are:
 
 - the runtime settings route consumes the existing device/runtime read model,
-  `GET /v1/client/ai-agent/devices`, the current-device daemon detail endpoint,
+  `GET /v1/client/ai-agent/devices`, the agent-bound daemon detail endpoint,
   daemon command endpoints, plus device/runtime and daemon status events
 - `내 기기` and `다른 기기` groups are both composed from ordinary device and
   runtime records; current-device grouping is a client/session selection, not a
   new API resource class
 - the agent hover popover uses existing agent profile fields such as `name` and
   `description`; hover timing, layout, and truncation remain client-owned
-- current-device daemon details are SaaS read-model facts exposed through
-  `riido.aiAgent.devices.daemon.details`; these include online/offline status,
+- daemon details are SaaS read-model facts exposed through
+  `riido.aiAgent.agents.daemon.details`; these include online/offline status,
   uptime, PID, daemon ID, profile, device name, and control state
-- current-device daemon start/restart/stop are SaaS command requests exposed
-  through generated client endpoints under `riido.aiAgent.devices.daemon.*`;
+- daemon start/restart/stop are SaaS command requests exposed through generated
+  client endpoints under `riido.aiAgent.agents.daemon.*`;
   the desktop daemon still executes local lifecycle behavior after reading the
   accepted command
 - daemon stop acceptance makes that device's runtimes client-visible as
@@ -308,18 +310,18 @@ For agent settings specifically:
   overflow behavior, but this repo owns only AI Agent visibility and owned-first
   agent ordering. Member sorting and visual dropdown constraints are client
   surface facts.
-- Figma additional planning section (`node-id=153-15935`) can cite owner-only
+- Figma additional planning section (`node-id=153-15935`) can cite agent-bound
   device/runtime actions, no agent recommendation in existing AI property
   filling, no agent mention command surface, and task/subtask-only assignment.
-  This repo owns only the target-scope contract fact: AI Agent assignment,
-  AI-Agent-directed comments, task-thread reads, and stop actions are generated
-  for task or subtask ids. Project, milestone, intake, property-filling, and
-  mention surfaces need a separate owning SSOT before they become generated AI
-  Agent operations.
+  This repo owns the target-scope contract fact and the access fact that public
+  agents delegate indirect daemon/runtime execution to workspace members while
+  private agents delegate it only to admins and owners. Project, milestone,
+  intake, property-filling, and mention surfaces need a separate owning SSOT
+  before they become generated AI Agent operations.
 - Figma runtime settings annotations (`node-id=162-23090`) can cite runtime
   liveness, agent hover, daemon stop modal, and restart animation behavior. This
-  repo owns the device/runtime read-model policy, current-device daemon detail
-  projection, current-device daemon start/restart/stop command contract, and the
+  repo owns the device/runtime read-model policy, agent-bound daemon detail
+  projection, agent-bound daemon start/restart/stop command contract, and the
   fact that a daemon stop makes affected runtimes offline through the existing
   liveness policy. Client hover/modal/animation behavior is downstream
   presentation.
@@ -387,33 +389,32 @@ Detection errors or missed detections are client-visible as `offline`.
 ### Runtime Settings
 
 The runtime settings surface is a client composition over the control-plane
-device/runtime read model and the current-device daemon read/command model.
+device/runtime read model and the agent-bound daemon read/command model.
 
 The control-plane client API exposes device/runtime liveness and attached-agent
-metadata for both current-device and other-device groups through
-`GET /v1/client/ai-agent/devices`. The runtime settings screen reads the
-viewer-owned current device's daemon detail through
-`GET /v1/client/ai-agent/devices/{device_id}/daemon`; this response owns the
-SaaS-visible daemon facts needed by the settings page: online/offline status,
-uptime, PID, daemon ID, profile, device name, supported actions, and current
-control state.
+metadata for current-device, other-device, and agent-accessible groups through
+`GET /v1/client/ai-agent/devices`. The runtime settings screen reads daemon
+detail through `GET /v1/client/ai-agent/agents/{agent_id}/daemon`; this
+response owns the SaaS-visible daemon facts needed by the settings page:
+online/offline status, uptime, PID, daemon ID, profile, device name, supported
+actions, and current control state.
 
 Start, restart, and stop are distinct SaaS command requests:
 
-- `POST /v1/client/ai-agent/devices/{device_id}/daemon/start`
-- `POST /v1/client/ai-agent/devices/{device_id}/daemon/restart`
-- `POST /v1/client/ai-agent/devices/{device_id}/daemon/stop`
+- `POST /v1/client/ai-agent/agents/{agent_id}/daemon/start`
+- `POST /v1/client/ai-agent/agents/{agent_id}/daemon/restart`
+- `POST /v1/client/ai-agent/agents/{agent_id}/daemon/stop`
 
 Those commands are not direct local socket calls from the frontend. The client
 asks the SaaS control plane, the daemon reads the accepted command, and the
 daemon performs local lifecycle control. The generated frontend path is
-`riido.aiAgent.devices.daemon.details/start/restart/stop`.
+`riido.aiAgent.agents.daemon.details/start/restart/stop`.
 
-Daemon detail and daemon commands follow the device-owner boundary. A workspace
-admin may have broad agent authority, but they do not gain the right to inspect
-or control another user's desktop local daemon. Other-device groups can still be
-composed from `DeviceRecord`/`RuntimeRecord` data according to workspace read
-policy.
+Daemon detail and daemon commands follow the agent access boundary. Publishing
+an agent as public delegates indirect daemon/runtime execution and daemon
+command requests to workspace members for that agent. Keeping an agent private
+limits the same path to workspace admins and the agent owner. Knowing a
+`device_id` alone is never enough to inspect or control a daemon.
 
 When a stop command is accepted, affected runtimes on that device become
 client-visible as `offline` through the same runtime liveness read model. The
@@ -528,9 +529,10 @@ Profile field creation and updates follow the same RBAC and mutation safety
 rules as name, visibility, and runtime binding updates. Creation stamps
 `owner_principal_id` from the authorized principal and binds only a selected
 runtime that is present in the authorized selectable device/runtime read model.
-For a non-admin viewer this normally means a viewer-owned runtime; an admin can
-use runtime rows made visible by workspace RBAC. Owner-only local daemon actions
-remain owned by the device/runtime owner. After creation, admin may mutate all agents,
+For a non-admin viewer this normally means a viewer-owned runtime or a runtime
+made available through a public agent; an admin can use runtime rows made
+visible by workspace RBAC. Local daemon detail/control follows the agent access
+boundary, not a standalone device-owner-only rule. After creation, admin may mutate all agents,
 owner may mutate owned agents, and no agent can be edited while it has assigned tasks.
 
 ### Agent List Timestamps
