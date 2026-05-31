@@ -96,14 +96,14 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	if len(openAPI.RiidoClientModules) != 1 || openAPI.RiidoClientModules[0].Module != "aiAgent" {
 		t.Fatalf("client modules = %#v", openAPI.RiidoClientModules)
 	}
-	daemonDetail := openAPI.Paths["/v1/client/ai-agent/devices/{device_id}/daemon"]["get"]
-	if daemonDetail.RiidoClient == nil || daemonDetail.RiidoClient.CacheTag != "aiAgent.devices.daemon" {
+	daemonDetail := openAPI.Paths["/v1/client/ai-agent/agents/{agent_id}/daemon"]["get"]
+	if daemonDetail.RiidoClient == nil || daemonDetail.RiidoClient.CacheTag != "aiAgent.agents.daemon" {
 		t.Fatalf("daemon detail client metadata = %#v", daemonDetail.RiidoClient)
 	}
-	if len(daemonDetail.Parameters) != 1 || daemonDetail.Parameters[0].Name != "device_id" {
+	if len(daemonDetail.Parameters) != 1 || daemonDetail.Parameters[0].Name != "agent_id" {
 		t.Fatalf("daemon detail parameters = %#v", daemonDetail.Parameters)
 	}
-	daemonStop := openAPI.Paths["/v1/client/ai-agent/devices/{device_id}/daemon/stop"]["post"]
+	daemonStop := openAPI.Paths["/v1/client/ai-agent/agents/{agent_id}/daemon/stop"]["post"]
 	if daemonStop.RiidoClient == nil || !contains(daemonStop.RiidoClient.Invalidates, "aiAgent.devices.runtimes") {
 		t.Fatalf("daemon stop client metadata = %#v", daemonStop.RiidoClient)
 	}
