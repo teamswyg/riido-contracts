@@ -34,18 +34,51 @@ UI dev handoff page adds Ready-for-dev surfaces for:
 
 Onboarding evidence from `node-id=42-3014` includes:
 
-- `node-id=137-6746`: choose the runtime used to create the first agent
-- `node-id=138-7389`: choose an agent template or choose direct configuration
-- `node-id=164-26969`: direct configuration expands into name, description,
-  and instruction fields and scrolls when needed
+- `node-id=137-6746`: choose the runtime used to create the first agent; the
+  inspected UI shows Claude Code and Codex as `감지됨` selectable rows, while
+  OpenClaw and Cursor Agent are `감지 안 됨` non-selectable rows
+- `node-id=138-7389`: choose an agent template or choose direct configuration;
+  the inspected UI shows the starter template rows `리도`, `영실`, `홍도`,
+  `지원`, followed by a `직접 설정` row, a pre-selection `다음` button, and a
+  right-side preview skeleton
+- `node-id=164-26969`: direct configuration is annotated `직접 설정 선택 시
+  스크롤`; it dims the starter template rows and expands `직접 설정` into
+  `이름` (`리도` placeholder), `설명` (`문제 정의부터 우선순위, 출시 계획까지
+  정리합니다.` placeholder), and `지침` (`기능 요청을 문제·목표·성공 기준으로
+  재정의하고 PRD, 우선순위, 로드맵, 출시 계획을 구조화합니다. 아이디어는
+  가설로 다루며 불확실한 내용은 [확인 필요]로 표시합니다.` placeholder) fields
+  with a scroll affordance
+- `node-id=164-30192`: workspace selection list shows the selected workspace,
+  a scroll affordance, and a `새 워크스페이스` row
 - `node-id=164-27719`: template descriptions show up to two lines before
   ellipsis; this is client presentation only
 - `node-id=164-30206`: if no selectable AI runtime is installed/detected, the
-  flow skips later template-selection steps and shows the start state
+  flow shows the no-runtime start state with Claude Code, Codex, OpenClaw, and
+  Cursor Agent all marked `연결 안 됨` and a `시작하기` CTA
 
 The durable contract fact is that onboarding agent templates are API data, not
 frontend hard-coded business copy. Runtime/no-runtime branching is still client
-composition over the existing device/runtime read model.
+composition over the existing device/runtime read model. Workspace list
+selection and the `새 워크스페이스` row are workspace/team/client product
+surfaces; they do not add an AI Agent generated operation by themselves.
+The all-disconnected provider list and start CTA are also presentation derived
+from device/runtime liveness; they do not create provider-install or
+provider-start commands in this contract.
+
+Web onboarding evidence is `node-id=236-29749` (`웹 온보딩`). Its frames and
+Dev Mode annotations cover macOS app download CTA, sign-up entry points, terms
+consent, email sign-up, member invite, Windows waitlist/marketing-consent
+variants, chat animation reference, and button progress-bar reference. Those
+screens do not add a new AI Agent contract operation by themselves:
+
+- sign-up, login, Google-auth terms consent, email/password validation, and
+  member invitation belong to existing auth/team/client product surfaces
+- macOS app download and Windows waitlist CTAs are distribution/product facts,
+  not runtime/provider install commands
+- terms row default-open/closed behavior, row click target, chat animation, and
+  progress-bar animation are client presentation facts
+- waitlist and marketing-consent mutation ownership remains unresolved in
+  `Q-CON-007`
 
 Participant dropdown evidence is `node-id=153-12742`
 (`컴포넌트 참여자 드롭다운`). Its annotations state:
@@ -61,6 +94,22 @@ The durable AI Agent contract fact is therefore only the agent side of that
 dropdown: visible assignable agents are the viewer's owned agents plus other
 users' public agents, and owned agents are ordered first.
 
+Additional planning evidence is `node-id=153-15935` (`추가 기획 내용`). The
+section has no annotation nodes; the visible planning text is the evidence. It
+confirms the cross-surface assignment target scope and several non-target
+surfaces:
+
+- AI Agent assignment is available only on Riido task and subtask surfaces.
+- Existing Riido AI property filling must not recommend or select agents.
+- Agent mention is not a supported command surface.
+- Device/runtime actions are owner-only.
+
+The durable contract fact is the target scope, not the page drawing. The
+`task_id` path parameter in AI Agent task APIs means a Riido task or subtask id.
+Projects, milestones, intakes, generic comments, AI property filling, and
+mention surfaces must not reuse task assignment/comment/stop/thread endpoints
+without a future owning SSOT and a newly generated operation.
+
 Task thread annotation evidence is `node-id=153-15931` (`댓글 소통`).
 The file contains Dev Mode annotation categories including `클라이언트 전달`.
 In that section, `node-id=153-8545` cites `riido.aiAgent.events.stream`
@@ -68,6 +117,12 @@ and `node-id=236-20768` cites `riido.aiAgent.tasks.stop`. Those names are
 generated-client consumption hints for the existing client event stream and stop
 operation. The durable contract facts remain the API operation ids, paths,
 typed stream variants, and task-thread policy defined below.
+The normal task screen `node-id=236-21379` shows the same boundary in one task
+view: a generic task comment input, an AI Agent thread row, a thread reply
+input, and a `중지` action. That screen is evidence for composing the existing
+thread cold collection, explicit AI Agent comment submit, and explicit stop
+operation; it is not a second source for task details, sidebar fields, or client
+layout.
 
 Menu placement evidence is `node-id=156-19307` (`메뉴바`). It shows
 `Menubar/default` and `Menubar/setting` in dark and light variants. The durable
@@ -82,31 +137,56 @@ restart-in-progress animation. The durable contract facts are:
 
 - the runtime settings route consumes the existing device/runtime read model,
   `GET /v1/client/ai-agent/devices`, plus `device_runtime_snapshot` events
+- `내 기기` and `다른 기기` groups are both composed from ordinary device and
+  runtime records; current-device grouping is a client/session selection, not a
+  new API resource class
 - the agent hover popover uses existing agent profile fields such as `name` and
   `description`; hover timing, layout, and truncation remain client-owned
 - daemon stop/restart controls are local desktop/helper lifecycle controls for
-  the viewer's device, not SaaS client API operations in this contract
+  the viewer's device, not SaaS client API operations in this contract; daemon
+  uptime, PID, daemon ID, profile, and device-name detail fields are local
+  daemon/helper facts unless a later SSOT promotes them into the SaaS read model
 
-Agent settings evidence is `node-id=164-50215` (`에이전트 설정페이지`) and
-`node-id=134-6542` (`에이전트 추가`). The settings annotations call out long
-one-line description UI, row/meatball edit entry points, absolute-time tooltip
-behavior, runtime dropdown, and model dropdown. The add screen shows profile
-photo, name, description, runtime, model, visibility, instruction, and save
-controls. The durable contract facts are:
+Agent settings evidence is `node-id=164-50215` (`에이전트 설정페이지`),
+`node-id=134-6542` (`에이전트 추가`), `node-id=337-24001` (`에이전트`
+settings list), and `node-id=432-35713` (`에이전트` list). The settings
+annotations call out long one-line description UI, row/meatball edit entry
+points, absolute-time tooltip behavior, runtime dropdown, model dropdown,
+required add/edit form controls (`node-id=417-21803` / `node-id=432-35544`),
+instruction input scroll behavior (`node-id=432-23265` / `node-id=432-35595`),
+long device-name dropdown rows (`node-id=I432:22235;6885:15212` /
+`node-id=I432:35655;6885:15212`), delete confirmation modals
+(`node-id=432-37740` / `node-id=432-38683`), and disabled edit menu
+presentation for working agents (`node-id=432-37900` / `node-id=432-38853`).
+The list screens add created/update columns, optional-description rows,
+online/working/offline labels, edit/delete menu entry points, and the
+`node-id=337-24013` rule that the `에이전트 추가` affordance is hidden when no
+member-visible runtime is selectable. The add screen shows profile photo, name,
+description, runtime, model, visibility, instruction, and save controls. The
+durable contract facts are:
 
 - the add screen needs a client-facing `POST /v1/client/ai-agent/agents`
   operation because the existing update/delete operations do not create an
   owned agent record
-- agent rows need a server-authored `updated_at` date-time so clients can render
-  list dates and absolute-time tooltips without inventing timestamps
+- agent rows need server-authored `created_at` and `updated_at` date-times so
+  clients can render list dates and absolute-time tooltips without inventing
+  timestamps
 - profile image, name, description, runtime binding, visibility, and instruction
   are the current editable configuration fields
+- Figma marks name, runtime, model, and visibility as required form controls;
+  API-level required fields are `name`, `runtime_id`, and `visibility`, while
+  omitted `model_id` resolves to the selected runtime's default model
 - runtime dropdown candidates come from existing runtime/device read-model data;
   clients own the dropdown rendering
+- the add affordance visibility is client presentation over the authorized
+  device/runtime read model; hiding the button does not create a separate
+  eligibility endpoint and does not let clients bypass create validation
 - model dropdown candidates come from `RuntimeRecord.models` as runtime-scoped
   catalog records; `model_id` is opaque per runtime and model labels are
   display data, not generated enum values
-- row click, meatball edit entry, description truncation/wrapping, and timestamp
+- row click, meatball edit entry, delete-confirmation modals, disabled edit
+  tooltip/cursor behavior, input scroll limits, long device-name presentation,
+  description truncation/wrapping, status-label copy/color, and timestamp
   formatting are client-owned
 
 The participant dropdown policy shown in the handoff is:
@@ -121,6 +201,29 @@ typed comment-status value instead of asking clients to parse rendered text.
 The client command contract also includes explicit task-thread comment submit
 and stop actions so web and desktop webview clients do not infer AI Agent work
 from generic task comments alone.
+In the normal active screen (`node-id=236-21379`), generic task comments and
+AI-Agent-directed thread replies are visually adjacent. The contract boundary is
+that AI-Agent-directed messages use the explicit comments operation with
+`agent_id` and optional `source_comment_id`; generic task comments remain the
+existing task product surface until routed through that operation.
+In the busy-agent screen (`node-id=153-8761`), assigning/commenting to an agent
+that is already working creates a queued task-thread row. The contract fact is
+the typed status tuple `comment_kind=queued_by_busy_agent`,
+`assignment_state=queued`, and `work_status=queued`; the Korean copy shown in
+Figma is client presentation around that tuple. The visible `중지` affordance
+continues to use the explicit task stop operation and does not create a second
+cancel endpoint.
+In the stopped-by-deleted-agent screen (`node-id=227-19354`, `작업 중지`),
+Figma shows a Riido-authored task-thread row with the copy "에이전트가 삭제되어
+진행 중이던 작업이 중지됐어요." The contract fact is not that copy. The canonical
+fact is that deleting an agent with queued or running assignments force-stops
+those assignments and projects a typed task-thread status with
+`comment_kind=stopped_by_agent_deleted`, `assignment_state=stopped`, and a
+terminal agent work status. This reuses `DELETE
+/v1/client/ai-agent/agents/{agent_id}` as the command. It does not introduce a
+new client stop endpoint; the exact Korean message, `리도` actor label, "방금 전"
+timestamp, hidden stop affordance state, avatar, and row layout remain
+client/task presentation over the typed status.
 
 ## SSOT Dependency Direction
 
@@ -157,10 +260,38 @@ For agent settings specifically:
   client chain syntax or UI micro-interactions. Long-body scroll/focus,
   viewer-away notification rendering, hover buttons, stop modals, and progress
   animations are client presentation facts around returned thread records.
+- Figma normal task-thread screen (`node-id=236-21379`) can cite that a task
+  screen needs both user-to-agent comment submission and active-thread stop
+  affordances. This repo already owns those as
+  `POST /v1/client/ai-agent/tasks/{task_id}/comments` and
+  `POST /v1/client/ai-agent/tasks/{task_id}/stop`; the right-side task details
+  panel, reply input rendering, send button state, and agent row layout remain
+  client/task surface facts.
+- Figma queued task-thread screen (`node-id=153-8761`) can cite the busy-agent
+  auto-comment copy and `중지` affordance. This repo owns only the typed queued
+  semantics: `queued_by_busy_agent`, `assignment_state=queued`, and
+  `work_status=queued`, plus reuse of the existing stop action. The exact copy,
+  timestamp wording, row layout, and agent avatar rendering are client/task
+  presentation facts.
+- Figma stopped-by-deleted-agent task-thread screen (`node-id=227-19354`) can
+  cite the stopped row shown after an assigned agent is deleted. This repo owns
+  only the typed forced-stop semantics: `stopped_by_agent_deleted`,
+  `assignment_state=stopped`, and reuse of the existing agent delete operation.
+  The exact Korean copy, Riido actor label, timestamp wording, row layout,
+  hidden action state, and agent/avatar rendering are client/task presentation
+  facts.
 - Figma participant dropdown annotations (`node-id=153-12742`) can cite sort and
   overflow behavior, but this repo owns only AI Agent visibility and owned-first
   agent ordering. Member sorting and visual dropdown constraints are client
   surface facts.
+- Figma additional planning section (`node-id=153-15935`) can cite owner-only
+  device/runtime actions, no agent recommendation in existing AI property
+  filling, no agent mention command surface, and task/subtask-only assignment.
+  This repo owns only the target-scope contract fact: AI Agent assignment,
+  AI-Agent-directed comments, task-thread reads, and stop actions are generated
+  for task or subtask ids. Project, milestone, intake, property-filling, and
+  mention surfaces need a separate owning SSOT before they become generated AI
+  Agent operations.
 - Figma runtime settings annotations (`node-id=162-23090`) can cite runtime
   liveness, agent hover, daemon stop modal, and restart animation behavior. This
   repo owns only the device/runtime read-model policy and the fact that a local
@@ -174,10 +305,17 @@ For agent settings specifically:
   present. Provider installation URLs, waitlist subscription, and marketing
   consent mutation need a separate owning SSOT before they become generated API
   operations.
-- Figma onboarding annotations (`node-id=42-3014`) can cite scroll, two-line
-  ellipsis, no-installed-AI skip behavior, and direct-setting expansion. This
-  repo owns only the onboarding template catalog data shape and the runtime
-  liveness facts used by clients to choose which step to show.
+- Figma onboarding annotations (`node-id=42-3014`) can cite scroll, workspace
+  selector list behavior (`node-id=164-30192`), two-line ellipsis,
+  no-installed-AI start behavior (`node-id=164-30206`), and direct-setting
+  expansion. This repo owns only the onboarding template catalog data shape and
+  the runtime liveness facts used by clients to choose which step to show.
+- Figma web onboarding annotations (`node-id=236-29749`) can cite sign-up,
+  terms, member-invite, app-download, waitlist, and animation behavior. This repo
+  owns none of those as AI Agent contract facts until a separate owning SSOT
+  promotes a durable auth/team/distribution/waitlist operation. Current AI Agent
+  contract facts stay `agent_templates`, agent create/update/read models, and
+  device/runtime liveness.
 
 ## Ubiquitous Language
 
@@ -228,10 +366,13 @@ device/runtime read model and, for the viewer's current desktop device, the
 local daemon/helper control surface.
 
 The control-plane client API exposes device/runtime liveness and attached agent
-metadata; it does not expose a SaaS command that stops or restarts a user's
-daemon. When a desktop client stops its local daemon, the resulting control-plane
-effect is represented through the same runtime liveness policy: affected
-runtimes become `offline` when heartbeat/detection state is missing or expired.
+metadata for both current-device and other-device groups; it does not expose a
+SaaS command that stops or restarts a user's daemon. Current-device daemon
+details such as uptime, PID, daemon ID, profile, and device name are
+desktop-local helper/daemon facts. When a desktop client stops its local daemon,
+the resulting control-plane effect is represented through the same runtime
+liveness policy: affected runtimes become `offline` when heartbeat/detection
+state is missing or expired.
 
 Restart is not a distinct contract operation. A client or helper may compose it
 from local daemon lifecycle controls, while this contract only requires that the
@@ -243,6 +384,14 @@ state.
 The AI Agent onboarding flow is a client composition over bootstrap, device
 runtime data, and agent creation.
 
+The runtime selection step from `node-id=137-6746` is composed from
+`DeviceRecord.runtimes`. A runtime is selectable for onboarding only when the
+client can submit its `runtime_id` to agent creation and the read model marks
+that runtime `availability=online` and `detection_state=detected`. Korean
+labels such as `감지됨` / `감지 안 됨`, radio state, row dimming, and `다음` /
+`다음에 하기` button presentation are client-owned rendering. The control
+plane still validates the selected `runtime_id` at agent create/update time.
+
 The control-plane bootstrap response carries an ordered onboarding template
 catalog. A template is a copyable default for an agent configuration and
 contains `template_id`, `name`, optional `role_label`, optional
@@ -250,15 +399,36 @@ contains `template_id`, `name`, optional `role_label`, optional
 instruction defaults are contract data so frontend clients do not hard-code the
 behavioral meaning of starter agents.
 
+The template-selection step from `node-id=138-7389` is projected from
+`ClientBootstrapResponse.agent_templates` in response order. Current Figma
+evidence shows four starter rows, `리도`, `영실`, `홍도`, and `지원`, but the
+rows are not frontend-owned copy. The `직접 설정` row is not an
+`AgentOnboardingTemplate`; it is a client presentation entry that lets the user
+continue to explicit agent configuration. The pre-selection disabled `다음`
+button and the right-side preview skeleton/popover are also client presentation
+over the selected or unselected template state.
+
 Selecting a template does not create a separate domain entity. The client still
 creates an agent through `POST /v1/client/ai-agent/agents` with selected runtime,
 visibility, and copied profile fields. Direct configuration uses the same create
 operation without choosing a template.
 
+The direct-configuration expansion from `node-id=164-26969` also does not create
+a separate command or template row. The expanded `이름`, `설명`, and `지침`
+fields project to `CreateAgentConfigurationRequest.name`, `description`, and
+`instruction`. The previously selected runtime continues to supply `runtime_id`,
+and visibility uses the create request policy/default chosen by the client. The
+dimmed starter-template rows, scroll bar, placeholder copy, and expanded-row
+layout are client presentation facts.
+
 If no selectable runtime is online/detected for the viewer, the client skips the
 template-selection and direct-setting steps and shows the no-installed-AI start
 state from the planning screen. That branch does not introduce a new control
 plane command. It is derived from the existing runtime/device read model.
+In `node-id=164-30206`, the client can still show provider rows for Claude Code,
+Codex, OpenClaw, and Cursor Agent as `연결 안 됨` and let the user continue with
+`시작하기`; those rows and CTA are not executable provider install/start
+operations.
 
 Runtime settings empty states from `node-id=275-22731` use the same read model.
 When the current device has no daemon, no runtime, or no selectable current
@@ -269,8 +439,18 @@ waitlist and marketing-consent button states shown in the Figma section are not
 part of this AI Agent client API yet; they require a separate product/marketing
 SSOT before this contract can add a generated endpoint.
 
-Workspace selection, template row selection, scroll behavior, description
-ellipsis, and preview-popover layout remain client-owned presentation behavior.
+Web onboarding from `node-id=236-29749` reinforces that boundary. The macOS app
+download CTA is a product/distribution route to a desktop artifact, not a
+provider CLI install command. The Windows launch-notification and
+marketing-consent variants are the same unresolved waitlist/product question as
+`node-id=275-22731`. Google sign-up terms consent, email sign-up terms rows,
+member invite input/link-copy, and animation references are client/auth/team
+presentation surfaces and do not change the AI Agent DSL/IR/OpenAPI projection.
+
+Workspace selection, workspace creation entry points, template row selection,
+`직접 설정` row rendering, disabled-next state before selection, scroll
+behavior, description ellipsis, and preview-popover layout remain client-owned
+presentation behavior.
 
 ### Agent Editing
 
@@ -306,20 +486,25 @@ rejected by the control plane before the agent configuration is saved.
 Profile field creation and updates follow the same RBAC and mutation safety
 rules as name, visibility, and runtime binding updates. Creation stamps
 `owner_principal_id` from the authorized principal and binds only a selected
-viewer-owned runtime. After creation, admin may mutate all agents, owner may
-mutate owned agents, and no agent can be edited while it has assigned tasks.
+runtime that is present in the authorized selectable device/runtime read model.
+For a non-admin viewer this normally means a viewer-owned runtime; an admin can
+use runtime rows made visible by workspace RBAC. Owner-only local daemon actions
+remain owned by the device/runtime owner. After creation, admin may mutate all
+agents, owner may mutate owned agents, and no agent can be edited while it has
+assigned tasks.
 
-### Agent Update Timestamp
+### Agent List Timestamps
 
-The agent client record carries a required `updated_at` date-time owned by the
-control plane. It changes when editable agent configuration is saved and is used
-by clients for agent-list update dates and absolute-time tooltips. Clients own
-relative/absolute formatting and tooltip presentation; they must not synthesize
-or rewrite the stored timestamp.
+The agent client record carries required `created_at` and `updated_at`
+date-times owned by the control plane. `created_at` is immutable after agent
+creation. `updated_at` changes when editable agent configuration is saved. Both
+fields are used by clients for agent-list dates and absolute-time tooltips.
+Clients own relative/absolute formatting and tooltip presentation; they must
+not synthesize or rewrite the stored timestamps.
 
-The timestamp is distinct from runtime heartbeat, daemon liveness, and provider
-session progress time. Runtime freshness remains owned by the device/runtime
-read model.
+These timestamps are distinct from runtime heartbeat, daemon liveness, and
+provider session progress time. Runtime freshness remains owned by the
+device/runtime read model.
 
 ### Runtime Model Dropdown
 
@@ -347,6 +532,12 @@ When an agent is created or updated:
 Daemon adapters may accept the selected model value only as part of an
 already-authorized runtime execution request. They do not own the client-facing
 model catalog or dropdown labels.
+
+Figma can still present the model dropdown as a required control because every
+selectable runtime must expose exactly one default model. That default is a
+deterministic selected value, not a new API required-field rule. This avoids a
+contract break for generated clients that omit `model_id` while still letting
+clients render a non-empty required model control.
 
 ### Runtime Output Parsing
 
@@ -392,6 +583,14 @@ Completed, stopped, failed, or otherwise cold task-thread collections omit
 historical AI Agent comments. When a task was assigned, completed, and assigned
 again later, the collection can contain multiple thread records, while
 `active_stream`, if present, targets only the currently active `thread_id`.
+
+When an agent delete command force-stops queued or running assignments, the
+later cold collection still returns the stopped thread records. The
+client-visible reason is the typed `stopped_by_agent_deleted` comment kind, not
+a parsed Korean sentence. SSE may carry the same typed status while the task
+screen is open; if the viewer opens the task later, the cold collection alone is
+sufficient and `active_stream` stays absent unless a new active assignment
+exists.
 
 ## API Codegen Rule
 
