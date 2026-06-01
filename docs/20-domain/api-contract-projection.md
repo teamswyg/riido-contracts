@@ -120,6 +120,14 @@ uses `POST /v1/client/ai-agent/onboarding/fixtures/{fixture_id}/agents` with a
 complete `CreateAgentConfigurationRequest` body, so the created result is a
 normal agent rather than a fixture/template entity.
 
+The former Figma discussion node `node-id=162-23468` is closed by
+`node-id=162-23475`: generated contracts treat a fixture-created agent exactly
+like a directly configured agent after creation. The create response carries the
+normal `agent_id`; duplicate display names are allowed and are not auto-suffixed;
+update/delete/editability operations are the normal agent operations
+`aiAgent.agents.updateConfiguration`, `aiAgent.agents.delete`, and
+`aiAgent.agents.editability` plus their `v2.aiAgent.*` duplicates.
+
 Task-thread history is projected as a cold collection at
 `GET /v1/client/ai-agent/tasks/{task_id}/threads`. The response contains
 historical thread records, including visible threads created while the viewer
