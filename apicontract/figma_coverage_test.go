@@ -54,6 +54,7 @@ func TestFigmaAIAgentCoverageManifest(t *testing.T) {
 		t.Fatalf("coverage doc must say Figma is evidence, not durable SSOT")
 	}
 	verifyFigmaCoverageInspectionMethod(t, manifest.InspectionMethod, docText)
+	verifyFigmaSupportingToolLimitations(t, manifest.SupportingToolLimitations, docText)
 
 	if got, want := len(manifest.ExpectedTopLevelNodes), 16; got != want {
 		t.Fatalf("expected_top_level_nodes = %d, want %d", got, want)
@@ -240,6 +241,53 @@ func verifyFigmaCoverageInspectionMethod(t *testing.T, method figmaCoverageInspe
 	for _, needle := range []string{"figma.root.children", "await figma.setCurrentPageAsync(page)", "page.children.length", "Metadata XML/read", "supporting evidence only", "lazy/unloaded"} {
 		if !strings.Contains(docText, needle) {
 			t.Fatalf("coverage doc must describe inspection method with %q", needle)
+		}
+	}
+}
+
+func verifyFigmaSupportingToolLimitations(t *testing.T, limitations []figmaSupportingToolLimitation, docText string) {
+	t.Helper()
+	if len(limitations) == 0 {
+		t.Fatalf("supporting_tool_limitations must record non-authoritative tooling failure modes")
+	}
+	var metadataPageList figmaSupportingToolLimitation
+	for _, limitation := range limitations {
+		if limitation.ID == "figma-metadata-page-list-underreports-pages.v1" {
+			metadataPageList = limitation
+			break
+		}
+	}
+	if metadataPageList.ID == "" {
+		t.Fatalf("supporting_tool_limitations must include figma-metadata-page-list-underreports-pages.v1")
+	}
+	if !strings.Contains(metadataPageList.Tool, "get_metadata") || !strings.Contains(metadataPageList.Tool, "without nodeId") {
+		t.Fatalf("metadata limitation tool must name no-nodeId get_metadata: %+v", metadataPageList)
+	}
+	for _, needle := range []string{"only page 129:5215 UI", "MUOd9lctoEHASUStN3vUuK"} {
+		if !strings.Contains(metadataPageList.ObservedResult, needle) {
+			t.Fatalf("metadata limitation observed_result must contain %q: %q", needle, metadataPageList.ObservedResult)
+		}
+	}
+	requiredPages := map[string]bool{"129:5215": false, "42:3014": false, "0:1": false}
+	for _, pageID := range metadataPageList.AuthoritativeResult {
+		if _, ok := requiredPages[pageID]; ok {
+			requiredPages[pageID] = true
+		}
+	}
+	for pageID, seen := range requiredPages {
+		if !seen {
+			t.Fatalf("metadata limitation authoritative_result is missing page %s: %+v", pageID, metadataPageList.AuthoritativeResult)
+		}
+	}
+	rule := strings.ToLower(metadataPageList.Rule)
+	for _, needle := range []string{"supporting evidence only", "must not remove expected_pages", "non-ui inventories"} {
+		if !strings.Contains(rule, needle) {
+			t.Fatalf("metadata limitation rule must contain %q: %q", needle, metadataPageList.Rule)
+		}
+	}
+	for _, needle := range []string{"figma-metadata-page-list-underreports-pages.v1", "get_metadata", "without `nodeId`", "`129:5215`", "`42:3014`", "`0:1`", "must not remove `expected_pages`"} {
+		if !strings.Contains(docText, needle) {
+			t.Fatalf("coverage doc must describe metadata page-list limitation with %q", needle)
 		}
 	}
 }
@@ -700,6 +748,7 @@ type figmaCoverageManifest struct {
 	RelatedManifests          []string                        `json:"related_manifests"`
 	Figma                     figmaCoverageSource             `json:"figma"`
 	InspectionMethod          figmaCoverageInspectionMethod   `json:"inspection_method"`
+	SupportingToolLimitations []figmaSupportingToolLimitation `json:"supporting_tool_limitations"`
 	CoveragePolicy            figmaCoveragePolicy             `json:"coverage_policy"`
 	ExpectedPages             []figmaCoveragePage             `json:"expected_pages"`
 	ExpectedTopLevelNodes     []figmaCoverageNode             `json:"expected_top_level_nodes"`
@@ -726,6 +775,16 @@ type figmaCoverageInspectionMethod struct {
 	TopLevelChildCountExpression string   `json:"top_level_child_count_expression"`
 	SupportingTools              []string `json:"supporting_tools"`
 	Rule                         string   `json:"rule"`
+}
+
+type figmaSupportingToolLimitation struct {
+	ID                  string   `json:"id"`
+	Tool                string   `json:"tool"`
+	ObservedAt          string   `json:"observed_at"`
+	ObservedResult      string   `json:"observed_result"`
+	AuthoritativeSource string   `json:"authoritative_source"`
+	AuthoritativeResult []string `json:"authoritative_result"`
+	Rule                string   `json:"rule"`
 }
 
 type figmaCoveragePolicy struct {

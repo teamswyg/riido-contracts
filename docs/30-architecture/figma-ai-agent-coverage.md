@@ -39,6 +39,19 @@ supporting evidence only: they may expand internal node subtrees, return a
 scoped XML view, or report lazy/unloaded child counts, so they must not redefine
 `expected_pages.child_count` or the top-level page registry.
 
+## Supporting Tool Limitations
+
+`figma-metadata-page-list-underreports-pages.v1` records a concrete 2026-06-02
+tooling limitation: calling Figma `get_metadata` without `nodeId` listed only
+`129:5215` `UI` for file `MUOd9lctoEHASUStN3vUuK`. The same file's Figma
+Plugin API page registry returned `129:5215`, `42:3014`, and `0:1`.
+
+That means the no-`nodeId` metadata page list is supporting evidence only. It
+must not remove `expected_pages`, collapse non-UI inventories, or erase legacy
+Wireframe coverage. Page registry updates must come from `figma.root.children`,
+and child-count updates must come from each loaded page after
+`await figma.setCurrentPageAsync(page)`.
+
 ## Coverage Rule
 
 Top-down changes start from product/design evidence:
