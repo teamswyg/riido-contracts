@@ -57,10 +57,30 @@ func TestFigmaAIAgentCoverageManifest(t *testing.T) {
 	if got, want := len(manifest.ExpectedTopLevelNodes), 16; got != want {
 		t.Fatalf("expected_top_level_nodes = %d, want %d", got, want)
 	}
+	if got, want := len(manifest.ExpectedPages), 3; got != want {
+		t.Fatalf("expected_pages = %d, want %d", got, want)
+	}
+	if got, want := len(manifest.NonUITopLevelNodes), 4; got != want {
+		t.Fatalf("non_ui_top_level_nodes = %d, want %d", got, want)
+	}
 	if got, want := len(manifest.Entries), len(manifest.ExpectedTopLevelNodes); got != want {
 		t.Fatalf("entries = %d, want %d", got, want)
 	}
 	openAPIGeneratedPaths := loadAIAgentClientGeneratedPaths(t)
+
+	pages := map[string]figmaCoveragePage{}
+	for _, page := range manifest.ExpectedPages {
+		if page.NodeID == "" || page.Name == "" || page.ChildCount <= 0 {
+			t.Fatalf("expected page has invalid field: %+v", page)
+		}
+		if _, exists := pages[page.NodeID]; exists {
+			t.Fatalf("duplicate expected page %q", page.NodeID)
+		}
+		pages[page.NodeID] = page
+	}
+	if _, ok := pages[manifest.Figma.PageID]; !ok {
+		t.Fatalf("primary figma page %q is missing from expected_pages", manifest.Figma.PageID)
+	}
 
 	expected := map[string]figmaCoverageNode{}
 	for _, node := range manifest.ExpectedTopLevelNodes {
@@ -73,7 +93,9 @@ func TestFigmaAIAgentCoverageManifest(t *testing.T) {
 		expected[node.NodeID] = node
 	}
 	registered := map[string]string{}
-	registerFigmaNode(t, registered, figmaCoverageNode{NodeID: manifest.Figma.PageID, Name: manifest.Figma.PageName}, "figma.page_id")
+	for _, page := range manifest.ExpectedPages {
+		registerFigmaNode(t, registered, figmaCoverageNode{NodeID: page.NodeID, Name: page.Name}, "expected_pages")
+	}
 	for _, node := range manifest.ExpectedTopLevelNodes {
 		registerFigmaNode(t, registered, node, "expected_top_level_nodes")
 	}
@@ -94,17 +116,26 @@ func TestFigmaAIAgentCoverageManifest(t *testing.T) {
 		if entry.Name != expectedNode.Name {
 			t.Fatalf("entry %q name = %q, want %q", entry.NodeID, entry.Name, expectedNode.Name)
 		}
-		if !strings.Contains(docText, entry.NodeID) || !strings.Contains(docText, entry.Name) {
-			t.Fatalf("coverage doc must mention node %s %s", entry.NodeID, entry.Name)
-		}
-		for _, generatedPath := range entry.GeneratedPaths {
-			if !docMentionsGeneratedPath(docText, generatedPath) {
-				t.Fatalf("coverage doc must mention generated path %q for node %s", generatedPath, entry.NodeID)
-			}
-		}
+		assertCoverageDocMentionsEntry(t, docText, entry)
 		if manifest.ExpectedTopLevelNodes[i].NodeID != entry.NodeID {
 			t.Fatalf("entry order must match expected_top_level_nodes at %d: got %s want %s", i, entry.NodeID, manifest.ExpectedTopLevelNodes[i].NodeID)
 		}
+		verifyCoverageEntry(t, entry, openAPIGeneratedPaths)
+	}
+	nonUISeen := map[string]bool{}
+	for _, entry := range manifest.NonUITopLevelNodes {
+		if _, ok := pages[entry.PageID]; !ok {
+			t.Fatalf("non-UI entry %q references unknown page %q", entry.NodeID, entry.PageID)
+		}
+		if entry.PageID == manifest.Figma.PageID {
+			t.Fatalf("non-UI entry %q must not reference primary UI page", entry.NodeID)
+		}
+		if nonUISeen[entry.NodeID] {
+			t.Fatalf("duplicate non-UI entry node_id %q", entry.NodeID)
+		}
+		nonUISeen[entry.NodeID] = true
+		registerFigmaNode(t, registered, figmaCoverageNode{NodeID: entry.NodeID, Name: entry.Name}, "non_ui_top_level_nodes")
+		assertCoverageDocMentionsEntry(t, docText, entry)
 		verifyCoverageEntry(t, entry, openAPIGeneratedPaths)
 	}
 
@@ -116,6 +147,18 @@ func TestFigmaAIAgentCoverageManifest(t *testing.T) {
 
 	assertDocumentedFigmaNodeRefsAreRegistered(t, registered)
 	assertNoStaleOnboardingFixtureWording(t)
+}
+
+func assertCoverageDocMentionsEntry(t *testing.T, docText string, entry figmaCoverageEntry) {
+	t.Helper()
+	if !strings.Contains(docText, entry.NodeID) || !strings.Contains(docText, entry.Name) {
+		t.Fatalf("coverage doc must mention node %s %s", entry.NodeID, entry.Name)
+	}
+	for _, generatedPath := range entry.GeneratedPaths {
+		if !docMentionsGeneratedPath(docText, generatedPath) {
+			t.Fatalf("coverage doc must mention generated path %q for node %s", generatedPath, entry.NodeID)
+		}
+	}
 }
 
 func verifyCoverageEntry(t *testing.T, entry figmaCoverageEntry, openAPIGeneratedPaths map[string]string) {
@@ -343,8 +386,10 @@ type figmaCoverageManifest struct {
 	RelatedManifests      []string             `json:"related_manifests"`
 	Figma                 figmaCoverageSource  `json:"figma"`
 	CoveragePolicy        figmaCoveragePolicy  `json:"coverage_policy"`
+	ExpectedPages         []figmaCoveragePage  `json:"expected_pages"`
 	ExpectedTopLevelNodes []figmaCoverageNode  `json:"expected_top_level_nodes"`
 	VerifiedEvidenceNodes []figmaCoverageNode  `json:"verified_evidence_nodes"`
+	NonUITopLevelNodes    []figmaCoverageEntry `json:"non_ui_top_level_nodes"`
 	Entries               []figmaCoverageEntry `json:"entries"`
 }
 
@@ -368,8 +413,15 @@ type figmaCoverageNode struct {
 	Name   string `json:"name"`
 }
 
+type figmaCoveragePage struct {
+	NodeID     string `json:"node_id"`
+	Name       string `json:"name"`
+	ChildCount int    `json:"child_count"`
+}
+
 type figmaCoverageEntry struct {
 	NodeID         string                 `json:"node_id"`
+	PageID         string                 `json:"page_id,omitempty"`
 	Name           string                 `json:"name"`
 	CoverageStatus string                 `json:"coverage_status"`
 	EvidenceKind   string                 `json:"evidence_kind"`

@@ -179,6 +179,26 @@ This slice does not change routes, schemas, authorization, RBAC, generated
 client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
 deployment evidence.
 
+### RIID-4829 — Figma non-UI page coverage SSOT
+
+This slice extends the Figma AI Agent coverage manifest from the primary UI
+page to the whole inspected Figma file.
+
+This slice does:
+
+- add a deterministic page registry for `UI`, `Wireframe - 온보딩`, and
+  `Wireframe`
+- add non-UI top-level evidence entries for desktop onboarding, macOS,
+  Windows, and legacy planning wireframes
+- classify platform wireframes as no-diff product surfaces unless a future SSOT
+  adds a durable AI Agent API or daemon fact
+- require coverage tests to register and document non-UI top-level evidence
+  instead of leaving it as hidden Figma drift
+
+This slice does not change routes, schemas, authorization, RBAC, generated
+client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
+deployment evidence.
+
 ## Validation Gates
 
 Required for this repository:
