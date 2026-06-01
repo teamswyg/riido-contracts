@@ -266,6 +266,33 @@ This slice does not change routes, schemas, authorization, RBAC, generated
 client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
 deployment evidence.
 
+### RIID-4838 — Legacy Wireframe semantic node coverage gate
+
+This slice closes a gap left by the loaded-page Figma coverage inventory.
+
+The prior manifest registered every loaded top-level node on legacy page `0:1`
+(`Wireframe`), but semantically meaningful frames such as `런타임`, `에이전트`,
+`에이전트 수정`, `에이전트 추가`, `데몬 상세`, and `런타임 상세` could still remain
+inventory-only. That made the page count deterministic, but it did not prove
+that old design frames had been absorbed into the current UI coverage entries.
+
+This slice does:
+
+- promote the legacy runtime, agent, agent add/edit, daemon detail, and runtime
+  detail frames from inventory-only records to explicit `non_ui_top_level_nodes`
+  coverage decisions
+- record `absorbed_by_top_level_node_id` so each legacy frame points to the
+  current UI section that owns the durable meaning
+- require the coverage test to fail when one of those semantic legacy nodes is
+  missing, lacks generated-path inheritance, or points to a non-covered current
+  UI section
+- keep Figma as evidence only: the current UI section, policy doc, and API DSL
+  still own the actual domain/API meaning
+
+This slice does not change routes, schemas, authorization, RBAC, generated
+client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
+deployment evidence.
+
 ## Validation Gates
 
 Required for this repository:
