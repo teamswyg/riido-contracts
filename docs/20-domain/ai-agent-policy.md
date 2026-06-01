@@ -158,7 +158,7 @@ restart-in-progress animation. The durable contract facts are:
 - daemon stop acceptance makes that device's runtimes client-visible as
   `offline` through the runtime read model and stream updates
 
-Agent settings evidence is `node-id=164-50215` (`에이전트 설정페이지`),
+Agent settings evidence is `node-id=432-37336` (`에이전트 설정페이지`),
 `node-id=134-6542` (`에이전트 추가`), `node-id=337-24001` (`에이전트`
 settings list), and `node-id=432-35713` (`에이전트` list). The settings
 annotations call out long one-line description UI, row/meatball edit entry

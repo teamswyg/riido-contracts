@@ -11,8 +11,8 @@
     "file_name": "v.1.22 AI Agent",
     "page_id": "129:5215",
     "page_name": "UI",
-    "inspected_at": "2026-06-01",
-    "inspection_source": "Figma metadata, top-level frame list, and annotations"
+    "inspected_at": "2026-06-02",
+    "inspection_source": "Figma metadata, top-level frame list, cited node-id existence check, and annotations"
   },
   "coverage_policy": {
     "summary": "Figma is product/design evidence, not the durable SSOT. A Figma node is covered only when it points to an owning domain/API/infrastructure/client boundary and a deterministic follow-up rule.",
@@ -36,6 +36,35 @@
     {"node_id": "236:29749", "name": "웹 온보딩"},
     {"node_id": "275:22731", "name": "런타임 설정페이지 엠티"},
     {"node_id": "432:37336", "name": "에이전트 설정페이지"}
+  ],
+  "verified_evidence_nodes": [
+    {"node_id": "134:6542", "name": "에이전트 추가"},
+    {"node_id": "137:6746", "name": "돌아가는 AI 보여주기"},
+    {"node_id": "138:7389", "name": "에이전트 선택"},
+    {"node_id": "153:8545", "name": "contents"},
+    {"node_id": "153:8761", "name": "que"},
+    {"node_id": "153:8835", "name": "Frame 6349974"},
+    {"node_id": "164:26969", "name": "Frame 6350445"},
+    {"node_id": "164:27719", "name": "한 줄 설명 길 경우 한 줄 설명 길 경우 한 줄 설명 길 경우 한 줄 설명 길 경우 한 줄 설명 길 경우"},
+    {"node_id": "164:30192", "name": "Frame 6350447"},
+    {"node_id": "164:30206", "name": "돌아가는 AI 보여주기"},
+    {"node_id": "227:19354", "name": "작업 중지"},
+    {"node_id": "236:20768", "name": "SolidButton"},
+    {"node_id": "236:21379", "name": "작업"},
+    {"node_id": "337:24001", "name": "에이전트"},
+    {"node_id": "337:24013", "name": "SolidButton"},
+    {"node_id": "417:21803", "name": "SolidButton"},
+    {"node_id": "42:3014", "name": "Wireframe - 온보딩"},
+    {"node_id": "432:23265", "name": "input"},
+    {"node_id": "432:35544", "name": "SolidButton"},
+    {"node_id": "432:35595", "name": "input"},
+    {"node_id": "432:35713", "name": "에이전트"},
+    {"node_id": "432:37740", "name": "Modal/medium"},
+    {"node_id": "432:37900", "name": "DropdownContents"},
+    {"node_id": "432:38683", "name": "Modal/medium"},
+    {"node_id": "432:38853", "name": "DropdownContents"},
+    {"node_id": "I432:22235;6885:15212", "name": "레이블"},
+    {"node_id": "I432:35655;6885:15212", "name": "레이블"}
   ],
   "entries": [
     {
