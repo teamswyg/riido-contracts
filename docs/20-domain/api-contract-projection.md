@@ -147,6 +147,24 @@ in which case the existing queued tuple is returned. `DELETE
 command and uses the existing stopped-by-user typed status; whether stopped rows
 are hidden in the task comment UI remains client presentation.
 
+## Generated Client Delivery Boundary
+
+Generated client delivery PRs are review handoffs. This contract owns the API
+projection facts that must survive into generated code: operation ids, paths,
+schemas, enum values, sum-type variants, lifecycle metadata, replacement
+guidance, and deprecation/removal semantics.
+
+`riido-control-plane` owns the downstream delivery workflow that turns the
+OpenAPI projection into generated React Query files and opens a PR against
+`riido-client`. That workflow may create or update a generated branch, but it
+must not auto-merge the client PR. `riido-client` owns the final review,
+application integration, and merge decision for generated files.
+
+Control-plane delivery details such as tag trigger policy, branch naming,
+generated path allowlist, generator pinning, and release manifest shape are
+downstream execution rules. They may repeat this review-handoff rule only by
+linking back to this SSOT.
+
 ## Boundary
 
 This contract owns:
@@ -158,6 +176,7 @@ This contract owns:
   policy ids, and BDD scenario ids
 - top-level API enum and sum-type definitions that must survive DSL -> IR ->
   OpenAPI projection for client codegen
+- generated-client lifecycle and review-handoff semantics
 - deterministic fixture drift verification
 
 This contract does not own:
@@ -167,6 +186,8 @@ This contract does not own:
 - RBAC evaluator implementation
 - persistence, stores, metrics, or SSE fan-out
 - frontend code generation output
+- generated client branch creation, PR creation mechanics, or client PR merge
+  decisions
 - production bearer tokens, IdP configuration, Terraform, or deployment
   evidence
 
