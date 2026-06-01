@@ -54,9 +54,29 @@
         },
         {
           "path": [
+            "onboarding"
+          ],
+          "description": "AI Agent 온보딩에서 필요한 서버 제공 초기값을 다루는 namespace입니다. 템플릿 엔티티를 만들거나 관리하지 않습니다."
+        },
+        {
+          "path": [
+            "onboarding",
+            "fixtures"
+          ],
+          "description": "리도, 영실, 홍도, 지원처럼 제품이 제공하는 고정 onboarding fixture 목록과 fixture 기반 agent 생성 진입점입니다."
+        },
+        {
+          "path": [
             "tasks"
           ],
-          "description": "task thread에서 AI Agent assignment와 comment action을 다루는 namespace입니다."
+          "description": "task thread에서 AI Agent assignment, thread message, compatibility comment action을 다루는 namespace입니다."
+        },
+        {
+          "path": [
+            "tasks",
+            "threadMessages"
+          ],
+          "description": "task thread에 사용자가 다음 작업 지시를 남기는 정식 message command namespace입니다. Figma의 댓글 표현은 이 thread message로 투영됩니다."
         }
       ]
     }
@@ -103,7 +123,7 @@
         },
         "security": [
           {
-            "bearerAuth": []
+            "riidoAIAgentToken": []
           }
         ],
         "x-riido-auth-scopes": [
@@ -173,7 +193,7 @@
         },
         "security": [
           {
-            "bearerAuth": []
+            "riidoAIAgentToken": []
           }
         ],
         "x-riido-auth-scopes": [
@@ -250,7 +270,7 @@
         },
         "security": [
           {
-            "bearerAuth": []
+            "riidoAIAgentToken": []
           }
         ],
         "x-riido-auth-scopes": [
@@ -322,7 +342,7 @@
         },
         "security": [
           {
-            "bearerAuth": []
+            "riidoAIAgentToken": []
           }
         ],
         "x-riido-auth-scopes": [
@@ -397,7 +417,7 @@
         },
         "security": [
           {
-            "bearerAuth": []
+            "riidoAIAgentToken": []
           }
         ],
         "x-riido-auth-scopes": [
@@ -473,7 +493,7 @@
         },
         "security": [
           {
-            "bearerAuth": []
+            "riidoAIAgentToken": []
           }
         ],
         "x-riido-auth-scopes": [
@@ -549,7 +569,7 @@
         },
         "security": [
           {
-            "bearerAuth": []
+            "riidoAIAgentToken": []
           }
         ],
         "x-riido-auth-scopes": [
@@ -616,7 +636,7 @@
         },
         "security": [
           {
-            "bearerAuth": []
+            "riidoAIAgentToken": []
           }
         ],
         "x-riido-auth-scopes": [
@@ -669,7 +689,7 @@
         },
         "security": [
           {
-            "bearerAuth": []
+            "riidoAIAgentToken": []
           }
         ],
         "x-riido-auth-scopes": [
@@ -687,7 +707,6 @@
         "x-riido-scenarios": [
           "getAIAgentClientBootstrap.figma-client-bootstrap",
           "getAIAgentClientBootstrap.figma-agent-list-timestamps",
-          "getAIAgentClientBootstrap.figma-onboarding-template-selection-initial-state",
           "getAIAgentClientBootstrap.figma-agent-add-button-visibility",
           "getAIAgentClientBootstrap.figma-onboarding-no-runtime"
         ]
@@ -724,7 +743,7 @@
         },
         "security": [
           {
-            "bearerAuth": []
+            "riidoAIAgentToken": []
           }
         ],
         "x-riido-auth-scopes": [
@@ -782,7 +801,7 @@
         },
         "security": [
           {
-            "bearerAuth": []
+            "riidoAIAgentToken": []
           }
         ],
         "x-riido-auth-scopes": [
@@ -802,7 +821,139 @@
           "streamAIAgentClientEvents.editability-updates-before-mutation",
           "streamAIAgentClientEvents.runtime-parse-status",
           "streamAIAgentClientEvents.runtime-progress-batch",
-          "streamAIAgentClientEvents.task-comment-status-update"
+          "streamAIAgentClientEvents.task-thread-status-update"
+        ]
+      }
+    },
+    "/v1/client/ai-agent/onboarding/fixtures": {
+      "get": {
+        "operationId": "listAIAgentOnboardingFixtures",
+        "summary": "AI Agent 온보딩에서 사용할 서버 제공 fixture 목록을 조회합니다",
+        "tags": [
+          "ai_agent_client"
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentOnboardingFixtureListResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "riidoAIAgentToken": []
+          }
+        ],
+        "x-riido-auth-scopes": [
+          "ai-agent:read"
+        ],
+        "x-riido-rbac-policy": "agent_onboarding_fixtures.v1",
+        "x-riido-operation-kind": "query",
+        "x-riido-client": {
+          "module": "aiAgent",
+          "facade_path": [
+            "onboarding",
+            "fixtures"
+          ],
+          "cache_tag": "aiAgent.onboarding.fixtures"
+        },
+        "x-riido-scenarios": [
+          "listAIAgentOnboardingFixtures.figma-onboarding-fixture-selection-initial-state",
+          "listAIAgentOnboardingFixtures.fixtures-are-not-templates"
+        ]
+      }
+    },
+    "/v1/client/ai-agent/onboarding/fixtures/{fixture_id}/agents": {
+      "post": {
+        "operationId": "createAIAgentFromOnboardingFixture",
+        "summary": "선택한 onboarding fixture를 기준으로 일반 AI agent를 생성합니다",
+        "tags": [
+          "ai_agent_client"
+        ],
+        "parameters": [
+          {
+            "name": "fixture_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAgentConfigurationRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AgentClientRecordResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "riidoAIAgentToken": []
+          }
+        ],
+        "x-riido-auth-scopes": [
+          "ai-agent:write",
+          "ai-agent:create"
+        ],
+        "x-riido-rbac-policy": "agent_onboarding_fixtures.v1",
+        "x-riido-operation-kind": "command",
+        "x-riido-client": {
+          "module": "aiAgent",
+          "facade_path": [
+            "onboarding",
+            "fixtures",
+            "createAgent"
+          ],
+          "invalidates": [
+            "aiAgent.bootstrap",
+            "aiAgent.devices.runtimes",
+            "aiAgent.tasks.assignableAgents"
+          ]
+        },
+        "x-riido-scenarios": [
+          "createAIAgentFromOnboardingFixture.fixture-creates-normal-agent",
+          "createAIAgentFromOnboardingFixture.fixture-create-validates-runtime-and-model"
         ]
       }
     },
@@ -847,7 +998,7 @@
         },
         "security": [
           {
-            "bearerAuth": []
+            "riidoAIAgentToken": []
           }
         ],
         "x-riido-auth-scopes": [
@@ -922,7 +1073,7 @@
         },
         "security": [
           {
-            "bearerAuth": []
+            "riidoAIAgentToken": []
           }
         ],
         "x-riido-auth-scopes": [
@@ -998,7 +1149,7 @@
         },
         "security": [
           {
-            "bearerAuth": []
+            "riidoAIAgentToken": []
           }
         ],
         "x-riido-auth-scopes": [
@@ -1029,7 +1180,7 @@
     "/v1/client/ai-agent/tasks/{task_id}/comments": {
       "post": {
         "operationId": "submitAIAgentTaskComment",
-        "summary": "task thread comment를 할당된 AI agent에게 전달합니다",
+        "summary": "호환 task comment route로 AI agent에게 메시지를 전달합니다",
         "tags": [
           "ai_agent_client"
         ],
@@ -1077,7 +1228,7 @@
         },
         "security": [
           {
-            "bearerAuth": []
+            "riidoAIAgentToken": []
           }
         ],
         "x-riido-auth-scopes": [
@@ -1099,8 +1250,8 @@
           ]
         },
         "x-riido-scenarios": [
-          "submitAIAgentTaskComment.comment-routes-to-running-agent",
-          "submitAIAgentTaskComment.comment-queues-behind-busy-agent"
+          "submitAIAgentTaskComment.legacy-comment-route-routes-to-running-agent",
+          "submitAIAgentTaskComment.legacy-comment-route-queues-behind-busy-agent"
         ]
       }
     },
@@ -1154,7 +1305,7 @@
         },
         "security": [
           {
-            "bearerAuth": []
+            "riidoAIAgentToken": []
           }
         ],
         "x-riido-auth-scopes": [
@@ -1177,7 +1328,7 @@
           ]
         },
         "x-riido-scenarios": [
-          "stopAIAgentTask.task-stop-emits-comment-status"
+          "stopAIAgentTask.task-stop-emits-thread-status"
         ]
       }
     },
@@ -1222,7 +1373,7 @@
         },
         "security": [
           {
-            "bearerAuth": []
+            "riidoAIAgentToken": []
           }
         ],
         "x-riido-auth-scopes": [
@@ -1244,6 +1395,94 @@
           "listAIAgentTaskThreads.running-task-advertises-one-stream",
           "listAIAgentTaskThreads.reassigned-task-has-multiple-threads",
           "listAIAgentTaskThreads.assignment-created-while-viewer-away"
+        ]
+      }
+    },
+    "/v1/client/ai-agent/tasks/{task_id}/threads/{thread_id}/messages": {
+      "post": {
+        "operationId": "createAIAgentTaskThreadMessage",
+        "summary": "task thread message로 AI agent에게 다음 작업 지시를 전달합니다",
+        "tags": [
+          "ai_agent_client"
+        ],
+        "parameters": [
+          {
+            "name": "task_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "thread_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateAIAgentTaskThreadMessageRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "202": {
+            "description": "Accepted",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AIAgentTaskActionResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "x-riido-auth-scopes": [
+          "ai-agent:write",
+          "task:{task_id}:comment"
+        ],
+        "x-riido-rbac-policy": "task_thread_next_instruction.v1",
+        "x-riido-operation-kind": "command",
+        "x-riido-client": {
+          "module": "aiAgent",
+          "facade_path": [
+            "tasks",
+            "threadMessages",
+            "create"
+          ],
+          "invalidates": [
+            "aiAgent.bootstrap",
+            "aiAgent.tasks.assignableAgents",
+            "aiAgent.tasks.threads"
+          ]
+        },
+        "x-riido-scenarios": [
+          "createAIAgentTaskThreadMessage.active-thread-next-instruction",
+          "createAIAgentTaskThreadMessage.completed-thread-new-run",
+          "createAIAgentTaskThreadMessage.rejects-other-active-thread"
         ]
       }
     }
@@ -1349,6 +1588,9 @@
             "type": "string"
           },
           "source_comment_id": {
+            "type": "string"
+          },
+          "source_message_id": {
             "type": "string"
           },
           "started_at": {
@@ -1603,41 +1845,75 @@
         ],
         "type": "object"
       },
-      "AgentOnboardingTemplate": {
-        "description": "AI Agent 온보딩에서 선택할 수 있는 starter agent template입니다.",
+      "AgentOnboardingFixture": {
+        "description": "AI Agent 온보딩에서 선택할 수 있는 서버 제공 fixture입니다. 템플릿 엔티티가 아니라 agent 생성 폼에 복사할 고정 초기값입니다.",
         "properties": {
+          "default_visibility": {
+            "$ref": "#/components/schemas/AgentVisibility",
+            "description": "fixture 선택 시 생성 폼에 미리 채울 공개 범위입니다. mock은 안전하게 private 값을 사용합니다."
+          },
           "description": {
+            "description": "에이전트 설명 기본값입니다. 최대 160자입니다.",
             "maxLength": 160,
             "type": "string"
           },
+          "fixture_id": {
+            "description": "fixture를 안정적으로 구분하는 ID입니다. 직접 설정 행은 포함되지 않습니다.",
+            "type": "string"
+          },
           "instruction": {
+            "description": "에이전트 지침 기본값입니다. 최대 1000자입니다.",
             "maxLength": 1000,
             "type": "string"
           },
           "name": {
+            "description": "에이전트 생성 폼에 복사할 기본 이름입니다.",
             "type": "string"
           },
           "profile_thumbnail_url": {
+            "description": "에이전트 프로필 이미지로 복사할 HTTPS 썸네일 URL입니다.",
             "format": "uri",
             "type": "string"
           },
-          "role_label": {
-            "type": "string"
+          "recommended_runtime_kind": {
+            "$ref": "#/components/schemas/RuntimeKind",
+            "description": "fixture에 권장하는 런타임 종류입니다. 선택 가능 여부는 devices.runtimes로 다시 판단합니다."
           },
-          "template_id": {
+          "role_label": {
+            "description": "fixture 목록에 보조로 표시할 역할 라벨입니다.",
             "type": "string"
           }
         },
         "required": [
-          "template_id",
+          "fixture_id",
           "name",
           "description",
-          "instruction"
+          "instruction",
+          "default_visibility"
+        ],
+        "type": "object"
+      },
+      "AgentOnboardingFixtureListResponse": {
+        "description": "온보딩 화면에서 사용할 서버 제공 fixture 목록 응답입니다. 직접 설정은 포함하지 않습니다.",
+        "properties": {
+          "fixtures": {
+            "items": {
+              "$ref": "#/components/schemas/AgentOnboardingFixture"
+            },
+            "type": "array"
+          },
+          "schema_version": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "schema_version",
+          "fixtures"
         ],
         "type": "object"
       },
       "AgentTaskCommentKind": {
-        "description": "Figma comment 소통 흐름에서 task thread에 기록되는 상태 update 종류입니다.",
+        "description": "task thread에 기록되는 AI Agent 상태 update 종류입니다. 기존 comment 필드명은 호환명입니다.",
         "enum": [
           "queued_by_busy_agent",
           "assignment_started",
@@ -1753,7 +2029,7 @@
         "type": "string"
       },
       "AgentWorkStatusChangedEvent": {
-        "description": "agent 작업 상태와 task thread comment 상태 변경을 전달하는 SSE event입니다.",
+        "description": "agent 작업 상태와 task thread 상태 변경을 전달하는 SSE event입니다.",
         "properties": {
           "agent_id": {
             "type": "string"
@@ -1809,12 +2085,6 @@
       "ClientBootstrapResponse": {
         "description": "AI Agent 화면 진입 시 필요한 agent와 device runtime 초기 데이터입니다.",
         "properties": {
-          "agent_templates": {
-            "items": {
-              "$ref": "#/components/schemas/AgentOnboardingTemplate"
-            },
-            "type": "array"
-          },
           "agents": {
             "items": {
               "$ref": "#/components/schemas/AgentClientRecord"
@@ -1842,8 +2112,7 @@
           "client_kind",
           "workspace_id",
           "agents",
-          "devices",
-          "agent_templates"
+          "devices"
         ],
         "type": "object"
       },
@@ -1892,6 +2161,21 @@
             "type": "string"
           }
         },
+        "type": "object"
+      },
+      "CreateAIAgentTaskThreadMessageRequest": {
+        "description": "task thread에 사용자의 다음 작업 지시 메시지를 남기는 정식 요청입니다. thread_id가 target agent를 결정하므로 agent_id를 받지 않습니다.",
+        "properties": {
+          "body": {
+            "type": "string"
+          },
+          "source_message_id": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "body"
+        ],
         "type": "object"
       },
       "CreateAgentConfigurationRequest": {
@@ -2319,7 +2603,7 @@
         "type": "object"
       },
       "SubmitAIAgentTaskCommentRequest": {
-        "description": "task thread comment를 agent에게 전달하기 위한 요청입니다.",
+        "description": "호환 task comment route로 agent에게 메시지를 전달하기 위한 요청입니다. 정식 command는 CreateAIAgentTaskThreadMessageRequest를 사용합니다.",
         "properties": {
           "agent_id": {
             "type": "string"
@@ -2388,6 +2672,11 @@
         "type": "http",
         "scheme": "bearer",
         "bearerFormat": "opaque"
+      },
+      "riidoAIAgentToken": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Riido-AI-Agent-Token"
       }
     }
   }

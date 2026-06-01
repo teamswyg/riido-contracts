@@ -96,7 +96,7 @@ func GenerateOpenAPI(ir IRDocument) (OpenAPISpec, error) {
 			Tags:           []string{ir.Context},
 			Parameters:     pathParameters(op.Path),
 			Responses:      responses,
-			Security:       []map[string][]string{{"bearerAuth": []string{}}},
+			Security:       securityForAuth(op.Auth),
 			RiidoScopes:    append([]string(nil), op.Auth.Scopes...),
 			RiidoRBAC:      op.RBACPolicy,
 			RiidoKind:      op.Kind,
@@ -121,10 +121,8 @@ func GenerateOpenAPI(ir IRDocument) (OpenAPISpec, error) {
 		RiidoClientModules: copyClientModules(ir.ClientModules),
 		Paths:              paths,
 		Components: OpenAPIComponents{
-			Schemas: components,
-			SecuritySchemes: map[string]OpenAPISecurityScheme{
-				"bearerAuth": {Type: "http", Scheme: "bearer", BearerFormat: "opaque"},
-			},
+			Schemas:         components,
+			SecuritySchemes: securitySchemesForIR(ir),
 		},
 	}, nil
 }
@@ -257,8 +255,8 @@ func validateDSL(dsl DSLDocument) error {
 		if !strings.HasPrefix(op.Path, "/") {
 			return fmt.Errorf("apicontract: operation %q path must start with /", op.OperationID)
 		}
-		if op.Auth.Scheme != "bearer" {
-			return fmt.Errorf("apicontract: operation %q must use bearer auth", op.OperationID)
+		if err := validateAuth(op.OperationID, op.Auth); err != nil {
+			return err
 		}
 		if op.Response.Status <= 0 || op.Response.Ref == "" {
 			return fmt.Errorf("apicontract: operation %q response is required", op.OperationID)
@@ -330,6 +328,9 @@ func validateIR(ir IRDocument) error {
 		}
 	}
 	for _, op := range ir.Operations {
+		if err := validateAuth(op.OperationID, op.Auth); err != nil {
+			return err
+		}
 		if _, ok := components[op.Response.Ref]; !ok {
 			return fmt.Errorf("apicontract: IR operation %q response schema %q is missing", op.OperationID, op.Response.Ref)
 		}
@@ -366,6 +367,22 @@ func validateIR(ir IRDocument) error {
 				}
 			}
 		}
+	}
+	return nil
+}
+
+func validateAuth(operationID string, auth Auth) error {
+	switch auth.Scheme {
+	case "bearer":
+		if strings.TrimSpace(auth.Header) != "" {
+			return fmt.Errorf("apicontract: operation %q bearer auth must not set header", operationID)
+		}
+	case "apiKey":
+		if strings.TrimSpace(auth.Header) == "" {
+			return fmt.Errorf("apicontract: operation %q apiKey auth must set header", operationID)
+		}
+	default:
+		return fmt.Errorf("apicontract: operation %q has unsupported auth scheme %q", operationID, auth.Scheme)
 	}
 	return nil
 }
@@ -524,11 +541,18 @@ func sumTypeToOpenAPI(sumType SumType) map[string]any {
 
 func propertyToOpenAPI(property Property) map[string]any {
 	if property.Ref != "" {
-		return refSchema(property.Ref)
+		out := refSchema(property.Ref)
+		if property.Description != "" {
+			out["description"] = property.Description
+		}
+		return out
 	}
 	out := map[string]any{}
 	if property.Type != "" {
 		out["type"] = property.Type
+	}
+	if property.Description != "" {
+		out["description"] = property.Description
 	}
 	if property.Format != "" {
 		out["format"] = property.Format
@@ -546,6 +570,28 @@ func propertyToOpenAPI(property Property) map[string]any {
 		out["additionalProperties"] = true
 	}
 	return out
+}
+
+func securityForAuth(auth Auth) []map[string][]string {
+	switch auth.Scheme {
+	case "apiKey":
+		return []map[string][]string{{"riidoAIAgentToken": []string{}}}
+	default:
+		return []map[string][]string{{"bearerAuth": []string{}}}
+	}
+}
+
+func securitySchemesForIR(ir IRDocument) map[string]OpenAPISecurityScheme {
+	schemes := map[string]OpenAPISecurityScheme{}
+	for _, op := range ir.Operations {
+		switch op.Auth.Scheme {
+		case "apiKey":
+			schemes["riidoAIAgentToken"] = OpenAPISecurityScheme{Type: "apiKey", In: "header", Name: op.Auth.Header}
+		default:
+			schemes["bearerAuth"] = OpenAPISecurityScheme{Type: "http", Scheme: "bearer", BearerFormat: "opaque"}
+		}
+	}
+	return schemes
 }
 
 func pathParameters(path string) []OpenAPIParameter {

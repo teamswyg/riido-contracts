@@ -60,6 +60,8 @@ It covers the v1.22 AI Agent client surface used by Riido web and the desktop
 webview:
 
 - `GET /v1/client/ai-agent/bootstrap`
+- `GET /v1/client/ai-agent/onboarding/fixtures`
+- `POST /v1/client/ai-agent/onboarding/fixtures/{fixture_id}/agents`
 - `GET /v1/client/ai-agent/devices`
 - `GET /v1/client/ai-agent/tasks/{task_id}/assignable-agents`
 - `POST /v1/client/ai-agent/tasks/{task_id}/assignment`
@@ -88,12 +90,12 @@ not add a runtime-selection command. The client renders detected/non-detected
 rows from the read model, and agent create/update mutations validate the
 selected `runtime_id`.
 
-Onboarding template selection from Figma `node-id=138-7389` is projected from
-`ClientBootstrapResponse.agent_templates`. The DSL does not add a
-template-selection command and does not encode `직접 설정` as an
-`AgentOnboardingTemplate`. Clients render row selection, pre-selection disabled
-next state, and preview skeleton/popover state from the ordered template data
-and local selection state.
+Onboarding fixture selection from Figma `node-id=138-7389` is projected from
+`AgentOnboardingFixtureListResponse.fixtures`. The DSL does not expose a
+template entity or template CRUD, and it does not encode `직접 설정` as an
+`AgentOnboardingFixture`. Clients render row selection, pre-selection disabled
+next state, and preview skeleton/popover state from the ordered fixture data and
+local selection state.
 
 Onboarding direct setting from Figma `node-id=164-26969` is projected through
 the existing `POST /v1/client/ai-agent/agents` command. The expanded `이름`,
@@ -101,7 +103,10 @@ the existing `POST /v1/client/ai-agent/agents` command. The expanded `이름`,
 `CreateAgentConfigurationRequest.name`, `description`, and `instruction`.
 `runtime_id`, `visibility`, optional profile image, and optional model selection
 remain the normal create request fields. The DSL does not add a direct-setting
-command or a fifth template record.
+command or a fifth fixture record. Selecting `리도`, `영실`, `홍도`, or `지원`
+uses `POST /v1/client/ai-agent/onboarding/fixtures/{fixture_id}/agents` with a
+complete `CreateAgentConfigurationRequest` body, so the created result is a
+normal agent rather than a fixture/template entity.
 
 Task-thread history is projected as a cold collection at
 `GET /v1/client/ai-agent/tasks/{task_id}/threads`. The response contains

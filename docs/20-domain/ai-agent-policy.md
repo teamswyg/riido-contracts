@@ -37,12 +37,12 @@ Onboarding evidence from `node-id=42-3014` includes:
 - `node-id=137-6746`: choose the runtime used to create the first agent; the
   inspected UI shows Claude Code and Codex as `감지됨` selectable rows, while
   OpenClaw and Cursor Agent are `감지 안 됨` non-selectable rows
-- `node-id=138-7389`: choose an agent template or choose direct configuration;
-  the inspected UI shows the starter template rows `리도`, `영실`, `홍도`,
+- `node-id=138-7389`: choose a product-provided onboarding fixture or choose
+  direct configuration; the inspected UI shows the starter fixture rows `리도`, `영실`, `홍도`,
   `지원`, followed by a `직접 설정` row, a pre-selection `다음` button, and a
   right-side preview skeleton
 - `node-id=164-26969`: direct configuration is annotated `직접 설정 선택 시
-  스크롤`; it dims the starter template rows and expands `직접 설정` into
+  스크롤`; it dims the starter fixture rows and expands `직접 설정` into
   `이름` (`리도` placeholder), `설명` (`문제 정의부터 우선순위, 출시 계획까지
   정리합니다.` placeholder), and `지침` (`기능 요청을 문제·목표·성공 기준으로
   재정의하고 PRD, 우선순위, 로드맵, 출시 계획을 구조화합니다. 아이디어는
@@ -50,17 +50,19 @@ Onboarding evidence from `node-id=42-3014` includes:
   with a scroll affordance
 - `node-id=164-30192`: workspace selection list shows the selected workspace,
   a scroll affordance, and a `새 워크스페이스` row
-- `node-id=164-27719`: template descriptions show up to two lines before
+- `node-id=164-27719`: fixture descriptions show up to two lines before
   ellipsis; this is client presentation only
 - `node-id=164-30206`: if no selectable AI runtime is installed/detected, the
   flow shows the no-runtime start state with Claude Code, Codex, OpenClaw, and
   Cursor Agent all marked `연결 안 됨` and a `시작하기` CTA
 
-The durable contract fact is that onboarding agent templates are API data, not
-frontend hard-coded business copy. Runtime/no-runtime branching is still client
-composition over the existing device/runtime read model. Workspace list
-selection and the `새 워크스페이스` row are workspace/team/client product
-surfaces; they do not add an AI Agent generated operation by themselves.
+The durable contract fact is that onboarding fixtures are API data, not
+frontend hard-coded business copy and not backend-managed template entities.
+Selecting `리도`, `영실`, `홍도`, or `지원` creates a normal agent. Runtime/no-runtime
+branching is still client composition over the existing device/runtime read
+model. Workspace list selection and the `새 워크스페이스` row are
+workspace/team/client product surfaces; they do not add an AI Agent generated
+operation by themselves.
 The all-disconnected provider list and start CTA are also presentation derived
 from device/runtime liveness; they do not create provider-install or
 provider-start commands in this contract.
@@ -265,10 +267,10 @@ For agent settings specifically:
 - `model_id` meaning starts here and in the same DSL fixture. It is validated
   against the selected runtime's `RuntimeModelRecord` catalog and defaults to
   the selected runtime's default model when omitted.
-- onboarding template catalog meaning starts here and is projected through the
-  same client bootstrap fixture so clients can render template names,
-  descriptions, role labels, thumbnails, and copyable instructions without
-  owning the template source text.
+- onboarding fixture catalog meaning starts here and is projected through
+  `GET /v1/client/ai-agent/onboarding/fixtures` so clients can render fixture
+  names, descriptions, role labels, thumbnails, default visibility, recommended
+  runtime kind, and copyable instructions without owning the source text.
 - `riido-control-plane` owns HTTP validation, save/update behavior, mock data,
   and generated-client handoff.
 - `riido-daemon` owns only runtime consumption of an assigned instruction value;
@@ -335,14 +337,14 @@ For agent settings specifically:
 - Figma onboarding annotations (`node-id=42-3014`) can cite scroll, workspace
   selector list behavior (`node-id=164-30192`), two-line ellipsis,
   no-installed-AI start behavior (`node-id=164-30206`), and direct-setting
-  expansion. This repo owns only the onboarding template catalog data shape and
+  expansion. This repo owns only the onboarding fixture catalog data shape and
   the runtime liveness facts used by clients to choose which step to show.
 - Figma web onboarding annotations (`node-id=236-29749`) can cite sign-up,
   terms, member-invite, app-download, waitlist, and animation behavior. This repo
   owns none of those as AI Agent contract facts until a separate owning SSOT
   promotes a durable auth/team/distribution/waitlist operation. Current AI Agent
-  contract facts stay `agent_templates`, agent create/update/read models, and
-  device/runtime liveness.
+  contract facts stay `AgentOnboardingFixtureListResponse.fixtures`, agent
+  create/update/read models, and device/runtime liveness.
 
 ## Ubiquitous Language
 
@@ -434,37 +436,40 @@ labels such as `감지됨` / `감지 안 됨`, radio state, row dimming, and `�
 `다음에 하기` button presentation are client-owned rendering. The control
 plane still validates the selected `runtime_id` at agent create/update time.
 
-The control-plane bootstrap response carries an ordered onboarding template
-catalog. A template is a copyable default for an agent configuration and
-contains `template_id`, `name`, optional `role_label`, optional
-`profile_thumbnail_url`, `description`, and `instruction`. Template text and
+The control plane exposes an ordered onboarding fixture catalog at
+`GET /v1/client/ai-agent/onboarding/fixtures`. A fixture is a copyable default
+for an agent configuration and contains `fixture_id`, `name`, optional
+`role_label`, optional `profile_thumbnail_url`, `description`, `instruction`,
+`default_visibility`, and optional `recommended_runtime_kind`. Fixture text and
 instruction defaults are contract data so frontend clients do not hard-code the
 behavioral meaning of starter agents.
 
-The template-selection step from `node-id=138-7389` is projected from
-`ClientBootstrapResponse.agent_templates` in response order. Current Figma
+The fixture-selection step from `node-id=138-7389` is projected from
+`AgentOnboardingFixtureListResponse.fixtures` in response order. Current Figma
 evidence shows four starter rows, `리도`, `영실`, `홍도`, and `지원`, but the
-rows are not frontend-owned copy. The `직접 설정` row is not an
-`AgentOnboardingTemplate`; it is a client presentation entry that lets the user
-continue to explicit agent configuration. The pre-selection disabled `다음`
-button and the right-side preview skeleton/popover are also client presentation
-over the selected or unselected template state.
+rows are not frontend-owned copy and they are not backend-managed templates. The
+`직접 설정` row is not an `AgentOnboardingFixture`; it is a client presentation
+entry that lets the user continue to explicit agent configuration. The
+pre-selection disabled `다음` button and the right-side preview skeleton/popover
+are also client presentation over the selected or unselected fixture state.
 
-Selecting a template does not create a separate domain entity. The client still
-creates an agent through `POST /v1/client/ai-agent/agents` with selected runtime,
-visibility, and copied profile fields. Direct configuration uses the same create
-operation without choosing a template.
+Selecting a fixture does not create a separate domain entity. The client creates
+a normal agent through
+`POST /v1/client/ai-agent/onboarding/fixtures/{fixture_id}/agents` with the
+selected runtime, visibility, and the complete `CreateAgentConfigurationRequest`
+body copied or edited from the fixture. Direct configuration uses
+`POST /v1/client/ai-agent/agents` without choosing a fixture.
 
 The direct-configuration expansion from `node-id=164-26969` also does not create
-a separate command or template row. The expanded `이름`, `설명`, and `지침`
+a separate command or fixture row. The expanded `이름`, `설명`, and `지침`
 fields project to `CreateAgentConfigurationRequest.name`, `description`, and
 `instruction`. The previously selected runtime continues to supply `runtime_id`,
 and visibility uses the create request policy/default chosen by the client. The
-dimmed starter-template rows, scroll bar, placeholder copy, and expanded-row
+dimmed starter-fixture rows, scroll bar, placeholder copy, and expanded-row
 layout are client presentation facts.
 
 If no selectable runtime is online/detected for the viewer, the client skips the
-template-selection and direct-setting steps and shows the no-installed-AI start
+fixture-selection and direct-setting steps and shows the no-installed-AI start
 state from the planning screen. That branch does not introduce a new control
 plane command. It is derived from the existing runtime/device read model.
 In `node-id=164-30206`, the client can still show provider rows for Claude Code,
@@ -490,7 +495,7 @@ marketing-consent variants follow the same `Q-CON-007` no-diff decision as
 member invite input/link-copy, and animation references are client/auth/team
 presentation surfaces and do not change the AI Agent DSL/IR/OpenAPI projection.
 
-Workspace selection, workspace creation entry points, template row selection,
+Workspace selection, workspace creation entry points, fixture row selection,
 `직접 설정` row rendering, disabled-next state before selection, scroll
 behavior, description ellipsis, and preview-popover layout remain client-owned
 presentation behavior.
@@ -669,6 +674,8 @@ The client-facing contract fixture is
 It covers:
 
 - `GET /v1/client/ai-agent/bootstrap`
+- `GET /v1/client/ai-agent/onboarding/fixtures`
+- `POST /v1/client/ai-agent/onboarding/fixtures/{fixture_id}/agents`
 - `GET /v1/client/ai-agent/devices`
 - `GET /v1/client/ai-agent/tasks/{task_id}/assignable-agents`
 - `POST /v1/client/ai-agent/tasks/{task_id}/assignment`
@@ -681,9 +688,6 @@ It covers:
 - `PATCH /v1/client/ai-agent/agents/{agent_id}`
 - `DELETE /v1/client/ai-agent/agents/{agent_id}`
 - `GET /v1/client/ai-agent/events`
-
-`GET /v1/client/ai-agent/bootstrap` also carries the onboarding template
-catalog for the Figma onboarding template-selection screen.
 
 The event stream uses a discriminated sum type, `ClientStreamEvent`, so client
 codegen can produce safe branches for runtime snapshots, agent editability, and
