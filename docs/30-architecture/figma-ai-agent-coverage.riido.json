@@ -121,11 +121,11 @@
       "generated_paths": [
         "aiAgent.tasks.assignableAgents",
         "aiAgent.agents.create",
-        "aiAgent.agents.update",
+        "aiAgent.agents.updateConfiguration",
         "aiAgent.agents.delete",
         "v2.aiAgent.tasks.assignableAgents",
         "v2.aiAgent.agents.create",
-        "v2.aiAgent.agents.update",
+        "v2.aiAgent.agents.updateConfiguration",
         "v2.aiAgent.agents.delete"
       ],
       "covered_facts": [
@@ -202,12 +202,12 @@
       "owner_repos": ["riido-contracts", "riido-control-plane", "riido-daemon", "riido-client"],
       "generated_paths": [
         "aiAgent.devices.runtimes",
-        "aiAgent.agents.daemon",
+        "aiAgent.agents.daemon.details",
         "aiAgent.agents.daemon.start",
         "aiAgent.agents.daemon.restart",
         "aiAgent.agents.daemon.stop",
         "v2.aiAgent.devices.runtimes",
-        "v2.aiAgent.agents.daemon",
+        "v2.aiAgent.agents.daemon.details",
         "v2.aiAgent.agents.daemon.start",
         "v2.aiAgent.agents.daemon.restart",
         "v2.aiAgent.agents.daemon.stop"
@@ -351,13 +351,13 @@
       "generated_paths": [
         "aiAgent.bootstrap",
         "aiAgent.agents.create",
-        "aiAgent.agents.update",
+        "aiAgent.agents.updateConfiguration",
         "aiAgent.agents.delete",
         "aiAgent.agents.editability",
         "aiAgent.devices.runtimes",
         "v2.aiAgent.bootstrap",
         "v2.aiAgent.agents.create",
-        "v2.aiAgent.agents.update",
+        "v2.aiAgent.agents.updateConfiguration",
         "v2.aiAgent.agents.delete",
         "v2.aiAgent.agents.editability",
         "v2.aiAgent.devices.runtimes"

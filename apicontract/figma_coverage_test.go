@@ -58,6 +58,7 @@ func TestFigmaAIAgentCoverageManifest(t *testing.T) {
 	if got, want := len(manifest.Entries), len(manifest.ExpectedTopLevelNodes); got != want {
 		t.Fatalf("entries = %d, want %d", got, want)
 	}
+	openAPIGeneratedPaths := loadAIAgentClientGeneratedPaths(t)
 
 	expected := map[string]figmaCoverageNode{}
 	for _, node := range manifest.ExpectedTopLevelNodes {
@@ -89,7 +90,7 @@ func TestFigmaAIAgentCoverageManifest(t *testing.T) {
 		if manifest.ExpectedTopLevelNodes[i].NodeID != entry.NodeID {
 			t.Fatalf("entry order must match expected_top_level_nodes at %d: got %s want %s", i, entry.NodeID, manifest.ExpectedTopLevelNodes[i].NodeID)
 		}
-		verifyCoverageEntry(t, entry)
+		verifyCoverageEntry(t, entry, openAPIGeneratedPaths)
 	}
 
 	for _, node := range manifest.ExpectedTopLevelNodes {
@@ -99,7 +100,7 @@ func TestFigmaAIAgentCoverageManifest(t *testing.T) {
 	}
 }
 
-func verifyCoverageEntry(t *testing.T, entry figmaCoverageEntry) {
+func verifyCoverageEntry(t *testing.T, entry figmaCoverageEntry, openAPIGeneratedPaths map[string]string) {
 	t.Helper()
 	if strings.TrimSpace(entry.CoverageStatus) == "" {
 		t.Fatalf("entry %q coverage_status is required", entry.NodeID)
@@ -118,6 +119,11 @@ func verifyCoverageEntry(t *testing.T, entry figmaCoverageEntry) {
 		for _, doc := range entry.SSOTDocs {
 			assertCoverageLocalRefExists(t, doc)
 		}
+		for _, generatedPath := range entry.GeneratedPaths {
+			if _, ok := openAPIGeneratedPaths[generatedPath]; !ok {
+				t.Fatalf("entry %q references unknown generated path %q", entry.NodeID, generatedPath)
+			}
+		}
 	case "non_decision_asset":
 		if strings.TrimSpace(entry.Reason) == "" {
 			t.Fatalf("non-decision entry %q must explain reason", entry.NodeID)
@@ -128,6 +134,29 @@ func verifyCoverageEntry(t *testing.T, entry figmaCoverageEntry) {
 	default:
 		t.Fatalf("entry %q has unknown coverage_status %q", entry.NodeID, entry.CoverageStatus)
 	}
+}
+
+func loadAIAgentClientGeneratedPaths(t *testing.T) map[string]string {
+	t.Helper()
+	dsl := loadTestDSL(t, "fixtures/control-plane-ai-agent-client.dsl.riido.json")
+	ir, err := GenerateIR(dsl)
+	if err != nil {
+		t.Fatalf("GenerateIR: %v", err)
+	}
+	openAPI, err := GenerateOpenAPI(ir)
+	if err != nil {
+		t.Fatalf("GenerateOpenAPI: %v", err)
+	}
+	out := map[string]string{}
+	for path, methods := range openAPI.Paths {
+		for method, operation := range methods {
+			if operation.RiidoClient == nil || strings.TrimSpace(operation.RiidoClient.GeneratedPath) == "" {
+				continue
+			}
+			out[operation.RiidoClient.GeneratedPath] = strings.ToUpper(method) + " " + path
+		}
+	}
+	return out
 }
 
 func assertCoverageLocalRefExists(t *testing.T, ref string) {
