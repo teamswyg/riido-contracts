@@ -461,6 +461,13 @@ selected runtime, visibility, and the complete `CreateAgentConfigurationRequest`
 body copied or edited from the fixture. Direct configuration uses
 `POST /v1/client/ai-agent/agents` without choosing a fixture.
 
+The Figma discussion evidence in `node-id=162-23475` resolves the fixture
+identity rule: fixture-created agents are ordinary agents. Their names remain
+mutable and non-unique, and the control plane must not auto-suffix or rewrite a
+duplicate display name such as `리도(1)`. `agent_id` remains the durable identity
+and ordering tie-breaker, and fixture-created agents follow the same
+editability, update, delete, and RBAC rules as directly configured agents.
+
 The direct-configuration expansion from `node-id=164-26969` also does not create
 a separate command or fixture row. The expanded `이름`, `설명`, and `지침`
 fields project to `CreateAgentConfigurationRequest.name`, `description`, and

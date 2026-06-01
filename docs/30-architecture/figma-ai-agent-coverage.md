@@ -59,7 +59,7 @@ presentation fact, a no-diff product surface, or an open question.
 | `153:15931` | 댓글 소통 | covered | task-thread policy, API DSL, control-plane, daemon, client |
 | `153:15932` | image 14 | non-decision asset | no independent SSOT decision |
 | `153:15935` | 추가 기획 내용 | covered | contracts policy and API DSL before implementation |
-| `162:23468` | 논의 필요 | planning evidence | open question or explicit owner required before code |
+| `162:23468` | 논의 필요 | covered | fixture-created agent identity, duplicate names, normal edit/delete lifecycle |
 | `156:18767` | image 13 | non-decision asset | no independent SSOT decision |
 | `156:19307` | 메뉴바 | covered | client route affordance, control-plane data after route open |
 | `156:19308` | Group 6 | non-decision asset | no independent SSOT decision |
@@ -91,6 +91,10 @@ API DSL, not hand-authored route names.
 - `docs/20-domain/ai-agent-policy.md` owns the durable business language:
   agent, runtime, device, daemon, visibility, editability, task-thread, fixture,
   workspace-scoped v2 API, and no-runtime semantics.
+- Figma `node-id=162-23475` closes the former `논의 필요` note: agents created
+  from onboarding fixtures are ordinary agents, may share the same display name,
+  are identified by `agent_id`, and follow normal update/delete/editability/RBAC
+  rules.
 - `docs/20-domain/api-contract-projection.md` owns DSL -> IR -> OpenAPI
   projection mechanics and generated-client path searchability.
 - `apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json` owns the
