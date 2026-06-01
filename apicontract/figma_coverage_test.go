@@ -109,6 +109,7 @@ func TestFigmaAIAgentCoverageManifest(t *testing.T) {
 	nonUIInventory := verifyNonUITopLevelInventory(t, manifest, pages)
 
 	seen := map[string]bool{}
+	entryByNodeID := map[string]figmaCoverageEntry{}
 	for i, entry := range manifest.Entries {
 		expectedNode, ok := expected[entry.NodeID]
 		if !ok {
@@ -118,6 +119,7 @@ func TestFigmaAIAgentCoverageManifest(t *testing.T) {
 			t.Fatalf("duplicate entry node_id %q", entry.NodeID)
 		}
 		seen[entry.NodeID] = true
+		entryByNodeID[entry.NodeID] = entry
 		if entry.Name != expectedNode.Name {
 			t.Fatalf("entry %q name = %q, want %q", entry.NodeID, entry.Name, expectedNode.Name)
 		}
@@ -161,6 +163,7 @@ func TestFigmaAIAgentCoverageManifest(t *testing.T) {
 		}
 	}
 
+	verifyFigmaClientDeliveryAnnotations(t, manifest.ClientDeliveryAnnotations, docText, openAPIGeneratedPaths, registered, entryByNodeID)
 	assertDocumentedFigmaNodeRefsAreRegistered(t, registered)
 	assertNoStaleOnboardingFixtureWording(t)
 }
@@ -286,6 +289,59 @@ func verifyCoverageEntry(t *testing.T, entry figmaCoverageEntry, openAPIGenerate
 	}
 }
 
+func verifyFigmaClientDeliveryAnnotations(t *testing.T, annotations []figmaClientDeliveryAnnotation, docText string, openAPIGeneratedPaths map[string]string, registered map[string]string, entries map[string]figmaCoverageEntry) {
+	t.Helper()
+	if got, want := len(annotations), 2; got != want {
+		t.Fatalf("client_delivery_annotations = %d, want %d", got, want)
+	}
+	seen := map[string]bool{}
+	for _, annotation := range annotations {
+		if seen[annotation.NodeID] {
+			t.Fatalf("duplicate client delivery annotation node %q", annotation.NodeID)
+		}
+		seen[annotation.NodeID] = true
+		if _, ok := registered[annotation.NodeID]; !ok {
+			t.Fatalf("client delivery annotation %q is not a registered Figma evidence node", annotation.NodeID)
+		}
+		if annotation.TopLevelNodeID != "153:15931" || annotation.CoverageEntryNodeID != "153:15931" {
+			t.Fatalf("client delivery annotation %q must resolve through task-thread top-level entry 153:15931: %+v", annotation.NodeID, annotation)
+		}
+		if annotation.CategoryID != "39:0" || annotation.CategoryLabel != "클라이언트 전달" {
+			t.Fatalf("client delivery annotation %q category drifted: %+v", annotation.NodeID, annotation)
+		}
+		if !strings.HasPrefix(annotation.FigmaGeneratedPath, "riido.") {
+			t.Fatalf("client delivery annotation %q must preserve the Figma facade path: %q", annotation.NodeID, annotation.FigmaGeneratedPath)
+		}
+		canonical := strings.TrimPrefix(annotation.FigmaGeneratedPath, "riido.")
+		if annotation.CanonicalGeneratedPath != canonical {
+			t.Fatalf("client delivery annotation %q canonical path = %q, want %q", annotation.NodeID, annotation.CanonicalGeneratedPath, canonical)
+		}
+		if _, ok := openAPIGeneratedPaths[annotation.CanonicalGeneratedPath]; !ok {
+			t.Fatalf("client delivery annotation %q references unknown OpenAPI generated path %q", annotation.NodeID, annotation.CanonicalGeneratedPath)
+		}
+		entry, ok := entries[annotation.CoverageEntryNodeID]
+		if !ok {
+			t.Fatalf("client delivery annotation %q references missing coverage entry %q", annotation.NodeID, annotation.CoverageEntryNodeID)
+		}
+		if !stringSliceContains(entry.GeneratedPaths, annotation.CanonicalGeneratedPath) {
+			t.Fatalf("client delivery annotation %q canonical path %q is not in coverage entry %q generated paths", annotation.NodeID, annotation.CanonicalGeneratedPath, entry.NodeID)
+		}
+		for _, needle := range []string{annotation.NodeID, annotation.FigmaGeneratedPath, annotation.CanonicalGeneratedPath, annotation.CategoryLabel} {
+			if !strings.Contains(docText, needle) {
+				t.Fatalf("coverage doc must mention client delivery annotation %q", needle)
+			}
+		}
+		if strings.Contains(annotation.FigmaLabel, "작업중") {
+			if annotation.ResolutionStatus != "resolved_stale_handoff_copy" {
+				t.Fatalf("client delivery annotation %q stale Figma copy must be explicitly resolved: %+v", annotation.NodeID, annotation)
+			}
+			if !strings.Contains(annotation.Resolution, "stale") || !strings.Contains(docText, "상세내용은 작업중입니다") {
+				t.Fatalf("client delivery annotation %q stale copy resolution is not documented", annotation.NodeID)
+			}
+		}
+	}
+}
+
 func loadAIAgentClientGeneratedPaths(t *testing.T) map[string]string {
 	t.Helper()
 	dsl := loadTestDSL(t, "fixtures/control-plane-ai-agent-client.dsl.riido.json")
@@ -318,6 +374,15 @@ func docMentionsGeneratedPath(docText, generatedPath string) bool {
 		return false
 	}
 	return strings.Contains(docText, generatedPath[:lastDot]+".*")
+}
+
+func stringSliceContains(items []string, want string) bool {
+	for _, item := range items {
+		if item == want {
+			return true
+		}
+	}
+	return false
 }
 
 func assertCoverageLocalRefExists(t *testing.T, ref string) {
@@ -479,20 +544,21 @@ var (
 )
 
 type figmaCoverageManifest struct {
-	SchemaVersion          string                        `json:"schema_version"`
-	ID                     string                        `json:"id"`
-	RiidoTask              string                        `json:"riido_task"`
-	HumanDoc               string                        `json:"human_doc"`
-	RelatedManifests       []string                      `json:"related_manifests"`
-	Figma                  figmaCoverageSource           `json:"figma"`
-	InspectionMethod       figmaCoverageInspectionMethod `json:"inspection_method"`
-	CoveragePolicy         figmaCoveragePolicy           `json:"coverage_policy"`
-	ExpectedPages          []figmaCoveragePage           `json:"expected_pages"`
-	ExpectedTopLevelNodes  []figmaCoverageNode           `json:"expected_top_level_nodes"`
-	NonUITopLevelInventory []figmaNonUITopLevelInventory `json:"non_ui_top_level_inventory"`
-	VerifiedEvidenceNodes  []figmaCoverageNode           `json:"verified_evidence_nodes"`
-	NonUITopLevelNodes     []figmaCoverageEntry          `json:"non_ui_top_level_nodes"`
-	Entries                []figmaCoverageEntry          `json:"entries"`
+	SchemaVersion             string                          `json:"schema_version"`
+	ID                        string                          `json:"id"`
+	RiidoTask                 string                          `json:"riido_task"`
+	HumanDoc                  string                          `json:"human_doc"`
+	RelatedManifests          []string                        `json:"related_manifests"`
+	Figma                     figmaCoverageSource             `json:"figma"`
+	InspectionMethod          figmaCoverageInspectionMethod   `json:"inspection_method"`
+	CoveragePolicy            figmaCoveragePolicy             `json:"coverage_policy"`
+	ExpectedPages             []figmaCoveragePage             `json:"expected_pages"`
+	ExpectedTopLevelNodes     []figmaCoverageNode             `json:"expected_top_level_nodes"`
+	NonUITopLevelInventory    []figmaNonUITopLevelInventory   `json:"non_ui_top_level_inventory"`
+	VerifiedEvidenceNodes     []figmaCoverageNode             `json:"verified_evidence_nodes"`
+	NonUITopLevelNodes        []figmaCoverageEntry            `json:"non_ui_top_level_nodes"`
+	ClientDeliveryAnnotations []figmaClientDeliveryAnnotation `json:"client_delivery_annotations"`
+	Entries                   []figmaCoverageEntry            `json:"entries"`
 }
 
 type figmaCoverageSource struct {
@@ -547,6 +613,19 @@ type figmaCoverageEntry struct {
 	CoveredFacts   []string               `json:"covered_facts,omitempty"`
 	DirectionLoop  figmaCoverageDirection `json:"direction_loop,omitempty"`
 	Reason         string                 `json:"reason,omitempty"`
+}
+
+type figmaClientDeliveryAnnotation struct {
+	NodeID                 string `json:"node_id"`
+	TopLevelNodeID         string `json:"top_level_node_id"`
+	CoverageEntryNodeID    string `json:"coverage_entry_node_id"`
+	CategoryID             string `json:"category_id"`
+	CategoryLabel          string `json:"category_label"`
+	FigmaLabel             string `json:"figma_label"`
+	FigmaGeneratedPath     string `json:"figma_generated_path"`
+	CanonicalGeneratedPath string `json:"canonical_generated_path"`
+	ResolutionStatus       string `json:"resolution_status"`
+	Resolution             string `json:"resolution"`
 }
 
 type figmaCoverageDirection struct {
