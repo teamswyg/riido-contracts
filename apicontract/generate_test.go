@@ -97,6 +97,46 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	if len(openAPI.RiidoClientModules) != 1 || openAPI.RiidoClientModules[0].Module != "aiAgent" {
 		t.Fatalf("client modules = %#v", openAPI.RiidoClientModules)
 	}
+	if _, ok := openAPI.Components.SecuritySchemes["riidoAIAgentToken"]; !ok {
+		t.Fatalf("riidoAIAgentToken security scheme missing: %#v", openAPI.Components.SecuritySchemes)
+	}
+	if _, ok := openAPI.Components.Schemas["AgentOnboardingTemplate"]; ok {
+		t.Fatalf("AgentOnboardingTemplate must not be exposed")
+	}
+	fixtureList := openAPI.Paths["/v1/client/ai-agent/onboarding/fixtures"]["get"]
+	if fixtureList.OperationID != "listAIAgentOnboardingFixtures" ||
+		fixtureList.RiidoClient == nil ||
+		fixtureList.RiidoClient.CacheTag != "aiAgent.onboarding.fixtures" ||
+		fixtureList.RiidoRBAC != "agent_onboarding_fixtures.v1" {
+		t.Fatalf("fixture list operation = %#v", fixtureList)
+	}
+	fixtureCreate := openAPI.Paths["/v1/client/ai-agent/onboarding/fixtures/{fixture_id}/agents"]["post"]
+	if fixtureCreate.OperationID != "createAIAgentFromOnboardingFixture" ||
+		fixtureCreate.RequestBody == nil ||
+		fixtureCreate.RiidoClient == nil ||
+		!contains(fixtureCreate.RiidoClient.Invalidates, "aiAgent.bootstrap") {
+		t.Fatalf("fixture create operation = %#v", fixtureCreate)
+	}
+	if len(fixtureCreate.Parameters) != 1 || fixtureCreate.Parameters[0].Name != "fixture_id" {
+		t.Fatalf("fixture create parameters = %#v", fixtureCreate.Parameters)
+	}
+	fixtureSchema := openAPI.Components.Schemas["AgentOnboardingFixture"]
+	fixtureProps, ok := fixtureSchema["properties"].(map[string]any)
+	if !ok {
+		t.Fatalf("AgentOnboardingFixture properties missing: %#v", fixtureSchema)
+	}
+	fixtureID, ok := fixtureProps["fixture_id"].(map[string]any)
+	if !ok || fixtureID["description"] == "" {
+		t.Fatalf("fixture_id description missing: %#v", fixtureProps["fixture_id"])
+	}
+	bootstrapSchema := openAPI.Components.Schemas["ClientBootstrapResponse"]
+	bootstrapProps, ok := bootstrapSchema["properties"].(map[string]any)
+	if !ok {
+		t.Fatalf("ClientBootstrapResponse properties missing: %#v", bootstrapSchema)
+	}
+	if _, ok := bootstrapProps["agent_templates"]; ok {
+		t.Fatalf("ClientBootstrapResponse must not expose agent_templates: %#v", bootstrapProps)
+	}
 	daemonDetail := openAPI.Paths["/v1/client/ai-agent/agents/{agent_id}/daemon"]["get"]
 	if daemonDetail.RiidoClient == nil || daemonDetail.RiidoClient.CacheTag != "aiAgent.agents.daemon" {
 		t.Fatalf("daemon detail client metadata = %#v", daemonDetail.RiidoClient)

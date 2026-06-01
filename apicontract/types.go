@@ -91,6 +91,7 @@ type Schema struct {
 type Property struct {
 	Name                 string    `json:"name,omitempty"`
 	Type                 string    `json:"type,omitempty"`
+	Description          string    `json:"description,omitempty"`
 	Format               string    `json:"format,omitempty"`
 	MaxLength            *int      `json:"max_length,omitempty"`
 	Enum                 []string  `json:"enum,omitempty"`
@@ -125,6 +126,7 @@ type ClientMeta struct {
 
 type Auth struct {
 	Scheme string   `json:"scheme"`
+	Header string   `json:"header,omitempty"`
 	Scopes []string `json:"scopes,omitempty"`
 }
 
@@ -255,6 +257,8 @@ type OpenAPIComponents struct {
 
 type OpenAPISecurityScheme struct {
 	Type         string `json:"type"`
-	Scheme       string `json:"scheme"`
+	In           string `json:"in,omitempty"`
+	Name         string `json:"name,omitempty"`
+	Scheme       string `json:"scheme,omitempty"`
 	BearerFormat string `json:"bearerFormat,omitempty"`
 }
