@@ -3,8 +3,10 @@ package apicontract
 import (
 	"bytes"
 	"encoding/json"
+	"net/url"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"testing"
 )
@@ -70,6 +72,14 @@ func TestFigmaAIAgentCoverageManifest(t *testing.T) {
 		}
 		expected[node.NodeID] = node
 	}
+	registered := map[string]string{}
+	registerFigmaNode(t, registered, figmaCoverageNode{NodeID: manifest.Figma.PageID, Name: manifest.Figma.PageName}, "figma.page_id")
+	for _, node := range manifest.ExpectedTopLevelNodes {
+		registerFigmaNode(t, registered, node, "expected_top_level_nodes")
+	}
+	for _, node := range manifest.VerifiedEvidenceNodes {
+		registerFigmaNode(t, registered, node, "verified_evidence_nodes")
+	}
 
 	seen := map[string]bool{}
 	for i, entry := range manifest.Entries {
@@ -98,6 +108,8 @@ func TestFigmaAIAgentCoverageManifest(t *testing.T) {
 			t.Fatalf("expected node %q has no entry", node.NodeID)
 		}
 	}
+
+	assertDocumentedFigmaNodeRefsAreRegistered(t, registered)
 }
 
 func verifyCoverageEntry(t *testing.T, entry figmaCoverageEntry, openAPIGeneratedPaths map[string]string) {
@@ -173,6 +185,81 @@ func assertCoverageLocalRefExists(t *testing.T, ref string) {
 	}
 }
 
+func registerFigmaNode(t *testing.T, registered map[string]string, node figmaCoverageNode, source string) {
+	t.Helper()
+	if strings.TrimSpace(node.NodeID) == "" || strings.TrimSpace(node.Name) == "" {
+		t.Fatalf("%s has empty node field: %+v", source, node)
+	}
+	if existing, exists := registered[node.NodeID]; exists {
+		t.Fatalf("duplicate Figma node %q in %s; already registered by %s", node.NodeID, source, existing)
+	}
+	registered[node.NodeID] = source
+}
+
+func assertDocumentedFigmaNodeRefsAreRegistered(t *testing.T, registered map[string]string) {
+	t.Helper()
+	for _, root := range []string{
+		filepath.FromSlash("../docs"),
+		filepath.FromSlash("fixtures"),
+		filepath.FromSlash("../README.md"),
+	} {
+		info, err := os.Stat(root)
+		if err != nil {
+			t.Fatalf("stat %s: %v", root, err)
+		}
+		if !info.IsDir() {
+			assertFigmaNodeRefsInFileAreRegistered(t, root, registered)
+			continue
+		}
+		err = filepath.WalkDir(root, func(path string, entry os.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
+			if entry.IsDir() {
+				return nil
+			}
+			switch filepath.Ext(path) {
+			case ".md", ".json":
+				assertFigmaNodeRefsInFileAreRegistered(t, path, registered)
+			}
+			return nil
+		})
+		if err != nil {
+			t.Fatalf("walk %s: %v", root, err)
+		}
+	}
+}
+
+func assertFigmaNodeRefsInFileAreRegistered(t *testing.T, path string, registered map[string]string) {
+	t.Helper()
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("read %s: %v", path, err)
+	}
+	for _, match := range figmaNodeIDRefPattern.FindAllStringSubmatch(string(data), -1) {
+		nodeID := normalizeFigmaNodeID(match[1])
+		if _, ok := registered[nodeID]; !ok {
+			t.Fatalf("%s cites unregistered Figma node-id=%s; add it to figma-ai-agent-coverage.riido.json or remove the stale citation", path, match[1])
+		}
+	}
+}
+
+func normalizeFigmaNodeID(raw string) string {
+	unescaped, err := url.QueryUnescape(raw)
+	if err != nil {
+		unescaped = raw
+	}
+	if match := numericFigmaURLNodePattern.FindStringSubmatch(unescaped); match != nil {
+		return match[1] + ":" + match[2]
+	}
+	return unescaped
+}
+
+var (
+	figmaNodeIDRefPattern      = regexp.MustCompile(`node-id=([A-Za-z0-9%][A-Za-z0-9:;%_-]*)`)
+	numericFigmaURLNodePattern = regexp.MustCompile(`^([0-9]+)-([0-9]+)$`)
+)
+
 type figmaCoverageManifest struct {
 	SchemaVersion         string               `json:"schema_version"`
 	ID                    string               `json:"id"`
@@ -182,6 +269,7 @@ type figmaCoverageManifest struct {
 	Figma                 figmaCoverageSource  `json:"figma"`
 	CoveragePolicy        figmaCoveragePolicy  `json:"coverage_policy"`
 	ExpectedTopLevelNodes []figmaCoverageNode  `json:"expected_top_level_nodes"`
+	VerifiedEvidenceNodes []figmaCoverageNode  `json:"verified_evidence_nodes"`
 	Entries               []figmaCoverageEntry `json:"entries"`
 }
 

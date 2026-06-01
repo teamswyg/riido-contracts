@@ -9,7 +9,10 @@ domain policy, API shape, daemon behavior, or infra topology.
 The executable coverage manifest is
 [`figma-ai-agent-coverage.riido.json`](figma-ai-agent-coverage.riido.json). It
 records the Figma file, page, top-level sections, owner repositories, generated
-client paths, and the top-down / bottom-up rule for each section.
+client paths, verified evidence node IDs, and the top-down / bottom-up rule for
+each section. Documentation may cite only node IDs registered in that manifest,
+so stale Figma links fail deterministically instead of remaining as hidden
+planning drift.
 
 ## Source
 
@@ -18,7 +21,7 @@ client paths, and the top-down / bottom-up rule for each section.
 | Figma file | `v.1.22 AI Agent` |
 | File key | `MUOd9lctoEHASUStN3vUuK` |
 | UI page node | `129:5215` |
-| Inspection date | `2026-06-01` |
+| Inspection date | `2026-06-02` |
 
 ## Coverage Rule
 
@@ -110,6 +113,6 @@ go test ./...
 ```
 
 The test verifies that each known top-level Figma node has an entry, that real
-decision sections link to SSOT documents and owner repos, and that
-non-decision assets stay explicitly classified instead of silently becoming
-work.
+decision sections link to SSOT documents and owner repos, that documentation
+does not cite unregistered `node-id=...` values, and that non-decision assets
+stay explicitly classified instead of silently becoming work.
