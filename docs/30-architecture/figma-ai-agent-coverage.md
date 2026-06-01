@@ -24,16 +24,20 @@ planning drift.
 | File key | `MUOd9lctoEHASUStN3vUuK` |
 | Primary UI page node | `129:5215` |
 | Pages inspected | `129:5215` UI, `42:3014` Wireframe - 온보딩, `0:1` Wireframe |
-| Page registry authority | Figma Plugin API `figma.root.children` / `page.children.length` |
+| Page registry authority | Figma Plugin API `figma.root.children`; loaded page child count from `await figma.setCurrentPageAsync(page); page.children.length` |
 | Supporting read tools | metadata XML/read output and node-specific metadata lookup |
 | Inspection date | `2026-06-02` |
 
 The page registry and the top-level child counts in this document are
 authoritative only when they come from the Figma Plugin API
-`figma.root.children` and each page's `page.children.length`. Metadata XML/read
-tools are supporting evidence only: they may expand internal node subtrees or
-return a scoped XML view, so they must not redefine `expected_pages.child_count`
-or the top-level page registry.
+`figma.root.children` and each page's loaded `page.children.length`. For
+non-current pages, the inspection script must first call
+`await figma.setCurrentPageAsync(page)` and only then read `page.children.length`
+and `page.children`. Passive `figma.root.children` page objects can be lazy or
+unloaded, so they are only a page registry source. Metadata XML/read tools are
+supporting evidence only: they may expand internal node subtrees, return a
+scoped XML view, or report lazy/unloaded child counts, so they must not redefine
+`expected_pages.child_count` or the top-level page registry.
 
 ## Coverage Rule
 
@@ -69,7 +73,7 @@ presentation fact, a no-diff product surface, or an open question.
 | --- | --- | --- | --- |
 | `129:5215` | UI | 16 | primary detailed API/domain coverage |
 | `42:3014` | Wireframe - 온보딩 | 3 | supporting onboarding/platform evidence |
-| `0:1` | Wireframe | 1 | legacy planning evidence |
+| `0:1` | Wireframe | 28 | legacy planning evidence |
 
 ## UI Top-Level Coverage
 
@@ -93,6 +97,15 @@ presentation fact, a no-diff product surface, or an open question.
 | `432:37336` | 에이전트 설정페이지 | covered | agent configuration fields, editability, runtime/model catalog |
 
 ## Non-UI Page Coverage
+
+`non_ui_top_level_inventory` in the executable manifest records every loaded
+top-level node on the non-UI pages. `non_ui_top_level_nodes` remains narrower:
+it lists only the non-UI nodes that carry a coverage decision. This separation
+prevents lazy page loading from hiding Figma drift while avoiding fake policy
+ownership for old screenshots, duplicated legacy frames, or asset-only layers.
+The 2026-06-02 loaded inspection found page `0:1` `Wireframe` has 28 top-level
+children after `await figma.setCurrentPageAsync(page)`, even though a passive
+page-registry read can report it as a single child.
 
 | Figma page | Figma node | Section | Status | Coverage rule |
 | --- | --- | --- | --- | --- |
@@ -141,8 +154,9 @@ API DSL, not hand-authored route names.
 ## Current Annotation Pass
 
 The 2026-06-02 Figma annotation pass keeps the same 16 top-level sections on
-primary page `129:5215` and additionally registers all non-UI top-level
-sections from pages `42:3014` and `0:1`. The task-thread section now also cites
+primary page `129:5215`, records loaded non-UI page inventories, and keeps
+coverage-bearing non-UI sections from pages `42:3014` and `0:1` distinct from
+inventory-only legacy layers. The task-thread section now also cites
 motion references
 (`node-id=153:12743`, `node-id=236:21467`), stop modals
 (`node-id=236:20762`, `node-id=236:21048`), viewer-away rows
