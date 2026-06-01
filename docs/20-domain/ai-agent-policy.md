@@ -61,8 +61,9 @@ frontend hard-coded business copy and not backend-managed template entities.
 Selecting `리도`, `영실`, `홍도`, or `지원` creates a normal agent. Runtime/no-runtime
 branching is still client composition over the existing device/runtime read
 model. Workspace list selection and the `새 워크스페이스` row are
-workspace/team/client product surfaces; they do not add an AI Agent generated
-operation by themselves.
+workspace/team/client product surfaces; they do not add workspace list/create
+operations to the AI Agent contract by themselves. The selected `workspace_id`
+does become the v2 AI Agent API scope because agents belong to a workspace.
 The all-disconnected provider list and start CTA are also presentation derived
 from device/runtime liveness; they do not create provider-install or
 provider-start commands in this contract.
@@ -263,7 +264,7 @@ dependency direction and the top-down / bottom-up harness loop are defined in
 For agent settings specifically:
 
 - `profile_thumbnail_url`, `description`, and `instruction` meaning starts here
-  and in the `control-plane-ai-agent-client-api.v1` DSL fixture.
+  and in the `control-plane-ai-agent-client-api.v2` DSL fixture.
 - `model_id` meaning starts here and in the same DSL fixture. It is validated
   against the selected runtime's `RuntimeModelRecord` catalog and defaults to
   the selected runtime's default model when omitted.
@@ -351,7 +352,7 @@ For agent settings specifically:
 | Term | Meaning |
 | --- | --- |
 | Runtime | A provider runtime installed on a device, such as Codex, Claude Code, Cursor, or OpenClaw. The device owner owns the runtime. |
-| Agent | A task-assignable abstraction of a configured runtime created through Riido by a workspace admin or by the creator-owner. The creator owns the agent. |
+| Agent | A task-assignable abstraction of a configured runtime created inside a Riido workspace. The workspace is the tenant boundary, and the creator is stored as `owner_principal_id` for owner/admin behavior. |
 | Control Plane | The Riido SaaS surface that applies the AI Agent feature to daemon and client workflows. |
 | Device | The machine running `riido-daemon`, indirectly first signed in to Riido by the owning account. A device owns runtimes. |
 | Daemon | The `riido-daemon` artifact controlled by the desktop app. It detects and controls runtimes and reports state to the control plane. |
@@ -543,9 +544,12 @@ assignment-created `Assignment.agent_instruction` snapshot and link back here
 only for the value semantics and limit.
 
 Profile field creation and updates follow the same RBAC and mutation safety
-rules as name, visibility, and runtime binding updates. Creation stamps
-`owner_principal_id` from the authorized principal and binds only a selected
-runtime that is present in the authorized selectable device/runtime read model.
+rules as name, visibility, and runtime binding updates. v2 creation stamps
+`workspace_id` from the URL path, stamps `owner_principal_id` from the
+authorized principal, and binds only a selected runtime that is present in the
+authorized selectable device/runtime read model. v1 creation remains present as
+a compatibility route for existing UI tests and must not be treated as the
+authoritative new integration path.
 For a non-admin viewer this normally means a viewer-owned runtime or a runtime
 made available through a public agent; an admin can use runtime rows made
 visible by workspace RBAC. Local daemon detail/control follows the agent access
@@ -664,7 +668,7 @@ this repository.
 ## Contract Fixtures
 
 The client-facing contract fixture is
-`control-plane-ai-agent-client-api.v1`:
+`control-plane-ai-agent-client-api.v2`:
 
 - DSL: `../../apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json`
 - IR: `../../apicontract/fixtures/control-plane-ai-agent-client.ir.riido.json`
@@ -688,6 +692,13 @@ It covers:
 - `PATCH /v1/client/ai-agent/agents/{agent_id}`
 - `DELETE /v1/client/ai-agent/agents/{agent_id}`
 - `GET /v1/client/ai-agent/events`
+
+The authoritative new client surface duplicates the AI Agent routes under
+`/v2/client/workspaces/{workspace_id}/ai-agent/...`. Generated client metadata
+uses the `v2` module, so frontend access paths are shaped like
+`riido.v2.aiAgent.agents.create`, `riido.v2.aiAgent.bootstrap`, and
+`riido.v2.aiAgent.tasks.assign`. v1 remains available only as a compatibility
+surface; it must not own the new workspace-scoped semantics.
 
 The event stream uses a discriminated sum type, `ClientStreamEvent`, so client
 codegen can produce safe branches for runtime snapshots, agent editability, and

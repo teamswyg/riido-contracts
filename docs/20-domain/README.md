@@ -35,7 +35,7 @@ RIID-4718 adds:
 RIID-4720 adds:
 
 - C10 AI Agent policy vocabulary in [`ai-agent-policy.md`](ai-agent-policy.md)
-- `control-plane-ai-agent-client-api.v1` API projection fixtures, including
+- `control-plane-ai-agent-client-api.v2` API projection fixtures, including
   top-level enum and sum-type definitions for client codegen safety
 
 The EventIngestor implementation, policy redaction catalog, provider adapters,

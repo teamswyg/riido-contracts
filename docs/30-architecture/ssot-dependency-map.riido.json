@@ -297,6 +297,37 @@
           "local_scope": "runtime config only after infra publishes deployment inputs"
         }
       ]
+    },
+    {
+      "id": "workspace-scoped-ai-agent-v2-api",
+      "fact": "AI Agent v2 client API is scoped by workspace_id path parameters while workspace list/create remains outside the AI Agent contract",
+      "human_doc_phrase": "Workspace-scoped AI Agent v2 API",
+      "source_refs": [
+        {
+          "repo": "riido-contracts",
+          "path": "docs/20-domain/ai-agent-policy.md",
+          "required_phrase": "/v2/client/workspaces/{workspace_id}/ai-agent/..."
+        },
+        {
+          "repo": "riido-contracts",
+          "path": "docs/20-domain/api-contract-projection.md",
+          "required_phrase": "generated client paths under `riido.v2.aiAgent.*`"
+        }
+      ],
+      "owner": {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/ai-agent-policy.md"
+      },
+      "downstreams": [
+        {
+          "repo": "riido-control-plane",
+          "local_scope": "v2 route parsing, workspace-scoped mock store records, authorization context, and persistence schema version marker"
+        },
+        {
+          "repo": "riido-client",
+          "local_scope": "generated calls such as riido.v2.aiAgent.agents.create with workspace_id params"
+        }
+      ]
     }
   ],
   "repo_dependencies": [
@@ -322,7 +353,8 @@
         "instruction",
         "participant-dropdown-agent-ordering",
         "profile-thumbnail-url",
-        "rbac-vocabulary"
+        "rbac-vocabulary",
+        "workspace-scoped-ai-agent-v2-api"
       ],
       "local_scope": "Control-plane executes HTTP, mock, authorization, and generated-client behavior without redefining canonical policy."
     },
