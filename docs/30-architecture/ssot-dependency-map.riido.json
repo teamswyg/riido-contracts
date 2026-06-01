@@ -88,8 +88,8 @@
     },
     {
       "id": "instruction",
-      "fact": "instruction is optional client-authored agent guidance text capped at 1000 characters and snapshotted into Assignment.agent_instruction at assignment creation",
-      "human_doc_phrase": "`instruction` is optional client-authored agent guidance text capped at 1000 characters",
+      "fact": "instruction is optional client-authored provider-neutral agent guidance text capped at 1000 characters and snapshotted into Assignment.agent_instruction at assignment creation",
+      "human_doc_phrase": "`instruction` is optional client-authored provider-neutral agent guidance text capped at 1000 characters",
       "source_refs": [
         {
           "repo": "riido-contracts",
@@ -108,7 +108,7 @@
         },
         {
           "repo": "riido-daemon",
-          "local_scope": "provider-specific prompt/native-config materialization from Assignment.agent_instruction"
+          "local_scope": "provider-specific placement/effectiveness harnesses from Assignment.agent_instruction"
         },
         {
           "repo": "riido-infra",
