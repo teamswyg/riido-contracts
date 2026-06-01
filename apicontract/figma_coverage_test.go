@@ -97,6 +97,11 @@ func TestFigmaAIAgentCoverageManifest(t *testing.T) {
 		if !strings.Contains(docText, entry.NodeID) || !strings.Contains(docText, entry.Name) {
 			t.Fatalf("coverage doc must mention node %s %s", entry.NodeID, entry.Name)
 		}
+		for _, generatedPath := range entry.GeneratedPaths {
+			if !docMentionsGeneratedPath(docText, generatedPath) {
+				t.Fatalf("coverage doc must mention generated path %q for node %s", generatedPath, entry.NodeID)
+			}
+		}
 		if manifest.ExpectedTopLevelNodes[i].NodeID != entry.NodeID {
 			t.Fatalf("entry order must match expected_top_level_nodes at %d: got %s want %s", i, entry.NodeID, manifest.ExpectedTopLevelNodes[i].NodeID)
 		}
@@ -170,6 +175,17 @@ func loadAIAgentClientGeneratedPaths(t *testing.T) map[string]string {
 		}
 	}
 	return out
+}
+
+func docMentionsGeneratedPath(docText, generatedPath string) bool {
+	if strings.Contains(docText, generatedPath) {
+		return true
+	}
+	lastDot := strings.LastIndex(generatedPath, ".")
+	if lastDot < 0 {
+		return false
+	}
+	return strings.Contains(docText, generatedPath[:lastDot]+".*")
 }
 
 func assertCoverageLocalRefExists(t *testing.T, ref string) {
