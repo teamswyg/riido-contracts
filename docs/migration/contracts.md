@@ -293,6 +293,29 @@ This slice does not change routes, schemas, authorization, RBAC, generated
 client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
 deployment evidence.
 
+### RIID-4840 — Figma metadata page-list limitation guard
+
+This slice records a Figma read-tool failure mode that can otherwise collapse
+the coverage SSOT.
+
+On 2026-06-02, `get_metadata` without `nodeId` returned only page `129:5215`
+`UI` for file `MUOd9lctoEHASUStN3vUuK`. The Figma Plugin API page registry for
+the same file returned `129:5215`, `42:3014`, and `0:1`, and the loaded
+`0:1` page still has 28 top-level children. Therefore the no-`nodeId` metadata
+page list is supporting evidence only.
+
+This slice does:
+
+- add `supporting_tool_limitations` to the Figma coverage manifest
+- document that no-`nodeId` `get_metadata` must not remove `expected_pages`,
+  non-UI inventories, or legacy Wireframe coverage
+- require the coverage test to preserve the three authoritative page IDs from
+  the Figma Plugin API
+
+This slice does not change routes, schemas, authorization, RBAC, generated
+client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
+deployment evidence.
+
 ## Validation Gates
 
 Required for this repository:
