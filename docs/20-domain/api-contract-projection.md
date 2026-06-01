@@ -113,9 +113,11 @@ SSE connection decisions deterministic for generated clients.
 Runtime settings empty states from Figma `node-id=275-22731` are projected from
 the same device/runtime read model as `GET /v1/client/ai-agent/devices`.
 Provider install-card hover, external provider installation links, Windows app
-waitlist copy, and marketing-consent presentation are not generated operations
-in this fixture. They require a separate owning SSOT before the DSL adds a
-waitlist or marketing mutation.
+waitlist copy, and marketing-consent presentation are client/product facts, not
+generated AI Agent operations in this fixture. `Q-CON-007` resolves that as a
+no-diff boundary for `control-plane-ai-agent-client-api.v1`: the DSL/IR/OpenAPI
+projection must not add waitlist or marketing-consent operations unless a future
+product/marketing SSOT defines a separate generated surface.
 
 Agent list timestamps from Figma `node-id=432-35713` are projected through
 `AgentClientRecord.created_at` and `AgentClientRecord.updated_at`.

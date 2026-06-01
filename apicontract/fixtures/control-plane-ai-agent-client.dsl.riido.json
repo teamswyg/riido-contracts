@@ -98,7 +98,7 @@
         "daemon_stop_effect: daemon stop이 accepted되면 해당 device의 runtimes는 client에 offline으로 노출되어야 합니다",
         "client: runtime-settings empty and install-card states are composed from device/runtime read-model data without changing liveness semantics",
         "client: runtime-settings current-device and other-device groups are composed from DeviceRecord values; daemon detail/actions are read through agents.daemon generated endpoints with an agent_id",
-        "client: provider install-card hover, Windows app waitlist copy, and marketing-consent presentation are downstream client/product facts until a separate owning SSOT adds a generated operation"
+        "client: provider install-card hover, Windows app waitlist copy, and marketing-consent presentation are downstream client/product facts; control-plane-ai-agent-client-api.v1 must not expose waitlist or marketing-consent operations unless a future product/marketing SSOT defines a separate generated surface"
       ]
     },
     {
