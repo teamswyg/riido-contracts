@@ -151,6 +151,9 @@ restart-in-progress animation. The durable contract facts are:
 - daemon details are SaaS read-model facts exposed through
   `riido.aiAgent.agents.daemon.details`; these include online/offline status,
   uptime, PID, daemon ID, profile, device name, and control state
+- the endpoint-looking runtime settings label at `node-id=129:17930` is not a
+  canonical base URL, generated path, or live host export; clients must receive
+  the AI Agent API base URL through configuration outside this contract
 - daemon start/restart/stop are SaaS command requests exposed through generated
   client endpoints under `riido.aiAgent.agents.daemon.*`;
   the desktop daemon still executes local lifecycle behavior after reading the
@@ -403,6 +406,12 @@ detail through `GET /v1/client/ai-agent/agents/{agent_id}/daemon`; this
 response owns the SaaS-visible daemon facts needed by the settings page:
 online/offline status, uptime, PID, daemon ID, profile, device name, supported
 actions, and current control state.
+
+Figma `node-id=129:17930` is an endpoint-looking label inside the runtime
+settings section, but it is not an API endpoint SSOT. This contract exposes
+operation paths and typed request/response shapes only. Runtime base URL values
+come from client/deployment configuration and must not be inferred from Figma
+screen copy.
 
 Start, restart, and stop are distinct SaaS command requests:
 
