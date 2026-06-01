@@ -50,7 +50,7 @@ The fixture includes the shared RBAC policy identifier
 owner is admin-equivalent only for owned agents, and non-admin users read owned
 agents plus other users' public agents.
 
-### `control-plane-ai-agent-client-api.v1`
+### `control-plane-ai-agent-client-api.v2`
 
 - DSL: `apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json`
 - IR: `apicontract/fixtures/control-plane-ai-agent-client.ir.riido.json`
@@ -74,6 +74,18 @@ webview:
 - `PATCH /v1/client/ai-agent/agents/{agent_id}`
 - `DELETE /v1/client/ai-agent/agents/{agent_id}`
 - `GET /v1/client/ai-agent/events`
+
+The v2 client surface is additive, not a migration. It duplicates the AI Agent
+routes under `/v2/client/workspaces/{workspace_id}/ai-agent/...` and uses
+generated client paths under `riido.v2.aiAgent.*`. The selected workspace comes
+from existing Riido workspace UI/API surfaces; AI Agent does not add workspace
+list/create operations. v1 routes stay present so existing UI tests and mock
+callers do not break, but new workspace-scoped client work must target v2.
+
+For v2 agent creation, `workspace_id` is required as a path parameter rather
+than a request-body field. The server stamps workspace ownership from the URL
+path, stamps `owner_principal_id` from authorization, and rejects attempts to
+derive workspace ownership from client-authored body data.
 
 The fixture includes explicit DSL/IR enums for runtime kind, runtime
 availability, runtime detection state, agent editability, agent work status,
@@ -120,7 +132,7 @@ the same device/runtime read model as `GET /v1/client/ai-agent/devices`.
 Provider install-card hover, external provider installation links, Windows app
 waitlist copy, and marketing-consent presentation are client/product facts, not
 generated AI Agent operations in this fixture. `Q-CON-007` resolves that as a
-no-diff boundary for `control-plane-ai-agent-client-api.v1`: the DSL/IR/OpenAPI
+no-diff boundary for `control-plane-ai-agent-client-api.v2`: the DSL/IR/OpenAPI
 projection must not add waitlist or marketing-consent operations unless a future
 product/marketing SSOT defines a separate generated surface.
 

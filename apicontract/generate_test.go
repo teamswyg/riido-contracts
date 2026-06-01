@@ -77,9 +77,15 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	if got, want := len(ir.SumTypes), 1; got != want {
 		t.Fatalf("IR sum types = %d, want %d", got, want)
 	}
+	if ir.ContractID != "control-plane-ai-agent-client-api.v2" {
+		t.Fatalf("IR contract_id = %q", ir.ContractID)
+	}
 	openAPI, err := GenerateOpenAPI(ir)
 	if err != nil {
 		t.Fatalf("GenerateOpenAPI: %v", err)
+	}
+	if openAPI.Info.Title != "control-plane-ai-agent-client-api.v2" {
+		t.Fatalf("OpenAPI title = %q", openAPI.Info.Title)
 	}
 	runtimeAvailability := openAPI.Components.Schemas["RuntimeAvailability"]
 	values, ok := runtimeAvailability["enum"].([]string)
@@ -94,7 +100,9 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	if _, ok := streamOperation.Responses["200"].Content["text/event-stream"]; !ok {
 		t.Fatalf("stream response content = %#v", streamOperation.Responses["200"].Content)
 	}
-	if len(openAPI.RiidoClientModules) != 1 || openAPI.RiidoClientModules[0].Module != "aiAgent" {
+	if len(openAPI.RiidoClientModules) != 2 ||
+		openAPI.RiidoClientModules[0].Module != "aiAgent" ||
+		openAPI.RiidoClientModules[1].Module != "v2" {
 		t.Fatalf("client modules = %#v", openAPI.RiidoClientModules)
 	}
 	if _, ok := openAPI.Components.SecuritySchemes["riidoAIAgentToken"]; !ok {
@@ -121,6 +129,35 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	}
 	if len(fixtureCreate.Parameters) != 1 || fixtureCreate.Parameters[0].Name != "fixture_id" {
 		t.Fatalf("fixture create parameters = %#v", fixtureCreate.Parameters)
+	}
+	agentCreateV2 := openAPI.Paths["/v2/client/workspaces/{workspace_id}/ai-agent/agents"]["post"]
+	if agentCreateV2.OperationID != "createAIAgentV2" ||
+		agentCreateV2.RequestBody == nil ||
+		agentCreateV2.RiidoClient == nil ||
+		agentCreateV2.RiidoClient.GeneratedPath != "v2.aiAgent.agents.create" ||
+		!contains(agentCreateV2.RiidoClient.Invalidates, "v2.aiAgent.bootstrap") {
+		t.Fatalf("v2 agent create operation = %#v", agentCreateV2)
+	}
+	if len(agentCreateV2.Parameters) != 1 || agentCreateV2.Parameters[0].Name != "workspace_id" {
+		t.Fatalf("v2 agent create parameters = %#v", agentCreateV2.Parameters)
+	}
+	agentV2 := openAPI.Components.Schemas["AgentClientRecordV2"]
+	agentV2Props, ok := agentV2["properties"].(map[string]any)
+	if !ok {
+		t.Fatalf("AgentClientRecordV2 properties missing: %#v", agentV2)
+	}
+	if _, ok := agentV2Props["workspace_id"].(map[string]any); !ok {
+		t.Fatalf("AgentClientRecordV2 workspace_id missing: %#v", agentV2Props)
+	}
+	v2Required, ok := agentV2["required"].([]string)
+	if !ok || !contains(v2Required, "workspace_id") {
+		t.Fatalf("AgentClientRecordV2 required = %#v", agentV2["required"])
+	}
+	v2Bootstrap := openAPI.Paths["/v2/client/workspaces/{workspace_id}/ai-agent/bootstrap"]["get"]
+	if v2Bootstrap.RiidoClient == nil ||
+		v2Bootstrap.RiidoClient.GeneratedPath != "v2.aiAgent.bootstrap" ||
+		v2Bootstrap.RiidoClient.CacheTag != "v2.aiAgent.bootstrap" {
+		t.Fatalf("v2 bootstrap client metadata = %#v", v2Bootstrap.RiidoClient)
 	}
 	threadMessageCreate := openAPI.Paths["/v1/client/ai-agent/tasks/{task_id}/threads/{thread_id}/messages"]["post"]
 	if threadMessageCreate.OperationID != "createAIAgentTaskThreadMessage" ||
