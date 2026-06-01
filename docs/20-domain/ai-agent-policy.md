@@ -521,9 +521,12 @@ plane before the agent configuration is saved. UI truncation/wrapping policy is
 owned by the client and must not change the stored value.
 
 The instruction value is client-authored text that is saved with the agent and
-used by the control plane/daemon when composing runtime prompts. Empty text is
-allowed. The current client API limit is 1000 characters. Longer values are
-rejected by the control plane before the agent configuration is saved.
+copied into `Assignment.agent_instruction` when the control plane creates an
+agent assignment. Empty text is allowed. The current client API limit is 1000
+characters. Longer values are rejected by the control plane before the agent
+configuration is saved. Assignment-time snapshotting is intentional: editing an
+agent after a task has been assigned does not rewrite already-queued or running
+runtime instructions.
 
 Profile field creation and updates follow the same RBAC and mutation safety
 rules as name, visibility, and runtime binding updates. Creation stamps
