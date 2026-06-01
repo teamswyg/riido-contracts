@@ -16,6 +16,14 @@ dependency edges that can be checked deterministically:
 go run ./tools/ssotdeps verify
 ```
 
+The Figma UI coverage projection is
+[`figma-ai-agent-coverage.md`](figma-ai-agent-coverage.md) and
+[`figma-ai-agent-coverage.riido.json`](figma-ai-agent-coverage.riido.json). It
+does not create new business facts. It only records whether each inspected
+top-level Figma section has been absorbed into an owning SSOT, classified as
+non-decision evidence, or left as planning evidence that must resolve before
+implementation.
+
 ## Rule
 
 One durable fact still has one owner. A downstream SSOT may repeat that fact
@@ -183,3 +191,7 @@ The current duplicated wording is intentional only in these forms:
   member invite, app download, Windows waitlist, and animation references. They
   must not turn auth/team/product/distribution presentation into AI Agent API,
   daemon, or Terraform facts without a new owning SSOT.
+- Figma coverage docs may repeat top-level node names, generated path hints,
+  and owner repo boundaries. They must not become the source of API shape,
+  RBAC, daemon lifecycle, or infra topology; those facts stay in the owning
+  policy, API DSL, daemon docs, or infra docs.
