@@ -88,13 +88,13 @@
     },
     {
       "id": "instruction",
-      "fact": "instruction is optional client-authored agent guidance text capped at 1000 characters",
+      "fact": "instruction is optional client-authored agent guidance text capped at 1000 characters and snapshotted into Assignment.agent_instruction at assignment creation",
       "human_doc_phrase": "`instruction` is optional client-authored agent guidance text capped at 1000 characters",
       "source_refs": [
         {
           "repo": "riido-contracts",
           "path": "docs/20-domain/ai-agent-policy.md",
-          "required_phrase": "limit is 1000 characters"
+          "required_phrase": "current client API limit is 1000"
         }
       ],
       "owner": {
@@ -104,11 +104,11 @@
       "downstreams": [
         {
           "repo": "riido-control-plane",
-          "local_scope": "PATCH validation, save/update behavior, and response projection"
+          "local_scope": "PATCH validation, save/update behavior, response projection, and Assignment.agent_instruction snapshotting"
         },
         {
           "repo": "riido-daemon",
-          "local_scope": "assigned run prompt/native-config materialization"
+          "local_scope": "provider-specific prompt/native-config materialization from Assignment.agent_instruction"
         },
         {
           "repo": "riido-infra",

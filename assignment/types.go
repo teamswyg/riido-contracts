@@ -119,11 +119,12 @@ func AllTaskEventTypes() []string {
 }
 
 type AssignRequest struct {
-	ComponentID     string `json:"component_id"`
-	AgentID         string `json:"agent_id"`
-	RuntimeProvider string `json:"runtime_provider"`
-	Prompt          string `json:"prompt"`
-	CreatedBy       string `json:"created_by,omitempty"`
+	ComponentID      string `json:"component_id"`
+	AgentID          string `json:"agent_id"`
+	RuntimeProvider  string `json:"runtime_provider"`
+	Prompt           string `json:"prompt"`
+	AgentInstruction string `json:"agent_instruction,omitempty"`
+	CreatedBy        string `json:"created_by,omitempty"`
 }
 
 type Assignment struct {
@@ -133,6 +134,7 @@ type Assignment struct {
 	AgentID               string          `json:"agent_id"`
 	RuntimeProvider       string          `json:"runtime_provider"`
 	Prompt                string          `json:"prompt"`
+	AgentInstruction      string          `json:"agent_instruction,omitempty"`
 	State                 AssignmentState `json:"state"`
 	LeaseToken            string          `json:"lease_token,omitempty"`
 	ReplacesAssignmentID  string          `json:"replaces_assignment_id,omitempty"`

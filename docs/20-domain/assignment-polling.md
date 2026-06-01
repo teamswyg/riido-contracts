@@ -54,6 +54,14 @@ The public shared DTOs are:
 - `TaskEvent`
 - `AgentRuntimeBinding`
 
+`Assignment.agent_instruction` is the assignment-created snapshot of the
+configured agent's `instruction` value. It is optional and keeps the same
+1000-character limit owned by [`ai-agent-policy.md`](ai-agent-policy.md). The
+control plane copies it into `AssignRequest` / `Assignment` at assignment
+creation time; later agent edits do not rewrite an already-created assignment.
+The daemon consumes this snapshot only when composing provider-specific runtime
+instructions.
+
 `Health` and `MetricsSnapshot` remain in `riido-control-plane` for now because
 they are control-plane adapter/read-model contracts rather than daemon polling
 contracts.
