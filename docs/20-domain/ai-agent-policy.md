@@ -38,11 +38,11 @@ Onboarding evidence from `node-id=42-3014` includes:
   inspected UI shows Claude Code and Codex as `감지됨` selectable rows, while
   OpenClaw and Cursor Agent are `감지 안 됨` non-selectable rows
 - `node-id=138-7389`: choose a product-provided onboarding fixture or choose
-  direct configuration; the inspected UI shows the starter fixture rows `리도`, `영실`, `홍도`,
-  `지원`, followed by a `직접 설정` row, a pre-selection `다음` button, and a
-  right-side preview skeleton
+  direct configuration; the inspected UI shows the onboarding fixture rows
+  `리도`, `영실`, `홍도`, `지원`, followed by a `직접 설정` row, a pre-selection
+  `다음` button, and a right-side preview skeleton
 - `node-id=164-26969`: direct configuration is annotated `직접 설정 선택 시
-  스크롤`; it dims the starter fixture rows and expands `직접 설정` into
+  스크롤`; it dims the onboarding fixture rows and expands `직접 설정` into
   `이름` (`리도` placeholder), `설명` (`문제 정의부터 우선순위, 출시 계획까지
   정리합니다.` placeholder), and `지침` (`기능 요청을 문제·목표·성공 기준으로
   재정의하고 PRD, 우선순위, 로드맵, 출시 계획을 구조화합니다. 아이디어는
@@ -445,12 +445,13 @@ for an agent configuration and contains `fixture_id`, `name`, optional
 `role_label`, optional `profile_thumbnail_url`, `description`, `instruction`,
 `default_visibility`, and optional `recommended_runtime_kind`. Fixture text and
 instruction defaults are contract data so frontend clients do not hard-code the
-behavioral meaning of starter agents.
+behavioral meaning of product-provided agent defaults.
 
 The fixture-selection step from `node-id=138-7389` is projected from
 `AgentOnboardingFixtureListResponse.fixtures` in response order. Current Figma
-evidence shows four starter rows, `리도`, `영실`, `홍도`, and `지원`, but the
-rows are not frontend-owned copy and they are not backend-managed templates. The
+evidence shows four onboarding fixture rows, `리도`, `영실`, `홍도`, and
+`지원`, but the rows are not frontend-owned copy and they are not
+backend-managed templates. The
 `직접 설정` row is not an `AgentOnboardingFixture`; it is a client presentation
 entry that lets the user continue to explicit agent configuration. The
 pre-selection disabled `다음` button and the right-side preview skeleton/popover
@@ -475,7 +476,7 @@ a separate command or fixture row. The expanded `이름`, `설명`, and `지침`
 fields project to `CreateAgentConfigurationRequest.name`, `description`, and
 `instruction`. The previously selected runtime continues to supply `runtime_id`,
 and visibility uses the create request policy/default chosen by the client. The
-dimmed starter-fixture rows, scroll bar, placeholder copy, and expanded-row
+dimmed onboarding fixture rows, scroll bar, placeholder copy, and expanded-row
 layout are client presentation facts.
 
 If no selectable runtime is online/detected for the viewer, the client skips the
