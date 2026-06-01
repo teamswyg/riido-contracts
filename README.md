@@ -52,6 +52,8 @@ OpenAPI는 사람이 직접 고치는 SSOT가 아닙니다. Domain DSL이 원본
 | API DSL -> IR -> OpenAPI projection 규칙 | [`docs/20-domain/api-contract-projection.md`](docs/20-domain/api-contract-projection.md) |
 | SSOT 간 의존 방향과 top-down / bottom-up 작업 루프 | [`docs/30-architecture/ssot-dependency-map.md`](docs/30-architecture/ssot-dependency-map.md) |
 | SSOT 의존 방향의 기계 검증 manifest | [`docs/30-architecture/ssot-dependency-map.riido.json`](docs/30-architecture/ssot-dependency-map.riido.json) |
+| Figma v1.22 AI Agent 화면 커버리지와 SSOT 흡수 상태 | [`docs/30-architecture/figma-ai-agent-coverage.md`](docs/30-architecture/figma-ai-agent-coverage.md) |
+| Figma 화면 커버리지의 기계 검증 manifest | [`docs/30-architecture/figma-ai-agent-coverage.riido.json`](docs/30-architecture/figma-ai-agent-coverage.riido.json) |
 | 계약을 언제 public module로 승격할지 | [`docs/30-architecture/contract-promotion-policy.md`](docs/30-architecture/contract-promotion-policy.md) |
 | 레포 간 어떤 artifact를 주고받는지 | [`docs/30-architecture/integration-matrix.md`](docs/30-architecture/integration-matrix.md) |
 | 마이그레이션 중 남은 맥락 | [`docs/migration/contracts.md`](docs/migration/contracts.md) |
