@@ -112,7 +112,21 @@ page-registry read can report it as a single child.
 | `42:3014` | `164:30657` | 데스크탑앱 온보딩 | covered | absorbed by UI onboarding fixture/direct-create API coverage; desktop owns launch presentation |
 | `42:3014` | `188:27707` | macOS | no-diff product surface | macOS install/launch presentation does not create an AI Agent endpoint |
 | `42:3014` | `188:27708` | windows | no-diff product surface | Windows install/waitlist/launch-notification presentation stays outside AI Agent generated API |
+| `0:1` | `13:3789` | 런타임 | covered | legacy runtime list absorbed by current UI runtime settings `162:23090` and `devices.runtimes` generated paths |
+| `0:1` | `86:9988` | 런타임 | covered | expanded legacy runtime frame absorbed by current UI runtime settings `162:23090` and agent-bound daemon detail |
+| `0:1` | `17:3551` | 에이전트 | covered | legacy agent list absorbed by current UI agent settings `432:37336` and normal agent lifecycle paths |
+| `0:1` | `17:4231` | 에이전트 수정 | covered | legacy agent edit absorbed by current UI agent settings `432:37336`, editability, and `updateConfiguration` |
+| `0:1` | `84:9846` | 에이전트 추가 | covered | legacy agent add absorbed by current UI agent settings `432:37336` and ordinary direct create paths |
+| `0:1` | `17:2871` | 데몬 상세 | covered | legacy daemon detail absorbed by current UI runtime settings `162:23090` and agent-bound daemon command paths |
+| `0:1` | `17:3111` | 런타임 상세 | covered | legacy runtime detail absorbed by current UI runtime settings `162:23090`; no standalone runtime-detail operation |
 | `0:1` | `153:15934` | 추가 기획 내용 | covered | legacy planning evidence resolved by UI page `153:15935` and task/subtask assignment scope |
+
+Legacy node absorption is explicit. When a non-UI Wireframe node carries a
+current product/API meaning, the manifest records
+`absorbed_by_top_level_node_id` so the old frame cannot become a second SSOT.
+If a future Figma change revives one of those legacy frames with new business
+meaning, the change must update the current UI coverage entry or create a new
+owning SSOT before implementation begins.
 
 ## Generated Client Path Hints
 
@@ -179,7 +193,10 @@ contracts generated path is the same value without the leading `riido.` prefix.
 The 2026-06-02 Figma annotation pass keeps the same 16 top-level sections on
 primary page `129:5215`, records loaded non-UI page inventories, and keeps
 coverage-bearing non-UI sections from pages `42:3014` and `0:1` distinct from
-inventory-only legacy layers. The task-thread section now also cites
+inventory-only legacy layers. Legacy Wireframe nodes for runtime, agent,
+agent add/edit, daemon detail, and runtime detail are now explicitly absorbed by
+the current runtime settings or agent settings UI entries instead of remaining
+silent inventory-only frames. The task-thread section now also cites
 motion references
 (`node-id=153:12743`, `node-id=236:21467`), stop modals
 (`node-id=236:20762`, `node-id=236:21048`), viewer-away rows
@@ -200,7 +217,8 @@ go test ./...
 
 The test verifies that each known primary UI top-level Figma node has an entry,
 that the file's known pages and non-UI top-level evidence nodes are registered,
-that real decision sections link to SSOT documents and owner repos, that
+that legacy semantic Wireframe nodes point to the current UI entry that absorbed
+them, that real decision sections link to SSOT documents and owner repos, that
 documentation does not cite unregistered `node-id=...` values, and that
 non-decision assets stay explicitly classified instead of silently becoming
 work.
