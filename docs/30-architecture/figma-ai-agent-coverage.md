@@ -2,8 +2,10 @@
 
 > Riido task: RIID-4809 `[Contracts] Figma AI Agent 화면 커버리지 SSOT manifest`
 
-This document explains how the Figma `v.1.22 AI Agent` UI page is absorbed
-into Riido SSOT documents. Figma is evidence. It is not the durable SSOT for
+This document explains how the Figma `v.1.22 AI Agent` file is absorbed into
+Riido SSOT documents. The `UI` page owns the detailed generated-client coverage;
+the wireframe pages are tracked as supporting evidence or no-diff product
+surfaces. Figma is evidence. It is not the durable SSOT for
 domain policy, API shape, daemon behavior, or infra topology.
 
 The executable coverage manifest is
@@ -20,7 +22,8 @@ planning drift.
 | --- | --- |
 | Figma file | `v.1.22 AI Agent` |
 | File key | `MUOd9lctoEHASUStN3vUuK` |
-| UI page node | `129:5215` |
+| Primary UI page node | `129:5215` |
+| Pages inspected | `129:5215` UI, `42:3014` Wireframe - 온보딩, `0:1` Wireframe |
 | Inspection date | `2026-06-02` |
 
 ## Coverage Rule
@@ -51,7 +54,15 @@ If a Figma section cannot name an owner and SSOT document, it is not ready for
 implementation. It must become either a resolved policy/API fact, a local
 presentation fact, a no-diff product surface, or an open question.
 
-## Top-Level Coverage
+## Page Registry
+
+| Figma page | Page | Top-level children | Coverage role |
+| --- | --- | --- | --- |
+| `129:5215` | UI | 16 | primary detailed API/domain coverage |
+| `42:3014` | Wireframe - 온보딩 | 3 | supporting onboarding/platform evidence |
+| `0:1` | Wireframe | 1 | legacy planning evidence |
+
+## UI Top-Level Coverage
 
 | Figma node | Section | Status | Owning boundary |
 | --- | --- | --- | --- |
@@ -71,6 +82,15 @@ presentation fact, a no-diff product surface, or an open question.
 | `236:29749` | 웹 온보딩 | no-diff product surface | auth/team/distribution/product; not AI Agent API |
 | `275:22731` | 런타임 설정페이지 엠티 | covered | runtime empty state from device/runtime read model |
 | `432:37336` | 에이전트 설정페이지 | covered | agent configuration fields, editability, runtime/model catalog |
+
+## Non-UI Page Coverage
+
+| Figma page | Figma node | Section | Status | Coverage rule |
+| --- | --- | --- | --- | --- |
+| `42:3014` | `164:30657` | 데스크탑앱 온보딩 | covered | absorbed by UI onboarding fixture/direct-create API coverage; desktop owns launch presentation |
+| `42:3014` | `188:27707` | macOS | no-diff product surface | macOS install/launch presentation does not create an AI Agent endpoint |
+| `42:3014` | `188:27708` | windows | no-diff product surface | Windows install/waitlist/launch-notification presentation stays outside AI Agent generated API |
+| `0:1` | `153:15934` | 추가 기획 내용 | covered | legacy planning evidence resolved by UI page `153:15935` and task/subtask assignment scope |
 
 ## Generated Client Path Hints
 
@@ -112,7 +132,9 @@ API DSL, not hand-authored route names.
 ## Current Annotation Pass
 
 The 2026-06-02 Figma annotation pass keeps the same 16 top-level sections on
-page `129:5215`. The task-thread section now also cites motion references
+primary page `129:5215` and additionally registers all non-UI top-level
+sections from pages `42:3014` and `0:1`. The task-thread section now also cites
+motion references
 (`node-id=153:12743`, `node-id=236:21467`), stop modals
 (`node-id=236:20762`, `node-id=236:21048`), viewer-away rows
 (`node-id=153:8749`, `node-id=236:21199`), and long-body focus rows
@@ -127,7 +149,9 @@ go test ./apicontract -run TestFigmaAIAgentCoverageManifest
 go test ./...
 ```
 
-The test verifies that each known top-level Figma node has an entry, that real
-decision sections link to SSOT documents and owner repos, that documentation
-does not cite unregistered `node-id=...` values, and that non-decision assets
-stay explicitly classified instead of silently becoming work.
+The test verifies that each known primary UI top-level Figma node has an entry,
+that the file's known pages and non-UI top-level evidence nodes are registered,
+that real decision sections link to SSOT documents and owner repos, that
+documentation does not cite unregistered `node-id=...` values, and that
+non-decision assets stay explicitly classified instead of silently becoming
+work.
