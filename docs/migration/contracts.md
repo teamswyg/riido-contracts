@@ -199,6 +199,25 @@ This slice does not change routes, schemas, authorization, RBAC, generated
 client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
 deployment evidence.
 
+### RIID-4830 — Figma coverage inspection method SSOT
+
+This slice makes the Figma coverage inspection authority explicit.
+
+This slice does:
+
+- record that the page registry and top-level child counts come from the Figma
+  Plugin API `figma.root.children` and `page.children.length`
+- classify metadata XML/read output and node-specific metadata lookup as
+  supporting evidence only
+- require the human coverage doc and executable manifest to agree on that
+  inspection method
+- prevent future coverage updates from treating expanded metadata XML subtrees
+  as page-level child-count drift
+
+This slice does not change routes, schemas, authorization, RBAC, generated
+client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
+deployment evidence.
+
 ## Validation Gates
 
 Required for this repository:

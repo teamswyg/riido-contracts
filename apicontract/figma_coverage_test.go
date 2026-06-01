@@ -53,6 +53,7 @@ func TestFigmaAIAgentCoverageManifest(t *testing.T) {
 	if !strings.Contains(docText, "Figma is evidence") {
 		t.Fatalf("coverage doc must say Figma is evidence, not durable SSOT")
 	}
+	verifyFigmaCoverageInspectionMethod(t, manifest.InspectionMethod, docText)
 
 	if got, want := len(manifest.ExpectedTopLevelNodes), 16; got != want {
 		t.Fatalf("expected_top_level_nodes = %d, want %d", got, want)
@@ -147,6 +148,36 @@ func TestFigmaAIAgentCoverageManifest(t *testing.T) {
 
 	assertDocumentedFigmaNodeRefsAreRegistered(t, registered)
 	assertNoStaleOnboardingFixtureWording(t)
+}
+
+func verifyFigmaCoverageInspectionMethod(t *testing.T, method figmaCoverageInspectionMethod, docText string) {
+	t.Helper()
+	if method.ID != "figma-plugin-api-page-registry.v1" {
+		t.Fatalf("inspection_method.id = %q", method.ID)
+	}
+	if strings.TrimSpace(method.Authority) != "Figma Plugin API via use_figma" {
+		t.Fatalf("inspection_method.authority = %q", method.Authority)
+	}
+	if method.PageRegistryExpression != "figma.root.children" {
+		t.Fatalf("inspection_method.page_registry_expression = %q", method.PageRegistryExpression)
+	}
+	if method.TopLevelChildCountExpression != "page.children.length" {
+		t.Fatalf("inspection_method.top_level_child_count_expression = %q", method.TopLevelChildCountExpression)
+	}
+	if len(method.SupportingTools) == 0 {
+		t.Fatalf("inspection_method.supporting_tools must name non-authoritative read tools")
+	}
+	rule := strings.ToLower(method.Rule)
+	for _, needle := range []string{"metadata", "supporting evidence", "must not redefine page-level child counts"} {
+		if !strings.Contains(rule, needle) {
+			t.Fatalf("inspection_method.rule must contain %q: %q", needle, method.Rule)
+		}
+	}
+	for _, needle := range []string{"figma.root.children", "page.children.length", "Metadata XML/read", "supporting evidence only"} {
+		if !strings.Contains(docText, needle) {
+			t.Fatalf("coverage doc must describe inspection method with %q", needle)
+		}
+	}
 }
 
 func assertCoverageDocMentionsEntry(t *testing.T, docText string, entry figmaCoverageEntry) {
@@ -379,18 +410,19 @@ var (
 )
 
 type figmaCoverageManifest struct {
-	SchemaVersion         string               `json:"schema_version"`
-	ID                    string               `json:"id"`
-	RiidoTask             string               `json:"riido_task"`
-	HumanDoc              string               `json:"human_doc"`
-	RelatedManifests      []string             `json:"related_manifests"`
-	Figma                 figmaCoverageSource  `json:"figma"`
-	CoveragePolicy        figmaCoveragePolicy  `json:"coverage_policy"`
-	ExpectedPages         []figmaCoveragePage  `json:"expected_pages"`
-	ExpectedTopLevelNodes []figmaCoverageNode  `json:"expected_top_level_nodes"`
-	VerifiedEvidenceNodes []figmaCoverageNode  `json:"verified_evidence_nodes"`
-	NonUITopLevelNodes    []figmaCoverageEntry `json:"non_ui_top_level_nodes"`
-	Entries               []figmaCoverageEntry `json:"entries"`
+	SchemaVersion         string                        `json:"schema_version"`
+	ID                    string                        `json:"id"`
+	RiidoTask             string                        `json:"riido_task"`
+	HumanDoc              string                        `json:"human_doc"`
+	RelatedManifests      []string                      `json:"related_manifests"`
+	Figma                 figmaCoverageSource           `json:"figma"`
+	InspectionMethod      figmaCoverageInspectionMethod `json:"inspection_method"`
+	CoveragePolicy        figmaCoveragePolicy           `json:"coverage_policy"`
+	ExpectedPages         []figmaCoveragePage           `json:"expected_pages"`
+	ExpectedTopLevelNodes []figmaCoverageNode           `json:"expected_top_level_nodes"`
+	VerifiedEvidenceNodes []figmaCoverageNode           `json:"verified_evidence_nodes"`
+	NonUITopLevelNodes    []figmaCoverageEntry          `json:"non_ui_top_level_nodes"`
+	Entries               []figmaCoverageEntry          `json:"entries"`
 }
 
 type figmaCoverageSource struct {
@@ -400,6 +432,15 @@ type figmaCoverageSource struct {
 	PageName         string `json:"page_name"`
 	InspectedAt      string `json:"inspected_at"`
 	InspectionSource string `json:"inspection_source"`
+}
+
+type figmaCoverageInspectionMethod struct {
+	ID                           string   `json:"id"`
+	Authority                    string   `json:"authority"`
+	PageRegistryExpression       string   `json:"page_registry_expression"`
+	TopLevelChildCountExpression string   `json:"top_level_child_count_expression"`
+	SupportingTools              []string `json:"supporting_tools"`
+	Rule                         string   `json:"rule"`
 }
 
 type figmaCoveragePolicy struct {
