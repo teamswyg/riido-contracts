@@ -109,6 +109,17 @@ API DSL, not hand-authored route names.
 - `riido-infra` acts only when deployment topology, secrets, storage, media,
   durability, cost, or evidence requirements change.
 
+## Current Annotation Pass
+
+The 2026-06-02 Figma annotation pass keeps the same 16 top-level sections on
+page `129:5215`. The task-thread section now also cites motion references
+(`node-id=153:12743`, `node-id=236:21467`), stop modals
+(`node-id=236:20762`, `node-id=236:21048`), viewer-away rows
+(`node-id=153:8749`, `node-id=236:21199`), and long-body focus rows
+(`node-id=153:8592`, `node-id=236:20848`). These nodes are registered as
+evidence so downstream docs can cite them deterministically, but they remain
+client presentation facts unless a later SSOT changes the typed thread API.
+
 ## Verification
 
 ```bash

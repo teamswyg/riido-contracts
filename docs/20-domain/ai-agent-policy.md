@@ -287,8 +287,10 @@ For agent settings specifically:
   `riido.aiAgent.tasks.stop`, but this repo owns their canonical operation
   ids/path/typed-event meaning through the DSL/IR/OpenAPI fixture, not the
   client chain syntax or UI micro-interactions. Long-body scroll/focus,
-  viewer-away notification rendering, hover buttons, stop modals, and progress
-  animations are client presentation facts around returned thread records.
+  viewer-away notification rendering, hover buttons, stop modals
+  (`node-id=236-20762`, `node-id=236-21048`), and progress animations
+  (`node-id=153-12743`, `node-id=236-21467`) are client presentation facts
+  around returned thread records.
 - Figma normal task-thread screen (`node-id=236-21379`) can cite that a task
   screen needs both user-to-agent comment submission and active-thread stop
   affordances. This repo already owns those as
