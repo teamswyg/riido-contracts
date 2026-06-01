@@ -218,6 +218,33 @@ This slice does not change routes, schemas, authorization, RBAC, generated
 client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
 deployment evidence.
 
+### RIID-4832 — Figma lazy page load coverage drift gate
+
+This slice closes a gap in the Figma coverage inspection method.
+
+The prior RIID-4830 wording treated `page.children.length` as authoritative
+without saying that non-current pages must be loaded first. A fresh Figma Plugin
+API inspection showed that passive page-registry reads can under-report lazy
+page children: page `0:1` (`Wireframe`) looked like it had one child until the
+script loaded the page with `await figma.setCurrentPageAsync(page)`, after
+which the loaded top-level count was 28.
+
+This slice does:
+
+- make loaded-page inspection part of the coverage SSOT:
+  `await figma.setCurrentPageAsync(page); page.children.length`
+- update the `Wireframe` page child count from 1 to the loaded count 28
+- add `non_ui_top_level_inventory` so every loaded non-UI top-level node is
+  registered without pretending every legacy layer owns a policy/API decision
+- keep `non_ui_top_level_nodes` as the narrower list of non-UI nodes that carry
+  a real coverage decision
+- require coverage tests to prove inventory length matches each non-UI page's
+  loaded `child_count`
+
+This slice does not change routes, schemas, authorization, RBAC, generated
+client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
+deployment evidence.
+
 ## Validation Gates
 
 Required for this repository:

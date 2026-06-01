@@ -82,6 +82,9 @@ func TestFigmaAIAgentCoverageManifest(t *testing.T) {
 	if _, ok := pages[manifest.Figma.PageID]; !ok {
 		t.Fatalf("primary figma page %q is missing from expected_pages", manifest.Figma.PageID)
 	}
+	if pages[manifest.Figma.PageID].ChildCount != len(manifest.ExpectedTopLevelNodes) {
+		t.Fatalf("primary page child_count = %d, expected_top_level_nodes = %d", pages[manifest.Figma.PageID].ChildCount, len(manifest.ExpectedTopLevelNodes))
+	}
 
 	expected := map[string]figmaCoverageNode{}
 	for _, node := range manifest.ExpectedTopLevelNodes {
@@ -103,6 +106,7 @@ func TestFigmaAIAgentCoverageManifest(t *testing.T) {
 	for _, node := range manifest.VerifiedEvidenceNodes {
 		registerFigmaNode(t, registered, node, "verified_evidence_nodes")
 	}
+	nonUIInventory := verifyNonUITopLevelInventory(t, manifest, pages)
 
 	seen := map[string]bool{}
 	for i, entry := range manifest.Entries {
@@ -135,9 +139,20 @@ func TestFigmaAIAgentCoverageManifest(t *testing.T) {
 			t.Fatalf("duplicate non-UI entry node_id %q", entry.NodeID)
 		}
 		nonUISeen[entry.NodeID] = true
+		if _, ok := nonUIInventory[entry.PageID][entry.NodeID]; !ok {
+			t.Fatalf("non-UI coverage entry %q is missing from loaded top-level inventory for page %q", entry.NodeID, entry.PageID)
+		}
 		registerFigmaNode(t, registered, figmaCoverageNode{NodeID: entry.NodeID, Name: entry.Name}, "non_ui_top_level_nodes")
 		assertCoverageDocMentionsEntry(t, docText, entry)
 		verifyCoverageEntry(t, entry, openAPIGeneratedPaths)
+	}
+	for pageID, nodes := range nonUIInventory {
+		for nodeID, node := range nodes {
+			if nonUISeen[nodeID] {
+				continue
+			}
+			registerFigmaNodeIfAbsent(t, registered, node, "non_ui_top_level_inventory page "+pageID)
+		}
 	}
 
 	for _, node := range manifest.ExpectedTopLevelNodes {
@@ -148,6 +163,49 @@ func TestFigmaAIAgentCoverageManifest(t *testing.T) {
 
 	assertDocumentedFigmaNodeRefsAreRegistered(t, registered)
 	assertNoStaleOnboardingFixtureWording(t)
+}
+
+func verifyNonUITopLevelInventory(t *testing.T, manifest figmaCoverageManifest, pages map[string]figmaCoveragePage) map[string]map[string]figmaCoverageNode {
+	t.Helper()
+	if len(manifest.NonUITopLevelInventory) == 0 {
+		t.Fatalf("non_ui_top_level_inventory must record loaded non-UI page children")
+	}
+	inventory := map[string]map[string]figmaCoverageNode{}
+	for _, pageInventory := range manifest.NonUITopLevelInventory {
+		page, ok := pages[pageInventory.PageID]
+		if !ok {
+			t.Fatalf("non-UI inventory references unknown page %q", pageInventory.PageID)
+		}
+		if pageInventory.PageID == manifest.Figma.PageID {
+			t.Fatalf("non-UI inventory must not reference primary UI page %q", pageInventory.PageID)
+		}
+		if _, exists := inventory[pageInventory.PageID]; exists {
+			t.Fatalf("duplicate non-UI inventory page %q", pageInventory.PageID)
+		}
+		if got, want := len(pageInventory.Nodes), page.ChildCount; got != want {
+			t.Fatalf("non-UI inventory page %q nodes = %d, want loaded child_count %d", pageInventory.PageID, got, want)
+		}
+		nodes := map[string]figmaCoverageNode{}
+		for _, node := range pageInventory.Nodes {
+			if strings.TrimSpace(node.NodeID) == "" || strings.TrimSpace(node.Name) == "" {
+				t.Fatalf("non-UI inventory page %q has invalid node: %+v", pageInventory.PageID, node)
+			}
+			if _, exists := nodes[node.NodeID]; exists {
+				t.Fatalf("duplicate non-UI inventory node %q on page %q", node.NodeID, pageInventory.PageID)
+			}
+			nodes[node.NodeID] = node
+		}
+		inventory[pageInventory.PageID] = nodes
+	}
+	for _, page := range pages {
+		if page.NodeID == manifest.Figma.PageID {
+			continue
+		}
+		if _, ok := inventory[page.NodeID]; !ok {
+			t.Fatalf("non-UI page %q is missing loaded top-level inventory", page.NodeID)
+		}
+	}
+	return inventory
 }
 
 func verifyFigmaCoverageInspectionMethod(t *testing.T, method figmaCoverageInspectionMethod, docText string) {
@@ -161,19 +219,19 @@ func verifyFigmaCoverageInspectionMethod(t *testing.T, method figmaCoverageInspe
 	if method.PageRegistryExpression != "figma.root.children" {
 		t.Fatalf("inspection_method.page_registry_expression = %q", method.PageRegistryExpression)
 	}
-	if method.TopLevelChildCountExpression != "page.children.length" {
+	if method.TopLevelChildCountExpression != "await figma.setCurrentPageAsync(page); page.children.length" {
 		t.Fatalf("inspection_method.top_level_child_count_expression = %q", method.TopLevelChildCountExpression)
 	}
 	if len(method.SupportingTools) == 0 {
 		t.Fatalf("inspection_method.supporting_tools must name non-authoritative read tools")
 	}
 	rule := strings.ToLower(method.Rule)
-	for _, needle := range []string{"metadata", "supporting evidence", "must not redefine page-level child counts"} {
+	for _, needle := range []string{"metadata", "supporting evidence", "must not redefine page-level child counts", "lazy/unloaded"} {
 		if !strings.Contains(rule, needle) {
 			t.Fatalf("inspection_method.rule must contain %q: %q", needle, method.Rule)
 		}
 	}
-	for _, needle := range []string{"figma.root.children", "page.children.length", "Metadata XML/read", "supporting evidence only"} {
+	for _, needle := range []string{"figma.root.children", "await figma.setCurrentPageAsync(page)", "page.children.length", "Metadata XML/read", "supporting evidence only", "lazy/unloaded"} {
 		if !strings.Contains(docText, needle) {
 			t.Fatalf("coverage doc must describe inspection method with %q", needle)
 		}
@@ -283,6 +341,17 @@ func registerFigmaNode(t *testing.T, registered map[string]string, node figmaCov
 	}
 	if existing, exists := registered[node.NodeID]; exists {
 		t.Fatalf("duplicate Figma node %q in %s; already registered by %s", node.NodeID, source, existing)
+	}
+	registered[node.NodeID] = source
+}
+
+func registerFigmaNodeIfAbsent(t *testing.T, registered map[string]string, node figmaCoverageNode, source string) {
+	t.Helper()
+	if strings.TrimSpace(node.NodeID) == "" || strings.TrimSpace(node.Name) == "" {
+		t.Fatalf("%s has empty node field: %+v", source, node)
+	}
+	if _, exists := registered[node.NodeID]; exists {
+		return
 	}
 	registered[node.NodeID] = source
 }
@@ -410,19 +479,20 @@ var (
 )
 
 type figmaCoverageManifest struct {
-	SchemaVersion         string                        `json:"schema_version"`
-	ID                    string                        `json:"id"`
-	RiidoTask             string                        `json:"riido_task"`
-	HumanDoc              string                        `json:"human_doc"`
-	RelatedManifests      []string                      `json:"related_manifests"`
-	Figma                 figmaCoverageSource           `json:"figma"`
-	InspectionMethod      figmaCoverageInspectionMethod `json:"inspection_method"`
-	CoveragePolicy        figmaCoveragePolicy           `json:"coverage_policy"`
-	ExpectedPages         []figmaCoveragePage           `json:"expected_pages"`
-	ExpectedTopLevelNodes []figmaCoverageNode           `json:"expected_top_level_nodes"`
-	VerifiedEvidenceNodes []figmaCoverageNode           `json:"verified_evidence_nodes"`
-	NonUITopLevelNodes    []figmaCoverageEntry          `json:"non_ui_top_level_nodes"`
-	Entries               []figmaCoverageEntry          `json:"entries"`
+	SchemaVersion          string                        `json:"schema_version"`
+	ID                     string                        `json:"id"`
+	RiidoTask              string                        `json:"riido_task"`
+	HumanDoc               string                        `json:"human_doc"`
+	RelatedManifests       []string                      `json:"related_manifests"`
+	Figma                  figmaCoverageSource           `json:"figma"`
+	InspectionMethod       figmaCoverageInspectionMethod `json:"inspection_method"`
+	CoveragePolicy         figmaCoveragePolicy           `json:"coverage_policy"`
+	ExpectedPages          []figmaCoveragePage           `json:"expected_pages"`
+	ExpectedTopLevelNodes  []figmaCoverageNode           `json:"expected_top_level_nodes"`
+	NonUITopLevelInventory []figmaNonUITopLevelInventory `json:"non_ui_top_level_inventory"`
+	VerifiedEvidenceNodes  []figmaCoverageNode           `json:"verified_evidence_nodes"`
+	NonUITopLevelNodes     []figmaCoverageEntry          `json:"non_ui_top_level_nodes"`
+	Entries                []figmaCoverageEntry          `json:"entries"`
 }
 
 type figmaCoverageSource struct {
@@ -458,6 +528,11 @@ type figmaCoveragePage struct {
 	NodeID     string `json:"node_id"`
 	Name       string `json:"name"`
 	ChildCount int    `json:"child_count"`
+}
+
+type figmaNonUITopLevelInventory struct {
+	PageID string              `json:"page_id"`
+	Nodes  []figmaCoverageNode `json:"nodes"`
 }
 
 type figmaCoverageEntry struct {
