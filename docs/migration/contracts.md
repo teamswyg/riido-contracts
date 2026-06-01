@@ -143,6 +143,23 @@ This slice does:
 This slice does not implement control-plane handlers, daemon runtime detection,
 desktop/web UI code, generated client code, or provider runtime parsing.
 
+### RIID-4827 — bootstrap scenario wording SSOT clarification
+
+This slice clarifies a BDD scenario sentence in the AI Agent client contract
+without changing API shape.
+
+This slice does:
+
+- replace ambiguous future-client/bootstrap wording with subsequent
+  `aiAgent.bootstrap` read wording
+- regenerate the derived IR fixture from the DSL
+- add a regression gate so the ambiguous wording cannot return to the
+  canonical client contract fixtures
+
+This slice does not change routes, schemas, authorization, RBAC, generated
+client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
+deployment evidence.
+
 ## Validation Gates
 
 Required for this repository:
