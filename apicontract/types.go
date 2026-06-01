@@ -118,10 +118,11 @@ type DSLOperation struct {
 }
 
 type ClientMeta struct {
-	Module      string   `json:"module"`
-	FacadePath  []string `json:"facade_path"`
-	CacheTag    string   `json:"cache_tag,omitempty"`
-	Invalidates []string `json:"invalidates,omitempty"`
+	Module        string   `json:"module"`
+	FacadePath    []string `json:"facade_path"`
+	GeneratedPath string   `json:"generated_path,omitempty"`
+	CacheTag      string   `json:"cache_tag,omitempty"`
+	Invalidates   []string `json:"invalidates,omitempty"`
 }
 
 type Auth struct {

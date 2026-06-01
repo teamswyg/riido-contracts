@@ -54,7 +54,7 @@ func GenerateIR(dsl DSLDocument) (IRDocument, error) {
 			Path:        op.Path,
 			Resource:    op.Resource,
 			Action:      op.Action,
-			Client:      copyClientMeta(op.Client),
+			Client:      deriveClientMeta(op.Client),
 			Summary:     op.Summary,
 			Auth:        op.Auth,
 			RBACPolicy:  op.RBACPolicy,
@@ -100,7 +100,7 @@ func GenerateOpenAPI(ir IRDocument) (OpenAPISpec, error) {
 			RiidoScopes:    append([]string(nil), op.Auth.Scopes...),
 			RiidoRBAC:      op.RBACPolicy,
 			RiidoKind:      op.Kind,
-			RiidoClient:    copyClientMeta(op.Client),
+			RiidoClient:    deriveClientMeta(op.Client),
 			RiidoScenarios: append([]string(nil), op.ScenarioIDs...),
 		}
 		if op.Request != nil {
@@ -427,6 +427,12 @@ func validateClientMeta(operationID, method string, meta ClientMeta, modules map
 	if strings.EqualFold(method, "GET") && strings.TrimSpace(meta.CacheTag) == "" {
 		return fmt.Errorf("apicontract: operation %q missing client cache_tag", operationID)
 	}
+	if generatedPath := strings.TrimSpace(meta.GeneratedPath); generatedPath != "" {
+		want := generatedClientPath(meta)
+		if generatedPath != want {
+			return fmt.Errorf("apicontract: operation %q has client generated_path %q, want %q", operationID, generatedPath, want)
+		}
+	}
 	return nil
 }
 
@@ -639,6 +645,22 @@ func copyClientMeta(meta *ClientMeta) *ClientMeta {
 	out.FacadePath = append([]string(nil), meta.FacadePath...)
 	out.Invalidates = append([]string(nil), meta.Invalidates...)
 	return &out
+}
+
+func deriveClientMeta(meta *ClientMeta) *ClientMeta {
+	out := copyClientMeta(meta)
+	if out == nil {
+		return nil
+	}
+	out.GeneratedPath = generatedClientPath(*out)
+	return out
+}
+
+func generatedClientPath(meta ClientMeta) string {
+	if strings.TrimSpace(meta.Module) == "" || len(meta.FacadePath) == 0 {
+		return ""
+	}
+	return meta.Module + "." + strings.Join(meta.FacadePath, ".")
 }
 
 func slugID(value string) string {

@@ -107,6 +107,7 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	if fixtureList.OperationID != "listAIAgentOnboardingFixtures" ||
 		fixtureList.RiidoClient == nil ||
 		fixtureList.RiidoClient.CacheTag != "aiAgent.onboarding.fixtures" ||
+		fixtureList.RiidoClient.GeneratedPath != "aiAgent.onboarding.fixtures" ||
 		fixtureList.RiidoRBAC != "agent_onboarding_fixtures.v1" {
 		t.Fatalf("fixture list operation = %#v", fixtureList)
 	}
@@ -114,11 +115,18 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	if fixtureCreate.OperationID != "createAIAgentFromOnboardingFixture" ||
 		fixtureCreate.RequestBody == nil ||
 		fixtureCreate.RiidoClient == nil ||
+		fixtureCreate.RiidoClient.GeneratedPath != "aiAgent.onboarding.fixtures.createAgent" ||
 		!contains(fixtureCreate.RiidoClient.Invalidates, "aiAgent.bootstrap") {
 		t.Fatalf("fixture create operation = %#v", fixtureCreate)
 	}
 	if len(fixtureCreate.Parameters) != 1 || fixtureCreate.Parameters[0].Name != "fixture_id" {
 		t.Fatalf("fixture create parameters = %#v", fixtureCreate.Parameters)
+	}
+	threadMessageCreate := openAPI.Paths["/v1/client/ai-agent/tasks/{task_id}/threads/{thread_id}/messages"]["post"]
+	if threadMessageCreate.OperationID != "createAIAgentTaskThreadMessage" ||
+		threadMessageCreate.RiidoClient == nil ||
+		threadMessageCreate.RiidoClient.GeneratedPath != "aiAgent.tasks.threadMessages.create" {
+		t.Fatalf("thread message create operation = %#v", threadMessageCreate)
 	}
 	fixtureSchema := openAPI.Components.Schemas["AgentOnboardingFixture"]
 	fixtureProps, ok := fixtureSchema["properties"].(map[string]any)
