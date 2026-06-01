@@ -113,6 +113,32 @@
       ]
     },
     {
+      "id": "generated-client-path-searchability",
+      "fact": "Generated client path searchability is derived from client.module and client.facade_path",
+      "human_doc_phrase": "Generated client path searchability",
+      "source_refs": [
+        {
+          "repo": "riido-contracts",
+          "path": "docs/20-domain/api-contract-projection.md",
+          "required_phrase": "Generated client path searchability is also a contract projection fact"
+        }
+      ],
+      "owner": {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/api-contract-projection.md"
+      },
+      "downstreams": [
+        {
+          "repo": "riido-control-plane",
+          "local_scope": "generated comments expose the full generated access path and module-local search path"
+        },
+        {
+          "repo": "riido-client",
+          "local_scope": "frontend developers search generated files by paths such as tasks.threadMessages.create"
+        }
+      ]
+    },
+    {
       "id": "instruction",
       "fact": "instruction is optional client-authored provider-neutral agent guidance text capped at 1000 characters and snapshotted into Assignment.agent_instruction at assignment creation",
       "human_doc_phrase": "`instruction` is optional client-authored provider-neutral agent guidance text capped at 1000 characters",

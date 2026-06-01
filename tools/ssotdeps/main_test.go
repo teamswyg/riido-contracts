@@ -13,7 +13,7 @@ func TestDefaultManifestVerifies(t *testing.T) {
 	if err := run([]string{"verify"}, &out); err != nil {
 		t.Fatalf("verify default manifest: %v", err)
 	}
-	if got := out.String(); !strings.Contains(got, "verified 10 facts and 4 repo dependencies") {
+	if got := out.String(); !strings.Contains(got, "verified 11 facts and 4 repo dependencies") {
 		t.Fatalf("unexpected output: %q", got)
 	}
 }

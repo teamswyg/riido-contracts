@@ -159,6 +159,14 @@ projection facts that must survive into generated code: operation ids, paths,
 schemas, enum values, sum-type variants, lifecycle metadata, replacement
 guidance, and deprecation/removal semantics.
 
+Generated client path searchability is also a contract projection fact. The DSL
+input owns `client.module` and `client.facade_path`; the IR/OpenAPI projection
+derives `client.generated_path` as `module + "." + facade_path`. Codegen must
+emit that path into generated comments, and should also expose the module-local
+search path such as `tasks.threadMessages.create`, so frontend developers can
+find the intended generated facade route without knowing operation ids or HTTP
+paths first.
+
 `riido-control-plane` owns the downstream delivery workflow that turns the
 OpenAPI projection into generated React Query files and opens a PR against
 `riido-client`. That workflow may create or update a generated branch, but it
@@ -182,6 +190,7 @@ This contract owns:
 - top-level API enum and sum-type definitions that must survive DSL -> IR ->
   OpenAPI projection for client codegen
 - generated-client lifecycle and review-handoff semantics
+- derived generated client path metadata used for searchable generated comments
 - deterministic fixture drift verification
 
 This contract does not own:
