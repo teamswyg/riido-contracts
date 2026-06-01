@@ -128,6 +128,18 @@ API DSL, not hand-authored route names.
 | Onboarding | `aiAgent.onboarding.fixtures`, `aiAgent.onboarding.fixtures.createAgent`, `aiAgent.agents.create`, `v2.aiAgent.onboarding.fixtures`, `v2.aiAgent.onboarding.fixtures.createAgent`, `v2.aiAgent.agents.create` |
 | Agent settings | `aiAgent.bootstrap`, `aiAgent.agents.create`, `aiAgent.agents.updateConfiguration`, `aiAgent.agents.delete`, `aiAgent.agents.editability`, `v2.aiAgent.bootstrap`, `v2.aiAgent.agents.*` |
 
+## Client Delivery Annotations
+
+Figma Dev Mode category `39:0` / `클라이언트 전달` is handoff evidence for
+frontend generated-client consumption. It does not own API names. A Figma label
+that starts with `riido.` is treated as a client facade example, and the durable
+contracts generated path is the same value without the leading `riido.` prefix.
+
+| Figma node | Figma label | Canonical generated path | Resolution |
+| --- | --- | --- | --- |
+| `153:8545` | `riido.aiAgent.events.stream` plus `상세내용은 작업중입니다` | `aiAgent.events.stream` | The Korean `상세내용은 작업중입니다` copy is stale handoff text, not a missing API. The stream is covered by the task-thread entry `153:15931`, API DSL/OpenAPI, and generated-client comments. |
+| `236:20768` | `riido.aiAgent.tasks.stop` | `aiAgent.tasks.stop` | The stop hint is a client facade example over the task-thread stop operation, covered by `153:15931`, API DSL/OpenAPI, and generated-client comments. |
+
 ## Ownership Notes
 
 - `docs/20-domain/ai-agent-policy.md` owns the durable business language:
