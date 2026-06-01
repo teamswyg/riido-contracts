@@ -160,6 +160,25 @@ This slice does not change routes, schemas, authorization, RBAC, generated
 client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
 deployment evidence.
 
+### RIID-4828 — task-thread v2 submitComment coverage gate
+
+This slice closes a coverage drift between the contracts-owned Figma manifest
+and the downstream control-plane generated-client projection.
+
+This slice does:
+
+- add `v2.aiAgent.tasks.submitComment` to the task-thread Figma coverage
+  generated-path hints
+- keep `aiAgent.tasks.threadMessages.create` as the canonical next-instruction
+  operation while documenting the compatibility `submitComment` route in both
+  v1 and v2 generated surfaces
+- require the human coverage doc to mention each generated path recorded by the
+  executable coverage manifest
+
+This slice does not change routes, schemas, authorization, RBAC, generated
+client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
+deployment evidence.
+
 ## Validation Gates
 
 Required for this repository:

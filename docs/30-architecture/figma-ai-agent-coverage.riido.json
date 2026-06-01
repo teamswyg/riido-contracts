@@ -124,6 +124,7 @@
         "aiAgent.events.stream",
         "v2.aiAgent.tasks.threads",
         "v2.aiAgent.tasks.threadMessages.create",
+        "v2.aiAgent.tasks.submitComment",
         "v2.aiAgent.tasks.stop",
         "v2.aiAgent.events.stream"
       ],
@@ -158,10 +159,14 @@
       "owner_repos": ["riido-contracts", "riido-control-plane", "riido-daemon", "riido-client"],
       "generated_paths": [
         "aiAgent.tasks.assignableAgents",
+        "aiAgent.tasks.assign",
+        "aiAgent.tasks.unassign",
         "aiAgent.agents.create",
         "aiAgent.agents.updateConfiguration",
         "aiAgent.agents.delete",
         "v2.aiAgent.tasks.assignableAgents",
+        "v2.aiAgent.tasks.assign",
+        "v2.aiAgent.tasks.unassign",
         "v2.aiAgent.agents.create",
         "v2.aiAgent.agents.updateConfiguration",
         "v2.aiAgent.agents.delete"
@@ -259,11 +264,13 @@
         "aiAgent.agents.daemon.start",
         "aiAgent.agents.daemon.restart",
         "aiAgent.agents.daemon.stop",
+        "aiAgent.events.stream",
         "v2.aiAgent.devices.runtimes",
         "v2.aiAgent.agents.daemon.details",
         "v2.aiAgent.agents.daemon.start",
         "v2.aiAgent.agents.daemon.restart",
-        "v2.aiAgent.agents.daemon.stop"
+        "v2.aiAgent.agents.daemon.stop",
+        "v2.aiAgent.events.stream"
       ],
       "covered_facts": [
         "device/runtime liveness is read from SaaS",
@@ -287,10 +294,12 @@
       ],
       "owner_repos": ["riido-contracts", "riido-control-plane", "riido-daemon", "riido-client", "riido-desktop"],
       "generated_paths": [
+        "aiAgent.bootstrap",
         "aiAgent.devices.runtimes",
         "aiAgent.onboarding.fixtures",
         "aiAgent.onboarding.fixtures.createAgent",
         "aiAgent.agents.create",
+        "v2.aiAgent.bootstrap",
         "v2.aiAgent.devices.runtimes",
         "v2.aiAgent.onboarding.fixtures",
         "v2.aiAgent.onboarding.fixtures.createAgent",
