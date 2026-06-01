@@ -163,9 +163,11 @@ func TestFigmaAIAgentCoverageManifest(t *testing.T) {
 		}
 	}
 
+	verifyFigmaRuntimeEndpointLabel(t, manifest.VerifiedEvidenceNodes, entryByNodeID["162:23090"], docText)
 	verifyFigmaClientDeliveryAnnotations(t, manifest.ClientDeliveryAnnotations, docText, openAPIGeneratedPaths, registered, entryByNodeID)
 	assertDocumentedFigmaNodeRefsAreRegistered(t, registered)
 	assertNoStaleOnboardingFixtureWording(t)
+	assertNoStaleRuntimeEndpointHostPinned(t)
 }
 
 func verifyNonUITopLevelInventory(t *testing.T, manifest figmaCoverageManifest, pages map[string]figmaCoveragePage) map[string]map[string]figmaCoverageNode {
@@ -342,6 +344,40 @@ func verifyFigmaClientDeliveryAnnotations(t *testing.T, annotations []figmaClien
 	}
 }
 
+func verifyFigmaRuntimeEndpointLabel(t *testing.T, evidence []figmaCoverageNode, runtimeEntry figmaCoverageEntry, docText string) {
+	t.Helper()
+	var found bool
+	for _, node := range evidence {
+		if node.NodeID == "129:17930" {
+			found = true
+			if !strings.Contains(strings.ToLower(node.Name), "endpoint") {
+				t.Fatalf("runtime endpoint-looking evidence node must explain its role: %+v", node)
+			}
+		}
+	}
+	if !found {
+		t.Fatal("runtime settings endpoint-looking label node-id=129:17930 must be registered as verified evidence")
+	}
+	if runtimeEntry.NodeID != "162:23090" {
+		t.Fatalf("runtime settings coverage entry missing: %+v", runtimeEntry)
+	}
+	facts := strings.Join(runtimeEntry.CoveredFacts, "\n")
+	normalizedDocText := strings.Join(strings.Fields(docText), " ")
+	for _, needle := range []string{
+		"node-id=129:17930",
+		"not a canonical base URL",
+		"generated path",
+		"live host export",
+	} {
+		if !strings.Contains(facts, needle) {
+			t.Fatalf("runtime settings coverage must classify endpoint-looking Figma label with %q: %q", needle, facts)
+		}
+		if !strings.Contains(normalizedDocText, needle) {
+			t.Fatalf("coverage doc must mention runtime endpoint-looking label rule with %q", needle)
+		}
+	}
+}
+
 func loadAIAgentClientGeneratedPaths(t *testing.T) map[string]string {
 	t.Helper()
 	dsl := loadTestDSL(t, "fixtures/control-plane-ai-agent-client.dsl.riido.json")
@@ -496,6 +532,52 @@ func assertNoStaleOnboardingFixtureWording(t *testing.T) {
 		if err != nil {
 			t.Fatalf("walk %s for stale onboarding fixture wording: %v", root, err)
 		}
+	}
+}
+
+func assertNoStaleRuntimeEndpointHostPinned(t *testing.T) {
+	t.Helper()
+	forbidden := "desktop-api." + "riido.ai"
+	for _, root := range []string{
+		filepath.FromSlash("../docs"),
+		filepath.FromSlash("fixtures"),
+		filepath.FromSlash("../README.md"),
+	} {
+		info, err := os.Stat(root)
+		if err != nil {
+			t.Fatalf("stat %s: %v", root, err)
+		}
+		if !info.IsDir() {
+			assertFileDoesNotContain(t, root, forbidden)
+			continue
+		}
+		err = filepath.WalkDir(root, func(path string, entry os.DirEntry, err error) error {
+			if err != nil {
+				return err
+			}
+			if entry.IsDir() {
+				return nil
+			}
+			switch filepath.Ext(path) {
+			case ".md", ".json":
+				assertFileDoesNotContain(t, path, forbidden)
+			}
+			return nil
+		})
+		if err != nil {
+			t.Fatalf("walk %s for stale runtime endpoint host: %v", root, err)
+		}
+	}
+}
+
+func assertFileDoesNotContain(t *testing.T, path, forbidden string) {
+	t.Helper()
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("read %s: %v", path, err)
+	}
+	if strings.Contains(string(data), forbidden) {
+		t.Fatalf("%s pins stale endpoint-looking Figma host; cite node-id=129:17930 and explain it is not canonical instead", path)
 	}
 }
 

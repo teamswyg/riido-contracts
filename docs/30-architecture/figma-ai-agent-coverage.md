@@ -128,6 +128,17 @@ API DSL, not hand-authored route names.
 | Onboarding | `aiAgent.onboarding.fixtures`, `aiAgent.onboarding.fixtures.createAgent`, `aiAgent.agents.create`, `v2.aiAgent.onboarding.fixtures`, `v2.aiAgent.onboarding.fixtures.createAgent`, `v2.aiAgent.agents.create` |
 | Agent settings | `aiAgent.bootstrap`, `aiAgent.agents.create`, `aiAgent.agents.updateConfiguration`, `aiAgent.agents.delete`, `aiAgent.agents.editability`, `v2.aiAgent.bootstrap`, `v2.aiAgent.agents.*` |
 
+## Runtime Endpoint Labels
+
+The runtime settings section contains an endpoint-looking text node at
+`node-id=129:17930`. That node is registered as Figma evidence only. It does not
+define the canonical AI Agent base URL, does not create a generated client path,
+and must not be copied into public docs as a live host. In short, it is not a
+canonical base URL, generated path, or live host export. Control-plane
+deployment and smoke workflows use configured environment variable names for
+live base URL values, while generated clients receive only operation paths and
+caller-provided configuration.
+
 ## Client Delivery Annotations
 
 Figma Dev Mode category `39:0` / `클라이언트 전달` is handoff evidence for
@@ -176,6 +187,9 @@ motion references
 (`node-id=153:8592`, `node-id=236:20848`). These nodes are registered as
 evidence so downstream docs can cite them deterministically, but they remain
 client presentation facts unless a later SSOT changes the typed thread API.
+The runtime settings endpoint-looking label (`node-id=129:17930`) is likewise
+registered as evidence so downstream docs can reject it as a canonical base URL
+or generated path.
 
 ## Verification
 
