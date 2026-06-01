@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/json"
 	"os"
+	"strings"
 	"testing"
 )
 
@@ -209,6 +210,28 @@ func TestAIAgentClientGeneratedFixturesDoNotDrift(t *testing.T) {
 	}
 	assertFixture(t, "fixtures/control-plane-ai-agent-client.ir.riido.json", ir)
 	assertFixture(t, "fixtures/control-plane-ai-agent-client.openapi.json", openAPI)
+}
+
+func TestAIAgentClientOpenAPIDoesNotExposeRuntimeWaitlistMutation(t *testing.T) {
+	dsl := loadTestDSL(t, "fixtures/control-plane-ai-agent-client.dsl.riido.json")
+	ir, err := GenerateIR(dsl)
+	if err != nil {
+		t.Fatalf("GenerateIR: %v", err)
+	}
+	openAPI, err := GenerateOpenAPI(ir)
+	if err != nil {
+		t.Fatalf("GenerateOpenAPI: %v", err)
+	}
+	for path, methods := range openAPI.Paths {
+		for method, operation := range methods {
+			haystack := strings.ToLower(path + " " + method + " " + operation.OperationID + " " + operation.Summary)
+			for _, forbidden := range []string{"waitlist", "marketing", "consent"} {
+				if strings.Contains(haystack, forbidden) {
+					t.Fatalf("AI Agent OpenAPI exposed %q in %s %s (%s)", forbidden, method, path, operation.OperationID)
+				}
+			}
+		}
+	}
 }
 
 func loadTestDSL(t *testing.T, path string) DSLDocument {

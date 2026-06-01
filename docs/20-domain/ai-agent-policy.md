@@ -77,8 +77,8 @@ screens do not add a new AI Agent contract operation by themselves:
   not runtime/provider install commands
 - terms row default-open/closed behavior, row click target, chat animation, and
   progress-bar animation are client presentation facts
-- waitlist and marketing-consent mutation ownership remains unresolved in
-  `Q-CON-007`
+- waitlist and marketing-consent mutation ownership is resolved by
+  `Q-CON-007` as no-diff for the AI Agent generated API
 
 Participant dropdown evidence is `node-id=153-12742`
 (`컴포넌트 참여자 드롭다운`). Its annotations state:
@@ -478,13 +478,14 @@ runtime, the API does not add a provider-install command. Clients can render
 provider install cards and hover states from product copy and external provider
 links, but provider CLIs remain external user-installed tools. The Windows app
 waitlist and marketing-consent button states shown in the Figma section are not
-part of this AI Agent client API yet; they require a separate product/marketing
-SSOT before this contract can add a generated endpoint.
+part of this AI Agent client API. `Q-CON-007` fixes this as a no-diff decision:
+they require a separate product/marketing SSOT and a separate generated
+operation before any API helper can exist.
 
 Web onboarding from `node-id=236-29749` reinforces that boundary. The macOS app
 download CTA is a product/distribution route to a desktop artifact, not a
 provider CLI install command. The Windows launch-notification and
-marketing-consent variants are the same unresolved waitlist/product question as
+marketing-consent variants follow the same `Q-CON-007` no-diff decision as
 `node-id=275-22731`. Google sign-up terms consent, email sign-up terms rows,
 member invite input/link-copy, and animation references are client/auth/team
 presentation surfaces and do not change the AI Agent DSL/IR/OpenAPI projection.
