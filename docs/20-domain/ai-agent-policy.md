@@ -528,6 +528,14 @@ configuration is saved. Assignment-time snapshotting is intentional: editing an
 agent after a task has been assigned does not rewrite already-queued or running
 runtime instructions.
 
+This contract treats `instruction` as provider-neutral agent guidance. It does
+not decide whether Claude, Codex, OpenClaw, Cursor, or a future runtime obeys
+the text more effectively through a prompt prefix, system prompt, native config,
+or another provider surface. That placement/effectiveness strategy is owned by
+the daemon provider-runtime SSOT. Cross-provider evidence must consume the
+assignment-created `Assignment.agent_instruction` snapshot and link back here
+only for the value semantics and limit.
+
 Profile field creation and updates follow the same RBAC and mutation safety
 rules as name, visibility, and runtime binding updates. Creation stamps
 `owner_principal_id` from the authorized principal and binds only a selected
