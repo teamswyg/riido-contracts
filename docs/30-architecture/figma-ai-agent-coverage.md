@@ -24,7 +24,16 @@ planning drift.
 | File key | `MUOd9lctoEHASUStN3vUuK` |
 | Primary UI page node | `129:5215` |
 | Pages inspected | `129:5215` UI, `42:3014` Wireframe - 온보딩, `0:1` Wireframe |
+| Page registry authority | Figma Plugin API `figma.root.children` / `page.children.length` |
+| Supporting read tools | metadata XML/read output and node-specific metadata lookup |
 | Inspection date | `2026-06-02` |
+
+The page registry and the top-level child counts in this document are
+authoritative only when they come from the Figma Plugin API
+`figma.root.children` and each page's `page.children.length`. Metadata XML/read
+tools are supporting evidence only: they may expand internal node subtrees or
+return a scoped XML view, so they must not redefine `expected_pages.child_count`
+or the top-level page registry.
 
 ## Coverage Rule
 
