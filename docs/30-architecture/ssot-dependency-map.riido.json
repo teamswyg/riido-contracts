@@ -87,6 +87,32 @@
       ]
     },
     {
+      "id": "generated-client-delivery-review-handoff",
+      "fact": "Generated client delivery PRs are review handoffs and must not be auto-merged by delivery automation",
+      "human_doc_phrase": "Generated client delivery PR review handoff",
+      "source_refs": [
+        {
+          "repo": "riido-contracts",
+          "path": "docs/20-domain/api-contract-projection.md",
+          "required_phrase": "Generated client delivery PRs are review handoffs"
+        }
+      ],
+      "owner": {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/api-contract-projection.md"
+      },
+      "downstreams": [
+        {
+          "repo": "riido-control-plane",
+          "local_scope": "generated branch creation, PR creation, release manifest, and path allowlist execution"
+        },
+        {
+          "repo": "riido-client",
+          "local_scope": "generated client review, application integration, and merge decision"
+        }
+      ]
+    },
+    {
       "id": "instruction",
       "fact": "instruction is optional client-authored provider-neutral agent guidance text capped at 1000 characters and snapshotted into Assignment.agent_instruction at assignment creation",
       "human_doc_phrase": "`instruction` is optional client-authored provider-neutral agent guidance text capped at 1000 characters",
@@ -253,7 +279,8 @@
       "from_repo": "riido-client",
       "to_repo": "riido-control-plane",
       "fact_ids": [
-        "api-projection"
+        "api-projection",
+        "generated-client-delivery-review-handoff"
       ],
       "local_scope": "Generated React Query code and API history are delivered by the control-plane workflow."
     },
@@ -265,6 +292,7 @@
         "agent-concept",
         "agent-editability",
         "api-projection",
+        "generated-client-delivery-review-handoff",
         "instruction",
         "participant-dropdown-agent-ordering",
         "profile-thumbnail-url",

@@ -39,6 +39,7 @@ regenerate or update downstream projections.
 | Participant dropdown agent ordering is owned-first, display-name ordered, then `agent_id` tied | [`../20-domain/ai-agent-policy.md`](../20-domain/ai-agent-policy.md) and the API DSL BDD scenarios | Control-plane returns deterministic assignable-agent responses. Clients render that order and handle long names/pixel sizing locally. |
 | Admin/owner/public-private visibility vocabulary | [`../20-domain/ai-agent-policy.md`](../20-domain/ai-agent-policy.md) and API fixture policy ids | Control-plane owns the executable RBAC evaluator and request authorization boundary. |
 | DSL -> IR -> OpenAPI projection rules | [`../20-domain/api-contract-projection.md`](../20-domain/api-contract-projection.md) | Control-plane mirrors generated fixtures and owns local generator drift checks. |
+| Generated client delivery PR review handoff | [`../20-domain/api-contract-projection.md`](../20-domain/api-contract-projection.md) | Control-plane owns generated branch/PR creation and release-manifest mechanics. Client owns final review, application integration, and merge decisions. Generated client PRs must not be auto-merged by the delivery workflow. |
 | Participant dropdown AI Agent visibility and ordering | [`../20-domain/ai-agent-policy.md`](../20-domain/ai-agent-policy.md) plus the AI Agent API DSL fixture, with Figma annotation evidence at `node-id=153-12742` | Control-plane implements `GET /v1/client/ai-agent/tasks/{task_id}/assignable-agents`. Client owns member sorting, long-name rendering, max height, scrollbar width, checkbox layout, and mixed member/agent visual composition. Daemon and infra do not change for dropdown presentation alone. |
 | Task participant AI Agent assign/unassign commands | [`../20-domain/ai-agent-policy.md`](../20-domain/ai-agent-policy.md) plus the AI Agent API DSL fixture | Control-plane implements `POST /v1/client/ai-agent/tasks/{task_id}/assignment` and `DELETE /v1/client/ai-agent/tasks/{task_id}/assignment`, preserves one active AI Agent per task, creates the initial `assignment_started` task-thread row, and projects unassign as `stopped_by_user_request`. Client owns human/agent section rendering and whether stopped rows are visually hidden. Daemon consumes the resulting SaaS assignment/stop state. Infra is no-diff for the mock API slice. |
 | AI Agent assignment target scope | [`../20-domain/ai-agent-policy.md`](../20-domain/ai-agent-policy.md) plus the AI Agent API DSL fixture, with Figma planning evidence at `node-id=153-15935` | Control-plane implements task/subtask-scoped generated operations under `/v1/client/ai-agent/tasks/{task_id}/...` and must not add project, milestone, intake, AI property filler, or mention operations without a new owning SSOT. Client owns whether non-target surfaces hide, disable, or omit agent UI. Daemon consumes only SaaS assignments after target validation. Infra is no-diff unless a future target surface adds durability, stream, queue, secret, or deployment topology. |
@@ -108,6 +109,10 @@ The current duplicated wording is intentional only in these forms:
 - `api-contract-projection.md` owns DSL/IR/OpenAPI mechanics. Control-plane may
   restate the generated fixture flow because it runs the local mock/generator
   harness.
+- Generated client delivery docs may restate branch names, tag triggers,
+  generator pinning, path allowlists, and release manifests as downstream
+  execution rules. They must not redefine generated client PRs as anything
+  other than review handoffs, and they must not auto-merge client PRs.
 - Control-plane RBAC and editability docs may repeat visible behavior because
   they own the executable evaluator. They must not redefine the shared
   vocabulary without a contracts change.
