@@ -554,6 +554,7 @@ func verifyFigmaAPIGeneratedAnnotationContentPolicy(t *testing.T, policy figmaAP
 	if !strings.Contains(policy.Rule, "must not become a second API SSOT") {
 		t.Fatalf("API Generated annotation content policy must prevent second SSOT drift: %q", policy.Rule)
 	}
+	verifyFigmaAPIGeneratedRetiredCategories(t, policy.RetiredCategories, docText)
 	scan := policy.LiveInspection
 	if scan.ObservedAt != "2026-06-02" || !strings.Contains(scan.Tool, "use_figma") {
 		t.Fatalf("API Generated annotation live inspection provenance drifted: %+v", scan)
@@ -606,6 +607,28 @@ func verifyFigmaAPIGeneratedAnnotationContentPolicy(t *testing.T, policy figmaAP
 	}
 	if totalRiido != 59 || totalAPIGenerated != 59 {
 		t.Fatalf("API Generated annotation live totals = riido:%d/api:%d, want 59/59", totalRiido, totalAPIGenerated)
+	}
+}
+
+func verifyFigmaAPIGeneratedRetiredCategories(t *testing.T, categories []figmaAPIGeneratedAnnotationRetiredCategory, docText string) {
+	t.Helper()
+	if len(categories) != 1 {
+		t.Fatalf("API Generated retired categories = %d, want 1", len(categories))
+	}
+	retired := categories[0]
+	if retired.CategoryID != "39:0" || retired.CategoryLabel != "클라이언트 전달" {
+		t.Fatalf("unexpected retired API Generated category: %+v", retired)
+	}
+	if retired.RetirementStatus != "unused_not_deleted" || retired.LiveUsageCount != 0 {
+		t.Fatalf("retired API Generated category must stay unused_not_deleted with zero live usage: %+v", retired)
+	}
+	if retired.ObservedAt != "2026-06-02" || !strings.Contains(retired.ToolLimitation, "remove/setLabel") {
+		t.Fatalf("retired API Generated category must record automation limitation: %+v", retired)
+	}
+	for _, needle := range []string{retired.CategoryID, retired.CategoryLabel, "retired", "zero annotations"} {
+		if !strings.Contains(docText, needle) {
+			t.Fatalf("coverage doc must mention retired API Generated category %q", needle)
+		}
 	}
 }
 
@@ -1040,11 +1063,21 @@ type figmaCoveragePolicy struct {
 }
 
 type figmaAPIGeneratedAnnotationContentRule struct {
-	CategoryID     string                              `json:"category_id"`
-	CategoryLabel  string                              `json:"category_label"`
-	LabelFormat    []string                            `json:"label_format"`
-	Rule           string                              `json:"rule"`
-	LiveInspection figmaAPIGeneratedAnnotationLiveScan `json:"live_inspection"`
+	CategoryID        string                                       `json:"category_id"`
+	CategoryLabel     string                                       `json:"category_label"`
+	LabelFormat       []string                                     `json:"label_format"`
+	Rule              string                                       `json:"rule"`
+	RetiredCategories []figmaAPIGeneratedAnnotationRetiredCategory `json:"retired_categories"`
+	LiveInspection    figmaAPIGeneratedAnnotationLiveScan          `json:"live_inspection"`
+}
+
+type figmaAPIGeneratedAnnotationRetiredCategory struct {
+	CategoryID       string `json:"category_id"`
+	CategoryLabel    string `json:"category_label"`
+	RetirementStatus string `json:"retirement_status"`
+	LiveUsageCount   int    `json:"live_usage_count"`
+	ObservedAt       string `json:"observed_at"`
+	ToolLimitation   string `json:"tool_limitation"`
 }
 
 type figmaAPIGeneratedAnnotationLiveScan struct {

@@ -135,6 +135,12 @@ The executable manifest keeps the durable `operation_kind` and `background`
 values in `api_generated_annotation_inventory`; the live Figma annotation text is
 handoff evidence, not a second API SSOT.
 
+The previous custom category `39:0` `클라이언트 전달` is retired. The 2026-06-02
+inspection found zero annotations using it across the inspected pages. It still
+exists as an unused Figma category definition because the current Figma MCP
+category objects expose only data fields, not callable `remove` or `setLabel`
+methods, so this automation could not delete the definition.
+
 The 2026-06-02 lightweight Figma Plugin API annotation traversal found:
 
 | Figma page | `riido.*` annotations | `API Generated` annotations | Missing kind | Missing background |
