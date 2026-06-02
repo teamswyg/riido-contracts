@@ -49,6 +49,7 @@ Current stabilization history:
 - `teamswyg/riido-contracts#57`
 - `teamswyg/riido-contracts#58`
 - `teamswyg/riido-contracts#60`
+- `teamswyg/riido-contracts#62`
 
 The page registry and the top-level child counts in this document are
 authoritative only when they come from the Figma Plugin API
@@ -120,6 +121,27 @@ presentation fact, a no-diff product surface, or an open question.
 | `129:5215` | UI | 16 | primary detailed API/domain coverage |
 | `42:3014` | Wireframe - 온보딩 | 83 | supporting onboarding/platform evidence |
 | `0:1` | Wireframe | 28 | legacy planning evidence |
+
+## API Generated Annotation Content
+
+Figma Dev Mode annotations that start with `riido.` belong to category `700:0`
+`API Generated`. Each annotation must keep this handoff shape:
+
+1. `riido.*` generated-client facade path
+2. `종류: Query | Mutation | SSE Stream`
+3. `배경: ...` Korean frontend consumption background
+
+The executable manifest keeps the durable `operation_kind` and `background`
+values in `api_generated_annotation_inventory`; the live Figma annotation text is
+handoff evidence, not a second API SSOT.
+
+The 2026-06-02 lightweight Figma Plugin API annotation traversal found:
+
+| Figma page | `riido.*` annotations | `API Generated` annotations | Missing kind | Missing background |
+| --- | ---: | ---: | ---: | ---: |
+| `129:5215` UI | 53 | 53 | 0 | 0 |
+| `42:3014` Wireframe - 온보딩 | 6 | 6 | 0 | 0 |
+| `0:1` Wireframe | 0 | 0 | 0 | 0 |
 
 ## UI Top-Level Coverage
 
