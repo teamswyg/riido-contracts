@@ -83,6 +83,14 @@
       "required": false,
       "snapshot": "assignment-created",
       "consumer": "riido-daemon runtime scheduling experimental opt-in gate"
+    },
+    {
+      "name": "model_id",
+      "source": "agent.model_id",
+      "max_length": 128,
+      "required": false,
+      "snapshot": "assignment-created",
+      "consumer": "riido-daemon provider runtime model selection"
     }
   ]
 }

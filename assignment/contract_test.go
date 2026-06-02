@@ -88,7 +88,7 @@ func TestAssignmentContractMatchesPackageSurface(t *testing.T) {
 		t.Fatalf("package task events missing from contract: %v", sortedStringSet(remainingTaskEvents))
 	}
 
-	if len(contract.AssignmentPayloadFields) != 2 {
+	if len(contract.AssignmentPayloadFields) != 3 {
 		t.Fatalf("assignment payload fields drifted: %#v", contract.AssignmentPayloadFields)
 	}
 	fields := map[string]contractAssignmentPayloadField{}
@@ -116,6 +116,17 @@ func TestAssignmentContractMatchesPackageSurface(t *testing.T) {
 	}
 	if optIn.Consumer != "riido-daemon runtime scheduling experimental opt-in gate" {
 		t.Fatalf("experimental runtime opt-in consumer drifted: %q", optIn.Consumer)
+	}
+	modelID := fields["model_id"]
+	if modelID.Name != "model_id" ||
+		modelID.Source != "agent.model_id" ||
+		modelID.MaxLength != 128 ||
+		modelID.Required ||
+		modelID.Snapshot != "assignment-created" {
+		t.Fatalf("model_id assignment payload field drifted: %#v", modelID)
+	}
+	if modelID.Consumer != "riido-daemon provider runtime model selection" {
+		t.Fatalf("model_id consumer drifted: %q", modelID.Consumer)
 	}
 }
 
