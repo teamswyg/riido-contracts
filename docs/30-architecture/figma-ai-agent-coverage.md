@@ -52,6 +52,7 @@ Current stabilization history:
 - `teamswyg/riido-contracts#62`
 - `teamswyg/riido-contracts#63`
 - `teamswyg/riido-contracts#64`
+- `teamswyg/riido-contracts#65`
 
 The page registry and the top-level child counts in this document are
 authoritative only when they come from the Figma Plugin API
@@ -76,6 +77,15 @@ must not remove `expected_pages`, collapse non-UI inventories, or erase legacy
 Wireframe coverage. Page registry updates must come from `figma.root.children`,
 and child-count updates must come from each loaded page after
 `await figma.setCurrentPageAsync(page)`.
+
+`figma-headless-file-key-placeholder.v1` records another Figma Plugin API
+runtime limitation: a 2026-06-02 live `use_figma` root/category inspection for
+file `MUOd9lctoEHASUStN3vUuK` returned `figma.fileKey=headless`, even though the
+same invocation successfully read the AI Agent pages and annotation categories.
+The authoritative file identity remains the Figma URL/tool input file key and
+the manifest's `figma.file_key`, not the headless runtime placeholder. That
+placeholder must not overwrite `figma.file_key`, `expected_pages`, or downstream
+projection source identity.
 
 `figma-onboarding-page-load-timeout.v1` records a separate 2026-06-02 tooling
 limitation: current live reads of `node-id=42:3014` (`Wireframe - 온보딩`) can
