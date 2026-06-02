@@ -374,6 +374,31 @@ This slice does not change routes, schemas, authorization, RBAC, generated
 client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
 deployment evidence.
 
+### Figma API Generated annotation content policy
+
+This slice records the live Figma annotation content rule requested for frontend
+handoff.
+
+The Figma file now uses category `700:0` / `API Generated` for generated-client
+handoff annotations. A lightweight Figma Plugin API traversal on 2026-06-02 found
+59 `riido.*` annotations across the inspected file: 53 on `129:5215` `UI`, 6 on
+`42:3014` `Wireframe - 온보딩`, and 0 on `0:1` `Wireframe`. Every live `riido.*`
+annotation is in `API Generated`, has an operation kind (`Query`, `Mutation`, or
+`SSE Stream`), and has Korean `배경:` handoff text.
+
+This slice does:
+
+- add `api_generated_annotation_content_policy` to the Figma coverage manifest
+- record the required handoff label shape: path, `종류`, then `배경`
+- record page-level live inspection counts for UI, onboarding, and legacy
+  wireframe pages
+- require the coverage test to verify category, label-format policy, page
+  totals, zero missing operation kinds, and zero missing backgrounds
+
+This slice does not change routes, schemas, authorization, RBAC, generated
+client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
+deployment evidence.
+
 ### Figma onboarding page load timeout limitation
 
 This slice records a live Figma tooling limitation found while continuing the
