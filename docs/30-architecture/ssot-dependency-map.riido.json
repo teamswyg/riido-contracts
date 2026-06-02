@@ -161,6 +161,40 @@
       ]
     },
     {
+      "id": "generated-assignment-excludes-team-openapi-key",
+      "fact": "Generated AI Agent assignment excludes team_id, teamId, OpenAPI task-context paths, Open API keys, and X-Workspace-Api-Key from client, agent, daemon, deployment, and smoke-test boundaries",
+      "human_doc_phrase": "Generated assignment excludes team/OpenAPI key",
+      "source_refs": [
+        {
+          "repo": "riido-contracts",
+          "path": "docs/20-domain/ai-agent-policy.md",
+          "required_phrase": "are outside the AI Agent assignment problem"
+        }
+      ],
+      "owner": {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/ai-agent-policy.md"
+      },
+      "downstreams": [
+        {
+          "repo": "riido-control-plane",
+          "local_scope": "private task context may resolve task location from task_id internally, but generated client requests and deployment/smoke criteria do not require team_id, OpenAPI keys, or Open API keys"
+        },
+        {
+          "repo": "riido-client",
+          "local_scope": "calls generated assignment with agent_id in the body and route-supplied task/workspace ids only"
+        },
+        {
+          "repo": "riido-daemon",
+          "local_scope": "polls and executes assignment snapshots without receiving team_id or OpenAPI workspace keys"
+        },
+        {
+          "repo": "riido-infra",
+          "local_scope": "does not treat team_id/OpenAPI/Open API task-context key configuration as generated-assignment deployment evidence"
+        }
+      ]
+    },
+    {
       "id": "generated-client-delivery-review-handoff",
       "fact": "Generated client delivery PRs are review handoffs and must not be auto-merged by delivery automation",
       "human_doc_phrase": "Generated client delivery PR review handoff",
@@ -463,6 +497,7 @@
         "agent-editability",
         "api-projection",
         "fixture-created-agent-normal-lifecycle",
+        "generated-assignment-excludes-team-openapi-key",
         "generated-client-delivery-review-handoff",
         "instruction",
         "onboarding-draft-ordering",
@@ -480,6 +515,7 @@
       "fact_ids": [
         "agent-concept",
         "fixture-created-agent-normal-lifecycle",
+        "generated-assignment-excludes-team-openapi-key",
         "instruction",
         "onboarding-draft-ordering",
         "profile-thumbnail-url"
@@ -492,6 +528,7 @@
       "to_repo": "riido-contracts",
       "fact_ids": [
         "fixture-created-agent-normal-lifecycle",
+        "generated-assignment-excludes-team-openapi-key",
         "instruction",
         "onboarding-draft-ordering",
         "profile-thumbnail-url",
