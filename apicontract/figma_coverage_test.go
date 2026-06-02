@@ -378,6 +378,7 @@ func verifyFigmaCoverageProvenance(t *testing.T, stabilizedBy []string, docPath 
 		"teamswyg/riido-contracts#62",
 		"teamswyg/riido-contracts#63",
 		"teamswyg/riido-contracts#64",
+		"teamswyg/riido-contracts#65",
 	}
 	if len(stabilizedBy) != len(want) {
 		t.Fatalf("stabilized_by = %d entries, want %d: %+v", len(stabilizedBy), len(want), stabilizedBy)

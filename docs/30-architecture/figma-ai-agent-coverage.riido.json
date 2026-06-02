@@ -17,7 +17,8 @@
     "teamswyg/riido-contracts#60",
     "teamswyg/riido-contracts#62",
     "teamswyg/riido-contracts#63",
-    "teamswyg/riido-contracts#64"
+    "teamswyg/riido-contracts#64",
+    "teamswyg/riido-contracts#65"
   ],
   "human_doc": "docs/30-architecture/figma-ai-agent-coverage.md",
   "related_manifests": [
