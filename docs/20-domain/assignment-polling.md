@@ -74,6 +74,14 @@ the selected agent/runtime binding at assignment creation time; the daemon must
 not infer it from provider name or local environment. This field is false by
 default and omitted from JSON unless the assignment explicitly opts in.
 
+`Assignment.model_id` is the assignment-created snapshot of the selected
+agent's validated runtime-scoped model. The control plane resolves omitted
+agent create/update values to the selected runtime default before assignment,
+then copies the saved `agent.model_id` into `AssignRequest` / `Assignment`.
+Daemon consumes this value only as provider runtime model selection input; it
+must not re-resolve model defaults from provider name, environment, team id, or
+Open API key configuration.
+
 `PollResponse.action=start` means the control plane leased a queued assignment
 to the polling daemon/runtime. `PollResponse.action=active` means the same
 daemon/runtime identity is still considered to hold an active assignment. A

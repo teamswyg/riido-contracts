@@ -14,6 +14,7 @@ func TestAssignmentAPIJSONShapes(t *testing.T) {
 		ComponentID:              "component-1",
 		AgentID:                  "agent-a",
 		RuntimeProvider:          "codex",
+		ModelID:                  "gpt-5.5",
 		Prompt:                   "run tests",
 		AgentInstruction:         "act as QA",
 		AllowExperimentalRuntime: true,
@@ -28,11 +29,12 @@ func TestAssignmentAPIJSONShapes(t *testing.T) {
 		ComponentID:              "component-1",
 		AgentID:                  "agent-a",
 		RuntimeProvider:          "codex",
+		ModelID:                  "gpt-5.5",
 		Prompt:                   "run tests",
 		AgentInstruction:         "act as QA",
 		AllowExperimentalRuntime: true,
 		CreatedBy:                "user-a",
-	}, `{"component_id":"component-1","agent_id":"agent-a","runtime_provider":"codex","prompt":"run tests","agent_instruction":"act as QA","allow_experimental_runtime":true,"created_by":"user-a"}`)
+	}, `{"component_id":"component-1","agent_id":"agent-a","runtime_provider":"codex","model_id":"gpt-5.5","prompt":"run tests","agent_instruction":"act as QA","allow_experimental_runtime":true,"created_by":"user-a"}`)
 	assertJSON(t, "poll request", PollRequest{
 		DaemonID:  "daemon-a",
 		DeviceID:  "device-a",
@@ -42,7 +44,7 @@ func TestAssignmentAPIJSONShapes(t *testing.T) {
 		SchemaVersion: SchemaVersion,
 		Action:        PollStart,
 		Assignment:    &assignment,
-	}, `{"schema_version":"riido-ai-server.v1","action":"start","assignment":{"assignment_id":"asn-000001","task_id":"task-a","component_id":"component-1","agent_id":"agent-a","runtime_provider":"codex","prompt":"run tests","agent_instruction":"act as QA","allow_experimental_runtime":true,"state":"leased","lease_token":"lease-1","replaces_assignment_id":"asn-old","blocked_by_assignment_id":"asn-blocker","created_at":"2026-05-27T11:00:00Z","updated_at":"2026-05-27T11:00:00Z"}}`)
+	}, `{"schema_version":"riido-ai-server.v1","action":"start","assignment":{"assignment_id":"asn-000001","task_id":"task-a","component_id":"component-1","agent_id":"agent-a","runtime_provider":"codex","model_id":"gpt-5.5","prompt":"run tests","agent_instruction":"act as QA","allow_experimental_runtime":true,"state":"leased","lease_token":"lease-1","replaces_assignment_id":"asn-old","blocked_by_assignment_id":"asn-blocker","created_at":"2026-05-27T11:00:00Z","updated_at":"2026-05-27T11:00:00Z"}}`)
 	assertJSON(t, "heartbeat request", AgentHeartbeatRequest{
 		DaemonID:            "daemon-a",
 		DeviceID:            "device-a",
@@ -53,7 +55,7 @@ func TestAssignmentAPIJSONShapes(t *testing.T) {
 	assertJSON(t, "heartbeat response", AgentHeartbeatResponse{
 		SchemaVersion:        SchemaVersion,
 		RefreshedAssignments: []Assignment{assignment},
-	}, `{"schema_version":"riido-ai-server.v1","refreshed_assignments":[{"assignment_id":"asn-000001","task_id":"task-a","component_id":"component-1","agent_id":"agent-a","runtime_provider":"codex","prompt":"run tests","agent_instruction":"act as QA","allow_experimental_runtime":true,"state":"leased","lease_token":"lease-1","replaces_assignment_id":"asn-old","blocked_by_assignment_id":"asn-blocker","created_at":"2026-05-27T11:00:00Z","updated_at":"2026-05-27T11:00:00Z"}]}`)
+	}, `{"schema_version":"riido-ai-server.v1","refreshed_assignments":[{"assignment_id":"asn-000001","task_id":"task-a","component_id":"component-1","agent_id":"agent-a","runtime_provider":"codex","model_id":"gpt-5.5","prompt":"run tests","agent_instruction":"act as QA","allow_experimental_runtime":true,"state":"leased","lease_token":"lease-1","replaces_assignment_id":"asn-old","blocked_by_assignment_id":"asn-blocker","created_at":"2026-05-27T11:00:00Z","updated_at":"2026-05-27T11:00:00Z"}]}`)
 	assertJSON(t, "agent event request", AgentEventRequest{
 		AssignmentID: "asn-000001",
 		TaskID:       "task-a",
@@ -80,7 +82,7 @@ func TestAssignmentAPIJSONShapes(t *testing.T) {
 		SchemaVersion: SchemaVersion,
 		Assignment:    &assignment,
 		Event:         event,
-	}, `{"schema_version":"riido-ai-server.v1","assignment":{"assignment_id":"asn-000001","task_id":"task-a","component_id":"component-1","agent_id":"agent-a","runtime_provider":"codex","prompt":"run tests","agent_instruction":"act as QA","allow_experimental_runtime":true,"state":"leased","lease_token":"lease-1","replaces_assignment_id":"asn-old","blocked_by_assignment_id":"asn-blocker","created_at":"2026-05-27T11:00:00Z","updated_at":"2026-05-27T11:00:00Z"},"event":{"seq":1,"task_id":"task-a","assignment_id":"asn-000001","agent_id":"agent-a","type":"assignment_running","state":"running","message":"running","metadata":{"step":"run"},"at":"2026-05-27T11:00:00Z"}}`)
+	}, `{"schema_version":"riido-ai-server.v1","assignment":{"assignment_id":"asn-000001","task_id":"task-a","component_id":"component-1","agent_id":"agent-a","runtime_provider":"codex","model_id":"gpt-5.5","prompt":"run tests","agent_instruction":"act as QA","allow_experimental_runtime":true,"state":"leased","lease_token":"lease-1","replaces_assignment_id":"asn-old","blocked_by_assignment_id":"asn-blocker","created_at":"2026-05-27T11:00:00Z","updated_at":"2026-05-27T11:00:00Z"},"event":{"seq":1,"task_id":"task-a","assignment_id":"asn-000001","agent_id":"agent-a","type":"assignment_running","state":"running","message":"running","metadata":{"step":"run"},"at":"2026-05-27T11:00:00Z"}}`)
 	assertJSON(t, "agent runtime binding", AgentRuntimeBinding{
 		AgentID:         "agent-a",
 		DaemonID:        "daemon-a",

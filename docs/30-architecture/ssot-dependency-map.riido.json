@@ -402,6 +402,41 @@
       ]
     },
     {
+      "id": "runtime-model-selection-assignment-snapshot",
+      "fact": "Runtime model selection is assignment-created snapshot data",
+      "human_doc_phrase": "Runtime model selection is assignment-created snapshot data",
+      "source_refs": [
+        {
+          "repo": "riido-contracts",
+          "path": "docs/20-domain/assignment-polling.md",
+          "required_phrase": "Assignment.model_id"
+        },
+        {
+          "repo": "riido-contracts",
+          "path": "docs/20-domain/ai-agent-policy.md",
+          "required_phrase": "runtime-scoped identifier"
+        }
+      ],
+      "owner": {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/assignment-polling.md"
+      },
+      "downstreams": [
+        {
+          "repo": "riido-control-plane",
+          "local_scope": "copies the selected agent model_id into Assignment.model_id at assignment creation time"
+        },
+        {
+          "repo": "riido-daemon",
+          "local_scope": "uses only Assignment.model_id for provider runtime model selection"
+        },
+        {
+          "repo": "riido-infra",
+          "local_scope": "no Terraform diff"
+        }
+      ]
+    },
+    {
       "id": "runtime-prompt-consumption",
       "fact": "Runtime prompt and native-config consumption",
       "human_doc_phrase": "Runtime prompt/native-config consumption",
