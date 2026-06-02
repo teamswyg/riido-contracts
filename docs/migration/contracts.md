@@ -388,6 +388,8 @@ annotation is in `API Generated`, has an operation kind (`Query`, `Mutation`, or
 
 This slice does:
 
+- append `teamswyg/riido-contracts#62` to the Figma coverage `stabilized_by`
+  list
 - add `api_generated_annotation_content_policy` to the Figma coverage manifest
 - record the required handoff label shape: path, `종류`, then `배경`
 - record page-level live inspection counts for UI, onboarding, and legacy
