@@ -167,8 +167,8 @@ func TestFigmaAIAgentCoverageManifest(t *testing.T) {
 	}
 
 	verifyFigmaRuntimeEndpointLabel(t, manifest.VerifiedEvidenceNodes, entryByNodeID["162:23090"], docText)
-	verifyFigmaClientDeliveryAnnotations(t, manifest.ClientDeliveryAnnotations, docText, openAPIGeneratedPaths, registered, entryByNodeID)
-	verifyFigmaClientDeliveryAnnotationInventory(t, manifest.ClientDeliveryAnnotationInventory, docText, openAPIGeneratedPaths, registered, entryByNodeID)
+	verifyFigmaAPIGeneratedAnnotations(t, manifest.APIGeneratedAnnotations, docText, openAPIGeneratedPaths, registered, entryByNodeID)
+	verifyFigmaAPIGeneratedAnnotationInventory(t, manifest.APIGeneratedAnnotationInventory, docText, openAPIGeneratedPaths, registered, entryByNodeID)
 	assertDocumentedFigmaNodeRefsAreRegistered(t, registered)
 	assertNoStaleOnboardingFixtureWording(t)
 	assertNoStaleRuntimeEndpointHostPinned(t)
@@ -444,138 +444,138 @@ func verifyCoverageEntry(t *testing.T, entry figmaCoverageEntry, openAPIGenerate
 	}
 }
 
-func verifyFigmaClientDeliveryAnnotations(t *testing.T, annotations []figmaClientDeliveryAnnotation, docText string, openAPIGeneratedPaths map[string]string, registered map[string]string, entries map[string]figmaCoverageEntry) {
+func verifyFigmaAPIGeneratedAnnotations(t *testing.T, annotations []figmaAPIGeneratedAnnotation, docText string, openAPIGeneratedPaths map[string]string, registered map[string]string, entries map[string]figmaCoverageEntry) {
 	t.Helper()
 	if got, want := len(annotations), 2; got != want {
-		t.Fatalf("client_delivery_annotations = %d, want %d", got, want)
+		t.Fatalf("api_generated_annotations = %d, want %d", got, want)
 	}
 	seen := map[string]bool{}
 	for _, annotation := range annotations {
 		if seen[annotation.NodeID] {
-			t.Fatalf("duplicate client delivery annotation node %q", annotation.NodeID)
+			t.Fatalf("duplicate API Generated annotation node %q", annotation.NodeID)
 		}
 		seen[annotation.NodeID] = true
 		if _, ok := registered[annotation.NodeID]; !ok {
-			t.Fatalf("client delivery annotation %q is not a registered Figma evidence node", annotation.NodeID)
+			t.Fatalf("API Generated annotation %q is not a registered Figma evidence node", annotation.NodeID)
 		}
 		if annotation.TopLevelNodeID != "153:15931" || annotation.CoverageEntryNodeID != "153:15931" {
-			t.Fatalf("client delivery annotation %q must resolve through task-thread top-level entry 153:15931: %+v", annotation.NodeID, annotation)
+			t.Fatalf("API Generated annotation %q must resolve through task-thread top-level entry 153:15931: %+v", annotation.NodeID, annotation)
 		}
 		if annotation.CategoryID != "700:0" || annotation.CategoryLabel != "API Generated" {
-			t.Fatalf("client delivery annotation %q category drifted: %+v", annotation.NodeID, annotation)
+			t.Fatalf("API Generated annotation %q category drifted: %+v", annotation.NodeID, annotation)
 		}
 		if !strings.HasPrefix(annotation.FigmaGeneratedPath, "riido.") {
-			t.Fatalf("client delivery annotation %q must preserve the Figma facade path: %q", annotation.NodeID, annotation.FigmaGeneratedPath)
+			t.Fatalf("API Generated annotation %q must preserve the Figma facade path: %q", annotation.NodeID, annotation.FigmaGeneratedPath)
 		}
 		canonical := strings.TrimPrefix(annotation.FigmaGeneratedPath, "riido.")
 		if annotation.CanonicalGeneratedPath != canonical {
-			t.Fatalf("client delivery annotation %q canonical path = %q, want %q", annotation.NodeID, annotation.CanonicalGeneratedPath, canonical)
+			t.Fatalf("API Generated annotation %q canonical path = %q, want %q", annotation.NodeID, annotation.CanonicalGeneratedPath, canonical)
 		}
 		if _, ok := openAPIGeneratedPaths[annotation.CanonicalGeneratedPath]; !ok {
-			t.Fatalf("client delivery annotation %q references unknown OpenAPI generated path %q", annotation.NodeID, annotation.CanonicalGeneratedPath)
+			t.Fatalf("API Generated annotation %q references unknown OpenAPI generated path %q", annotation.NodeID, annotation.CanonicalGeneratedPath)
 		}
 		entry, ok := entries[annotation.CoverageEntryNodeID]
 		if !ok {
-			t.Fatalf("client delivery annotation %q references missing coverage entry %q", annotation.NodeID, annotation.CoverageEntryNodeID)
+			t.Fatalf("API Generated annotation %q references missing coverage entry %q", annotation.NodeID, annotation.CoverageEntryNodeID)
 		}
 		if !stringSliceContains(entry.GeneratedPaths, annotation.CanonicalGeneratedPath) {
-			t.Fatalf("client delivery annotation %q canonical path %q is not in coverage entry %q generated paths", annotation.NodeID, annotation.CanonicalGeneratedPath, entry.NodeID)
+			t.Fatalf("API Generated annotation %q canonical path %q is not in coverage entry %q generated paths", annotation.NodeID, annotation.CanonicalGeneratedPath, entry.NodeID)
 		}
 		for _, needle := range []string{annotation.NodeID, annotation.FigmaGeneratedPath, annotation.CanonicalGeneratedPath, annotation.CategoryLabel} {
 			if !strings.Contains(docText, needle) {
-				t.Fatalf("coverage doc must mention client delivery annotation %q", needle)
+				t.Fatalf("coverage doc must mention API Generated annotation %q", needle)
 			}
 		}
 		if strings.Contains(annotation.FigmaLabel, "작업중") {
 			if annotation.ResolutionStatus != "resolved_stale_handoff_copy" {
-				t.Fatalf("client delivery annotation %q stale Figma copy must be explicitly resolved: %+v", annotation.NodeID, annotation)
+				t.Fatalf("API Generated annotation %q stale Figma copy must be explicitly resolved: %+v", annotation.NodeID, annotation)
 			}
 			if !strings.Contains(annotation.Resolution, "stale") || !strings.Contains(docText, "상세내용은 작업중입니다") {
-				t.Fatalf("client delivery annotation %q stale copy resolution is not documented", annotation.NodeID)
+				t.Fatalf("API Generated annotation %q stale copy resolution is not documented", annotation.NodeID)
 			}
 		}
 	}
 }
 
-func verifyFigmaClientDeliveryAnnotationInventory(t *testing.T, inventory []figmaClientDeliveryAnnotationGroup, docText string, openAPIGeneratedPaths map[string]string, registered map[string]string, entries map[string]figmaCoverageEntry) {
+func verifyFigmaAPIGeneratedAnnotationInventory(t *testing.T, inventory []figmaAPIGeneratedAnnotationGroup, docText string, openAPIGeneratedPaths map[string]string, registered map[string]string, entries map[string]figmaCoverageEntry) {
 	t.Helper()
 	if got, want := len(inventory), 19; got != want {
-		t.Fatalf("client_delivery_annotation_inventory = %d, want %d", got, want)
+		t.Fatalf("api_generated_annotation_inventory = %d, want %d", got, want)
 	}
 	allowedKinds := map[string]bool{"Query": true, "Mutation": true, "SSE Stream": true}
 	seenPath := map[string]bool{}
 	totalAnnotations := 0
 	for _, group := range inventory {
 		if strings.TrimSpace(group.UIArea) == "" {
-			t.Fatalf("client delivery annotation group has empty ui_area: %+v", group)
+			t.Fatalf("API Generated annotation group has empty ui_area: %+v", group)
 		}
 		if group.CategoryID != "700:0" || group.CategoryLabel != "API Generated" {
-			t.Fatalf("client delivery annotation group %q category drifted: %+v", group.FigmaGeneratedPath, group)
+			t.Fatalf("API Generated annotation group %q category drifted: %+v", group.FigmaGeneratedPath, group)
 		}
 		if !strings.HasPrefix(group.FigmaGeneratedPath, "riido.") {
-			t.Fatalf("client delivery annotation group must preserve Figma facade path: %q", group.FigmaGeneratedPath)
+			t.Fatalf("API Generated annotation group must preserve Figma facade path: %q", group.FigmaGeneratedPath)
 		}
 		canonical := strings.TrimPrefix(group.FigmaGeneratedPath, "riido.")
 		if group.CanonicalGeneratedPath != canonical {
-			t.Fatalf("client delivery annotation group %q canonical path = %q, want %q", group.FigmaGeneratedPath, group.CanonicalGeneratedPath, canonical)
+			t.Fatalf("API Generated annotation group %q canonical path = %q, want %q", group.FigmaGeneratedPath, group.CanonicalGeneratedPath, canonical)
 		}
 		if seenPath[group.CanonicalGeneratedPath] {
-			t.Fatalf("duplicate client delivery annotation inventory generated path %q", group.CanonicalGeneratedPath)
+			t.Fatalf("duplicate API Generated annotation inventory generated path %q", group.CanonicalGeneratedPath)
 		}
 		seenPath[group.CanonicalGeneratedPath] = true
 		if _, ok := openAPIGeneratedPaths[group.CanonicalGeneratedPath]; !ok {
-			t.Fatalf("client delivery annotation group references unknown OpenAPI generated path %q", group.CanonicalGeneratedPath)
+			t.Fatalf("API Generated annotation group references unknown OpenAPI generated path %q", group.CanonicalGeneratedPath)
 		}
 		if !allowedKinds[group.OperationKind] {
-			t.Fatalf("client delivery annotation group %q operation_kind = %q", group.CanonicalGeneratedPath, group.OperationKind)
+			t.Fatalf("API Generated annotation group %q operation_kind = %q", group.CanonicalGeneratedPath, group.OperationKind)
 		}
 		if strings.TrimSpace(group.Background) == "" {
-			t.Fatalf("client delivery annotation group %q must explain background", group.CanonicalGeneratedPath)
+			t.Fatalf("API Generated annotation group %q must explain background", group.CanonicalGeneratedPath)
 		}
 		if len(group.Sources) == 0 {
-			t.Fatalf("client delivery annotation group %q must name sources", group.CanonicalGeneratedPath)
+			t.Fatalf("API Generated annotation group %q must name sources", group.CanonicalGeneratedPath)
 		}
 		annotationCount := 0
 		for _, source := range group.Sources {
 			if strings.TrimSpace(source.PageID) == "" || strings.TrimSpace(source.TopLevelNodeID) == "" || strings.TrimSpace(source.CoverageEntryNodeID) == "" {
-				t.Fatalf("client delivery annotation group %q has invalid source: %+v", group.CanonicalGeneratedPath, source)
+				t.Fatalf("API Generated annotation group %q has invalid source: %+v", group.CanonicalGeneratedPath, source)
 			}
 			entry, ok := entries[source.CoverageEntryNodeID]
 			if !ok {
-				t.Fatalf("client delivery annotation group %q references missing coverage entry %q", group.CanonicalGeneratedPath, source.CoverageEntryNodeID)
+				t.Fatalf("API Generated annotation group %q references missing coverage entry %q", group.CanonicalGeneratedPath, source.CoverageEntryNodeID)
 			}
 			if !stringSliceContains(entry.GeneratedPaths, group.CanonicalGeneratedPath) {
-				t.Fatalf("client delivery annotation group %q canonical path is not covered by source entry %q", group.CanonicalGeneratedPath, source.CoverageEntryNodeID)
+				t.Fatalf("API Generated annotation group %q canonical path is not covered by source entry %q", group.CanonicalGeneratedPath, source.CoverageEntryNodeID)
 			}
-			registerFigmaNodeIDIfAbsent(t, registered, source.TopLevelNodeID, "client_delivery_annotation_inventory top-level "+group.CanonicalGeneratedPath)
+			registerFigmaNodeIDIfAbsent(t, registered, source.TopLevelNodeID, "api_generated_annotation_inventory top-level "+group.CanonicalGeneratedPath)
 			if len(source.NodeIDs) == 0 {
-				t.Fatalf("client delivery annotation group %q source %q must list node_ids", group.CanonicalGeneratedPath, source.TopLevelNodeID)
+				t.Fatalf("API Generated annotation group %q source %q must list node_ids", group.CanonicalGeneratedPath, source.TopLevelNodeID)
 			}
 			sourceSeen := map[string]bool{}
 			for _, nodeID := range source.NodeIDs {
 				if strings.TrimSpace(nodeID) == "" {
-					t.Fatalf("client delivery annotation group %q source has empty node id", group.CanonicalGeneratedPath)
+					t.Fatalf("API Generated annotation group %q source has empty node id", group.CanonicalGeneratedPath)
 				}
 				if sourceSeen[nodeID] {
-					t.Fatalf("client delivery annotation group %q source %q duplicates node %q", group.CanonicalGeneratedPath, source.TopLevelNodeID, nodeID)
+					t.Fatalf("API Generated annotation group %q source %q duplicates node %q", group.CanonicalGeneratedPath, source.TopLevelNodeID, nodeID)
 				}
 				sourceSeen[nodeID] = true
-				registerFigmaNodeIDIfAbsent(t, registered, nodeID, "client_delivery_annotation_inventory "+group.CanonicalGeneratedPath)
+				registerFigmaNodeIDIfAbsent(t, registered, nodeID, "api_generated_annotation_inventory "+group.CanonicalGeneratedPath)
 				annotationCount++
 			}
 		}
 		if group.AnnotationCount != annotationCount {
-			t.Fatalf("client delivery annotation group %q annotation_count = %d, want node count %d", group.CanonicalGeneratedPath, group.AnnotationCount, annotationCount)
+			t.Fatalf("API Generated annotation group %q annotation_count = %d, want node count %d", group.CanonicalGeneratedPath, group.AnnotationCount, annotationCount)
 		}
 		totalAnnotations += annotationCount
 		for _, needle := range []string{group.UIArea, group.FigmaGeneratedPath, group.CanonicalGeneratedPath, group.OperationKind, group.Background} {
 			if !strings.Contains(docText, needle) {
-				t.Fatalf("coverage doc must mention client delivery annotation inventory %q", needle)
+				t.Fatalf("coverage doc must mention API Generated annotation inventory %q", needle)
 			}
 		}
 	}
 	if got, want := totalAnnotations, 59; got != want {
-		t.Fatalf("client delivery annotation inventory node annotations = %d, want %d", got, want)
+		t.Fatalf("API Generated annotation inventory node annotations = %d, want %d", got, want)
 	}
 }
 
@@ -872,24 +872,24 @@ var (
 )
 
 type figmaCoverageManifest struct {
-	SchemaVersion                     string                               `json:"schema_version"`
-	ID                                string                               `json:"id"`
-	RiidoTask                         string                               `json:"riido_task"`
-	StabilizedBy                      []string                             `json:"stabilized_by"`
-	HumanDoc                          string                               `json:"human_doc"`
-	RelatedManifests                  []string                             `json:"related_manifests"`
-	Figma                             figmaCoverageSource                  `json:"figma"`
-	InspectionMethod                  figmaCoverageInspectionMethod        `json:"inspection_method"`
-	SupportingToolLimitations         []figmaSupportingToolLimitation      `json:"supporting_tool_limitations"`
-	CoveragePolicy                    figmaCoveragePolicy                  `json:"coverage_policy"`
-	ExpectedPages                     []figmaCoveragePage                  `json:"expected_pages"`
-	ExpectedTopLevelNodes             []figmaCoverageNode                  `json:"expected_top_level_nodes"`
-	NonUITopLevelInventory            []figmaNonUITopLevelInventory        `json:"non_ui_top_level_inventory"`
-	VerifiedEvidenceNodes             []figmaCoverageNode                  `json:"verified_evidence_nodes"`
-	NonUITopLevelNodes                []figmaCoverageEntry                 `json:"non_ui_top_level_nodes"`
-	ClientDeliveryAnnotations         []figmaClientDeliveryAnnotation      `json:"client_delivery_annotations"`
-	ClientDeliveryAnnotationInventory []figmaClientDeliveryAnnotationGroup `json:"client_delivery_annotation_inventory"`
-	Entries                           []figmaCoverageEntry                 `json:"entries"`
+	SchemaVersion                   string                             `json:"schema_version"`
+	ID                              string                             `json:"id"`
+	RiidoTask                       string                             `json:"riido_task"`
+	StabilizedBy                    []string                           `json:"stabilized_by"`
+	HumanDoc                        string                             `json:"human_doc"`
+	RelatedManifests                []string                           `json:"related_manifests"`
+	Figma                           figmaCoverageSource                `json:"figma"`
+	InspectionMethod                figmaCoverageInspectionMethod      `json:"inspection_method"`
+	SupportingToolLimitations       []figmaSupportingToolLimitation    `json:"supporting_tool_limitations"`
+	CoveragePolicy                  figmaCoveragePolicy                `json:"coverage_policy"`
+	ExpectedPages                   []figmaCoveragePage                `json:"expected_pages"`
+	ExpectedTopLevelNodes           []figmaCoverageNode                `json:"expected_top_level_nodes"`
+	NonUITopLevelInventory          []figmaNonUITopLevelInventory      `json:"non_ui_top_level_inventory"`
+	VerifiedEvidenceNodes           []figmaCoverageNode                `json:"verified_evidence_nodes"`
+	NonUITopLevelNodes              []figmaCoverageEntry               `json:"non_ui_top_level_nodes"`
+	APIGeneratedAnnotations         []figmaAPIGeneratedAnnotation      `json:"api_generated_annotations"`
+	APIGeneratedAnnotationInventory []figmaAPIGeneratedAnnotationGroup `json:"api_generated_annotation_inventory"`
+	Entries                         []figmaCoverageEntry               `json:"entries"`
 }
 
 type figmaCoverageSource struct {
@@ -957,7 +957,7 @@ type figmaCoverageEntry struct {
 	Reason                   string                 `json:"reason,omitempty"`
 }
 
-type figmaClientDeliveryAnnotation struct {
+type figmaAPIGeneratedAnnotation struct {
 	NodeID                 string `json:"node_id"`
 	TopLevelNodeID         string `json:"top_level_node_id"`
 	CoverageEntryNodeID    string `json:"coverage_entry_node_id"`
@@ -970,19 +970,19 @@ type figmaClientDeliveryAnnotation struct {
 	Resolution             string `json:"resolution"`
 }
 
-type figmaClientDeliveryAnnotationGroup struct {
-	UIArea                 string                                `json:"ui_area"`
-	CategoryID             string                                `json:"category_id"`
-	CategoryLabel          string                                `json:"category_label"`
-	FigmaGeneratedPath     string                                `json:"figma_generated_path"`
-	CanonicalGeneratedPath string                                `json:"canonical_generated_path"`
-	OperationKind          string                                `json:"operation_kind"`
-	Background             string                                `json:"background"`
-	AnnotationCount        int                                   `json:"annotation_count"`
-	Sources                []figmaClientDeliveryAnnotationSource `json:"sources"`
+type figmaAPIGeneratedAnnotationGroup struct {
+	UIArea                 string                              `json:"ui_area"`
+	CategoryID             string                              `json:"category_id"`
+	CategoryLabel          string                              `json:"category_label"`
+	FigmaGeneratedPath     string                              `json:"figma_generated_path"`
+	CanonicalGeneratedPath string                              `json:"canonical_generated_path"`
+	OperationKind          string                              `json:"operation_kind"`
+	Background             string                              `json:"background"`
+	AnnotationCount        int                                 `json:"annotation_count"`
+	Sources                []figmaAPIGeneratedAnnotationSource `json:"sources"`
 }
 
-type figmaClientDeliveryAnnotationSource struct {
+type figmaAPIGeneratedAnnotationSource struct {
 	PageID              string   `json:"page_id"`
 	TopLevelNodeID      string   `json:"top_level_node_id"`
 	CoverageEntryNodeID string   `json:"coverage_entry_node_id"`

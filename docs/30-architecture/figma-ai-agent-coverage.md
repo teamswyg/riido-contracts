@@ -209,15 +209,15 @@ riido.aiAgent.tasks.stop
 | `153:8545` | `riido.aiAgent.events.stream` / `종류: SSE Stream` | `aiAgent.events.stream` | The stream hint is a client facade example over the task-thread active stream handoff, covered by `153:15931`, API DSL/OpenAPI, and generated-client comments. |
 | `236:20768` | `riido.aiAgent.tasks.stop` / `종류: Mutation` | `aiAgent.tasks.stop` | The stop hint is a client facade example over the task-thread stop operation, covered by `153:15931`, API DSL/OpenAPI, and generated-client comments. |
 
-The executable manifest keeps two layers for this category. The legacy field
-names `client_delivery_annotations` and `client_delivery_annotation_inventory`
-are retained for manifest compatibility, but their category authority is now
-`API Generated`. The first field keeps the two original representative
-task-thread hints, while the inventory field registers the screen-level
-inventory below. Those annotations are still evidence, not API authority. Their
-first-line paths must already exist in the API DSL / OpenAPI projection and
-generated TypeScript comments, and every group must carry `Query`, `Mutation`,
-or `SSE Stream` plus Korean background text.
+The executable manifest keeps two layers for this category. The canonical field
+names are `api_generated_annotations` and
+`api_generated_annotation_inventory`, matching the Figma category rather than
+the older handoff wording. The first field keeps the two original
+representative task-thread hints, while the inventory field registers the
+screen-level inventory below. Those annotations are still evidence, not API
+authority. Their first-line paths must already exist in the API DSL / OpenAPI
+projection and generated TypeScript comments, and every group must carry
+`Query`, `Mutation`, or `SSE Stream` plus Korean background text.
 
 | UI area | Representative Figma nodes | Facade path | Kind | Background shown in Figma |
 | --- | --- | --- | --- | --- |

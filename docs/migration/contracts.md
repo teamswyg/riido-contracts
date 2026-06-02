@@ -284,9 +284,9 @@ This slice closes a coverage gap around Figma Dev Mode category `700:0`
 
 This slice does:
 
-- add `client_delivery_annotations` to the Figma AI Agent coverage manifest,
-  retaining the legacy field name while validating the current `API Generated`
-  category
+- add `api_generated_annotations` to the Figma AI Agent coverage manifest,
+  replacing the older handoff-oriented field name with the current
+  `API Generated` category vocabulary
 - preserve Figma facade examples such as `riido.aiAgent.events.stream` and
   `riido.aiAgent.tasks.stop`
 - normalize those examples to canonical generated paths
