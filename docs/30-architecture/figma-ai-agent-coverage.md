@@ -79,13 +79,16 @@ and child-count updates must come from each loaded page after
 `figma-onboarding-page-load-timeout.v1` records a separate 2026-06-02 tooling
 limitation: current live reads of `node-id=42:3014` (`Wireframe - 온보딩`) can
 time out after 120s when using Figma `get_metadata(nodeId=42:3014)` or
-`use_figma` scripts that attempt `await figma.setCurrentPageAsync(page)`. A
-timeout is supporting evidence only. It must not rewrite `expected_pages`,
-remove page `42:3014`, remove onboarding inventory, or mark onboarding
-generated paths unresolved; in other words, the timeout must not become
-onboarding generated paths unresolved. The authoritative value for the
+`use_figma` scripts that attempt `await figma.setCurrentPageAsync(page)`. Direct
+Figma Plugin API `getNodeByIdAsync` lookups for registered nodes `236:33845` and
+`236:33847` still returned the six onboarding `riido.*` `API Generated`
+annotations. A timeout is supporting evidence only. It must not rewrite `expected_pages`,
+remove page `42:3014`, remove onboarding inventory, or mark onboarding generated
+paths unresolved; in other words, the timeout must not
+become onboarding generated paths unresolved. The authoritative value for the
 onboarding page remains the previously captured loaded Figma Plugin API
-inventory and the registered node-id evidence in this manifest.
+inventory, registered node-id evidence in this manifest, and direct registered
+node lookup fallback for onboarding API Generated annotations.
 
 ## Coverage Rule
 

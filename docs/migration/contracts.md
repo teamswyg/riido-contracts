@@ -426,6 +426,28 @@ This slice does not change routes, schemas, authorization, RBAC, generated
 client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
 deployment evidence.
 
+### Figma onboarding direct-node fallback evidence
+
+This slice refines the onboarding page-load timeout limitation with the fallback
+that succeeded during live Figma inspection.
+
+The full `42:3014` `Wireframe - 온보딩` page traversal can still time out after
+120s. However, direct Figma Plugin API `getNodeByIdAsync` reads for registered
+nodes `236:33845` and `236:33847` returned the six onboarding `riido.*`
+`API Generated` annotations with operation kind and Korean background text.
+
+This slice does:
+
+- keep full loaded-page inventory as the authority for `child_count=83`
+- record `236:33845`, `236:33847`, and
+  `onboarding_api_generated_annotations=6` as fallback authoritative results
+  inside `figma-onboarding-page-load-timeout.v1`
+- require the coverage test to preserve that direct-node fallback evidence
+
+This slice does not change routes, schemas, authorization, RBAC, generated
+client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
+deployment evidence.
+
 ### Figma onboarding page load timeout limitation
 
 This slice records a live Figma tooling limitation found while continuing the
