@@ -28,6 +28,22 @@ planning drift.
 | Supporting read tools | metadata XML/read output and node-specific metadata lookup |
 | Inspection date | `2026-06-02` |
 
+## Stabilization Provenance
+
+The executable manifest's `stabilized_by` list is the contracts-owned source
+for downstream projection provenance. `riido-control-plane` and `riido-daemon`
+may mirror this list to explain which coverage history their narrower local
+projection consumed, but they must not invent a different upstream history.
+
+Current stabilization history:
+
+- `teamswyg/riido-contracts#38`
+- `teamswyg/riido-contracts#39`
+- `teamswyg/riido-contracts#45`
+- `teamswyg/riido-contracts#46`
+- `teamswyg/riido-contracts#51`
+- `teamswyg/riido-contracts#52`
+
 The page registry and the top-level child counts in this document are
 authoritative only when they come from the Figma Plugin API
 `figma.root.children` and each page's loaded `page.children.length`. For
