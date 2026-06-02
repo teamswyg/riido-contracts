@@ -15,7 +15,7 @@ Domain DSL -> canonical API IR -> OpenAPI projection
 
 The Domain DSL describes the human-owned resource, policy, schema, and operation
 facts. The API IR is the canonical machine-readable contract used for drift
-checks. OpenAPI is generated from the IR for web clients, mock servers, docs,
+checks. OpenAPI is generated from the IR for web clients, HTTP test servers, docs,
 and black-box HTTP checks.
 
 OpenAPI is not the SSOT. If an OpenAPI artifact disagrees with the API IR, the
@@ -79,8 +79,17 @@ The v2 client surface is additive, not a migration. It duplicates the AI Agent
 routes under `/v2/client/workspaces/{workspace_id}/ai-agent/...` and uses
 generated client paths under `riido.v2.aiAgent.*`. The selected workspace comes
 from existing Riido workspace UI/API surfaces; AI Agent does not add workspace
-list/create operations. v1 routes stay present so existing UI tests and mock
+list/create operations. v1 routes stay present so existing UI tests and
 callers do not break, but new workspace-scoped client work must target v2.
+
+Device credential enrollment is a separate Desktop/Daemon boundary, not a web
+frontend generated-client feature. Desktop registers a device after a
+UserPrincipal session is established and receives a one-time device credential;
+the daemon later authenticates as a DevicePrincipal with that credential. The
+credential secret must not be projected into `riido-client`, browser storage,
+webview JavaScript, generated React Query files, OpenAPI examples, task-thread
+events, logs, or status responses. The canonical policy is
+[`device-principal.md`](device-principal.md).
 
 For v2 agent creation, `workspace_id` is required as a path parameter rather
 than a request-body field. The server stamps workspace ownership from the URL
@@ -218,6 +227,9 @@ This contract owns:
   OpenAPI projection for client codegen
 - generated-client lifecycle and review-handoff semantics
 - derived generated client path metadata used for searchable generated comments
+- device-principal policy metadata that downstream Desktop/Daemon/Control Plane
+  implementations must reference without leaking device secrets to frontend
+  generated clients
 - deterministic fixture drift verification
 
 This contract does not own:

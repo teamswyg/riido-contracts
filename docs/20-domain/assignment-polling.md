@@ -67,6 +67,13 @@ creation time; later agent edits do not rewrite an already-created assignment.
 The daemon consumes this snapshot only when composing provider-specific runtime
 instructions.
 
+`AgentRuntimeBinding` is the shared DTO that lets a daemon know which
+workspace-created agent may poll through one of its runtime slots. The DTO shape
+is shared here, but the binding list is not a static deployment secret in the
+current DevicePrincipal path. Control-plane derives it from persisted agent
+configuration plus the latest daemon runtime snapshot for the authenticated
+device.
+
 `Health` and `MetricsSnapshot` remain in `riido-control-plane` for now because
 they are control-plane adapter/read-model contracts rather than daemon polling
 contracts.

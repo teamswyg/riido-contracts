@@ -22,7 +22,7 @@
       "downstreams": [
         {
           "repo": "riido-control-plane",
-          "local_scope": "HTTP handlers, stores, mock data, and generated client projection"
+          "local_scope": "HTTP handlers, stores, fixture data, and generated client projection"
         },
         {
           "repo": "riido-daemon",
@@ -78,7 +78,7 @@
       "downstreams": [
         {
           "repo": "riido-control-plane",
-          "local_scope": "checked-in OpenAPI copy, mock server behavior, and generated client handoff"
+          "local_scope": "checked-in OpenAPI copy, HTTP test behavior, and generated client handoff"
         },
         {
           "repo": "riido-client",
@@ -399,7 +399,7 @@
       "downstreams": [
         {
           "repo": "riido-control-plane",
-          "local_scope": "v2 route parsing, workspace-scoped mock store records, authorization context, and persistence schema version marker"
+          "local_scope": "v2 route parsing, workspace-scoped store records, authorization context, and persistence schema version marker"
         },
         {
           "repo": "riido-client",
@@ -436,7 +436,7 @@
         "rbac-vocabulary",
         "workspace-scoped-ai-agent-v2-api"
       ],
-      "local_scope": "Control-plane executes HTTP, mock, authorization, and generated-client behavior without redefining canonical policy."
+      "local_scope": "Control-plane executes HTTP, fixture, authorization, and generated-client behavior without redefining canonical policy."
     },
     {
       "id": "daemon-imports-contracts-policy",

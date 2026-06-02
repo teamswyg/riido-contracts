@@ -627,6 +627,66 @@ This slice does not change routes, schemas, authorization, RBAC, generated
 client delivery, frontend code, control-plane handlers, Terraform, AWS data,
 Figma annotations, daemon provider execution, or deployment evidence.
 
+### RIID-4868 — DevicePrincipal ownership SSOT
+
+This slice records the shared authentication boundary for Desktop-launched
+daemon sessions.
+
+This slice does:
+
+- define UserPrincipal and DevicePrincipal as separate authentication concepts
+- define account-owned Device/Runtime and workspace-owned Agent relationships
+- require Desktop to register a device from a UserPrincipal session and keep
+  the returned one-time device credential outside browser/webview JavaScript
+- require daemon SaaS polling to use `X-Riido-Device-ID` and
+  `X-Riido-Device-Secret`, not browser JWT
+- update the SSOT dependency map so control-plane, daemon, and desktop
+  implementations reference the same ownership graph
+
+This slice does not change `riido-client`, add workspace list/create APIs,
+implement desktop daemon download/install behavior, change provider execution,
+move secrets into OpenAPI examples, create Terraform resources, or deploy
+control-plane code.
+
+### RIID-4871 — Device credential projection fixture
+
+This slice adds machine-readable policy metadata for the DevicePrincipal
+boundary to the AI Agent API DSL/IR/OpenAPI fixture.
+
+This slice does:
+
+- preserve `device_principal_enrollment.v1` through DSL -> IR -> OpenAPI
+  projection
+- document that device credential enrollment is a Desktop/Daemon contract, not
+  a web frontend generated-client operation
+- keep credential secret delivery out of generated frontend schemas and
+  examples
+
+This slice does not add a public frontend mutation, change generated React
+Query delivery, change authorization implementation, write desktop storage
+code, implement daemon polling, or deploy any SaaS endpoint.
+
+### RIID-4876 — Dynamic DevicePrincipal AgentRuntimeBinding direction
+
+This slice records the shared contract decision that Desktop-launched daemon
+assignment uses dynamic DevicePrincipal binding projection instead of a static
+deployment secret.
+
+This slice does:
+
+- define `AgentRuntimeBinding` as a derived control-plane projection from
+  authenticated device credential, latest runtime snapshot, and saved agent
+  runtime selection
+- state that `RIIDO_AI_SERVER_AGENT_BINDINGS_JSON` is not the production source
+  of daemon-visible bindings
+- preserve `assignment.AgentRuntimeBinding` as the shared DTO while keeping the
+  query store and HTTP routes in `riido-control-plane`
+- require daemon polling to read the binding projection before polling
+  agent-specific assignment queues
+
+This slice does not remove historical test fixtures, change generated frontend
+operations, add Terraform resources, or define device credential rotation.
+
 ## Validation Gates
 
 Required for this repository:
