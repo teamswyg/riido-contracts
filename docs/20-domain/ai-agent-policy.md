@@ -233,6 +233,16 @@ which case the existing queued tuple applies. Removing an active or queued agent
 from task participants uses the generated unassign command, which stops the
 agent work with `comment_kind=stopped_by_user_request`; hiding stopped content is
 client-owned presentation around the returned typed status.
+Generated assignment does not make the agent team-aware. The generated request
+body carries `agent_id` only; `task_id` and, in v2, `workspace_id` come from the
+URL. `team_id`, `teamId`, OpenAPI task-context paths, and Open API key transport
+such as `X-Workspace-Api-Key` are outside the AI Agent assignment problem
+entirely. They are not generated request fields, agent fields, daemon polling
+inputs, deployment prerequisites, or smoke acceptance criteria. A downstream
+control plane may resolve a task's team location internally from `task_id` to
+read the existing task document, but that resolved value is an internal
+task-context lookup result and must not be persisted into the agent or exposed
+to generated clients.
 In the normal active screen (`node-id=236-21379`), generic task comments and
 AI-Agent-directed thread replies are visually adjacent. The contract boundary is
 that AI-Agent-directed messages use the explicit comments operation with
@@ -326,6 +336,12 @@ For agent settings specifically:
   private agents delegate it only to admins and owners. Project, milestone,
   intake, property-filling, and mention surfaces need a separate owning SSOT
   before they become generated AI Agent operations.
+- The generated assignment task-context boundary starts here and in the API DSL
+  fixture. Downstream control-plane may resolve private task location from
+  `task_id`, but `team_id`, `teamId`, OpenAPI task-context paths, and Open API
+  key transport such as `X-Workspace-Api-Key` are not generated client inputs,
+  agent fields, daemon inputs, deployment prerequisites, or smoke-test
+  acceptance criteria.
 - Figma runtime settings annotations (`node-id=162-23090`) can cite runtime
   liveness, agent hover, daemon stop modal, and restart animation behavior. This
   repo owns the device/runtime read-model policy, agent-bound daemon detail
