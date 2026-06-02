@@ -350,6 +350,30 @@ This slice does not change routes, schemas, authorization, RBAC, generated
 client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
 deployment evidence.
 
+### Figma onboarding timeout provenance catch-up
+
+This slice repairs the Figma coverage stabilization history after the
+onboarding page load timeout limitation was added.
+
+`teamswyg/riido-contracts#60` changed executable Figma coverage meaning by
+adding `figma-onboarding-page-load-timeout.v1` to
+`supporting_tool_limitations`. Before this slice, the canonical
+`stabilized_by` list still stopped at `teamswyg/riido-contracts#58`, so
+downstream mirrors could not prove that they consumed the latest timeout
+limitation state.
+
+This slice does:
+
+- append `teamswyg/riido-contracts#60` to the Figma coverage `stabilized_by`
+  list
+- require the coverage test to expect that provenance entry in order
+- keep the update documentation-only so no API, daemon, infra, generated client,
+  or deployment behavior changes
+
+This slice does not change routes, schemas, authorization, RBAC, generated
+client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
+deployment evidence.
+
 ### Figma onboarding page load timeout limitation
 
 This slice records a live Figma tooling limitation found while continuing the
