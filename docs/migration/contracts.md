@@ -448,6 +448,29 @@ This slice does not change routes, schemas, authorization, RBAC, generated
 client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
 deployment evidence.
 
+### Figma headless file-key placeholder limitation
+
+This slice records a small but important Figma Plugin API runtime limitation
+found during the continuing whole-file audit.
+
+A live `use_figma` root/category inspection on 2026-06-02 successfully read the
+AI Agent file's pages and annotation categories, but `figma.fileKey` returned the
+placeholder value `headless` instead of `MUOd9lctoEHASUStN3vUuK`. Contracts keep
+the user-provided Figma URL/tool input key and the manifest's `figma.file_key` as
+the authoritative file identity.
+
+This slice does:
+
+- add `figma-headless-file-key-placeholder.v1` to
+  `supporting_tool_limitations`
+- document that `figma.fileKey=headless` is supporting evidence only
+- require the coverage test to reject using that placeholder as manifest or
+  downstream projection source identity
+
+This slice does not change routes, schemas, authorization, RBAC, generated
+client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
+deployment evidence.
+
 ### Figma onboarding page load timeout limitation
 
 This slice records a live Figma tooling limitation found while continuing the

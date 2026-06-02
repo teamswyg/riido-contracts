@@ -254,10 +254,14 @@ func verifyFigmaSupportingToolLimitations(t *testing.T, limitations []figmaSuppo
 		t.Fatalf("supporting_tool_limitations must record non-authoritative tooling failure modes")
 	}
 	var metadataPageList figmaSupportingToolLimitation
+	var headlessFileKey figmaSupportingToolLimitation
 	var onboardingPageLoadTimeout figmaSupportingToolLimitation
 	for _, limitation := range limitations {
 		if limitation.ID == "figma-metadata-page-list-underreports-pages.v1" {
 			metadataPageList = limitation
+		}
+		if limitation.ID == "figma-headless-file-key-placeholder.v1" {
+			headlessFileKey = limitation
 		}
 		if limitation.ID == "figma-onboarding-page-load-timeout.v1" {
 			onboardingPageLoadTimeout = limitation
@@ -294,6 +298,35 @@ func verifyFigmaSupportingToolLimitations(t *testing.T, limitations []figmaSuppo
 	for _, needle := range []string{"figma-metadata-page-list-underreports-pages.v1", "get_metadata", "without `nodeId`", "`129:5215`", "`42:3014`", "`0:1`", "must not remove `expected_pages`"} {
 		if !strings.Contains(docText, needle) {
 			t.Fatalf("coverage doc must describe metadata page-list limitation with %q", needle)
+		}
+	}
+	if headlessFileKey.ID == "" {
+		t.Fatalf("supporting_tool_limitations must include figma-headless-file-key-placeholder.v1")
+	}
+	for _, needle := range []string{"use_figma", "figma.fileKey"} {
+		if !strings.Contains(headlessFileKey.Tool, needle) {
+			t.Fatalf("headless file-key limitation tool must contain %q: %+v", needle, headlessFileKey)
+		}
+	}
+	for _, needle := range []string{"MUOd9lctoEHASUStN3vUuK", "figma.fileKey=headless", "pages and annotation categories"} {
+		if !strings.Contains(headlessFileKey.ObservedResult, needle) {
+			t.Fatalf("headless file-key observed_result must contain %q: %q", needle, headlessFileKey.ObservedResult)
+		}
+	}
+	for _, needle := range []string{"MUOd9lctoEHASUStN3vUuK", "v.1.22 AI Agent"} {
+		if !stringSliceContains(headlessFileKey.AuthoritativeResult, needle) {
+			t.Fatalf("headless file-key authoritative_result must contain %q: %+v", needle, headlessFileKey.AuthoritativeResult)
+		}
+	}
+	headlessRule := strings.ToLower(headlessFileKey.Rule)
+	for _, needle := range []string{"supporting evidence only", "must not overwrite figma.file_key", "expected_pages", "downstream projection source identity"} {
+		if !strings.Contains(headlessRule, needle) {
+			t.Fatalf("headless file-key rule must contain %q: %q", needle, headlessFileKey.Rule)
+		}
+	}
+	for _, needle := range []string{"figma-headless-file-key-placeholder.v1", "`figma.fileKey=headless`", "`MUOd9lctoEHASUStN3vUuK`", "authoritative file identity", "must not overwrite `figma.file_key`"} {
+		if !strings.Contains(docText, needle) {
+			t.Fatalf("coverage doc must describe headless file-key limitation with %q", needle)
 		}
 	}
 	if onboardingPageLoadTimeout.ID == "" {
