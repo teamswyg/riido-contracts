@@ -381,6 +381,7 @@ func verifyFigmaCoverageProvenance(t *testing.T, stabilizedBy []string, docPath 
 		"teamswyg/riido-contracts#64",
 		"teamswyg/riido-contracts#65",
 		"teamswyg/riido-contracts#66",
+		"teamswyg/riido-contracts#67",
 	}
 	if len(stabilizedBy) != len(want) {
 		t.Fatalf("stabilized_by = %d entries, want %d: %+v", len(stabilizedBy), len(want), stabilizedBy)
@@ -581,7 +582,7 @@ func verifyFigmaAPIGeneratedAnnotationContentPolicy(t *testing.T, policy figmaAP
 	if len(policy.LabelFormat) != 3 {
 		t.Fatalf("API Generated annotation label_format = %d entries, want 3", len(policy.LabelFormat))
 	}
-	for _, needle := range []string{"riido.*", "종류", "Query", "Mutation", "SSE Stream", "배경", "Korean", "text/event-stream", "non-stream GET", "non-GET"} {
+	for _, needle := range []string{"riido.*", "v2.", "source coverage entry", "종류", "Query", "Mutation", "SSE Stream", "배경", "Korean", "text/event-stream", "non-stream GET", "non-GET"} {
 		if !strings.Contains(strings.Join(policy.LabelFormat, "\n")+"\n"+policy.Rule, needle) {
 			t.Fatalf("API Generated annotation content policy must mention %q: %+v", needle, policy)
 		}
@@ -710,12 +711,20 @@ func verifyFigmaAPIGeneratedAnnotationInventory(t *testing.T, inventory []figmaA
 		if !ok {
 			t.Fatalf("API Generated annotation group %q has no OpenAPI transport evidence", group.CanonicalGeneratedPath)
 		}
+		v2Path := "v2." + group.CanonicalGeneratedPath
+		v2Transport, ok := openAPITransports[v2Path]
+		if !ok {
+			t.Fatalf("API Generated annotation group %q must keep OpenAPI v2 counterpart %q", group.CanonicalGeneratedPath, v2Path)
+		}
 		if !allowedKinds[group.OperationKind] {
 			t.Fatalf("API Generated annotation group %q operation_kind = %q", group.CanonicalGeneratedPath, group.OperationKind)
 		}
 		wantKind := operationKindForOpenAPITransport(transport)
 		if group.OperationKind != wantKind {
 			t.Fatalf("API Generated annotation group %q operation_kind = %q, want %q from OpenAPI transport %+v", group.CanonicalGeneratedPath, group.OperationKind, wantKind, transport)
+		}
+		if v2Kind := operationKindForOpenAPITransport(v2Transport); group.OperationKind != v2Kind {
+			t.Fatalf("API Generated annotation group %q operation_kind = %q, want %q from v2 OpenAPI transport %q %+v", group.CanonicalGeneratedPath, group.OperationKind, v2Kind, v2Path, v2Transport)
 		}
 		if strings.TrimSpace(group.Background) == "" {
 			t.Fatalf("API Generated annotation group %q must explain background", group.CanonicalGeneratedPath)
@@ -734,6 +743,9 @@ func verifyFigmaAPIGeneratedAnnotationInventory(t *testing.T, inventory []figmaA
 			}
 			if !stringSliceContains(entry.GeneratedPaths, group.CanonicalGeneratedPath) {
 				t.Fatalf("API Generated annotation group %q canonical path is not covered by source entry %q", group.CanonicalGeneratedPath, source.CoverageEntryNodeID)
+			}
+			if !stringSliceContains(entry.GeneratedPaths, v2Path) {
+				t.Fatalf("API Generated annotation group %q v2 counterpart %q is not covered by source entry %q", group.CanonicalGeneratedPath, v2Path, source.CoverageEntryNodeID)
 			}
 			registerFigmaNodeIDIfAbsent(t, registered, source.TopLevelNodeID, "api_generated_annotation_inventory top-level "+group.CanonicalGeneratedPath)
 			if len(source.NodeIDs) == 0 {
@@ -760,6 +772,9 @@ func verifyFigmaAPIGeneratedAnnotationInventory(t *testing.T, inventory []figmaA
 			if !strings.Contains(docText, needle) {
 				t.Fatalf("coverage doc must mention API Generated annotation inventory %q", needle)
 			}
+		}
+		if !docMentionsGeneratedPath(docText, v2Path) {
+			t.Fatalf("coverage doc must mention API Generated annotation v2 counterpart %q", v2Path)
 		}
 	}
 	if got, want := totalAnnotations, 59; got != want {

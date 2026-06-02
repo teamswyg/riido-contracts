@@ -54,6 +54,7 @@ Current stabilization history:
 - `teamswyg/riido-contracts#64`
 - `teamswyg/riido-contracts#65`
 - `teamswyg/riido-contracts#66`
+- `teamswyg/riido-contracts#67`
 
 The page registry and the top-level child counts in this document are
 authoritative only when they come from the Figma Plugin API
@@ -153,6 +154,11 @@ handoff evidence, not a second API SSOT.
 `operation_kind` is not free text: it must match the generated OpenAPI
 transport. `text/event-stream` responses are `SSE Stream`, non-stream `GET`
 operations are `Query`, and non-`GET` operations are `Mutation`.
+The `riido.aiAgent.*` text in Figma is the frontend-facing facade. Each
+`api_generated_annotation_inventory` item must also keep the matching
+`v2.aiAgent.*` OpenAPI/generated-client counterpart in the same source coverage entry,
+so the Figma handoff remains searchable while the workspace-scoped v2 API stays
+deterministic.
 
 The previous custom category `39:0` `클라이언트 전달` is retired. The 2026-06-02
 inspection found zero annotations using it across the inspected pages. It still
