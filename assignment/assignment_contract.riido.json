@@ -75,6 +75,14 @@
       "required": false,
       "snapshot": "assignment-created",
       "consumer": "riido-daemon provider-specific runtime instruction placement"
+    },
+    {
+      "name": "allow_experimental_runtime",
+      "source": "agent.runtime.requires_experimental_opt_in",
+      "max_length": 0,
+      "required": false,
+      "snapshot": "assignment-created",
+      "consumer": "riido-daemon runtime scheduling experimental opt-in gate"
     }
   ]
 }

@@ -67,6 +67,13 @@ creation time; later agent edits do not rewrite an already-created assignment.
 The daemon consumes this snapshot only when composing provider-specific runtime
 instructions.
 
+`Assignment.allow_experimental_runtime` is the assignment-created snapshot that
+lets the daemon execute a runtime capability marked
+`requires_experimental_opt_in=true`. The control plane derives the value from
+the selected agent/runtime binding at assignment creation time; the daemon must
+not infer it from provider name or local environment. This field is false by
+default and omitted from JSON unless the assignment explicitly opts in.
+
 `AgentRuntimeBinding` is the shared DTO that lets a daemon know which
 workspace-created agent may poll through one of its runtime slots. The DTO shape
 is shared here, but the binding list is not a static deployment secret in the

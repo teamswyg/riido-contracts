@@ -696,6 +696,7 @@
           "availability",
           "detection_state",
           "has_assigned_agent",
+          "requires_experimental_opt_in",
           "models"
         ],
         "properties": [
@@ -730,6 +731,10 @@
           },
           {
             "name": "has_assigned_agent",
+            "type": "boolean"
+          },
+          {
+            "name": "requires_experimental_opt_in",
             "type": "boolean"
           },
           {

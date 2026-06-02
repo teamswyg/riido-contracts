@@ -88,19 +88,34 @@ func TestAssignmentContractMatchesPackageSurface(t *testing.T) {
 		t.Fatalf("package task events missing from contract: %v", sortedStringSet(remainingTaskEvents))
 	}
 
-	if len(contract.AssignmentPayloadFields) != 1 {
+	if len(contract.AssignmentPayloadFields) != 2 {
 		t.Fatalf("assignment payload fields drifted: %#v", contract.AssignmentPayloadFields)
 	}
-	field := contract.AssignmentPayloadFields[0]
-	if field.Name != "agent_instruction" ||
-		field.Source != "agent.instruction" ||
-		field.MaxLength != 1000 ||
-		field.Required ||
-		field.Snapshot != "assignment-created" {
-		t.Fatalf("agent instruction assignment payload field drifted: %#v", field)
+	fields := map[string]contractAssignmentPayloadField{}
+	for _, field := range contract.AssignmentPayloadFields {
+		fields[field.Name] = field
 	}
-	if field.Consumer != "riido-daemon provider-specific runtime instruction placement" {
-		t.Fatalf("agent instruction consumer drifted: %q", field.Consumer)
+	instruction := fields["agent_instruction"]
+	if instruction.Name != "agent_instruction" ||
+		instruction.Source != "agent.instruction" ||
+		instruction.MaxLength != 1000 ||
+		instruction.Required ||
+		instruction.Snapshot != "assignment-created" {
+		t.Fatalf("agent instruction assignment payload field drifted: %#v", instruction)
+	}
+	if instruction.Consumer != "riido-daemon provider-specific runtime instruction placement" {
+		t.Fatalf("agent instruction consumer drifted: %q", instruction.Consumer)
+	}
+	optIn := fields["allow_experimental_runtime"]
+	if optIn.Name != "allow_experimental_runtime" ||
+		optIn.Source != "agent.runtime.requires_experimental_opt_in" ||
+		optIn.MaxLength != 0 ||
+		optIn.Required ||
+		optIn.Snapshot != "assignment-created" {
+		t.Fatalf("experimental runtime opt-in assignment payload field drifted: %#v", optIn)
+	}
+	if optIn.Consumer != "riido-daemon runtime scheduling experimental opt-in gate" {
+		t.Fatalf("experimental runtime opt-in consumer drifted: %q", optIn.Consumer)
 	}
 }
 

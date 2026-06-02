@@ -586,6 +586,15 @@ the daemon provider-runtime SSOT. Cross-provider evidence must consume the
 assignment-created `Assignment.agent_instruction` snapshot and link back here
 only for the value semantics and limit.
 
+When the selected runtime capability requires experimental opt-in, the control
+plane snapshots that decision into
+`Assignment.allow_experimental_runtime=true` at assignment creation time. The
+assignment snapshot, not a daemon provider-name heuristic, is the only runtime
+execution signal for this opt-in.
+The client API may display the runtime fact as
+`RuntimeRecord.requires_experimental_opt_in`, but clients do not author or
+override the assignment opt-in decision.
+
 Profile field creation and updates follow the same RBAC and mutation safety
 rules as name, visibility, and runtime binding updates. v2 creation stamps
 `workspace_id` from the URL path, stamps `owner_principal_id` from the
