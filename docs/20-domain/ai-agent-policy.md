@@ -116,7 +116,7 @@ mention surfaces must not reuse task assignment/comment/stop/thread endpoints
 without a future owning SSOT and a newly generated operation.
 
 Task thread annotation evidence is `node-id=153-15931` (`댓글 소통`).
-The file contains Dev Mode annotation categories including `클라이언트 전달`.
+The file contains Dev Mode annotation categories including `API Generated`.
 In that section, `node-id=153-8545` cites `riido.aiAgent.events.stream`
 and `node-id=236-20768` cites `riido.aiAgent.tasks.stop`. Those names are
 generated-client consumption hints for the existing client event stream and stop
