@@ -43,6 +43,7 @@ Current stabilization history:
 - `teamswyg/riido-contracts#46`
 - `teamswyg/riido-contracts#51`
 - `teamswyg/riido-contracts#52`
+- `teamswyg/riido-contracts#54`
 
 The page registry and the top-level child counts in this document are
 authoritative only when they come from the Figma Plugin API
@@ -101,7 +102,7 @@ presentation fact, a no-diff product surface, or an open question.
 | Figma page | Page | Top-level children | Coverage role |
 | --- | --- | --- | --- |
 | `129:5215` | UI | 16 | primary detailed API/domain coverage |
-| `42:3014` | Wireframe - 온보딩 | 3 | supporting onboarding/platform evidence |
+| `42:3014` | Wireframe - 온보딩 | 83 | supporting onboarding/platform evidence |
 | `0:1` | Wireframe | 28 | legacy planning evidence |
 
 ## UI Top-Level Coverage
@@ -135,12 +136,17 @@ ownership for old screenshots, duplicated legacy frames, or asset-only layers.
 The 2026-06-02 loaded inspection found page `0:1` `Wireframe` has 28 top-level
 children after `await figma.setCurrentPageAsync(page)`, even though a passive
 page-registry read can report it as a single child.
+The same loaded inspection found page `42:3014` `Wireframe - 온보딩` has 83
+top-level children. Several top-level layers have blank or repeated Figma names,
+so the executable inventory keeps stable descriptive labels while preserving
+the node IDs.
 
 | Figma page | Figma node | Section | Status | Coverage rule |
 | --- | --- | --- | --- | --- |
 | `42:3014` | `164:30657` | 데스크탑앱 온보딩 | covered | absorbed by UI onboarding fixture/direct-create API coverage; desktop owns launch presentation |
 | `42:3014` | `188:27707` | macOS | no-diff product surface | macOS install/launch presentation does not create an AI Agent endpoint |
 | `42:3014` | `188:27708` | windows | no-diff product surface | Windows install/waitlist/launch-notification presentation stays outside AI Agent generated API |
+| `42:3014` | `432:46849` | Ex AI - 온보딩 순서 변경 메모 | covered | revised onboarding order is client-local draft/config selection first, but durable v2 create still requires selected workspace and runtime at final submit |
 | `0:1` | `13:3789` | 런타임 | covered | legacy runtime list absorbed by current UI runtime settings `162:23090` and `devices.runtimes` generated paths |
 | `0:1` | `86:9988` | 런타임 | covered | expanded legacy runtime frame absorbed by current UI runtime settings `162:23090` and agent-bound daemon detail |
 | `0:1` | `17:3551` | 에이전트 | covered | legacy agent list absorbed by current UI agent settings `432:37336` and normal agent lifecycle paths |
@@ -236,6 +242,11 @@ client presentation facts unless a later SSOT changes the typed thread API.
 The runtime settings endpoint-looking label (`node-id=129:17930`) is likewise
 registered as evidence so downstream docs can reject it as a canonical base URL
 or generated path.
+RIID-4857 adds loaded inventory closure for the `42:3014` onboarding page and
+registers the `432:46849` order-change planning memo as a coverage-bearing
+decision: the UI may let the user choose/configure an agent draft before runtime
+and workspace selection, but contracts still expose only final create commands
+that require the selected workspace/runtime context.
 
 ## Verification
 

@@ -208,6 +208,45 @@
       ]
     },
     {
+      "id": "onboarding-draft-ordering",
+      "fact": "Onboarding draft ordering is client-local until final workspace/runtime-scoped create",
+      "human_doc_phrase": "Onboarding draft ordering is client-local until final workspace/runtime-scoped create",
+      "source_refs": [
+        {
+          "repo": "riido-contracts",
+          "path": "docs/20-domain/ai-agent-policy.md",
+          "required_phrase": "client-local onboarding draft/configuration selection"
+        },
+        {
+          "repo": "riido-contracts",
+          "path": "docs/20-domain/api-contract-projection.md",
+          "required_phrase": "persisted draft state or workspace-less create"
+        }
+      ],
+      "owner": {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/ai-agent-policy.md"
+      },
+      "downstreams": [
+        {
+          "repo": "riido-control-plane",
+          "local_scope": "v2 final create handlers continue to require workspace_id path scope and runtime_id request validation; no persisted onboarding draft is added"
+        },
+        {
+          "repo": "riido-client",
+          "local_scope": "renders local fixture/direct-configuration draft state before final create"
+        },
+        {
+          "repo": "riido-daemon",
+          "local_scope": "receives only saved assignment/runtime snapshots after final create and assignment"
+        },
+        {
+          "repo": "riido-infra",
+          "local_scope": "no topology change unless a future SSOT introduces persisted drafts or storage"
+        }
+      ]
+    },
+    {
       "id": "participant-dropdown-agent-ordering",
       "fact": "Participant dropdown agent ordering is owned-first, display-name ordered, then agent_id tied",
       "human_doc_phrase": "Participant dropdown agent ordering is owned-first, display-name ordered, then `agent_id` tied",
@@ -391,6 +430,7 @@
         "fixture-created-agent-normal-lifecycle",
         "generated-client-delivery-review-handoff",
         "instruction",
+        "onboarding-draft-ordering",
         "participant-dropdown-agent-ordering",
         "profile-thumbnail-url",
         "rbac-vocabulary",
@@ -406,6 +446,7 @@
         "agent-concept",
         "fixture-created-agent-normal-lifecycle",
         "instruction",
+        "onboarding-draft-ordering",
         "profile-thumbnail-url"
       ],
       "local_scope": "Daemon consumes assigned agent settings only at runtime boundaries."
@@ -417,6 +458,7 @@
       "fact_ids": [
         "fixture-created-agent-normal-lifecycle",
         "instruction",
+        "onboarding-draft-ordering",
         "profile-thumbnail-url",
         "storage-topology"
       ],

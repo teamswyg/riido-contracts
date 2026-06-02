@@ -440,6 +440,16 @@ stream also includes typed daemon status changes so clients can render
 The AI Agent onboarding flow is a client composition over bootstrap, device
 runtime data, and agent creation.
 
+Figma `node-id=432:46849` revises the explanation order from
+`런타임 선택 → 워크스페이스 선택 → 에이전트 생성` to
+`에이전트 생성 → 런타임 선택 → 워크스페이스 선택`. Contracts interpret that
+as client-local onboarding draft/configuration selection, not as a durable
+workspace-less agent create command. A client may let the user choose a fixture
+or type direct configuration first, but the control plane persists an agent only
+on final submit after the selected `workspace_id` and `runtime_id` are known.
+The v2 workspace-scoped create routes remain the durable contract; v1 remains a
+compatibility surface for existing UI tests.
+
 The runtime selection step from `node-id=137-6746` is composed from
 `DeviceRecord.runtimes`. A runtime is selectable for onboarding only when the
 client can submit its `runtime_id` to agent creation and the read model marks

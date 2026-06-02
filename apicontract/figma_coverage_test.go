@@ -63,7 +63,7 @@ func TestFigmaAIAgentCoverageManifest(t *testing.T) {
 	if got, want := len(manifest.ExpectedPages), 3; got != want {
 		t.Fatalf("expected_pages = %d, want %d", got, want)
 	}
-	if got, want := len(manifest.NonUITopLevelNodes), 11; got != want {
+	if got, want := len(manifest.NonUITopLevelNodes), 12; got != want {
 		t.Fatalf("non_ui_top_level_nodes = %d, want %d", got, want)
 	}
 	if got, want := len(manifest.Entries), len(manifest.ExpectedTopLevelNodes); got != want {
@@ -302,6 +302,7 @@ func verifyFigmaCoverageProvenance(t *testing.T, stabilizedBy []string, docPath 
 		"teamswyg/riido-contracts#46",
 		"teamswyg/riido-contracts#51",
 		"teamswyg/riido-contracts#52",
+		"teamswyg/riido-contracts#54",
 	}
 	if len(stabilizedBy) != len(want) {
 		t.Fatalf("stabilized_by = %d entries, want %d: %+v", len(stabilizedBy), len(want), stabilizedBy)
