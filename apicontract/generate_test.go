@@ -159,6 +159,9 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 		v2Bootstrap.RiidoClient.CacheTag != "v2.aiAgent.bootstrap" {
 		t.Fatalf("v2 bootstrap client metadata = %#v", v2Bootstrap.RiidoClient)
 	}
+	if !strings.Contains(v2Bootstrap.Summary, "v2.aiAgent.bootstrap.agents[]") {
+		t.Fatalf("v2 bootstrap summary must name agents[] source for generated comments: %q", v2Bootstrap.Summary)
+	}
 	threadMessageCreate := openAPI.Paths["/v1/client/ai-agent/tasks/{task_id}/threads/{thread_id}/messages"]["post"]
 	if threadMessageCreate.OperationID != "createAIAgentTaskThreadMessage" ||
 		threadMessageCreate.RiidoClient == nil ||
@@ -182,6 +185,16 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	if _, ok := bootstrapProps["agent_templates"]; ok {
 		t.Fatalf("ClientBootstrapResponse must not expose agent_templates: %#v", bootstrapProps)
 	}
+	bootstrapAgents, ok := bootstrapProps["agents"].(map[string]any)
+	if !ok {
+		t.Fatalf("ClientBootstrapResponse agents property missing: %#v", bootstrapProps["agents"])
+	}
+	bootstrapAgentsDescription, ok := bootstrapAgents["description"].(string)
+	if !ok ||
+		!strings.Contains(bootstrapAgentsDescription, "agent_id") ||
+		!strings.Contains(bootstrapAgentsDescription, "tasks.assignableAgents") {
+		t.Fatalf("ClientBootstrapResponse agents description must explain settings/list agent_id source and task dropdown boundary: %q", bootstrapAgentsDescription)
+	}
 	daemonDetail := openAPI.Paths["/v1/client/ai-agent/agents/{agent_id}/daemon"]["get"]
 	if daemonDetail.RiidoClient == nil || daemonDetail.RiidoClient.CacheTag != "aiAgent.agents.daemon" {
 		t.Fatalf("daemon detail client metadata = %#v", daemonDetail.RiidoClient)
@@ -200,6 +213,21 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	assignable := openAPI.Paths["/v1/client/ai-agent/tasks/{task_id}/assignable-agents"]["get"]
 	if len(assignable.Parameters) != 1 || assignable.Parameters[0].Name != "task_id" {
 		t.Fatalf("assignable-agent parameters = %#v", assignable.Parameters)
+	}
+	assignableList := openAPI.Components.Schemas["AgentClientListResponse"]
+	assignableListProps, ok := assignableList["properties"].(map[string]any)
+	if !ok {
+		t.Fatalf("AgentClientListResponse properties missing: %#v", assignableList)
+	}
+	assignableAgents, ok := assignableListProps["agents"].(map[string]any)
+	if !ok {
+		t.Fatalf("AgentClientListResponse agents property missing: %#v", assignableListProps["agents"])
+	}
+	assignableAgentsDescription, ok := assignableAgents["description"].(string)
+	if !ok ||
+		!strings.Contains(assignableAgentsDescription, "agent_id") ||
+		!strings.Contains(assignableAgentsDescription, "tasks.assign") {
+		t.Fatalf("AgentClientListResponse agents description must explain task dropdown agent_id source: %q", assignableAgentsDescription)
 	}
 	threads := openAPI.Paths["/v1/client/ai-agent/tasks/{task_id}/threads"]["get"]
 	if threads.RiidoRBAC != "task_thread_cold_collection.v1" {
@@ -232,6 +260,16 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	}
 	if _, ok := recordProps["model_id"].(map[string]any); !ok {
 		t.Fatalf("model_id schema missing: %#v", recordProps)
+	}
+	agentID, ok := recordProps["agent_id"].(map[string]any)
+	if !ok {
+		t.Fatalf("agent_id schema missing: %#v", recordProps)
+	}
+	agentIDDescription, ok := agentID["description"].(string)
+	if !ok ||
+		!strings.Contains(agentIDDescription, "bootstrap.agents[]") ||
+		!strings.Contains(agentIDDescription, "tasks.assignableAgents.agents[]") {
+		t.Fatalf("agent_id description must explain bootstrap vs assignableAgents source: %q", agentIDDescription)
 	}
 	createdAt, ok := recordProps["created_at"].(map[string]any)
 	if !ok || createdAt["format"] != "date-time" {
