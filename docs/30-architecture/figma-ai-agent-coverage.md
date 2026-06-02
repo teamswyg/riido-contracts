@@ -53,6 +53,7 @@ Current stabilization history:
 - `teamswyg/riido-contracts#63`
 - `teamswyg/riido-contracts#64`
 - `teamswyg/riido-contracts#65`
+- `teamswyg/riido-contracts#66`
 
 The page registry and the top-level child counts in this document are
 authoritative only when they come from the Figma Plugin API
