@@ -15,6 +15,9 @@ client paths, verified evidence node IDs, and the top-down / bottom-up rule for
 each section. Documentation may cite only node IDs registered in that manifest,
 so stale Figma links fail deterministically instead of remaining as hidden
 planning drift.
+The coverage gate decodes this manifest as one strict JSON document: unknown
+fields and trailing JSON documents are rejected so the manifest shape remains a
+deliberate contracts-owned SSOT rather than an append-only scratchpad.
 
 ## Source
 
