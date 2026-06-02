@@ -74,6 +74,14 @@ the selected agent/runtime binding at assignment creation time; the daemon must
 not infer it from provider name or local environment. This field is false by
 default and omitted from JSON unless the assignment explicitly opts in.
 
+`PollResponse.action=start` means the control plane leased a queued assignment
+to the polling daemon/runtime. `PollResponse.action=active` means the same
+daemon/runtime identity is still considered to hold an active assignment. A
+daemon that already has the task in local in-flight state may ignore `active`;
+a daemon that lost local in-flight state after restart may rebuild the same
+`TaskRequest` from the returned assignment snapshot. The control plane must
+therefore keep `active` payloads self-contained in the same way as `start`.
+
 `AgentRuntimeBinding` is the shared DTO that lets a daemon know which
 workspace-created agent may poll through one of its runtime slots. The DTO shape
 is shared here, but the binding list is not a static deployment secret in the
