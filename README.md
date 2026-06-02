@@ -6,7 +6,7 @@
 이 레포의 목적은 구현을 옮기는 것이 아니라, 여러 레포가 같은 사실을
 다르게 적지 않도록 "공유 계약의 기준점"을 만드는 것입니다. 예를 들어
 AI Agent client API의 DSL, IR, OpenAPI fixture는 여기서 정의하고,
-`riido-control-plane`은 그 projection을 소비해 mock API와 generated client
+`riido-control-plane`은 그 projection을 소비해 development API와 generated client
 drift gate를 맞춥니다.
 
 ## 이 레포가 하는 일
@@ -39,7 +39,7 @@ AI Agent 기능은 `riido-daemon`, `riido-control-plane`, web/desktop client,
 - DSL -> IR -> OpenAPI projection fixture와 drift 검증
 
 OpenAPI는 사람이 직접 고치는 SSOT가 아닙니다. Domain DSL이 원본이고, API IR이
-기계가 검증하는 canonical contract이며, OpenAPI는 client/mock/docs를 위한
+기계가 검증하는 canonical contract이며, OpenAPI는 client/development API/docs를 위한
 생성물입니다.
 
 ## 어떤 문서를 보면 되나

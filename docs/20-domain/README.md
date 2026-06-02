@@ -38,6 +38,11 @@ RIID-4720 adds:
 - `control-plane-ai-agent-client-api.v2` API projection fixtures, including
   top-level enum and sum-type definitions for client codegen safety
 
+RIID-4868 adds:
+
+- device principal enrollment and daemon credential semantics in
+  [`device-principal.md`](device-principal.md)
+
 The EventIngestor implementation, policy redaction catalog, provider adapters,
 server stores, and Terraform deployment code remain outside this repository.
 They may consume these contracts, but they do not become contract module

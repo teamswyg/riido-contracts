@@ -275,7 +275,7 @@ For agent settings specifically:
   `GET /v1/client/ai-agent/onboarding/fixtures` so clients can render fixture
   names, descriptions, role labels, thumbnails, default visibility, recommended
   runtime kind, and copyable instructions without owning the source text.
-- `riido-control-plane` owns HTTP validation, save/update behavior, mock data,
+- `riido-control-plane` owns HTTP validation, save/update behavior, fixture data,
   and generated-client handoff.
 - `riido-daemon` owns only runtime consumption of an assigned instruction value;
   it does not own thumbnail presentation, storage, RBAC, or API shape.
@@ -529,6 +529,20 @@ Workspace selection, workspace creation entry points, fixture row selection,
 `직접 설정` row rendering, disabled-next state before selection, scroll
 behavior, description ellipsis, and preview-popover layout remain client-owned
 presentation behavior.
+
+### Device Principal Boundary
+
+Device enrollment and daemon-facing credential semantics are owned by
+[`device-principal.md`](device-principal.md). This policy may repeat only the
+ownership consequence: device/runtime records are account-owned, while agents
+are workspace-owned. A selected `workspace_id` scopes agent create/read/assign
+requests; it does not make a device workspace-owned.
+
+Browser and desktop-webview requests may authenticate a `UserPrincipal` through
+`X-Riido-AI-Agent-Token`. A daemon must not reuse that browser JWT. After
+desktop enrollment, daemon requests authenticate as `DevicePrincipal` with
+`X-Riido-Device-ID` and `X-Riido-Device-Secret`, and the control plane resolves
+the enrolled device owner from those credentials.
 
 ### Agent Editing
 
