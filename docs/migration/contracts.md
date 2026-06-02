@@ -316,6 +316,30 @@ This slice does not change routes, schemas, authorization, RBAC, generated
 client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
 deployment evidence.
 
+### RIID-4849 — Figma coverage upstream provenance SSOT guard
+
+This slice moves Figma coverage stabilization history back to the canonical
+contracts manifest.
+
+Control-plane and daemon downstream projections already mirror the contracts
+coverage history (`teamswyg/riido-contracts#38`, `#39`, `#45`, `#46`, `#51`,
+and `#52`) to explain which upstream Figma coverage state they consumed. Before
+this slice, the canonical contracts manifest did not own that list, so
+downstreams had to preserve it from local knowledge instead of mirroring a
+contracts field.
+
+This slice does:
+
+- add top-level `stabilized_by` to
+  `docs/30-architecture/figma-ai-agent-coverage.riido.json`
+- document that `stabilized_by` is the downstream projection mirror source
+- require `TestFigmaAIAgentCoverageManifest` to fail if the list is missing,
+  out of order, or absent from the human coverage doc
+
+This slice does not change routes, schemas, authorization, RBAC, generated
+client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
+deployment evidence.
+
 ## Validation Gates
 
 Required for this repository:

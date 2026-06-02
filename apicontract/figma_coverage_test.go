@@ -35,6 +35,7 @@ func TestFigmaAIAgentCoverageManifest(t *testing.T) {
 	if manifest.RiidoTask != "RIID-4809" {
 		t.Fatalf("riido_task = %q", manifest.RiidoTask)
 	}
+	verifyFigmaCoverageProvenance(t, manifest.StabilizedBy, docPath)
 	if manifest.HumanDoc != "docs/30-architecture/figma-ai-agent-coverage.md" {
 		t.Fatalf("human_doc = %q", manifest.HumanDoc)
 	}
@@ -289,6 +290,40 @@ func verifyFigmaSupportingToolLimitations(t *testing.T, limitations []figmaSuppo
 		if !strings.Contains(docText, needle) {
 			t.Fatalf("coverage doc must describe metadata page-list limitation with %q", needle)
 		}
+	}
+}
+
+func verifyFigmaCoverageProvenance(t *testing.T, stabilizedBy []string, docPath string) {
+	t.Helper()
+	want := []string{
+		"teamswyg/riido-contracts#38",
+		"teamswyg/riido-contracts#39",
+		"teamswyg/riido-contracts#45",
+		"teamswyg/riido-contracts#46",
+		"teamswyg/riido-contracts#51",
+		"teamswyg/riido-contracts#52",
+	}
+	if len(stabilizedBy) != len(want) {
+		t.Fatalf("stabilized_by = %d entries, want %d: %+v", len(stabilizedBy), len(want), stabilizedBy)
+	}
+	for i := range want {
+		if stabilizedBy[i] != want[i] {
+			t.Fatalf("stabilized_by[%d] = %q, want %q; full list = %+v", i, stabilizedBy[i], want[i], stabilizedBy)
+		}
+	}
+	doc, err := os.ReadFile(docPath)
+	if err != nil {
+		t.Fatalf("read coverage doc for provenance: %v", err)
+	}
+	docText := string(doc)
+	for _, pr := range want {
+		if !strings.Contains(docText, pr) {
+			t.Fatalf("coverage doc must mention stabilization provenance %q", pr)
+		}
+	}
+	if !strings.Contains(docText, "`stabilized_by`") ||
+		!strings.Contains(docText, "downstream projection") {
+		t.Fatalf("coverage doc must explain stabilized_by as the downstream projection mirror source")
 	}
 }
 
@@ -744,6 +779,7 @@ type figmaCoverageManifest struct {
 	SchemaVersion             string                          `json:"schema_version"`
 	ID                        string                          `json:"id"`
 	RiidoTask                 string                          `json:"riido_task"`
+	StabilizedBy              []string                        `json:"stabilized_by"`
 	HumanDoc                  string                          `json:"human_doc"`
 	RelatedManifests          []string                        `json:"related_manifests"`
 	Figma                     figmaCoverageSource             `json:"figma"`
