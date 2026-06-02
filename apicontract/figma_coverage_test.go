@@ -304,23 +304,23 @@ func verifyFigmaSupportingToolLimitations(t *testing.T, limitations []figmaSuppo
 			t.Fatalf("onboarding load timeout tool must contain %q: %+v", needle, onboardingPageLoadTimeout)
 		}
 	}
-	for _, needle := range []string{"timed out after 120s", "Wireframe - 온보딩", "setCurrentPageAsync"} {
+	for _, needle := range []string{"time out after 120s", "Wireframe - 온보딩", "setCurrentPageAsync", "236:33845", "236:33847", "six onboarding riido.* API Generated annotations"} {
 		if !strings.Contains(onboardingPageLoadTimeout.ObservedResult, needle) {
 			t.Fatalf("onboarding load timeout observed_result must contain %q: %q", needle, onboardingPageLoadTimeout.ObservedResult)
 		}
 	}
-	for _, needle := range []string{"42:3014", "child_count=83", "non_ui_top_level_inventory"} {
+	for _, needle := range []string{"42:3014", "child_count=83", "non_ui_top_level_inventory", "236:33845", "236:33847", "onboarding_api_generated_annotations=6"} {
 		if !stringSliceContains(onboardingPageLoadTimeout.AuthoritativeResult, needle) {
 			t.Fatalf("onboarding load timeout authoritative_result must contain %q: %+v", needle, onboardingPageLoadTimeout.AuthoritativeResult)
 		}
 	}
 	onboardingRule := strings.ToLower(onboardingPageLoadTimeout.Rule)
-	for _, needle := range []string{"supporting evidence only", "must not rewrite expected_pages", "remove page 42:3014", "onboarding generated paths"} {
+	for _, needle := range []string{"supporting evidence only", "must not rewrite expected_pages", "remove page 42:3014", "onboarding generated paths", "direct registered-node lookup"} {
 		if !strings.Contains(onboardingRule, needle) {
 			t.Fatalf("onboarding load timeout rule must contain %q: %q", needle, onboardingPageLoadTimeout.Rule)
 		}
 	}
-	for _, needle := range []string{"figma-onboarding-page-load-timeout.v1", "get_metadata(nodeId=42:3014)", "after 120s", "`Wireframe - 온보딩`", "must not rewrite `expected_pages`", "onboarding generated paths unresolved"} {
+	for _, needle := range []string{"figma-onboarding-page-load-timeout.v1", "get_metadata(nodeId=42:3014)", "after 120s", "`Wireframe - 온보딩`", "`236:33845`", "`236:33847`", "six onboarding `riido.*` `API Generated`", "must not rewrite `expected_pages`", "onboarding generated paths unresolved"} {
 		if !strings.Contains(docText, needle) {
 			t.Fatalf("coverage doc must describe onboarding page load timeout with %q", needle)
 		}
@@ -344,6 +344,7 @@ func verifyFigmaCoverageProvenance(t *testing.T, stabilizedBy []string, docPath 
 		"teamswyg/riido-contracts#60",
 		"teamswyg/riido-contracts#62",
 		"teamswyg/riido-contracts#63",
+		"teamswyg/riido-contracts#64",
 	}
 	if len(stabilizedBy) != len(want) {
 		t.Fatalf("stabilized_by = %d entries, want %d: %+v", len(stabilizedBy), len(want), stabilizedBy)
