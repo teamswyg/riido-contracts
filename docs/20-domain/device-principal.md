@@ -63,6 +63,12 @@ When device enrollment is requested from a desktop app, the request may carry a
 user's current workspace membership and return a stable user principal. That
 workspace context does not make the enrolled device workspace-owned.
 
+`team_id`, Open API workspace keys, and existing workspace Open API credentials
+are not part of this principal model. They must not be used to identify a
+daemon, match a browser session to a daemon, select an agent runtime binding, or
+authorize assignment polling. Those values may exist only in legacy
+task-context reader integrations outside this DevicePrincipal contract.
+
 ## Enrollment
 
 The desktop app owns the enrollment trigger. After the user is logged in inside
