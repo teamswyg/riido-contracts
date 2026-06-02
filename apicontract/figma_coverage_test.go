@@ -461,7 +461,7 @@ func verifyFigmaClientDeliveryAnnotations(t *testing.T, annotations []figmaClien
 		if annotation.TopLevelNodeID != "153:15931" || annotation.CoverageEntryNodeID != "153:15931" {
 			t.Fatalf("client delivery annotation %q must resolve through task-thread top-level entry 153:15931: %+v", annotation.NodeID, annotation)
 		}
-		if annotation.CategoryID != "39:0" || annotation.CategoryLabel != "클라이언트 전달" {
+		if annotation.CategoryID != "700:0" || annotation.CategoryLabel != "API Generated" {
 			t.Fatalf("client delivery annotation %q category drifted: %+v", annotation.NodeID, annotation)
 		}
 		if !strings.HasPrefix(annotation.FigmaGeneratedPath, "riido.") {
@@ -509,7 +509,7 @@ func verifyFigmaClientDeliveryAnnotationInventory(t *testing.T, inventory []figm
 		if strings.TrimSpace(group.UIArea) == "" {
 			t.Fatalf("client delivery annotation group has empty ui_area: %+v", group)
 		}
-		if group.CategoryID != "39:0" || group.CategoryLabel != "클라이언트 전달" {
+		if group.CategoryID != "700:0" || group.CategoryLabel != "API Generated" {
 			t.Fatalf("client delivery annotation group %q category drifted: %+v", group.FigmaGeneratedPath, group)
 		}
 		if !strings.HasPrefix(group.FigmaGeneratedPath, "riido.") {

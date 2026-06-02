@@ -277,14 +277,16 @@ This slice does not change routes, schemas, authorization, RBAC, generated
 client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
 deployment evidence.
 
-### RIID-4834 — Figma client-delivery annotation normalization gate
+### RIID-4834 — Figma API Generated annotation normalization gate
 
-This slice closes a coverage gap around Figma Dev Mode category `39:0`
-`클라이언트 전달`.
+This slice closes a coverage gap around Figma Dev Mode category `700:0`
+`API Generated`.
 
 This slice does:
 
-- add `client_delivery_annotations` to the Figma AI Agent coverage manifest
+- add `client_delivery_annotations` to the Figma AI Agent coverage manifest,
+  retaining the legacy field name while validating the current `API Generated`
+  category
 - preserve Figma facade examples such as `riido.aiAgent.events.stream` and
   `riido.aiAgent.tasks.stop`
 - normalize those examples to canonical generated paths
