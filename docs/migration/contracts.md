@@ -612,6 +612,21 @@ This slice does not change routes, schemas, authorization, RBAC, generated
 client delivery, frontend code, control-plane handlers, Terraform, AWS data,
 Figma annotations, or deployment evidence.
 
+### Assignment contract strict document guard
+
+This slice tightens the executable assignment polling contract fixture after
+the broader SSOT audit found that `assignment_payload_fields` was present in
+`assignment/assignment_contract.riido.json` but invisible to the test schema.
+
+The contract test now decodes the fixture with unknown-field and
+trailing-document rejection, and it asserts the `agent_instruction` assignment
+payload field that the daemon consumes when composing provider-specific runtime
+instructions.
+
+This slice does not change routes, schemas, authorization, RBAC, generated
+client delivery, frontend code, control-plane handlers, Terraform, AWS data,
+Figma annotations, daemon provider execution, or deployment evidence.
+
 ## Validation Gates
 
 Required for this repository:

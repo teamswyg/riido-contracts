@@ -1,7 +1,10 @@
 package assignment
 
 import (
+	"bytes"
 	"encoding/json"
+	"errors"
+	"io"
 	"os"
 	"sort"
 	"testing"
@@ -84,6 +87,21 @@ func TestAssignmentContractMatchesPackageSurface(t *testing.T) {
 	if len(remainingTaskEvents) != 0 {
 		t.Fatalf("package task events missing from contract: %v", sortedStringSet(remainingTaskEvents))
 	}
+
+	if len(contract.AssignmentPayloadFields) != 1 {
+		t.Fatalf("assignment payload fields drifted: %#v", contract.AssignmentPayloadFields)
+	}
+	field := contract.AssignmentPayloadFields[0]
+	if field.Name != "agent_instruction" ||
+		field.Source != "agent.instruction" ||
+		field.MaxLength != 1000 ||
+		field.Required ||
+		field.Snapshot != "assignment-created" {
+		t.Fatalf("agent instruction assignment payload field drifted: %#v", field)
+	}
+	if field.Consumer != "riido-daemon provider-specific runtime instruction placement" {
+		t.Fatalf("agent instruction consumer drifted: %q", field.Consumer)
+	}
 }
 
 func TestAssignmentTransitionBDDScenarios(t *testing.T) {
@@ -145,18 +163,25 @@ func loadContract(t *testing.T) executableContract {
 		t.Fatalf("read assignment contract: %v", err)
 	}
 	var contract executableContract
-	if err := json.Unmarshal(data, &contract); err != nil {
+	decoder := json.NewDecoder(bytes.NewReader(data))
+	decoder.DisallowUnknownFields()
+	if err := decoder.Decode(&contract); err != nil {
 		t.Fatalf("unmarshal assignment contract: %v", err)
+	}
+	var trailing struct{}
+	if err := decoder.Decode(&trailing); !errors.Is(err, io.EOF) {
+		t.Fatal("assignment contract must contain exactly one JSON document")
 	}
 	return contract
 }
 
 type executableContract struct {
-	SchemaVersion        string          `json:"schema_version"`
-	ServiceSchemaVersion string          `json:"service_schema_version"`
-	AssignmentStates     []contractState `json:"assignment_states"`
-	PollActions          []contractValue `json:"poll_actions"`
-	TaskEvents           []contractValue `json:"task_events"`
+	SchemaVersion           string                           `json:"schema_version"`
+	ServiceSchemaVersion    string                           `json:"service_schema_version"`
+	AssignmentStates        []contractState                  `json:"assignment_states"`
+	PollActions             []contractValue                  `json:"poll_actions"`
+	TaskEvents              []contractValue                  `json:"task_events"`
+	AssignmentPayloadFields []contractAssignmentPayloadField `json:"assignment_payload_fields"`
 }
 
 type contractState struct {
@@ -170,6 +195,15 @@ type contractState struct {
 type contractValue struct {
 	Name  string `json:"name"`
 	Value string `json:"value"`
+}
+
+type contractAssignmentPayloadField struct {
+	Name      string `json:"name"`
+	Source    string `json:"source"`
+	MaxLength int    `json:"max_length"`
+	Required  bool   `json:"required"`
+	Snapshot  string `json:"snapshot"`
+	Consumer  string `json:"consumer"`
 }
 
 func sortedAssignmentStateSet(values map[AssignmentState]struct{}) []AssignmentState {

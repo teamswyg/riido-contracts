@@ -36,8 +36,13 @@ That fixture owns the canonical lists for:
 - legal transitions from each state
 - poll actions
 - task event type values
+- assignment payload fields that the control plane snapshots for daemon runtime
+  composition
 
-Markdown must link to the fixture instead of redefining the matrix.
+Markdown must link to the fixture instead of redefining the matrix. The contract
+test decodes the fixture as one strict JSON document: unknown fields and
+trailing JSON documents are failures. A new executable contract fact must update
+the test schema and this human explanation in the same work unit.
 
 ## DTO Surface
 
