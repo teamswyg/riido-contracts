@@ -686,7 +686,7 @@ func verifyFigmaAPIGeneratedRetiredCategories(t *testing.T, categories []figmaAP
 
 func verifyFigmaAPIGeneratedAnnotationInventory(t *testing.T, inventory []figmaAPIGeneratedAnnotationGroup, docText string, openAPIGeneratedPaths map[string]string, openAPITransports map[string]figmaOpenAPITransport, registered map[string]string, entries map[string]figmaCoverageEntry) {
 	t.Helper()
-	if got, want := len(inventory), 19; got != want {
+	if got, want := len(inventory), 20; got != want {
 		t.Fatalf("api_generated_annotation_inventory = %d, want %d", got, want)
 	}
 	allowedKinds := map[string]bool{"Query": true, "Mutation": true, "SSE Stream": true}
@@ -783,7 +783,7 @@ func verifyFigmaAPIGeneratedAnnotationInventory(t *testing.T, inventory []figmaA
 			t.Fatalf("coverage doc must mention API Generated annotation v2 counterpart %q", v2Path)
 		}
 	}
-	if got, want := totalAnnotations, 59; got != want {
+	if got, want := totalAnnotations, 61; got != want {
 		t.Fatalf("API Generated annotation inventory node annotations = %d, want %d", got, want)
 	}
 }
