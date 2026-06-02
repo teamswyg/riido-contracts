@@ -471,6 +471,27 @@ This slice does not change routes, schemas, authorization, RBAC, generated
 client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
 deployment evidence.
 
+### Figma API Generated operation-kind transport guard
+
+This slice tightens the Figma API Generated annotation guard.
+
+Figma annotations expose `종류: Query | Mutation | SSE Stream` for frontend
+handoff readability, but that value must not become a second source of truth.
+Contracts derive the canonical transport from the generated OpenAPI operation:
+`text/event-stream` responses are `SSE Stream`, non-stream `GET` operations are
+`Query`, and non-`GET` operations are `Mutation`.
+
+This slice does:
+
+- document the transport-derived meaning of `operation_kind`
+- require `api_generated_annotation_inventory.operation_kind` to match the
+  generated OpenAPI method and response content type
+- keep Figma text as handoff evidence, not as an API operation-kind authority
+
+This slice does not change routes, schemas, authorization, RBAC, generated
+client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
+deployment evidence.
+
 ### Figma onboarding page load timeout limitation
 
 This slice records a live Figma tooling limitation found while continuing the
