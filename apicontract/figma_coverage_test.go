@@ -71,6 +71,7 @@ func TestFigmaAIAgentCoverageManifest(t *testing.T) {
 		t.Fatalf("entries = %d, want %d", got, want)
 	}
 	openAPIGeneratedPaths := loadAIAgentClientGeneratedPaths(t)
+	openAPITransports := loadAIAgentClientGeneratedPathTransports(t)
 
 	pages := map[string]figmaCoveragePage{}
 	for _, page := range manifest.ExpectedPages {
@@ -169,7 +170,7 @@ func TestFigmaAIAgentCoverageManifest(t *testing.T) {
 
 	verifyFigmaRuntimeEndpointLabel(t, manifest.VerifiedEvidenceNodes, entryByNodeID["162:23090"], docText)
 	verifyFigmaAPIGeneratedAnnotations(t, manifest.APIGeneratedAnnotations, docText, openAPIGeneratedPaths, registered, entryByNodeID)
-	verifyFigmaAPIGeneratedAnnotationInventory(t, manifest.APIGeneratedAnnotationInventory, docText, openAPIGeneratedPaths, registered, entryByNodeID)
+	verifyFigmaAPIGeneratedAnnotationInventory(t, manifest.APIGeneratedAnnotationInventory, docText, openAPIGeneratedPaths, openAPITransports, registered, entryByNodeID)
 	assertDocumentedFigmaNodeRefsAreRegistered(t, registered)
 	assertNoStaleOnboardingFixtureWording(t)
 	assertNoStaleRuntimeEndpointHostPinned(t)
@@ -379,6 +380,7 @@ func verifyFigmaCoverageProvenance(t *testing.T, stabilizedBy []string, docPath 
 		"teamswyg/riido-contracts#63",
 		"teamswyg/riido-contracts#64",
 		"teamswyg/riido-contracts#65",
+		"teamswyg/riido-contracts#66",
 	}
 	if len(stabilizedBy) != len(want) {
 		t.Fatalf("stabilized_by = %d entries, want %d: %+v", len(stabilizedBy), len(want), stabilizedBy)
@@ -579,11 +581,18 @@ func verifyFigmaAPIGeneratedAnnotationContentPolicy(t *testing.T, policy figmaAP
 	if len(policy.LabelFormat) != 3 {
 		t.Fatalf("API Generated annotation label_format = %d entries, want 3", len(policy.LabelFormat))
 	}
-	for _, needle := range []string{"riido.*", "종류", "Query", "Mutation", "SSE Stream", "배경", "Korean"} {
+	for _, needle := range []string{"riido.*", "종류", "Query", "Mutation", "SSE Stream", "배경", "Korean", "text/event-stream", "non-stream GET", "non-GET"} {
 		if !strings.Contains(strings.Join(policy.LabelFormat, "\n")+"\n"+policy.Rule, needle) {
 			t.Fatalf("API Generated annotation content policy must mention %q: %+v", needle, policy)
 		}
-		if !strings.Contains(docText, needle) {
+		docNeedle := needle
+		if needle == "non-stream GET" {
+			docNeedle = "non-stream `GET`"
+		}
+		if needle == "non-GET" {
+			docNeedle = "non-`GET`"
+		}
+		if !strings.Contains(docText, docNeedle) {
 			t.Fatalf("coverage doc must mention API Generated annotation content policy %q", needle)
 		}
 	}
@@ -668,7 +677,7 @@ func verifyFigmaAPIGeneratedRetiredCategories(t *testing.T, categories []figmaAP
 	}
 }
 
-func verifyFigmaAPIGeneratedAnnotationInventory(t *testing.T, inventory []figmaAPIGeneratedAnnotationGroup, docText string, openAPIGeneratedPaths map[string]string, registered map[string]string, entries map[string]figmaCoverageEntry) {
+func verifyFigmaAPIGeneratedAnnotationInventory(t *testing.T, inventory []figmaAPIGeneratedAnnotationGroup, docText string, openAPIGeneratedPaths map[string]string, openAPITransports map[string]figmaOpenAPITransport, registered map[string]string, entries map[string]figmaCoverageEntry) {
 	t.Helper()
 	if got, want := len(inventory), 19; got != want {
 		t.Fatalf("api_generated_annotation_inventory = %d, want %d", got, want)
@@ -697,8 +706,16 @@ func verifyFigmaAPIGeneratedAnnotationInventory(t *testing.T, inventory []figmaA
 		if _, ok := openAPIGeneratedPaths[group.CanonicalGeneratedPath]; !ok {
 			t.Fatalf("API Generated annotation group references unknown OpenAPI generated path %q", group.CanonicalGeneratedPath)
 		}
+		transport, ok := openAPITransports[group.CanonicalGeneratedPath]
+		if !ok {
+			t.Fatalf("API Generated annotation group %q has no OpenAPI transport evidence", group.CanonicalGeneratedPath)
+		}
 		if !allowedKinds[group.OperationKind] {
 			t.Fatalf("API Generated annotation group %q operation_kind = %q", group.CanonicalGeneratedPath, group.OperationKind)
+		}
+		wantKind := operationKindForOpenAPITransport(transport)
+		if group.OperationKind != wantKind {
+			t.Fatalf("API Generated annotation group %q operation_kind = %q, want %q from OpenAPI transport %+v", group.CanonicalGeneratedPath, group.OperationKind, wantKind, transport)
 		}
 		if strings.TrimSpace(group.Background) == "" {
 			t.Fatalf("API Generated annotation group %q must explain background", group.CanonicalGeneratedPath)
@@ -805,6 +822,49 @@ func loadAIAgentClientGeneratedPaths(t *testing.T) map[string]string {
 		}
 	}
 	return out
+}
+
+func loadAIAgentClientGeneratedPathTransports(t *testing.T) map[string]figmaOpenAPITransport {
+	t.Helper()
+	dsl := loadTestDSL(t, "fixtures/control-plane-ai-agent-client.dsl.riido.json")
+	ir, err := GenerateIR(dsl)
+	if err != nil {
+		t.Fatalf("GenerateIR: %v", err)
+	}
+	openAPI, err := GenerateOpenAPI(ir)
+	if err != nil {
+		t.Fatalf("GenerateOpenAPI: %v", err)
+	}
+	out := map[string]figmaOpenAPITransport{}
+	for path, methods := range openAPI.Paths {
+		for method, operation := range methods {
+			if operation.RiidoClient == nil || strings.TrimSpace(operation.RiidoClient.GeneratedPath) == "" {
+				continue
+			}
+			contentTypes := map[string]bool{}
+			for _, response := range operation.Responses {
+				for contentType := range response.Content {
+					contentTypes[contentType] = true
+				}
+			}
+			out[operation.RiidoClient.GeneratedPath] = figmaOpenAPITransport{
+				Method:       strings.ToUpper(method),
+				Path:         path,
+				ContentTypes: contentTypes,
+			}
+		}
+	}
+	return out
+}
+
+func operationKindForOpenAPITransport(transport figmaOpenAPITransport) string {
+	if transport.ContentTypes["text/event-stream"] {
+		return "SSE Stream"
+	}
+	if transport.Method == "GET" {
+		return "Query"
+	}
+	return "Mutation"
 }
 
 func docMentionsGeneratedPath(docText, generatedPath string) bool {
@@ -1194,6 +1254,12 @@ type figmaAPIGeneratedAnnotationSource struct {
 	TopLevelNodeID      string   `json:"top_level_node_id"`
 	CoverageEntryNodeID string   `json:"coverage_entry_node_id"`
 	NodeIDs             []string `json:"node_ids"`
+}
+
+type figmaOpenAPITransport struct {
+	Method       string
+	Path         string
+	ContentTypes map[string]bool
 }
 
 type figmaCoverageDirection struct {
