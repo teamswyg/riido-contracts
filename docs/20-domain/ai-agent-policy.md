@@ -243,6 +243,9 @@ control plane may resolve a task's team location internally from `task_id` to
 read the existing task document, but that resolved value is an internal
 task-context lookup result and must not be persisted into the agent or exposed
 to generated clients.
+This exclusion is canonical for the generated AI Agent flow; it is not a mock
+environment shortcut and must not be reintroduced by daemon, deployment, or E2E
+test harness logic.
 In the normal active screen (`node-id=236-21379`), generic task comments and
 AI-Agent-directed thread replies are visually adjacent. The contract boundary is
 that AI-Agent-directed messages use the explicit comments operation with

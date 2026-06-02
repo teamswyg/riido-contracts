@@ -687,6 +687,26 @@ This slice does:
 This slice does not remove historical test fixtures, change generated frontend
 operations, add Terraform resources, or define device credential rotation.
 
+### RIID-4881 — Team/OpenAPI exclusion for DevicePrincipal E2E
+
+This slice tightens the canonical exclusion rule for generated AI Agent
+assignment and DevicePrincipal identity.
+
+This slice does:
+
+- state that `team_id`, `teamId`, OpenAPI task-context paths, Open API keys, and
+  `X-Workspace-Api-Key` are not fallback inputs for matching browser-visible AI
+  Agent state with daemon-visible runtime state
+- keep the generated assignment boundary on route-scoped `workspace_id`,
+  route-scoped `task_id`, request-body `agent_id`, and DevicePrincipal daemon
+  credentials
+- make staging smoke checks judge this flow without team/OpenAPI key
+  prerequisites
+
+This slice does not remove legacy task-context reader integrations, change the
+existing private API-server lookup, add generated client fields, add daemon
+credentials to OpenAPI examples, or change deployment topology.
+
 ## Validation Gates
 
 Required for this repository:
