@@ -350,6 +350,32 @@ This slice does not change routes, schemas, authorization, RBAC, generated
 client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
 deployment evidence.
 
+### Figma API Generated provenance catch-up
+
+This slice repairs the Figma coverage stabilization history after the API
+Generated annotation passes.
+
+`teamswyg/riido-contracts#56`, `#57`, and `#58` changed executable Figma
+coverage meaning: #56 registered the screen-level API Generated annotation
+inventory, #57 moved the Figma category to `700:0` / `API Generated`, and #58
+renamed the manifest fields to `api_generated_annotations` and
+`api_generated_annotation_inventory`. Before this slice, the canonical
+`stabilized_by` list still stopped at `teamswyg/riido-contracts#55`, so
+downstream mirrors could not prove that they consumed the latest annotation
+coverage state.
+
+This slice does:
+
+- append `teamswyg/riido-contracts#56`, `#57`, and `#58` to the Figma coverage
+  `stabilized_by` list
+- require the coverage test to expect those provenance entries in order
+- keep the update documentation-only so no API, daemon, infra, generated client,
+  or deployment behavior changes
+
+This slice does not change routes, schemas, authorization, RBAC, generated
+client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
+deployment evidence.
+
 ### RIID-4849 — Figma coverage upstream provenance SSOT guard
 
 This slice moves Figma coverage stabilization history back to the canonical
