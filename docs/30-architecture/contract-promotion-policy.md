@@ -36,6 +36,27 @@ Changing a package schema constant does not automatically create a tag. A tag is
 created only after the PR is merged and downstream consumers are ready to import
 it.
 
+## Runtime Release Tags
+
+Runtime repositories may also publish their own Git tags for deployable
+artifacts. For example, `riido-control-plane v0.0.0` is a SaaS runtime release
+tag that can trigger its own testnet CD workflow.
+
+Those runtime tags are not `riido-contracts` module versions and must not reset
+or fork this module's tag line. A runtime release records which
+`riido-contracts` module version it imports through that runtime repository's
+`go.mod`; the shared contract module keeps its own next tag cadence.
+
+Use the following reading model for runtime tags that consume this module:
+
+- `v0.0.x`: bootstrap/testnet runtime artifact releases that do not promise a
+  stable external API.
+- `v0.y.z`: pre-1.0 additive runtime/API delivery slices while client and daemon
+  integration is still moving.
+- `v1.0.0`: first stable runtime/API line after the owning runtime repository
+  declares production compatibility and downstream clients have an import/use
+  gate.
+
 ## Breaking Change Rules
 
 Breaking changes require an explicit migration slice:
