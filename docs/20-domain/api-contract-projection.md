@@ -120,6 +120,13 @@ uses `POST /v1/client/ai-agent/onboarding/fixtures/{fixture_id}/agents` with a
 complete `CreateAgentConfigurationRequest` body, so the created result is a
 normal agent rather than a fixture/template entity.
 
+Figma `node-id=432:46849` changes the onboarding explanation order to agent
+draft/configuration first, then runtime, then workspace. The API DSL does not
+model that as persisted draft state or workspace-less create. The client owns
+the local draft until final submit, and final submit still calls the v2
+workspace-scoped fixture/direct create operation with `workspace_id` in the URL
+and `runtime_id` in the request body.
+
 The former Figma discussion node `node-id=162-23468` is closed by
 `node-id=162-23475`: generated contracts treat a fixture-created agent exactly
 like a directly configured agent after creation. The create response carries the

@@ -160,6 +160,38 @@ This slice does not change routes, schemas, authorization, RBAC, generated
 client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
 deployment evidence.
 
+### RIID-4857 — Figma onboarding loaded inventory and draft-create SSOT
+
+This slice closes the `42:3014` `Wireframe - 온보딩` loaded-page inventory gap
+and absorbs the Figma `node-id=432:46849` onboarding order-change memo.
+
+The loaded Figma Plugin API inspection says `42:3014` has 83 top-level
+children. Earlier contracts coverage recorded only three top-level nodes, which
+made the manifest contradict its own loaded-page child-count rule. The same
+Figma pass shows an order-change memo: `에이전트 생성 → 런타임 선택 → 워크스페이스
+선택`. Contracts interpret that as client-local onboarding draft/configuration
+selection before final submit, not as a durable workspace-less agent create
+command.
+
+This slice does:
+
+- update `figma-ai-agent-coverage.riido.json` so the `42:3014` loaded inventory
+  has 83 top-level nodes and `node-id=432:46849` is a coverage-bearing planning
+  decision
+- update `ai-agent-policy.md`, `api-contract-projection.md`, and the API DSL so
+  local onboarding drafts remain client-owned and final v2 fixture/direct create
+  still requires `workspace_id` in the URL and `runtime_id` in the request
+- regenerate the derived AI Agent client IR/OpenAPI fixtures from the DSL
+- add `onboarding-draft-ordering` to the SSOT dependency manifest so downstream
+  repos can mirror the boundary without redefining it
+- require the Figma coverage gate to expect the updated provenance and the new
+  non-UI coverage-bearing node count
+
+This slice does not add persisted draft state, a workspace-less create route,
+new authorization scopes, new RBAC policy ids, generated client delivery
+automation, frontend code, control-plane handlers, daemon runtime behavior,
+Terraform, AWS data, or deployment evidence.
+
 ### RIID-4828 — task-thread v2 submitComment coverage gate
 
 This slice closes a coverage drift between the contracts-owned Figma manifest
