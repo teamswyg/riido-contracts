@@ -4362,6 +4362,9 @@
           "owner_principal_id": {
             "type": "string"
           },
+          "requires_experimental_opt_in": {
+            "type": "boolean"
+          },
           "runtime_id": {
             "type": "string"
           }
@@ -4373,6 +4376,7 @@
           "availability",
           "detection_state",
           "has_assigned_agent",
+          "requires_experimental_opt_in",
           "models"
         ],
         "type": "object"

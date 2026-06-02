@@ -246,6 +246,14 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	if !ok {
 		t.Fatalf("RuntimeRecord properties missing: %#v", runtimeRecord)
 	}
+	runtimeRequired, ok := runtimeRecord["required"].([]string)
+	if !ok || !contains(runtimeRequired, "requires_experimental_opt_in") {
+		t.Fatalf("RuntimeRecord required = %#v", runtimeRecord["required"])
+	}
+	optIn, ok := runtimeProps["requires_experimental_opt_in"].(map[string]any)
+	if !ok || optIn["type"] != "boolean" {
+		t.Fatalf("RuntimeRecord requires_experimental_opt_in schema = %#v", runtimeProps["requires_experimental_opt_in"])
+	}
 	models, ok := runtimeProps["models"].(map[string]any)
 	if !ok || models["type"] != "array" {
 		t.Fatalf("RuntimeRecord models schema = %#v", runtimeProps["models"])

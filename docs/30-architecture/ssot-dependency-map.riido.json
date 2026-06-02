@@ -87,6 +87,41 @@
       ]
     },
     {
+      "id": "experimental-runtime-opt-in-assignment-snapshot",
+      "fact": "Experimental runtime opt-in is assignment-created snapshot data",
+      "human_doc_phrase": "Experimental runtime opt-in is assignment-created snapshot data",
+      "source_refs": [
+        {
+          "repo": "riido-contracts",
+          "path": "docs/20-domain/assignment-polling.md",
+          "required_phrase": "Assignment.allow_experimental_runtime"
+        },
+        {
+          "repo": "riido-contracts",
+          "path": "docs/20-domain/ai-agent-policy.md",
+          "required_phrase": "requires experimental opt-in"
+        }
+      ],
+      "owner": {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/assignment-polling.md"
+      },
+      "downstreams": [
+        {
+          "repo": "riido-control-plane",
+          "local_scope": "derives Assignment.allow_experimental_runtime from the selected agent runtime capability at assignment creation time"
+        },
+        {
+          "repo": "riido-daemon",
+          "local_scope": "uses only Assignment.allow_experimental_runtime for the experimental runtime scheduling gate"
+        },
+        {
+          "repo": "riido-infra",
+          "local_scope": "no Terraform diff"
+        }
+      ]
+    },
+    {
       "id": "fixture-created-agent-normal-lifecycle",
       "fact": "Fixture-created agents are ordinary agents with non-unique display names and normal update/delete/editability lifecycle",
       "human_doc_phrase": "Fixture-created agents are ordinary agents",

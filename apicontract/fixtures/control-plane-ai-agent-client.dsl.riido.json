@@ -418,7 +418,7 @@
       "name": "RuntimeRecord",
       "description": "device에 설치되었거나 assignment 정책상 offline으로 유지되는 runtime record입니다.",
       "type": "object",
-      "required": ["runtime_id", "device_id", "kind", "availability", "detection_state", "has_assigned_agent", "models"],
+      "required": ["runtime_id", "device_id", "kind", "availability", "detection_state", "has_assigned_agent", "requires_experimental_opt_in", "models"],
       "properties": [
         {"name": "runtime_id", "type": "string"},
         {"name": "device_id", "type": "string"},
@@ -428,6 +428,7 @@
         {"name": "owner_principal_id", "type": "string"},
         {"name": "last_detected_at", "type": "string", "format": "date-time"},
         {"name": "has_assigned_agent", "type": "boolean"},
+        {"name": "requires_experimental_opt_in", "type": "boolean"},
         {"name": "models", "type": "array", "items": {"ref": "RuntimeModelRecord"}}
       ]
     },

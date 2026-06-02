@@ -119,28 +119,30 @@ func AllTaskEventTypes() []string {
 }
 
 type AssignRequest struct {
-	ComponentID      string `json:"component_id"`
-	AgentID          string `json:"agent_id"`
-	RuntimeProvider  string `json:"runtime_provider"`
-	Prompt           string `json:"prompt"`
-	AgentInstruction string `json:"agent_instruction,omitempty"`
-	CreatedBy        string `json:"created_by,omitempty"`
+	ComponentID              string `json:"component_id"`
+	AgentID                  string `json:"agent_id"`
+	RuntimeProvider          string `json:"runtime_provider"`
+	Prompt                   string `json:"prompt"`
+	AgentInstruction         string `json:"agent_instruction,omitempty"`
+	AllowExperimentalRuntime bool   `json:"allow_experimental_runtime,omitempty"`
+	CreatedBy                string `json:"created_by,omitempty"`
 }
 
 type Assignment struct {
-	ID                    string          `json:"assignment_id"`
-	TaskID                string          `json:"task_id"`
-	ComponentID           string          `json:"component_id"`
-	AgentID               string          `json:"agent_id"`
-	RuntimeProvider       string          `json:"runtime_provider"`
-	Prompt                string          `json:"prompt"`
-	AgentInstruction      string          `json:"agent_instruction,omitempty"`
-	State                 AssignmentState `json:"state"`
-	LeaseToken            string          `json:"lease_token,omitempty"`
-	ReplacesAssignmentID  string          `json:"replaces_assignment_id,omitempty"`
-	BlockedByAssignmentID string          `json:"blocked_by_assignment_id,omitempty"`
-	CreatedAt             time.Time       `json:"created_at"`
-	UpdatedAt             time.Time       `json:"updated_at"`
+	ID                       string          `json:"assignment_id"`
+	TaskID                   string          `json:"task_id"`
+	ComponentID              string          `json:"component_id"`
+	AgentID                  string          `json:"agent_id"`
+	RuntimeProvider          string          `json:"runtime_provider"`
+	Prompt                   string          `json:"prompt"`
+	AgentInstruction         string          `json:"agent_instruction,omitempty"`
+	AllowExperimentalRuntime bool            `json:"allow_experimental_runtime,omitempty"`
+	State                    AssignmentState `json:"state"`
+	LeaseToken               string          `json:"lease_token,omitempty"`
+	ReplacesAssignmentID     string          `json:"replaces_assignment_id,omitempty"`
+	BlockedByAssignmentID    string          `json:"blocked_by_assignment_id,omitempty"`
+	CreatedAt                time.Time       `json:"created_at"`
+	UpdatedAt                time.Time       `json:"updated_at"`
 }
 
 type PollRequest struct {
