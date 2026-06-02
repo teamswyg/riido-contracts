@@ -3,6 +3,8 @@ package apicontract
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
+	"io"
 	"net/url"
 	"os"
 	"path/filepath"
@@ -24,6 +26,10 @@ func TestFigmaAIAgentCoverageManifest(t *testing.T) {
 	dec.DisallowUnknownFields()
 	if err := dec.Decode(&manifest); err != nil {
 		t.Fatalf("decode coverage manifest: %v", err)
+	}
+	var trailing struct{}
+	if err := dec.Decode(&trailing); !errors.Is(err, io.EOF) {
+		t.Fatalf("decode coverage manifest: trailing JSON document: %v", err)
 	}
 
 	if manifest.SchemaVersion != "riido-figma-ai-agent-coverage.v1" {

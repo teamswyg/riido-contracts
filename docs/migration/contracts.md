@@ -590,6 +590,28 @@ This slice does not change routes, schemas, authorization, RBAC, generated
 client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
 deployment evidence.
 
+### Figma coverage manifest strict document guard
+
+This follow-up tightens the canonical contracts-owned Figma coverage manifest
+reader after downstream projection mirrors began rejecting unknown fields and
+trailing JSON documents.
+
+The Figma coverage manifest is a machine-readable SSOT, not a scratchpad. It
+already rejected unknown fields. This slice also rejects trailing JSON documents
+after the first decoded manifest so accidental pasted payloads or append-only
+notes cannot live beside the canonical object while tests still pass.
+
+This slice does:
+
+- require `TestFigmaAIAgentCoverageManifest` to reject trailing JSON documents
+  after `figma-ai-agent-coverage.riido.json`
+- document the strict single-document rule in the Figma coverage architecture
+  SSOT
+
+This slice does not change routes, schemas, authorization, RBAC, generated
+client delivery, frontend code, control-plane handlers, Terraform, AWS data,
+Figma annotations, or deployment evidence.
+
 ## Validation Gates
 
 Required for this repository:
