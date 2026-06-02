@@ -401,6 +401,31 @@ This slice does not change routes, schemas, authorization, RBAC, generated
 client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
 deployment evidence.
 
+### Figma retired client-delivery annotation category
+
+This slice records the remaining state of the old Figma annotation category
+after `API Generated` became the generated-client handoff category.
+
+The current Figma file still defines category `39:0` / `클라이언트 전달`, but a
+2026-06-02 whole-file annotation usage scan found zero annotations using it.
+The current Figma MCP exposes category entries as data objects without callable
+`remove` or `setLabel` methods, so this automation could not delete the unused
+category definition from the file.
+
+This slice does:
+
+- add the old category to `api_generated_annotation_content_policy` as a retired
+  category
+- record `live_usage_count=0`
+- document that `700:0` / `API Generated` is the active generated-client
+  handoff category
+- require the coverage test to fail if the retired category regains usage or is
+  confused with the active category
+
+This slice does not change routes, schemas, authorization, RBAC, generated
+client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
+deployment evidence.
+
 ### Figma onboarding page load timeout limitation
 
 This slice records a live Figma tooling limitation found while continuing the

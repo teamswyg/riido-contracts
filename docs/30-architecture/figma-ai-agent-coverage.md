@@ -50,6 +50,7 @@ Current stabilization history:
 - `teamswyg/riido-contracts#58`
 - `teamswyg/riido-contracts#60`
 - `teamswyg/riido-contracts#62`
+- `teamswyg/riido-contracts#63`
 
 The page registry and the top-level child counts in this document are
 authoritative only when they come from the Figma Plugin API
@@ -134,6 +135,12 @@ Figma Dev Mode annotations that start with `riido.` belong to category `700:0`
 The executable manifest keeps the durable `operation_kind` and `background`
 values in `api_generated_annotation_inventory`; the live Figma annotation text is
 handoff evidence, not a second API SSOT.
+
+The previous custom category `39:0` `클라이언트 전달` is retired. The 2026-06-02
+inspection found zero annotations using it across the inspected pages. It still
+exists as an unused Figma category definition because the current Figma MCP
+category objects expose only data fields, not callable `remove` or `setLabel`
+methods, so this automation could not delete the definition.
 
 The 2026-06-02 lightweight Figma Plugin API annotation traversal found:
 
