@@ -565,6 +565,31 @@ This slice does not change routes, schemas, authorization, RBAC, generated
 client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
 deployment evidence.
 
+### Figma API Generated v2 counterpart guard
+
+This slice tightens the generated-client handoff after the Figma annotation
+category was normalized to `API Generated`.
+
+Figma annotation text intentionally keeps the shorter facade shape such as
+`riido.aiAgent.tasks.stop` because that is the searchable client-facing label
+used during UI handoff. The durable API, however, now exposes workspace-scoped
+v2 calls such as `riido.v2.aiAgent.tasks.stop`. Before this slice, the coverage
+gate proved that the facade path existed in OpenAPI, but it did not prove that
+the corresponding v2 path stayed paired with the same Figma source coverage
+entry.
+
+This slice does:
+
+- document that each API Generated inventory facade path must keep a matching
+  `v2.*` generated path in the same source coverage entry
+- require the coverage test to verify the v2 OpenAPI generated path exists
+- require the v2 generated path to have the same transport-derived
+  `operation_kind`
+
+This slice does not change routes, schemas, authorization, RBAC, generated
+client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
+deployment evidence.
+
 ## Validation Gates
 
 Required for this repository:
