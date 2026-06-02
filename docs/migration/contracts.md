@@ -350,6 +350,29 @@ This slice does not change routes, schemas, authorization, RBAC, generated
 client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
 deployment evidence.
 
+### Figma onboarding page load timeout limitation
+
+This slice records a live Figma tooling limitation found while continuing the
+whole-file AI Agent coverage audit.
+
+Current live reads of `node-id=42:3014` (`Wireframe - 온보딩`) can time out
+after 120s when using Figma `get_metadata(nodeId=42:3014)` or `use_figma`
+scripts that attempt `await figma.setCurrentPageAsync(page)`. This is different
+from the no-`nodeId` metadata page-list under-report: the page is known and
+registered, but the current tool call cannot reliably reload it.
+
+This slice does:
+
+- add `figma-onboarding-page-load-timeout.v1` to
+  `supporting_tool_limitations`
+- document that the timeout is supporting evidence only
+- require the coverage gate to preserve page `42:3014`, its captured
+  `child_count=83`, its onboarding inventory, and its generated path coverage
+
+This slice does not change routes, schemas, authorization, RBAC, generated
+client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
+deployment evidence.
+
 ### Figma API Generated provenance catch-up
 
 This slice repairs the Figma coverage stabilization history after the API

@@ -253,10 +253,13 @@ func verifyFigmaSupportingToolLimitations(t *testing.T, limitations []figmaSuppo
 		t.Fatalf("supporting_tool_limitations must record non-authoritative tooling failure modes")
 	}
 	var metadataPageList figmaSupportingToolLimitation
+	var onboardingPageLoadTimeout figmaSupportingToolLimitation
 	for _, limitation := range limitations {
 		if limitation.ID == "figma-metadata-page-list-underreports-pages.v1" {
 			metadataPageList = limitation
-			break
+		}
+		if limitation.ID == "figma-onboarding-page-load-timeout.v1" {
+			onboardingPageLoadTimeout = limitation
 		}
 	}
 	if metadataPageList.ID == "" {
@@ -290,6 +293,35 @@ func verifyFigmaSupportingToolLimitations(t *testing.T, limitations []figmaSuppo
 	for _, needle := range []string{"figma-metadata-page-list-underreports-pages.v1", "get_metadata", "without `nodeId`", "`129:5215`", "`42:3014`", "`0:1`", "must not remove `expected_pages`"} {
 		if !strings.Contains(docText, needle) {
 			t.Fatalf("coverage doc must describe metadata page-list limitation with %q", needle)
+		}
+	}
+	if onboardingPageLoadTimeout.ID == "" {
+		t.Fatalf("supporting_tool_limitations must include figma-onboarding-page-load-timeout.v1")
+	}
+	for _, needle := range []string{"get_metadata", "42:3014", "Plugin API page load"} {
+		if !strings.Contains(onboardingPageLoadTimeout.Tool, needle) {
+			t.Fatalf("onboarding load timeout tool must contain %q: %+v", needle, onboardingPageLoadTimeout)
+		}
+	}
+	for _, needle := range []string{"timed out after 120s", "Wireframe - 온보딩", "setCurrentPageAsync"} {
+		if !strings.Contains(onboardingPageLoadTimeout.ObservedResult, needle) {
+			t.Fatalf("onboarding load timeout observed_result must contain %q: %q", needle, onboardingPageLoadTimeout.ObservedResult)
+		}
+	}
+	for _, needle := range []string{"42:3014", "child_count=83", "non_ui_top_level_inventory"} {
+		if !stringSliceContains(onboardingPageLoadTimeout.AuthoritativeResult, needle) {
+			t.Fatalf("onboarding load timeout authoritative_result must contain %q: %+v", needle, onboardingPageLoadTimeout.AuthoritativeResult)
+		}
+	}
+	onboardingRule := strings.ToLower(onboardingPageLoadTimeout.Rule)
+	for _, needle := range []string{"supporting evidence only", "must not rewrite expected_pages", "remove page 42:3014", "onboarding generated paths"} {
+		if !strings.Contains(onboardingRule, needle) {
+			t.Fatalf("onboarding load timeout rule must contain %q: %q", needle, onboardingPageLoadTimeout.Rule)
+		}
+	}
+	for _, needle := range []string{"figma-onboarding-page-load-timeout.v1", "get_metadata(nodeId=42:3014)", "after 120s", "`Wireframe - 온보딩`", "must not rewrite `expected_pages`", "onboarding generated paths unresolved"} {
+		if !strings.Contains(docText, needle) {
+			t.Fatalf("coverage doc must describe onboarding page load timeout with %q", needle)
 		}
 	}
 }
