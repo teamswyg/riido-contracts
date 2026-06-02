@@ -68,6 +68,10 @@ are not part of this principal model. They must not be used to identify a
 daemon, match a browser session to a daemon, select an agent runtime binding, or
 authorize assignment polling. Those values may exist only in legacy
 task-context reader integrations outside this DevicePrincipal contract.
+This is a hard exclusion, not a fallback path: a valid DevicePrincipal test or
+staging smoke check must not require `team_id`, `teamId`, an OpenAPI task
+context URL, an Open API key, or `X-Workspace-Api-Key` to connect browser-visible
+AI Agent state with daemon-visible runtime state.
 
 ## Enrollment
 
