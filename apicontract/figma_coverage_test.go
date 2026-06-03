@@ -615,8 +615,8 @@ func verifyFigmaAPIGeneratedAnnotationContentPolicy(t *testing.T, policy figmaAP
 		"129:5215": {
 			PageID:               "129:5215",
 			PageName:             "UI",
-			RiidoAnnotationCount: 56,
-			APIGeneratedCount:    56,
+			RiidoAnnotationCount: 84,
+			APIGeneratedCount:    84,
 		},
 		"42:3014": {
 			PageID:               "42:3014",
@@ -657,8 +657,8 @@ func verifyFigmaAPIGeneratedAnnotationContentPolicy(t *testing.T, policy figmaAP
 	if scan.TotalRiidoAnnotations != totalRiido || scan.TotalAPIGeneratedAnnotations != totalAPIGenerated {
 		t.Fatalf("API Generated annotation live totals = riido:%d/api:%d, want riido:%d/api:%d", scan.TotalRiidoAnnotations, scan.TotalAPIGeneratedAnnotations, totalRiido, totalAPIGenerated)
 	}
-	if totalRiido != 62 || totalAPIGenerated != 62 {
-		t.Fatalf("API Generated annotation live totals = riido:%d/api:%d, want 62/62", totalRiido, totalAPIGenerated)
+	if totalRiido != 90 || totalAPIGenerated != 90 {
+		t.Fatalf("API Generated annotation live totals = riido:%d/api:%d, want 90/90", totalRiido, totalAPIGenerated)
 	}
 }
 
@@ -783,7 +783,7 @@ func verifyFigmaAPIGeneratedAnnotationInventory(t *testing.T, inventory []figmaA
 			t.Fatalf("coverage doc must mention API Generated annotation v2 counterpart %q", v2Path)
 		}
 	}
-	if got, want := totalAnnotations, 62; got != want {
+	if got, want := totalAnnotations, 90; got != want {
 		t.Fatalf("API Generated annotation inventory node annotations = %d, want %d", got, want)
 	}
 }
