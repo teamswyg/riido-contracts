@@ -40,6 +40,31 @@ If only one repository consumes the fact, keep it local to that repository.
 | RBAC scenario fixtures | `internal/riidoaiserver/*rbac*`, security docs | Promote black-box fixtures, not authorization implementation. |
 | Store distribution contract fixtures | `packaging/store`, `tools/storecontract` | Promote only if daemon and infra both validate the same fixture. |
 
+### RIID-4900 — Figma API Generated handoff refresh
+
+This slice records the latest Figma handoff audit for v1.22 AI Agent.
+
+The live `API Generated` annotation audit found no generated API path change:
+all 90 `riido.*` annotations still use the `API Generated` category, include
+operation kind, and include background text for frontend handoff. The only
+contracts-visible drift is page `42:3014` (`Wireframe - 온보딩`): RIID-4900 live
+annotation traversal observed `page.children.length=84`, while the previously
+captured full top-level node inventory still identifies 83 nodes because full
+identity traversal can time out.
+
+This slice does:
+
+- update `expected_pages` for page `42:3014` to `child_count=84`
+- keep the known `non_ui_top_level_inventory` at 83 identified nodes
+- record `known_inventory_count=83` and `unresolved_extra_top_level_node=1` in
+  `figma-onboarding-page-load-timeout.v1`
+- keep generated-client path, operation-kind, and background-text coverage
+  unchanged
+
+This slice does not change routes, schemas, authorization, RBAC, generated
+client delivery, frontend code, control-plane handlers, Terraform, AWS data, or
+deployment evidence.
+
 ## Repository Boundaries
 
 `riido-contracts` may contain:

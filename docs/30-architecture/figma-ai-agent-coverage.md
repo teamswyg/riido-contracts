@@ -95,16 +95,17 @@ projection source identity.
 `figma-onboarding-page-load-timeout.v1` records a separate 2026-06-02 tooling
 limitation: current live reads of `node-id=42:3014` (`Wireframe - 온보딩`) can
 time out after 120s when using Figma `get_metadata(nodeId=42:3014)` or
-`use_figma` scripts that attempt `await figma.setCurrentPageAsync(page)`. Direct
-Figma Plugin API `getNodeByIdAsync` lookups for registered nodes `236:33845` and
-`236:33847` still returned the six onboarding `riido.*` `API Generated`
-annotations. A timeout is supporting evidence only. It must not rewrite `expected_pages`,
-remove page `42:3014`, remove onboarding inventory, or mark onboarding generated
-paths unresolved; in other words, the timeout must not
-become onboarding generated paths unresolved. The authoritative value for the
-onboarding page remains the previously captured loaded Figma Plugin API
-inventory, registered node-id evidence in this manifest, and direct registered
-node lookup fallback for onboarding API Generated annotations.
+`use_figma` scripts that attempt full inventory traversal after
+`await figma.setCurrentPageAsync(page)`. RIID-4900 live annotation traversal
+loaded the page far enough to count `page.children.length=84` and verify the six onboarding `riido.*` `API Generated` annotations, but full top-level node
+identity capture still timed out. Direct Figma Plugin API `getNodeByIdAsync`
+lookups for registered nodes `236:33845` and `236:33847` also returned the six
+onboarding `riido.*` `API Generated` annotations. A timeout is supporting
+evidence only. It must not rewrite `expected_pages` downward, remove page
+`42:3014`, remove onboarding inventory, or mark onboarding generated paths unresolved; in other words, the timeout must not become onboarding generated
+paths unresolved. The authoritative page child count is currently 84, while the
+known captured inventory remains 83 until the extra top-level node identity can
+be captured without timeout.
 
 ## Coverage Rule
 
@@ -139,7 +140,7 @@ presentation fact, a no-diff product surface, or an open question.
 | Figma page | Page | Top-level children | Coverage role |
 | --- | --- | --- | --- |
 | `129:5215` | UI | 16 | primary detailed API/domain coverage |
-| `42:3014` | Wireframe - 온보딩 | 83 | supporting onboarding/platform evidence |
+| `42:3014` | Wireframe - 온보딩 | 84 | supporting onboarding/platform evidence |
 | `0:1` | Wireframe | 28 | legacy planning evidence |
 
 ## API Generated Annotation Content
@@ -213,10 +214,12 @@ ownership for old screenshots, duplicated legacy frames, or asset-only layers.
 The 2026-06-02 loaded inspection found page `0:1` `Wireframe` has 28 top-level
 children after `await figma.setCurrentPageAsync(page)`, even though a passive
 page-registry read can report it as a single child.
-The same loaded inspection found page `42:3014` `Wireframe - 온보딩` has 83
-top-level children. Several top-level layers have blank or repeated Figma names,
-so the executable inventory keeps stable descriptive labels while preserving
-the node IDs.
+The RIID-4900 live annotation traversal found page `42:3014`
+`Wireframe - 온보딩` has 84 top-level children. The executable inventory still
+has 83 identified top-level nodes because the full top-level identity traversal
+can time out after the page is loaded. Several captured top-level layers have
+blank or repeated Figma names, so the executable inventory keeps stable
+descriptive labels while preserving the node IDs.
 
 | Figma page | Figma node | Section | Status | Coverage rule |
 | --- | --- | --- | --- | --- |
