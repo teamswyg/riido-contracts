@@ -147,7 +147,7 @@ presentation fact, a no-diff product surface, or an open question.
 Figma Dev Mode annotations that start with `riido.` belong to category `700:0`
 `API Generated`. Each annotation must keep this handoff shape:
 
-1. `riido.*` generated-client facade path
+1. `riido.v2.*` generated-client facade path for workspace-scoped client APIs
 2. `종류: Query | Mutation | SSE Stream`
 3. `배경: ...` Korean frontend consumption background
 
@@ -157,23 +157,23 @@ handoff evidence, not a second API SSOT.
 `operation_kind` is not free text: it must match the generated OpenAPI
 transport. `text/event-stream` responses are `SSE Stream`, non-stream `GET`
 operations are `Query`, and non-`GET` operations are `Mutation`.
-The `riido.aiAgent.*` text in Figma is the frontend-facing facade. Each
-`api_generated_annotation_inventory` item must also keep the matching
-`v2.aiAgent.*` OpenAPI/generated-client counterpart in the same source coverage entry,
-so the Figma handoff remains searchable while the workspace-scoped v2 API stays
+The `riido.v2.aiAgent.*` text in Figma is the frontend-facing facade for the
+workspace-scoped client. Each `api_generated_annotation_inventory` item keeps a
+canonical `aiAgent.*` generated path and the matching `v2.aiAgent.*`
+OpenAPI/generated-client counterpart in the same source coverage entry, so the
+Figma handoff remains searchable while the durable API projection stays
 deterministic.
 
-The previous custom category `39:0` `클라이언트 전달` is retired. The 2026-06-02
+The previous custom category `39:0` `클라이언트 전달` is retired. The 2026-06-03
 inspection found zero annotations using it across the inspected pages. It still
-exists as an unused Figma category definition because the current Figma MCP
-category objects expose only data fields, not callable `remove` or `setLabel`
-methods, so this automation could not delete the definition.
+exists as an unused Figma category definition, but this automation does not
+delete shared design categories unless a design owner explicitly approves it.
 
-The 2026-06-02 lightweight Figma Plugin API annotation traversal found:
+The 2026-06-03 Figma Plugin API annotation traversal found:
 
 | Figma page | `riido.*` annotations | `API Generated` annotations | Missing kind | Missing background |
 | --- | ---: | ---: | ---: | ---: |
-| `129:5215` UI | 53 | 53 | 0 | 0 |
+| `129:5215` UI | 56 | 56 | 0 | 0 |
 | `42:3014` Wireframe - 온보딩 | 6 | 6 | 0 | 0 |
 | `0:1` Wireframe | 0 | 0 | 0 | 0 |
 
@@ -265,20 +265,21 @@ caller-provided configuration.
 Figma Dev Mode category `700:0` / `API Generated` is handoff evidence for
 frontend generated-client consumption. It does not own API names. A Figma label
 that starts with `riido.` is treated as a client facade example, and the durable
-contracts generated path is the same value without the leading `riido.` prefix.
+contracts generated path is the same value without the leading `riido.` prefix
+and without a live-label `v2.` segment.
 Current labels keep the facade path on the first line so Figma search works,
 then add Korean handoff context:
 
 ```text
-riido.aiAgent.tasks.stop
+riido.v2.aiAgent.tasks.stop
 종류: Mutation
 배경: 작업 중인 Agent에게 중지 요청을 보냅니다. daemon은 이 요청을 읽어 provider 실행을 강제 중지합니다.
 ```
 
 | Figma node | Figma label | Canonical generated path | Resolution |
 | --- | --- | --- | --- |
-| `153:8545` | `riido.aiAgent.events.stream` / `종류: SSE Stream` | `aiAgent.events.stream` | The stream hint is a client facade example over the task-thread active stream handoff, covered by `153:15931`, API DSL/OpenAPI, and generated-client comments. |
-| `236:20768` | `riido.aiAgent.tasks.stop` / `종류: Mutation` | `aiAgent.tasks.stop` | The stop hint is a client facade example over the task-thread stop operation, covered by `153:15931`, API DSL/OpenAPI, and generated-client comments. |
+| `153:8545` | `riido.v2.aiAgent.events.stream` / `종류: SSE Stream` | `aiAgent.events.stream` | The stream hint is a client facade example over the task-thread active stream handoff, covered by `153:15931`, API DSL/OpenAPI, and generated-client comments. |
+| `236:20768` | `riido.v2.aiAgent.tasks.stop` / `종류: Mutation` | `aiAgent.tasks.stop` | The stop hint is a client facade example over the task-thread stop operation, covered by `153:15931`, API DSL/OpenAPI, and generated-client comments. |
 
 The executable manifest keeps two layers for this category. The canonical field
 names are `api_generated_annotations` and
@@ -292,26 +293,26 @@ projection and generated TypeScript comments, and every group must carry
 
 | UI area | Representative Figma nodes | Facade path | Kind | Background shown in Figma |
 | --- | --- | --- | --- | --- |
-| Participant dropdown / task details | `227:16920`, `227:17993`, `236:33845`, `236:33847` | `riido.aiAgent.tasks.assignableAgents` | Query | 참여자 드롭다운에서 현재 task/subtask에 배정할 수 있는 Agent 목록을 조회합니다. task 배정 mutation에 넘길 agent_id는 이 응답의 agents[]에서 얻습니다. |
-| Participant dropdown / task details | `227:16920`, `227:17993`, `236:33845`, `236:33847` | `riido.aiAgent.tasks.assign` | Mutation | 작업에 Agent를 참여자로 배정하고 daemon이 런타임으로 작업을 시작할 수 있는 서버 상태를 만듭니다. |
-| Participant dropdown / task details | `227:16920`, `227:17993`, `236:33845`, `236:33847` | `riido.aiAgent.tasks.unassign` | Mutation | 참여자에서 Agent를 제거합니다. 진행 중이면 중지 요청/큐 해제 흐름으로 이어집니다. |
-| Task thread | `153:8592`, `236:21379` | `riido.aiAgent.tasks.threads` | Query | 작업의 완료/진행 중 Agent thread cold collection을 조회합니다. active_stream이 있으면 SSE로 이어집니다. |
-| Task thread | `153:8588` | `riido.aiAgent.tasks.threadMessages.create` | Mutation | 특정 thread_id에 다음 지시/답글을 추가하고 Agent 응답을 이어서 요청합니다. |
-| Task thread | `153:8588` | `riido.aiAgent.tasks.submitComment` | Mutation | 호환용 댓글 제출 경로입니다. thread_id 없이 입력하면 서버가 적절한 thread 응답 흐름을 처리합니다. |
-| Task thread | `153:8545`, `236:21379` | `riido.aiAgent.events.stream` | SSE Stream | threads 조회 결과에 active_stream이 있을 때만 연결해 진행 상태와 thread 갱신 이벤트를 받습니다. |
-| Task thread | `236:20768` | `riido.aiAgent.tasks.stop` | Mutation | 작업 중인 Agent에게 중지 요청을 보냅니다. daemon은 이 요청을 읽어 provider 실행을 강제 중지합니다. |
-| Runtime and agent settings | `160:10339`, `160:10418`, `559:34626`, `559:34704`, `164:34470`, `164:34476`, `164:34483`, `164:34496`, `435:72699`, `432:22231`, `432:35651`, `432:22617`, `432:35707` | `riido.aiAgent.devices.runtimes` | Query | 계정 소유 device에서 감지된 runtime 목록과 온라인/오프라인 상태를 조회합니다. 화면은 SaaS 값을 신뢰합니다. |
-| Runtime settings | `160:10654`, `559:34714` | `riido.aiAgent.agents.daemon.details` | Query | Agent에 연결된 daemon/runtime 상세와 제어 가능 상태를 SaaS 기준으로 조회합니다. |
-| Runtime settings | `129:17433`, `164:23586` | `riido.aiAgent.agents.daemon.start` | Mutation | stopped/offline 상태의 daemon에 시작 요청을 남깁니다. daemon 실행 트리거는 desktop이 담당하고, SaaS는 시작 요청 상태와 runtime projection을 제공합니다. |
-| Runtime settings | `160:14712`, `164:23904` | `riido.aiAgent.agents.daemon.stop` | Mutation | SaaS에 daemon 중지 요청을 남깁니다. daemon은 요청을 읽은 뒤 스스로 종료합니다. |
-| Runtime settings | `160:16169`, `164:23977` | `riido.aiAgent.agents.daemon.restart` | Mutation | SaaS에 daemon 재시작 요청을 남깁니다. daemon은 polling으로 요청을 읽어 실행합니다. |
-| Onboarding | `164:30672`, `164:30681`, `164:30690`, `164:30699` | `riido.aiAgent.onboarding.fixtures` | Query | 리도/영실/홍도/지원처럼 제품이 제공하는 초기값 목록을 조회합니다. template entity가 아니라 fixture입니다. |
-| Onboarding | `164:33556` | `riido.aiAgent.onboarding.fixtures.createAgent` | Mutation | 선택한 fixture 값을 기반으로 일반 Agent를 생성합니다. fixture 자체를 생성하는 기능은 아닙니다. |
-| Agent settings / direct setting | `337:24013`, `432:37349`, `134:6584`, `432:35493`, `164:30708`, `164:33556` | `riido.aiAgent.agents.create` | Mutation | 직접 설정 화면에서 워크스페이스 안에 새 Agent를 생성합니다. 신규 v2 create는 workspace_id를 포함합니다. |
-| Agent settings | `337:24013`, `432:37349` | `riido.aiAgent.bootstrap` | Query | AI Agent 설정/온보딩 초기 화면에 필요한 bootstrap.agents[]를 조회합니다. 설정/목록 화면의 agent list와 agent_id 출처이며, task 참여자 드롭다운은 tasks.assignableAgents를 사용합니다. |
-| Agent settings | `417:21803`, `432:35544` | `riido.aiAgent.agents.updateConfiguration` | Mutation | 할당 작업이 없는 Agent의 이름, 썸네일, 설명, 지침, 런타임, 모델, 공개 범위를 저장합니다. |
-| Agent settings | `417:21803`, `432:35544`, `432:38529`, `432:38855` | `riido.aiAgent.agents.editability` | Query | Agent를 수정할 수 있는지 먼저 조회합니다. 할당된 작업이 있으면 저장/수정 UI는 막혀야 합니다. |
-| Agent settings | `432:37746`, `432:38689` | `riido.aiAgent.agents.delete` | Mutation | Agent 삭제를 요청합니다. 진행/예약 중 작업은 서버 정책에 따라 중지 또는 큐 해제됩니다. |
+| Participant dropdown / task details | `227:16920`, `227:17993`, `236:33845`, `236:33847` | `riido.v2.aiAgent.tasks.assignableAgents` | Query | 참여자 드롭다운에서 현재 task/subtask에 배정할 수 있는 Agent 목록을 조회합니다. task 배정 mutation에 넘길 agent_id는 이 응답의 agents[]에서 얻습니다. |
+| Participant dropdown / task details | `227:16920`, `227:17993`, `236:33845`, `236:33847` | `riido.v2.aiAgent.tasks.assign` | Mutation | 작업에 Agent를 참여자로 배정하고 daemon이 런타임으로 작업을 시작할 수 있는 서버 상태를 만듭니다. |
+| Participant dropdown / task details | `227:16920`, `227:17993`, `236:33845`, `236:33847` | `riido.v2.aiAgent.tasks.unassign` | Mutation | 참여자에서 Agent를 제거합니다. 진행 중이면 중지 요청/큐 해제 흐름으로 이어집니다. |
+| Task thread | `153:8592`, `236:21379` | `riido.v2.aiAgent.tasks.threads` | Query | 작업의 완료/진행 중 Agent thread cold collection을 조회합니다. active_stream이 있으면 SSE로 이어집니다. |
+| Task thread | `153:8588` | `riido.v2.aiAgent.tasks.threadMessages.create` | Mutation | 특정 thread_id에 다음 지시/답글을 추가하고 Agent 응답을 이어서 요청합니다. |
+| Task thread | `153:8588` | `riido.v2.aiAgent.tasks.submitComment` | Mutation | 호환용 댓글 제출 경로입니다. thread_id 없이 입력하면 서버가 적절한 thread 응답 흐름을 처리합니다. |
+| Task thread | `153:8545`, `236:21379` | `riido.v2.aiAgent.events.stream` | SSE Stream | threads 조회 결과에 active_stream이 있을 때만 연결해 진행 상태와 thread 갱신 이벤트를 받습니다. |
+| Task thread | `236:20768` | `riido.v2.aiAgent.tasks.stop` | Mutation | 작업 중인 Agent에게 중지 요청을 보냅니다. daemon은 이 요청을 읽어 provider 실행을 강제 중지합니다. |
+| Runtime and agent settings | `160:10339`, `160:10418`, `559:34626`, `559:34704`, `164:34470`, `164:34476`, `164:34483`, `164:34496`, `435:72699`, `432:22231`, `432:35651`, `432:22617`, `432:35707` | `riido.v2.aiAgent.devices.runtimes` | Query | 계정 소유 device에서 감지된 runtime 목록과 온라인/오프라인 상태를 조회합니다. 화면은 SaaS 값을 신뢰합니다. |
+| Runtime settings | `160:10654`, `559:34714` | `riido.v2.aiAgent.agents.daemon.details` | Query | Agent에 연결된 daemon/runtime 상세와 제어 가능 상태를 SaaS 기준으로 조회합니다. |
+| Runtime settings | `129:17433`, `164:23586` | `riido.v2.aiAgent.agents.daemon.start` | Mutation | stopped/offline 상태의 daemon에 시작 요청을 남깁니다. daemon 실행 트리거는 desktop이 담당하고, SaaS는 시작 요청 상태와 runtime projection을 제공합니다. |
+| Runtime settings | `160:14712`, `164:23904` | `riido.v2.aiAgent.agents.daemon.stop` | Mutation | SaaS에 daemon 중지 요청을 남깁니다. daemon은 요청을 읽은 뒤 스스로 종료합니다. |
+| Runtime settings | `160:16169`, `164:23977` | `riido.v2.aiAgent.agents.daemon.restart` | Mutation | SaaS에 daemon 재시작 요청을 남깁니다. daemon은 polling으로 요청을 읽어 실행합니다. |
+| Onboarding | `164:30672`, `164:30681`, `164:30690`, `164:30699` | `riido.v2.aiAgent.onboarding.fixtures` | Query | 리도/영실/홍도/지원처럼 제품이 제공하는 초기값 목록을 조회합니다. template entity가 아니라 fixture입니다. |
+| Onboarding | `164:33556` | `riido.v2.aiAgent.onboarding.fixtures.createAgent` | Mutation | 선택한 fixture 값을 기반으로 일반 Agent를 생성합니다. fixture 자체를 생성하는 기능은 아닙니다. |
+| Agent settings / direct setting | `337:24013`, `432:37349`, `134:6584`, `432:35493`, `164:30708`, `164:33556` | `riido.v2.aiAgent.agents.create` | Mutation | 직접 설정 화면에서 워크스페이스 안에 새 Agent를 생성합니다. 신규 v2 create는 workspace_id를 포함합니다. |
+| Agent settings | `160:10335`, `337:24013`, `432:37349` | `riido.v2.aiAgent.bootstrap` | Query | AI Agent 설정/온보딩 초기 화면에 필요한 bootstrap.agents[]를 조회합니다. 설정/목록 화면의 agent list와 agent_id 출처이며, task 참여자 드롭다운은 tasks.assignableAgents를 사용합니다. |
+| Agent settings | `417:21803`, `432:35544` | `riido.v2.aiAgent.agents.updateConfiguration` | Mutation | 할당 작업이 없는 Agent의 이름, 썸네일, 설명, 지침, 런타임, 모델, 공개 범위를 저장합니다. |
+| Agent settings | `417:21803`, `432:35544`, `432:38529`, `432:38855` | `riido.v2.aiAgent.agents.editability` | Query | Agent를 수정할 수 있는지 먼저 조회합니다. 할당된 작업이 있으면 저장/수정 UI는 막혀야 합니다. |
+| Agent settings | `432:37746`, `432:38689` | `riido.v2.aiAgent.agents.delete` | Mutation | Agent 삭제를 요청합니다. 진행/예약 중 작업은 서버 정책에 따라 중지 또는 큐 해제됩니다. |
 
 ## Ownership Notes
 
@@ -338,7 +339,7 @@ projection and generated TypeScript comments, and every group must carry
 
 ## Current Annotation Pass
 
-The 2026-06-02 Figma annotation pass keeps the same 16 top-level sections on
+The 2026-06-03 Figma annotation pass keeps the same 16 top-level sections on
 primary page `129:5215`, records loaded non-UI page inventories, and keeps
 coverage-bearing non-UI sections from pages `42:3014` and `0:1` distinct from
 inventory-only legacy layers. Legacy Wireframe nodes for runtime, agent,
