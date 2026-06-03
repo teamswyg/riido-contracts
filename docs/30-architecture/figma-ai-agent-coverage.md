@@ -173,9 +173,14 @@ The 2026-06-03 Figma Plugin API annotation traversal found:
 
 | Figma page | `riido.*` annotations | `API Generated` annotations | Missing kind | Missing background |
 | --- | ---: | ---: | ---: | ---: |
-| `129:5215` UI | 56 | 56 | 0 | 0 |
+| `129:5215` UI | 84 | 84 | 0 | 0 |
 | `42:3014` Wireframe - 온보딩 | 6 | 6 | 0 | 0 |
 | `0:1` Wireframe | 0 | 0 | 0 | 0 |
+
+RIID-4898 split the former runtime control label that bundled
+`riido.v2.aiAgent.agents.daemon.start / restart / stop` into three independent
+Mutation annotations. Figma search now resolves each generated path exactly the
+same way frontend code searches the generated client facade.
 
 ## UI Top-Level Coverage
 
@@ -293,26 +298,26 @@ projection and generated TypeScript comments, and every group must carry
 
 | UI area | Representative Figma nodes | Facade path | Kind | Background shown in Figma |
 | --- | --- | --- | --- | --- |
-| Participant dropdown / task details | `227:16920`, `227:17993`, `236:33845`, `236:33847` | `riido.v2.aiAgent.tasks.assignableAgents` | Query | 참여자 드롭다운에서 현재 task/subtask에 배정할 수 있는 Agent 목록을 조회합니다. task 배정 mutation에 넘길 agent_id는 이 응답의 agents[]에서 얻습니다. |
-| Participant dropdown / task details | `227:16920`, `227:17993`, `236:33845`, `236:33847` | `riido.v2.aiAgent.tasks.assign` | Mutation | 작업에 Agent를 참여자로 배정하고 daemon이 런타임으로 작업을 시작할 수 있는 서버 상태를 만듭니다. |
-| Participant dropdown / task details | `227:16920`, `227:17993`, `236:33845`, `236:33847` | `riido.v2.aiAgent.tasks.unassign` | Mutation | 참여자에서 Agent를 제거합니다. 진행 중이면 중지 요청/큐 해제 흐름으로 이어집니다. |
-| Task thread | `153:8592`, `236:21379` | `riido.v2.aiAgent.tasks.threads` | Query | 작업의 완료/진행 중 Agent thread cold collection을 조회합니다. active_stream이 있으면 SSE로 이어집니다. |
-| Task thread | `153:8588` | `riido.v2.aiAgent.tasks.threadMessages.create` | Mutation | 특정 thread_id에 다음 지시/답글을 추가하고 Agent 응답을 이어서 요청합니다. |
+| Participant dropdown / task details | `153:8342`, `227:16920`, `227:17993`, `236:33845`, `236:33847` | `riido.v2.aiAgent.tasks.assignableAgents` | Query | 참여자 드롭다운에서 현재 task/subtask에 배정할 수 있는 Agent 목록을 조회합니다. task 배정 mutation에 넘길 agent_id는 이 응답의 agents[]에서 얻습니다. |
+| Participant dropdown / task details | `153:8342`, `227:16920`, `227:17993`, `236:33845`, `236:33847` | `riido.v2.aiAgent.tasks.assign` | Mutation | 작업에 Agent를 참여자로 배정하고 daemon이 런타임으로 작업을 시작할 수 있는 서버 상태를 만듭니다. |
+| Participant dropdown / task details | `153:8342`, `227:16920`, `227:17993`, `236:33845`, `236:33847` | `riido.v2.aiAgent.tasks.unassign` | Mutation | 참여자에서 Agent를 제거합니다. 진행 중이면 중지 요청/큐 해제 흐름으로 이어집니다. |
+| Task thread | `153:8518`, `153:8592`, `236:21379` | `riido.v2.aiAgent.tasks.threads` | Query | 작업의 완료/진행 중 Agent thread cold collection을 조회합니다. active_stream이 있으면 SSE로 이어집니다. |
+| Task thread | `153:8518`, `153:8588` | `riido.v2.aiAgent.tasks.threadMessages.create` | Mutation | 특정 thread_id에 다음 지시/답글을 추가하고 Agent 응답을 이어서 요청합니다. |
 | Task thread | `153:8588` | `riido.v2.aiAgent.tasks.submitComment` | Mutation | 호환용 댓글 제출 경로입니다. thread_id 없이 입력하면 서버가 적절한 thread 응답 흐름을 처리합니다. |
-| Task thread | `153:8545`, `236:21379` | `riido.v2.aiAgent.events.stream` | SSE Stream | threads 조회 결과에 active_stream이 있을 때만 연결해 진행 상태와 thread 갱신 이벤트를 받습니다. |
-| Task thread | `236:20768` | `riido.v2.aiAgent.tasks.stop` | Mutation | 작업 중인 Agent에게 중지 요청을 보냅니다. daemon은 이 요청을 읽어 provider 실행을 강제 중지합니다. |
-| Runtime and agent settings | `160:10339`, `160:10418`, `559:34626`, `559:34704`, `164:34470`, `164:34476`, `164:34483`, `164:34496`, `435:72699`, `432:22231`, `432:35651`, `432:22617`, `432:35707` | `riido.v2.aiAgent.devices.runtimes` | Query | 계정 소유 device에서 감지된 runtime 목록과 온라인/오프라인 상태를 조회합니다. 화면은 SaaS 값을 신뢰합니다. |
-| Runtime settings | `160:10654`, `559:34714` | `riido.v2.aiAgent.agents.daemon.details` | Query | Agent에 연결된 daemon/runtime 상세와 제어 가능 상태를 SaaS 기준으로 조회합니다. |
-| Runtime settings | `129:17433`, `164:23586` | `riido.v2.aiAgent.agents.daemon.start` | Mutation | stopped/offline 상태의 daemon에 시작 요청을 남깁니다. daemon 실행 트리거는 desktop이 담당하고, SaaS는 시작 요청 상태와 runtime projection을 제공합니다. |
-| Runtime settings | `160:14712`, `164:23904` | `riido.v2.aiAgent.agents.daemon.stop` | Mutation | SaaS에 daemon 중지 요청을 남깁니다. daemon은 요청을 읽은 뒤 스스로 종료합니다. |
-| Runtime settings | `160:16169`, `164:23977` | `riido.v2.aiAgent.agents.daemon.restart` | Mutation | SaaS에 daemon 재시작 요청을 남깁니다. daemon은 polling으로 요청을 읽어 실행합니다. |
-| Onboarding | `164:30672`, `164:30681`, `164:30690`, `164:30699` | `riido.v2.aiAgent.onboarding.fixtures` | Query | 리도/영실/홍도/지원처럼 제품이 제공하는 초기값 목록을 조회합니다. template entity가 아니라 fixture입니다. |
-| Onboarding | `164:33556` | `riido.v2.aiAgent.onboarding.fixtures.createAgent` | Mutation | 선택한 fixture 값을 기반으로 일반 Agent를 생성합니다. fixture 자체를 생성하는 기능은 아닙니다. |
-| Agent settings / direct setting | `337:24013`, `432:37349`, `134:6584`, `432:35493`, `164:30708`, `164:33556` | `riido.v2.aiAgent.agents.create` | Mutation | 직접 설정 화면에서 워크스페이스 안에 새 Agent를 생성합니다. 신규 v2 create는 workspace_id를 포함합니다. |
-| Agent settings | `160:10335`, `337:24013`, `432:37349` | `riido.v2.aiAgent.bootstrap` | Query | AI Agent 설정/온보딩 초기 화면에 필요한 bootstrap.agents[]를 조회합니다. 설정/목록 화면의 agent list와 agent_id 출처이며, task 참여자 드롭다운은 tasks.assignableAgents를 사용합니다. |
-| Agent settings | `417:21803`, `432:35544` | `riido.v2.aiAgent.agents.updateConfiguration` | Mutation | 할당 작업이 없는 Agent의 이름, 썸네일, 설명, 지침, 런타임, 모델, 공개 범위를 저장합니다. |
-| Agent settings | `417:21803`, `432:35544`, `432:38529`, `432:38855` | `riido.v2.aiAgent.agents.editability` | Query | Agent를 수정할 수 있는지 먼저 조회합니다. 할당된 작업이 있으면 저장/수정 UI는 막혀야 합니다. |
-| Agent settings | `432:37746`, `432:38689` | `riido.v2.aiAgent.agents.delete` | Mutation | Agent 삭제를 요청합니다. 진행/예약 중 작업은 서버 정책에 따라 중지 또는 큐 해제됩니다. |
+| Task thread | `153:8518`, `153:8545`, `236:21379` | `riido.v2.aiAgent.events.stream` | SSE Stream | threads 조회 결과에 active_stream이 있을 때만 연결해 진행 상태와 thread 갱신 이벤트를 받습니다. |
+| Task thread | `153:8518`, `236:20768` | `riido.v2.aiAgent.tasks.stop` | Mutation | 작업 중인 Agent에게 중지 요청을 보냅니다. daemon은 이 요청을 읽어 provider 실행을 강제 중지합니다. |
+| Runtime and agent settings | `160:10339`, `160:10418`, `559:34626`, `559:34704`, `129:17616`, `164:34459`, `164:34470`, `164:34476`, `164:34483`, `164:34496`, `435:72699`, `134:6542`, `417:21753`, `432:22231`, `432:35651`, `432:22617`, `432:35707` | `riido.v2.aiAgent.devices.runtimes` | Query | 계정 소유 device에서 감지된 runtime 목록과 온라인/오프라인 상태를 조회합니다. 화면은 SaaS 값을 신뢰합니다. |
+| Runtime settings | `160:10654`, `559:34714`, `129:17616` | `riido.v2.aiAgent.agents.daemon.details` | Query | Agent에 연결된 daemon/runtime 상세와 제어 가능 상태를 SaaS 기준으로 조회합니다. |
+| Runtime settings | `129:17433`, `164:23586`, `129:17616` | `riido.v2.aiAgent.agents.daemon.start` | Mutation | stopped/offline 상태의 daemon에 시작 요청을 남깁니다. daemon 실행 트리거는 desktop이 담당하고, SaaS는 시작 요청 상태와 runtime projection을 제공합니다. |
+| Runtime settings | `160:14712`, `164:23904`, `129:17616` | `riido.v2.aiAgent.agents.daemon.stop` | Mutation | SaaS에 daemon 중지 요청을 남깁니다. daemon은 요청을 읽은 뒤 스스로 종료합니다. |
+| Runtime settings | `160:16169`, `164:23977`, `129:17616` | `riido.v2.aiAgent.agents.daemon.restart` | Mutation | SaaS에 daemon 재시작 요청을 남깁니다. daemon은 polling으로 요청을 읽어 실행합니다. |
+| Onboarding | `164:30661`, `164:30672`, `164:30681`, `164:30690`, `164:30699` | `riido.v2.aiAgent.onboarding.fixtures` | Query | 리도/영실/홍도/지원처럼 제품이 제공하는 초기값 목록을 조회합니다. template entity가 아니라 fixture입니다. |
+| Onboarding | `164:30661`, `164:33536`, `164:33556` | `riido.v2.aiAgent.onboarding.fixtures.createAgent` | Mutation | 선택한 fixture 값을 기반으로 일반 Agent를 생성합니다. fixture 자체를 생성하는 기능은 아닙니다. |
+| Agent settings / direct setting | `164:30661`, `164:30708`, `164:33536`, `164:33556`, `134:6542`, `134:6584`, `432:35493`, `337:24001`, `337:24013`, `432:37349` | `riido.v2.aiAgent.agents.create` | Mutation | 직접 설정 화면에서 워크스페이스 안에 새 Agent를 생성합니다. 신규 v2 create는 workspace_id를 포함합니다. |
+| Agent settings | `160:10335`, `129:17616`, `337:24001`, `337:24013`, `432:37349` | `riido.v2.aiAgent.bootstrap` | Query | AI Agent 설정/온보딩 초기 화면에 필요한 bootstrap.agents[]를 조회합니다. 설정/목록 화면의 agent list와 agent_id 출처이며, task 참여자 드롭다운은 tasks.assignableAgents를 사용합니다. |
+| Agent settings | `417:21753`, `417:21803`, `432:35544` | `riido.v2.aiAgent.agents.updateConfiguration` | Mutation | 할당 작업이 없는 Agent의 이름, 썸네일, 설명, 지침, 런타임, 모델, 공개 범위를 저장합니다. |
+| Agent settings | `417:21753`, `417:21803`, `432:35544`, `337:24001`, `432:38529`, `432:38855` | `riido.v2.aiAgent.agents.editability` | Query | Agent를 수정할 수 있는지 먼저 조회합니다. 할당된 작업이 있으면 저장/수정 UI는 막혀야 합니다. |
+| Agent settings | `337:24001`, `432:37746`, `432:38689` | `riido.v2.aiAgent.agents.delete` | Mutation | Agent 삭제를 요청합니다. 진행/예약 중 작업은 서버 정책에 따라 중지 또는 큐 해제됩니다. |
 
 ## Ownership Notes
 
