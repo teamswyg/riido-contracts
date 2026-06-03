@@ -550,7 +550,7 @@ func verifyFigmaAPIGeneratedAnnotations(t *testing.T, annotations []figmaAPIGene
 		if !strings.HasPrefix(annotation.FigmaGeneratedPath, "riido.") {
 			t.Fatalf("API Generated annotation %q must preserve the Figma facade path: %q", annotation.NodeID, annotation.FigmaGeneratedPath)
 		}
-		canonical := strings.TrimPrefix(annotation.FigmaGeneratedPath, "riido.")
+		canonical := canonicalPathFromFigmaFacade(annotation.FigmaGeneratedPath)
 		if annotation.CanonicalGeneratedPath != canonical {
 			t.Fatalf("API Generated annotation %q canonical path = %q, want %q", annotation.NodeID, annotation.CanonicalGeneratedPath, canonical)
 		}
@@ -608,15 +608,15 @@ func verifyFigmaAPIGeneratedAnnotationContentPolicy(t *testing.T, policy figmaAP
 	}
 	verifyFigmaAPIGeneratedRetiredCategories(t, policy.RetiredCategories, docText)
 	scan := policy.LiveInspection
-	if scan.ObservedAt != "2026-06-02" || !strings.Contains(scan.Tool, "use_figma") {
+	if scan.ObservedAt != "2026-06-03" || !strings.Contains(scan.Tool, "use_figma") || !strings.Contains(scan.Tool, "categoryId") {
 		t.Fatalf("API Generated annotation live inspection provenance drifted: %+v", scan)
 	}
 	expected := map[string]figmaAPIGeneratedAnnotationLivePageCounter{
 		"129:5215": {
 			PageID:               "129:5215",
 			PageName:             "UI",
-			RiidoAnnotationCount: 53,
-			APIGeneratedCount:    53,
+			RiidoAnnotationCount: 56,
+			APIGeneratedCount:    56,
 		},
 		"42:3014": {
 			PageID:               "42:3014",
@@ -657,8 +657,8 @@ func verifyFigmaAPIGeneratedAnnotationContentPolicy(t *testing.T, policy figmaAP
 	if scan.TotalRiidoAnnotations != totalRiido || scan.TotalAPIGeneratedAnnotations != totalAPIGenerated {
 		t.Fatalf("API Generated annotation live totals = riido:%d/api:%d, want riido:%d/api:%d", scan.TotalRiidoAnnotations, scan.TotalAPIGeneratedAnnotations, totalRiido, totalAPIGenerated)
 	}
-	if totalRiido != 59 || totalAPIGenerated != 59 {
-		t.Fatalf("API Generated annotation live totals = riido:%d/api:%d, want 59/59", totalRiido, totalAPIGenerated)
+	if totalRiido != 62 || totalAPIGenerated != 62 {
+		t.Fatalf("API Generated annotation live totals = riido:%d/api:%d, want 62/62", totalRiido, totalAPIGenerated)
 	}
 }
 
@@ -674,7 +674,7 @@ func verifyFigmaAPIGeneratedRetiredCategories(t *testing.T, categories []figmaAP
 	if retired.RetirementStatus != "unused_not_deleted" || retired.LiveUsageCount != 0 {
 		t.Fatalf("retired API Generated category must stay unused_not_deleted with zero live usage: %+v", retired)
 	}
-	if retired.ObservedAt != "2026-06-02" || !strings.Contains(retired.ToolLimitation, "remove/setLabel") {
+	if retired.ObservedAt != "2026-06-03" || !strings.Contains(retired.ToolLimitation, "design owner") {
 		t.Fatalf("retired API Generated category must record automation limitation: %+v", retired)
 	}
 	for _, needle := range []string{retired.CategoryID, retired.CategoryLabel, "retired", "zero annotations"} {
@@ -702,7 +702,7 @@ func verifyFigmaAPIGeneratedAnnotationInventory(t *testing.T, inventory []figmaA
 		if !strings.HasPrefix(group.FigmaGeneratedPath, "riido.") {
 			t.Fatalf("API Generated annotation group must preserve Figma facade path: %q", group.FigmaGeneratedPath)
 		}
-		canonical := strings.TrimPrefix(group.FigmaGeneratedPath, "riido.")
+		canonical := canonicalPathFromFigmaFacade(group.FigmaGeneratedPath)
 		if group.CanonicalGeneratedPath != canonical {
 			t.Fatalf("API Generated annotation group %q canonical path = %q, want %q", group.FigmaGeneratedPath, group.CanonicalGeneratedPath, canonical)
 		}
@@ -783,9 +783,15 @@ func verifyFigmaAPIGeneratedAnnotationInventory(t *testing.T, inventory []figmaA
 			t.Fatalf("coverage doc must mention API Generated annotation v2 counterpart %q", v2Path)
 		}
 	}
-	if got, want := totalAnnotations, 61; got != want {
+	if got, want := totalAnnotations, 62; got != want {
 		t.Fatalf("API Generated annotation inventory node annotations = %d, want %d", got, want)
 	}
+}
+
+func canonicalPathFromFigmaFacade(path string) string {
+	out := strings.TrimPrefix(path, "riido.")
+	out = strings.TrimPrefix(out, "v2.")
+	return out
 }
 
 func verifyFigmaRuntimeEndpointLabel(t *testing.T, evidence []figmaCoverageNode, runtimeEntry figmaCoverageEntry, docText string) {
