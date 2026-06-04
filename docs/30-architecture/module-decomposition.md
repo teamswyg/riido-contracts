@@ -16,7 +16,9 @@ contracts. It is intentionally small and standard-library only.
 | `hostintegration` | C11/C10 distribution and provider routing status vocabulary | app data roots, IPC, consent storage, store helper implementation |
 | `assignment` | C10 assignment polling DTOs and state vocabulary | control-plane store actor, HTTP/SSE handlers, authorization, persistence |
 | `apicontract` | C10 API DSL, API IR, generated OpenAPI projection fixtures, API enum/sum-type vocabulary | control-plane handlers, frontend implementation, authorization/RBAC implementation, generated client code |
+| `progressmessage` | C10 AI Agent runtime progress message DSL/IR, integer code catalog, locale templates, and append-only validation | provider output parsing, control-plane HTTP/SSE handlers, frontend rendering behavior |
 | `tools/apicontract` | deterministic fixture drift verifier/generator | runtime code generation output, network calls, third-party parser dependencies |
+| `tools/progressmessage` | deterministic progress-message DSL -> IR drift verifier/generator | daemon runtime emission, control-plane SSE rendering, frontend message rendering |
 | `tools/ssotdeps` | deterministic verifier for the SSOT dependency manifest and acyclic repo dependency graph | downstream repository execution gates, live Riido task mutation, third-party graph parsers |
 
 ## Dependency Rules

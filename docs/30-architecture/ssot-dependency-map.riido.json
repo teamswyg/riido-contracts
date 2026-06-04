@@ -376,6 +376,37 @@
       ]
     },
     {
+      "id": "progress-message-catalog",
+      "fact": "AI Agent runtime progress messages are fixed, translated, integer-coded, append-only, and rendered before public SSE delivery",
+      "human_doc_phrase": "AI Agent runtime progress messages are fixed, translated, integer-coded, append-only, and rendered before public SSE delivery",
+      "source_refs": [
+        {
+          "repo": "riido-contracts",
+          "path": "docs/20-domain/progress-message-catalog.md",
+          "required_phrase": "AI Agent runtime progress messages are fixed, translated, integer-coded, append-only, and rendered before public SSE delivery"
+        },
+        {
+          "repo": "riido-contracts",
+          "path": "progressmessage/catalog.dsl.riido.json",
+          "required_phrase": "append_only"
+        }
+      ],
+      "owner": {
+        "repo": "riido-contracts",
+        "path": "progressmessage/catalog.dsl.riido.json"
+      },
+      "downstreams": [
+        {
+          "repo": "riido-control-plane",
+          "local_scope": "renders structured progress codes to the existing thread/SSE message string and preserves backward-compatible raw message ingestion"
+        },
+        {
+          "repo": "riido-daemon",
+          "local_scope": "parses structured provider telemetry, maps known legacy text, and submits progress code/args plus rendered fallback copy"
+        }
+      ]
+    },
+    {
       "id": "rbac-vocabulary",
       "fact": "Admin, owner, public, and private visibility vocabulary",
       "human_doc_phrase": "Admin/owner/public-private visibility vocabulary",
@@ -569,6 +600,7 @@
         "onboarding-draft-ordering",
         "participant-dropdown-agent-ordering",
         "profile-thumbnail-url",
+        "progress-message-catalog",
         "rbac-vocabulary",
         "workspace-assigned-agent-profile-map",
         "workspace-scoped-ai-agent-v2-api"
@@ -585,7 +617,8 @@
         "generated-assignment-excludes-team-openapi-key",
         "instruction",
         "onboarding-draft-ordering",
-        "profile-thumbnail-url"
+        "profile-thumbnail-url",
+        "progress-message-catalog"
       ],
       "local_scope": "Daemon consumes assigned agent settings only at runtime boundaries."
     },

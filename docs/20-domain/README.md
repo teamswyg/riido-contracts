@@ -43,6 +43,12 @@ RIID-4868 adds:
 - device principal enrollment and daemon credential semantics in
   [`device-principal.md`](device-principal.md)
 
+Current AI Agent progress-message work adds:
+
+- fixed, translated, append-only runtime progress copy in
+  [`progress-message-catalog.md`](progress-message-catalog.md), with the
+  executable catalog under `progressmessage/catalog.dsl.riido.json`
+
 The EventIngestor implementation, policy redaction catalog, provider adapters,
 server stores, and Terraform deployment code remain outside this repository.
 They may consume these contracts, but they do not become contract module

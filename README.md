@@ -69,6 +69,8 @@ OpenAPI는 사람이 직접 고치는 SSOT가 아닙니다. Domain DSL이 원본
   validation을 소유합니다.
 - `hostintegration`: distribution channel과 provider routing status
   vocabulary를 공유합니다.
+- `progressmessage`: AI Agent runtime progress message의 integer code,
+  locale template, usage classification, append-only fixture를 소유합니다.
 - `provider/capability`: provider capability, protocol identifier,
   compatibility status, fingerprint vocabulary를 소유합니다.
 - `task`: task lifecycle state와 transition matrix를 소유합니다.
@@ -87,6 +89,7 @@ OpenAPI는 사람이 직접 고치는 SSOT가 아닙니다. Domain DSL이 원본
 go test ./...
 go list -m all
 go run ./tools/apicontract verify
+go run ./tools/progressmessage verify
 go run ./tools/ssotdeps verify
 ```
 

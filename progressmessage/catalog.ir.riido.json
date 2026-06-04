@@ -1,0 +1,189 @@
+{
+  "schema_version": "riido-progress-message-ir.v1",
+  "contract_id": "ai-agent-progress-message-catalog.v1",
+  "source_schema_version": "riido-progress-message-dsl.v1",
+  "append_only": true,
+  "max_messages": 15,
+  "messages": [
+    {
+      "code": 1001,
+      "key": "agent.thinking",
+      "usage": "required",
+      "category": "agent",
+      "description": "Provider has not produced a more specific structured tool/progress signal yet.",
+      "locales": {
+        "en": "Thinking. . .",
+        "ko": "생각 중. . ."
+      }
+    },
+    {
+      "code": 1002,
+      "key": "assignment.queued.agent_busy",
+      "usage": "required",
+      "category": "assignment",
+      "description": "The selected agent already owns another active assignment and this task is queued.",
+      "locales": {
+        "en": "I am working on another task right now. I will start as soon as the current task finishes.",
+        "ko": "지금은 다른 작업을 처리 중이에요. 현재 작업이 끝나는 대로 바로 시작할게요."
+      }
+    },
+    {
+      "code": 1003,
+      "key": "assignment.stopped.agent_deleted",
+      "usage": "required",
+      "category": "assignment",
+      "description": "The agent was deleted while the assignment was active.",
+      "locales": {
+        "en": "The agent was deleted, so the active task was stopped.",
+        "ko": "에이전트가 삭제되어 진행 중이던 작업이 중지됐어요."
+      }
+    },
+    {
+      "code": 1004,
+      "key": "assignment.stopped.by_user",
+      "usage": "active",
+      "category": "assignment",
+      "description": "A user explicitly stopped the active assignment.",
+      "args": [
+        {
+          "name": "actor_name",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "locales": {
+        "en": "{{actor_name}} stopped this task.",
+        "ko": "{{actor_name}}님이 직접 종료하였습니다"
+      }
+    },
+    {
+      "code": 1101,
+      "key": "tool.collecting",
+      "usage": "active",
+      "category": "tool",
+      "description": "A tool-backed collection/read operation is in progress.",
+      "args": [
+        {
+          "name": "label",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "locales": {
+        "en": "Collecting {{label}} - {{description}}",
+        "ko": "{{label}} 수집 중 - {{description}}"
+      }
+    },
+    {
+      "code": 1102,
+      "key": "tool.collection_completed_count",
+      "usage": "active",
+      "category": "tool",
+      "description": "A tool-backed collection/read operation completed with a count and representative title.",
+      "args": [
+        {
+          "name": "label",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "count",
+          "type": "int",
+          "required": true
+        },
+        {
+          "name": "representative_title",
+          "type": "string"
+        }
+      ],
+      "locales": {
+        "en": "{{label}} lookup complete - fetched summaries for {{count}} items including {{representative_title}}. . .",
+        "ko": "{{label}} 조회 완료 - {{count}}건({{representative_title}} 외)의 요약을 가져왔습니다. . ."
+      }
+    },
+    {
+      "code": 1103,
+      "key": "tool.running",
+      "usage": "active",
+      "category": "tool",
+      "description": "A tool/action is executing.",
+      "args": [
+        {
+          "name": "label",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "description",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "locales": {
+        "en": "Running {{label}} - {{description}}",
+        "ko": "{{label}} 실행 중 - {{description}}"
+      }
+    },
+    {
+      "code": 1104,
+      "key": "tool.completed",
+      "usage": "active",
+      "category": "tool",
+      "description": "A tool/action completed with a short summary.",
+      "args": [
+        {
+          "name": "label",
+          "type": "string",
+          "required": true
+        },
+        {
+          "name": "summary",
+          "type": "string",
+          "required": true
+        }
+      ],
+      "locales": {
+        "en": "{{label}} complete - {{summary}}",
+        "ko": "{{label}} 완료 - {{summary}}"
+      }
+    },
+    {
+      "code": 1201,
+      "key": "assignment.started",
+      "usage": "reserved",
+      "category": "assignment",
+      "description": "Reserved for future explicit start-copy once product copy is finalized.",
+      "locales": {
+        "en": "The task has started.",
+        "ko": "작업을 시작했어요."
+      }
+    },
+    {
+      "code": 1202,
+      "key": "assignment.completed",
+      "usage": "reserved",
+      "category": "assignment",
+      "description": "Reserved for future explicit completion-copy once product copy is finalized.",
+      "locales": {
+        "en": "The task is complete.",
+        "ko": "작업을 완료했어요."
+      }
+    },
+    {
+      "code": 1203,
+      "key": "assignment.failed",
+      "usage": "reserved",
+      "category": "assignment",
+      "description": "Reserved for future explicit failure-copy once product copy is finalized.",
+      "locales": {
+        "en": "The task could not continue.",
+        "ko": "작업을 계속 진행하지 못했어요."
+      }
+    }
+  ]
+}
