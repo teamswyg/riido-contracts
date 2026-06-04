@@ -188,6 +188,19 @@ in which case the existing queued tuple is returned. `DELETE
 command and uses the existing stopped-by-user typed status; whether stopped rows
 are hidden in the task comment UI remains client presentation.
 
+Workspace assigned-agent profile map: workspace task/card lists use the v2-only
+generated query
+`riido.v2.aiAgent.tasks.assignedAgentProfiles`, projected to
+`GET /v2/client/workspaces/{workspace_id}/ai-agent/tasks/assigned-agent-profiles`.
+It returns `AssignedAgentProfileMapResponse.assigned_agent_profiles`, an object
+whose keys are the actual Riido component/task ids and whose values contain the
+minimal profile display hints `avatar_url` and/or `tmp_color`. The response is a
+workspace read model for currently active queued/running/stopping AI Agent
+assignments only; completed, stopped, failed, unassigned, or historical-only
+threads remain available through task-thread history and are omitted from this
+map. Clients use this query for list/card avatar hints, not for participant
+dropdown candidates.
+
 ## Generated Client Delivery Boundary
 
 Generated client delivery PRs are review handoffs. This contract owns the API
