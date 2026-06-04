@@ -90,6 +90,15 @@ a daemon that lost local in-flight state after restart may rebuild the same
 `TaskRequest` from the returned assignment snapshot. The control plane must
 therefore keep `active` payloads self-contained in the same way as `start`.
 
+While an assignment is `leased`, `ready`, or `running`, the daemon sends an
+assignment heartbeat every 5 seconds. The control plane treats the active
+assignment lease as stale when it has not been refreshed for 20 seconds. A stale
+active assignment is terminally failed before the same agent can claim later
+queued work, and later daemon heartbeats/events for that expired lease must not
+revive it. The heartbeat response refreshes only assignments that still hold the
+active lease; a daemon must treat a missing refreshed assignment as a server-side
+stale/cancel signal and stop the local provider run.
+
 `AgentRuntimeBinding` is the shared DTO that lets a daemon know which
 workspace-created agent may poll through one of its runtime slots. The DTO shape
 is shared here, but the binding list is not a static deployment secret in the

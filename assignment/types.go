@@ -10,6 +10,14 @@ const (
 	// SchemaVersion is the C10 SaaS assignment API schema version shared by
 	// daemon poll/event clients and the control-plane API surface.
 	SchemaVersion = "riido-ai-server.v1"
+
+	// RecommendedHeartbeatIntervalSeconds is the daemon-side cadence for
+	// active assignment heartbeats.
+	RecommendedHeartbeatIntervalSeconds = 5
+
+	// ActiveAssignmentStaleAfterSeconds is the control-plane lease timeout for
+	// assignments that are leased, ready, or running.
+	ActiveAssignmentStaleAfterSeconds = 20
 )
 
 type AssignmentState string
