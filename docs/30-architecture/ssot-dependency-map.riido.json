@@ -5,6 +5,41 @@
   "human_doc": "docs/30-architecture/ssot-dependency-map.md",
   "facts": [
     {
+      "id": "active-assignment-heartbeat-stale-lease",
+      "fact": "Daemon sends active assignment heartbeats every 5 seconds; control-plane treats 20 seconds without refresh as stale and must not let late traffic revive the lease",
+      "human_doc_phrase": "Active assignment heartbeat and stale lease fencing",
+      "source_refs": [
+        {
+          "repo": "riido-contracts",
+          "path": "docs/20-domain/assignment-polling.md",
+          "required_phrase": "assignment heartbeat every 5 seconds"
+        },
+        {
+          "repo": "riido-contracts",
+          "path": "docs/20-domain/assignment-polling.md",
+          "required_phrase": "not been refreshed for 20 seconds"
+        }
+      ],
+      "owner": {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/assignment-polling.md"
+      },
+      "downstreams": [
+        {
+          "repo": "riido-control-plane",
+          "local_scope": "uses a 20 second default active-assignment lease, fails stale active assignments during poll/heartbeat, and does not refresh expired leases"
+        },
+        {
+          "repo": "riido-daemon",
+          "local_scope": "uses a 5 second default heartbeat cadence and cancels local provider runs when heartbeat response omits a requested active assignment"
+        },
+        {
+          "repo": "riido-client",
+          "local_scope": "no generated client or visible thread API change; frontend sees existing typed thread/SSE state changes"
+        }
+      ]
+    },
+    {
       "id": "agent-concept",
       "fact": "Agent means a task-assignable abstraction of a configured runtime",
       "human_doc_phrase": "Agent means a task-assignable abstraction of a configured runtime",
@@ -590,6 +625,7 @@
       "from_repo": "riido-control-plane",
       "to_repo": "riido-contracts",
       "fact_ids": [
+        "active-assignment-heartbeat-stale-lease",
         "agent-concept",
         "agent-editability",
         "api-projection",
@@ -612,6 +648,7 @@
       "from_repo": "riido-daemon",
       "to_repo": "riido-contracts",
       "fact_ids": [
+        "active-assignment-heartbeat-stale-lease",
         "agent-concept",
         "fixture-created-agent-normal-lifecycle",
         "generated-assignment-excludes-team-openapi-key",
