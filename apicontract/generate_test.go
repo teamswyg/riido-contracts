@@ -141,6 +141,62 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	if len(agentCreateV2.Parameters) != 1 || agentCreateV2.Parameters[0].Name != "workspace_id" {
 		t.Fatalf("v2 agent create parameters = %#v", agentCreateV2.Parameters)
 	}
+	createRequest := openAPI.Components.Schemas["CreateAgentConfigurationRequest"]
+	createRequestDescription, ok := createRequest["description"].(string)
+	if !ok ||
+		!strings.Contains(createRequestDescription, "프로필 사진") ||
+		!strings.Contains(createRequestDescription, "런타임") ||
+		!strings.Contains(createRequestDescription, "모델") ||
+		!strings.Contains(createRequestDescription, "지침") {
+		t.Fatalf("CreateAgentConfigurationRequest description must explain Figma agent setting fields: %q", createRequestDescription)
+	}
+	createRequestRequired, ok := createRequest["required"].([]string)
+	if !ok ||
+		!contains(createRequestRequired, "name") ||
+		!contains(createRequestRequired, "visibility") ||
+		!contains(createRequestRequired, "runtime_id") ||
+		contains(createRequestRequired, "model_id") {
+		t.Fatalf("CreateAgentConfigurationRequest required = %#v", createRequest["required"])
+	}
+	createRequestProps, ok := createRequest["properties"].(map[string]any)
+	if !ok {
+		t.Fatalf("CreateAgentConfigurationRequest properties missing: %#v", createRequest)
+	}
+	for _, propertyName := range []string{"name", "profile_thumbnail_url", "description", "runtime_id", "model_id", "visibility", "instruction"} {
+		if _, ok := createRequestProps[propertyName].(map[string]any); !ok {
+			t.Fatalf("CreateAgentConfigurationRequest missing %s: %#v", propertyName, createRequestProps)
+		}
+	}
+	createThumbnail, ok := createRequestProps["profile_thumbnail_url"].(map[string]any)
+	if !ok || createThumbnail["format"] != "uri" {
+		t.Fatalf("CreateAgentConfigurationRequest profile_thumbnail_url schema = %#v", createRequestProps["profile_thumbnail_url"])
+	}
+	createDescription, ok := createRequestProps["description"].(map[string]any)
+	if !ok || createDescription["maxLength"] != 160 {
+		t.Fatalf("CreateAgentConfigurationRequest description schema = %#v", createRequestProps["description"])
+	}
+	createInstruction, ok := createRequestProps["instruction"].(map[string]any)
+	if !ok || createInstruction["maxLength"] != 1000 {
+		t.Fatalf("CreateAgentConfigurationRequest instruction schema = %#v", createRequestProps["instruction"])
+	}
+	updateRequest := openAPI.Components.Schemas["UpdateAgentConfigurationRequest"]
+	updateRequestDescription, ok := updateRequest["description"].(string)
+	if !ok ||
+		!strings.Contains(updateRequestDescription, "프로필 사진") ||
+		!strings.Contains(updateRequestDescription, "런타임") ||
+		!strings.Contains(updateRequestDescription, "모델") ||
+		!strings.Contains(updateRequestDescription, "지침") {
+		t.Fatalf("UpdateAgentConfigurationRequest description must explain Figma agent setting fields: %q", updateRequestDescription)
+	}
+	updateRequestProps, ok := updateRequest["properties"].(map[string]any)
+	if !ok {
+		t.Fatalf("UpdateAgentConfigurationRequest properties missing: %#v", updateRequest)
+	}
+	for _, propertyName := range []string{"name", "profile_thumbnail_url", "description", "runtime_id", "model_id", "visibility", "instruction"} {
+		if _, ok := updateRequestProps[propertyName].(map[string]any); !ok {
+			t.Fatalf("UpdateAgentConfigurationRequest missing %s: %#v", propertyName, updateRequestProps)
+		}
+	}
 	agentV2 := openAPI.Components.Schemas["AgentClientRecordV2"]
 	agentV2Props, ok := agentV2["properties"].(map[string]any)
 	if !ok {
