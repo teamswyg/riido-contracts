@@ -481,6 +481,37 @@
       ]
     },
     {
+      "id": "workspace-assigned-agent-profile-map",
+      "fact": "Workspace task/card lists read current assigned AI Agent profile hints from a component_id keyed v2 map",
+      "human_doc_phrase": "Workspace assigned-agent profile map",
+      "source_refs": [
+        {
+          "repo": "riido-contracts",
+          "path": "docs/20-domain/ai-agent-policy.md",
+          "required_phrase": "workspace assigned-agent profile map"
+        },
+        {
+          "repo": "riido-contracts",
+          "path": "docs/20-domain/api-contract-projection.md",
+          "required_phrase": "riido.v2.aiAgent.tasks.assignedAgentProfiles"
+        }
+      ],
+      "owner": {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/api-contract-projection.md"
+      },
+      "downstreams": [
+        {
+          "repo": "riido-control-plane",
+          "local_scope": "v2 HTTP route, current assignment projection, fixture color persistence, and generated-client handoff"
+        },
+        {
+          "repo": "riido-client",
+          "local_scope": "Task/card list avatar hints use the generated query without replacing participant dropdown or task-thread reads."
+        }
+      ]
+    },
+    {
       "id": "workspace-scoped-ai-agent-v2-api",
       "fact": "AI Agent v2 client API is scoped by workspace_id path parameters while workspace list/create remains outside the AI Agent contract",
       "human_doc_phrase": "Workspace-scoped AI Agent v2 API",
@@ -539,6 +570,7 @@
         "participant-dropdown-agent-ordering",
         "profile-thumbnail-url",
         "rbac-vocabulary",
+        "workspace-assigned-agent-profile-map",
         "workspace-scoped-ai-agent-v2-api"
       ],
       "local_scope": "Control-plane executes HTTP, fixture, authorization, and generated-client behavior without redefining canonical policy."

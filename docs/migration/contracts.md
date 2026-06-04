@@ -732,6 +732,23 @@ This slice does not remove legacy task-context reader integrations, change the
 existing private API-server lookup, add generated client fields, add daemon
 credentials to OpenAPI examples, or change deployment topology.
 
+### RIID-4902 — Workspace assigned-agent profile map
+
+This slice adds the generated read model needed by task/card lists to render
+currently assigned AI Agent profile hints without issuing one request per task.
+
+This slice does:
+
+- add the v2 generated query path `riido.v2.aiAgent.tasks.assignedAgentProfiles`
+- project `GET /v2/client/workspaces/{workspace_id}/ai-agent/tasks/assigned-agent-profiles`
+- define `AssignedAgentProfileMapResponse.assigned_agent_profiles` as a
+  component_id/task_id keyed object
+- preserve `avatar_url` and fixture `tmp_color` as minimal presentation hints
+- record Figma onboarding fixture fallback colors for 리도, 영실, 홍도, and 지원
+
+This slice does not change participant dropdown selection, task-thread history,
+daemon polling, assignment commands, or frontend rendering precedence.
+
 ## Validation Gates
 
 Required for this repository:

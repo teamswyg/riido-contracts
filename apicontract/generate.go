@@ -442,6 +442,11 @@ func validatePropertyRef(schemaName string, property Property, components map[st
 			return fmt.Errorf("apicontract: schema %q property %q ref %q is missing", schemaName, property.Name, property.Ref)
 		}
 	}
+	if property.AdditionalPropertiesRef != "" {
+		if _, ok := components[property.AdditionalPropertiesRef]; !ok {
+			return fmt.Errorf("apicontract: schema %q property %q additional_properties_ref %q is missing", schemaName, property.Name, property.AdditionalPropertiesRef)
+		}
+	}
 	if property.Items != nil {
 		return validatePropertyRef(schemaName, *property.Items, components)
 	}
@@ -574,6 +579,9 @@ func propertyToOpenAPI(property Property) map[string]any {
 	}
 	if property.AdditionalProperties {
 		out["additionalProperties"] = true
+	}
+	if property.AdditionalPropertiesRef != "" {
+		out["additionalProperties"] = refSchema(property.AdditionalPropertiesRef)
 	}
 	return out
 }

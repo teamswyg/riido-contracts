@@ -162,6 +162,17 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	if !strings.Contains(v2Bootstrap.Summary, "v2.aiAgent.bootstrap.agents[]") {
 		t.Fatalf("v2 bootstrap summary must name agents[] source for generated comments: %q", v2Bootstrap.Summary)
 	}
+	assignedProfiles := openAPI.Paths["/v2/client/workspaces/{workspace_id}/ai-agent/tasks/assigned-agent-profiles"]["get"]
+	if assignedProfiles.OperationID != "listWorkspaceAssignedAgentProfilesV2" ||
+		assignedProfiles.RiidoClient == nil ||
+		assignedProfiles.RiidoClient.GeneratedPath != "v2.aiAgent.tasks.assignedAgentProfiles" ||
+		assignedProfiles.RiidoClient.CacheTag != "v2.aiAgent.tasks.assignedAgentProfiles" ||
+		assignedProfiles.RiidoRBAC != "workspace_assigned_agent_profile_map.v1" {
+		t.Fatalf("assigned profiles operation = %#v", assignedProfiles)
+	}
+	if len(assignedProfiles.Parameters) != 1 || assignedProfiles.Parameters[0].Name != "workspace_id" {
+		t.Fatalf("assigned profiles parameters = %#v", assignedProfiles.Parameters)
+	}
 	threadMessageCreate := openAPI.Paths["/v1/client/ai-agent/tasks/{task_id}/threads/{thread_id}/messages"]["post"]
 	if threadMessageCreate.OperationID != "createAIAgentTaskThreadMessage" ||
 		threadMessageCreate.RiidoClient == nil ||
@@ -176,6 +187,9 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	fixtureID, ok := fixtureProps["fixture_id"].(map[string]any)
 	if !ok || fixtureID["description"] == "" {
 		t.Fatalf("fixture_id description missing: %#v", fixtureProps["fixture_id"])
+	}
+	if _, ok := fixtureProps["tmp_color"].(map[string]any); !ok {
+		t.Fatalf("fixture tmp_color schema missing: %#v", fixtureProps)
 	}
 	bootstrapSchema := openAPI.Components.Schemas["ClientBootstrapResponse"]
 	bootstrapProps, ok := bootstrapSchema["properties"].(map[string]any)
@@ -260,6 +274,22 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	}
 	if _, ok := recordProps["model_id"].(map[string]any); !ok {
 		t.Fatalf("model_id schema missing: %#v", recordProps)
+	}
+	if _, ok := recordProps["tmp_color"].(map[string]any); !ok {
+		t.Fatalf("tmp_color schema missing: %#v", recordProps)
+	}
+	assignedProfileMap := openAPI.Components.Schemas["AssignedAgentProfileMapResponse"]
+	assignedProfileMapProps, ok := assignedProfileMap["properties"].(map[string]any)
+	if !ok {
+		t.Fatalf("AssignedAgentProfileMapResponse properties missing: %#v", assignedProfileMap)
+	}
+	assignedProfileValues, ok := assignedProfileMapProps["assigned_agent_profiles"].(map[string]any)
+	if !ok {
+		t.Fatalf("assigned_agent_profiles property missing: %#v", assignedProfileMapProps)
+	}
+	additional, ok := assignedProfileValues["additionalProperties"].(map[string]any)
+	if !ok || additional["$ref"] != "#/components/schemas/AssignedAgentProfile" {
+		t.Fatalf("assigned_agent_profiles additionalProperties = %#v", assignedProfileValues["additionalProperties"])
 	}
 	agentID, ok := recordProps["agent_id"].(map[string]any)
 	if !ok {

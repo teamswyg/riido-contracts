@@ -281,13 +281,17 @@ For agent settings specifically:
 
 - `profile_thumbnail_url`, `description`, and `instruction` meaning starts here
   and in the `control-plane-ai-agent-client-api.v2` DSL fixture.
+- `tmp_color` is a fixture-provided avatar fallback color that may be copied
+  into fixture-created agents. It is not a template id, not a UI-only magic
+  constant, and not a durable template entity.
 - `model_id` meaning starts here and in the same DSL fixture. It is validated
   against the selected runtime's `RuntimeModelRecord` catalog and defaults to
   the selected runtime's default model when omitted.
 - onboarding fixture catalog meaning starts here and is projected through
   `GET /v1/client/ai-agent/onboarding/fixtures` so clients can render fixture
-  names, descriptions, role labels, thumbnails, default visibility, recommended
-  runtime kind, and copyable instructions without owning the source text.
+  names, descriptions, role labels, thumbnails, fixture fallback colors, default
+  visibility, recommended runtime kind, and copyable instructions without owning
+  the source text.
 - `riido-control-plane` owns HTTP validation, save/update behavior, fixture data,
   and generated-client handoff.
 - `riido-daemon` owns only runtime consumption of an assigned instruction value;
@@ -345,6 +349,11 @@ For agent settings specifically:
   key transport such as `X-Workspace-Api-Key` are not generated client inputs,
   agent fields, daemon inputs, deployment prerequisites, or smoke-test
   acceptance criteria.
+- The workspace assigned-agent profile map starts here and in the API DSL
+  fixture. It is a v2 workspace read model keyed by the actual component/task id
+  string and returns only `avatar_url`/`tmp_color` presentation hints for
+  currently active AI Agent assignments. It does not replace
+  `tasks.assignableAgents`, task-thread history, or daemon assignment polling.
 - Figma runtime settings annotations (`node-id=162-23090`) can cite runtime
   liveness, agent hover, daemon stop modal, and restart animation behavior. This
   repo owns the device/runtime read-model policy, agent-bound daemon detail
@@ -480,16 +489,18 @@ plane still validates the selected `runtime_id` at agent create/update time.
 The control plane exposes an ordered onboarding fixture catalog at
 `GET /v1/client/ai-agent/onboarding/fixtures`. A fixture is a copyable default
 for an agent configuration and contains `fixture_id`, `name`, optional
-`role_label`, optional `profile_thumbnail_url`, `description`, `instruction`,
-`default_visibility`, and optional `recommended_runtime_kind`. Fixture text and
-instruction defaults are contract data so frontend clients do not hard-code the
-behavioral meaning of product-provided agent defaults.
+`role_label`, optional `profile_thumbnail_url`, optional `tmp_color`,
+`description`, `instruction`, `default_visibility`, and optional
+`recommended_runtime_kind`. Fixture text, fallback color, and instruction
+defaults are contract data so frontend clients do not hard-code the behavioral
+meaning or presentation fallback of product-provided agent defaults.
 
 The fixture-selection step from `node-id=138-7389` is projected from
 `AgentOnboardingFixtureListResponse.fixtures` in response order. Current Figma
 evidence shows four onboarding fixture rows, `리도`, `영실`, `홍도`, and
-`지원`, but the rows are not frontend-owned copy and they are not
-backend-managed templates. The
+`지원`. Their current avatar fallback colors are `#C9A452`, `#6AA437`,
+`#B87EAD`, and `#2F84DE` in that order, but the rows are not frontend-owned copy
+and they are not backend-managed templates. The
 `직접 설정` row is not an `AgentOnboardingFixture`; it is a client presentation
 entry that lets the user continue to explicit agent configuration. The
 pre-selection disabled `다음` button and the right-side preview skeleton/popover
@@ -576,12 +587,18 @@ Agent names are mutable and not unique.
 
 Agent profile presentation belongs to the agent configuration, not to a task
 thread or runtime. The client-facing agent record therefore carries optional
-`profile_thumbnail_url`, `description`, and `instruction` fields wherever
-agents are returned.
+`profile_thumbnail_url`, `tmp_color`, `description`, and `instruction` fields
+wherever agents are returned.
 
 The thumbnail value is an HTTPS image URL string. Binary upload, image
 resizing, CDN storage, and moderation are outside this contract until a separate
 media/storage contract owns them.
+
+The `tmp_color` value is an optional fixture-provided avatar fallback color.
+Selecting 리도/영실/홍도/지원 may copy this value into the normal created agent so
+workspace task/card lists can show the same product-provided color without
+hard-coding fixture names. Directly configured agents may omit it, and clients
+own whether `avatar_url` or `tmp_color` wins when both are present.
 
 The description value is client-authored text used as a short, one-line agent
 summary in agent list and edit surfaces. Empty text is allowed. The current

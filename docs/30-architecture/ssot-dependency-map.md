@@ -175,6 +175,11 @@ The current duplicated wording is intentional only in these forms:
   They must not turn client presentation facts into API, daemon, or Terraform
   requirements. Only agent visibility and owned-first agent ordering are
   canonical AI Agent contract facts.
+- Workspace assigned-agent profile map docs may restate that the frontend needs
+  a workspace-level assigned-agent avatar hint map. They must not replace
+  participant dropdown candidate queries, task-thread history, daemon polling,
+  or assignment command semantics. Only the v2 `assignedAgentProfiles` read
+  model shape and active assignment filtering are canonical API facts.
 - Assignment-target-scope docs may restate that Figma `node-id=153-15935` says
   only tasks and subtasks can receive Agent assignment, existing AI property
   filling does not recommend agents, and agent mentions are unsupported. They
