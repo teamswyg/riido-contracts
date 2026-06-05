@@ -55,7 +55,12 @@ type ProviderCapability struct {
 	SupportsWorktree        bool
 	SupportsJSONSchemaTools bool
 
-	// safety-surface defaults
+	// safety-surface defaults.
+	//
+	// These are provider-reported or profile-derived capability facts, not a
+	// Riido runtime launch decision. A downstream provider adapter may choose a
+	// stronger trusted-runtime envelope only through its own C4/C7 SSOT and
+	// harness evidence; it must not infer that decision from these fields alone.
 	DefaultSandboxMode    string
 	DefaultApprovalPolicy string
 	HasNetworkOffDefault  bool
