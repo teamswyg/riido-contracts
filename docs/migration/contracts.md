@@ -712,6 +712,26 @@ This slice does:
 This slice does not remove historical test fixtures, change generated frontend
 operations, add Terraform resources, or define device credential rotation.
 
+### RIID-4917 — Device/runtime liveness stale projection
+
+This slice records the shared contract decision that device/runtime liveness is
+refreshed by daemon runtime snapshots, not by active assignment heartbeat alone.
+
+This slice does:
+
+- require a running daemon to refresh device/runtime liveness with an aggregated
+  runtime snapshot every 5 seconds
+- define the 20 second stale projection rule for device daemon availability,
+  runtime availability, and runtime detection state
+- require control-plane to exclude stale runtimes from newly derived
+  `AgentRuntimeBinding`
+- preserve the generated frontend route and response shape; clients keep
+  reading existing availability/detection fields
+
+This slice does not add a new frontend generated operation, change assignment
+SSE shape, define credential rotation, add infrastructure resources, or alter
+Desktop enrollment.
+
 ### RIID-4881 — Team/OpenAPI exclusion for DevicePrincipal E2E
 
 This slice tightens the canonical exclusion rule for generated AI Agent

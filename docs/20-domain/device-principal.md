@@ -139,6 +139,32 @@ runtime unavailable for newly derived bindings. Existing agent records are not
 deleted by runtime disappearance; they become actionable again only when the
 same device/runtime identity is detected and reported again.
 
+## Device And Runtime Liveness
+
+The daemon refreshes device/runtime liveness by sending a daemon runtime
+snapshot every 5 seconds while the desktop-launched daemon is running. The
+snapshot is daemon-level and should aggregate the current device runtime rows
+where possible; it must not create one SaaS request per runtime unless a
+provider-specific transport forces that shape.
+
+SSOT phrase for dependency checks: daemon runtime snapshot every 5 seconds.
+
+The control plane treats a device/runtime read model as stale when the latest
+runtime snapshot for that device has not been refreshed for 20 seconds. Stale
+devices and runtimes are still historical records, but client-facing runtime
+reads must project them as unavailable:
+
+- device daemon availability becomes `offline`
+- runtime availability becomes `offline`
+- runtime detection state becomes `missing`
+- stale runtimes must not be used for newly derived `AgentRuntimeBinding`
+  projection
+
+This policy does not add a generated frontend route or change the response
+shape. Frontend code keeps reading the existing device/runtime fields and
+renders the current availability values. A later fresh runtime snapshot may
+make the same device/runtime identity available again.
+
 ## Secret Non-Exposure
 
 The raw `device_secret` must not be written to:
