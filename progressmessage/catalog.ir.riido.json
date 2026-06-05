@@ -61,7 +61,7 @@
       "key": "tool.collecting",
       "usage": "active",
       "category": "tool",
-      "description": "A tool-backed collection/read operation is in progress.",
+      "description": "A tool-backed collection/read operation is in progress. The label argument must be a state-neutral noun phrase and must not include rendered state copy such as collecting/running/completed.",
       "args": [
         {
           "name": "label",
@@ -84,7 +84,7 @@
       "key": "tool.collection_completed_count",
       "usage": "active",
       "category": "tool",
-      "description": "A tool-backed collection/read operation completed with a count and representative title.",
+      "description": "A tool-backed collection/read operation completed with a count and representative title. The label argument must be a state-neutral noun phrase and must not include rendered state copy such as collecting/running/completed.",
       "args": [
         {
           "name": "label",
@@ -111,7 +111,7 @@
       "key": "tool.running",
       "usage": "active",
       "category": "tool",
-      "description": "A tool/action is executing.",
+      "description": "A tool/action is executing. The label argument must be a state-neutral noun phrase and must not include rendered state copy such as collecting/running/completed.",
       "args": [
         {
           "name": "label",
@@ -134,7 +134,7 @@
       "key": "tool.completed",
       "usage": "active",
       "category": "tool",
-      "description": "A tool/action completed with a short summary.",
+      "description": "A tool/action completed with a short summary. The label argument must be a state-neutral noun phrase and must not include rendered state copy such as collecting/running/completed.",
       "args": [
         {
           "name": "label",

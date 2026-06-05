@@ -25,6 +25,15 @@ AI Agent runtime progress messages are fixed, translated, integer-coded, append-
 - Public frontend SSE shape does not change. The generated/internal code may
   carry `message_code` and `message_args`, but the public UI still consumes the
   rendered `message`.
+- Tool message `label` arguments are state-neutral nouns or noun phrases. They
+  name the target or action subject, such as `팀 프로젝트`, `웹 검색`,
+  `README 수정`, or `검증`. They must not include the rendered state suffix that
+  the catalog template owns, such as `수집 중`, `조회 완료`, `실행 중`, `실행`,
+  or `완료`.
+- Daemon and control-plane renderers defensively normalize `label` before
+  rendering so persisted/provider telemetry such as `테스트 실행` or `검증 완료`
+  does not become duplicated public copy like `테스트 실행 실행 중` or
+  `검증 완료 완료`.
 
 ## Projection
 
