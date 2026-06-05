@@ -660,9 +660,13 @@ a compatibility route for existing UI tests and must not be treated as the
 authoritative new integration path.
 For a non-admin viewer this normally means a viewer-owned runtime or a runtime
 made available through a public agent; an admin can use runtime rows made
-visible by workspace RBAC. Local daemon detail/control follows the agent access
+visible by workspace RBAC. Admin role never means "all persisted devices in the
+control-plane snapshot"; device/runtime rows from another workspace stay hidden
+unless they are exposed through a visible agent/runtime access path in the
+current workspace. Local daemon detail/control follows the agent access
 boundary, not a standalone device-owner-only rule. After creation, admin may mutate all agents,
-owner may mutate owned agents, and no agent can be edited while it has assigned tasks.
+owner may mutate owned agents, and no agent can be edited while it has assigned
+tasks.
 
 ### Agent List Timestamps
 
