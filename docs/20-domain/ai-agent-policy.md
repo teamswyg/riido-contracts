@@ -141,21 +141,25 @@ Dev Mode annotations call out an agent hover popover, a daemon stop modal, and a
 restart-in-progress animation. The durable contract facts are:
 
 - the runtime settings route consumes the existing device/runtime read model,
-  `GET /v1/client/ai-agent/devices`, the agent-bound daemon detail endpoint,
-  daemon command endpoints, plus device/runtime and daemon status events
+  `GET /v1/client/ai-agent/devices`, device-bound daemon detail/command
+  endpoints for `내 기기`, agent-bound daemon detail/command endpoints for
+  explicit selected-agent access, plus device/runtime and daemon status events
 - `내 기기` and `다른 기기` groups are both composed from ordinary device and
   runtime records; current-device grouping is a client/session selection, not a
   new API resource class
 - the agent hover popover uses existing agent profile fields such as `name` and
   `description`; hover timing, layout, and truncation remain client-owned
-- daemon details are SaaS read-model facts exposed through
-  `riido.aiAgent.agents.daemon.details`; these include online/offline status,
-  uptime, PID, daemon ID, profile, device name, and control state
+- `내 기기` daemon details are SaaS read-model facts exposed through
+  `riido.aiAgent.devices.daemon.details` with `device_id`; selected-agent
+  daemon details remain exposed through `riido.aiAgent.agents.daemon.details`.
+  Both include online/offline status, uptime, PID, daemon ID, profile, device
+  name, and control state
 - the endpoint-looking runtime settings label at `node-id=129:17930` is not a
   canonical base URL, generated path, or live host export; clients must receive
   the AI Agent API base URL through configuration outside this contract
 - daemon start/restart/stop are SaaS command requests exposed through generated
-  client endpoints under `riido.aiAgent.agents.daemon.*`;
+  client endpoints under `riido.aiAgent.devices.daemon.*` for `내 기기` and
+  `riido.aiAgent.agents.daemon.*` for explicit selected-agent access;
   the desktop daemon still executes local lifecycle behavior after reading the
   accepted command
 - daemon stop acceptance makes that device's runtimes client-visible as
@@ -356,10 +360,11 @@ For agent settings specifically:
   `tasks.assignableAgents`, task-thread history, or daemon assignment polling.
 - Figma runtime settings annotations (`node-id=162-23090`) can cite runtime
   liveness, agent hover, daemon stop modal, and restart animation behavior. This
-  repo owns the device/runtime read-model policy, agent-bound daemon detail
-  projection, agent-bound daemon start/restart/stop command contract, and the
-  fact that a daemon stop makes affected runtimes offline through the existing
-  liveness policy. Client hover/modal/animation behavior is downstream
+  repo owns the device/runtime read-model policy, device-bound `내 기기` daemon
+  detail/start/restart/stop contract, agent-bound selected-agent daemon
+  detail/start/restart/stop contract, and the fact that a daemon stop makes
+  affected runtimes offline through the existing liveness policy. Client
+  hover/modal/animation behavior is downstream
   presentation.
 - Figma runtime settings empty-state annotations (`node-id=275-22731`) can cite
   provider install cards, hover states, Windows app waitlist copy, and marketing
@@ -425,15 +430,22 @@ Detection errors or missed detections are client-visible as `offline`.
 ### Runtime Settings
 
 The runtime settings surface is a client composition over the control-plane
-device/runtime read model and the agent-bound daemon read/command model.
+device/runtime read model, the device-bound `내 기기` daemon read/command model,
+and the agent-bound selected-agent daemon read/command model.
 
 The control-plane client API exposes device/runtime liveness and attached-agent
 metadata for current-device, other-device, and agent-accessible groups through
 `GET /v1/client/ai-agent/devices`. The runtime settings screen reads daemon
-detail through `GET /v1/client/ai-agent/agents/{agent_id}/daemon`; this
-response owns the SaaS-visible daemon facts needed by the settings page:
+detail for the current viewer's own device through
+`GET /v1/client/ai-agent/devices/{device_id}/daemon`; this device-bound response
+owns the SaaS-visible `내 기기` daemon facts needed by the settings page:
 online/offline status, uptime, PID, daemon ID, profile, device name, supported
-actions, and current control state.
+actions, and current control state. The `device_id` comes from the devices
+response; the client must not choose an arbitrary `agent_id` to render `내 기기`.
+
+The existing `GET /v1/client/ai-agent/agents/{agent_id}/daemon` route remains
+agent-bound. It is used only when the client intentionally reads daemon detail
+through a selected agent and that agent's public/private access policy.
 
 Figma `node-id=129:17930` is an endpoint-looking label inside the runtime
 settings section, but it is not an API endpoint SSOT. This contract exposes
@@ -443,20 +455,28 @@ screen copy.
 
 Start, restart, and stop are distinct SaaS command requests:
 
+- `POST /v1/client/ai-agent/devices/{device_id}/daemon/start`
+- `POST /v1/client/ai-agent/devices/{device_id}/daemon/restart`
+- `POST /v1/client/ai-agent/devices/{device_id}/daemon/stop`
 - `POST /v1/client/ai-agent/agents/{agent_id}/daemon/start`
 - `POST /v1/client/ai-agent/agents/{agent_id}/daemon/restart`
 - `POST /v1/client/ai-agent/agents/{agent_id}/daemon/stop`
 
 Those commands are not direct local socket calls from the frontend. The client
 asks the SaaS control plane, the daemon reads the accepted command, and the
-daemon performs local lifecycle control. The generated frontend path is
+daemon performs local lifecycle control. The generated frontend path for `내
+기기` is `riido.aiAgent.devices.daemon.details/start/restart/stop`; the
+agent-bound generated path is
 `riido.aiAgent.agents.daemon.details/start/restart/stop`.
 
-Daemon detail and daemon commands follow the agent access boundary. Publishing
-an agent as public delegates indirect daemon/runtime execution and daemon
-command requests to workspace members for that agent. Keeping an agent private
-limits the same path to workspace admins and the agent owner. Knowing a
-`device_id` alone is never enough to inspect or control a daemon.
+Device-bound daemon detail and daemon commands are limited to the authenticated
+owner's own registered device. Agent-bound daemon detail and daemon commands
+follow the agent access boundary. Publishing an agent as public delegates
+indirect daemon/runtime execution and daemon command requests to workspace
+members for that agent. Keeping an agent private limits the same path to
+workspace admins and the agent owner. A client must not substitute an arbitrary
+`agent_id` for the `내 기기` row, and a `device_id` is accepted only through the
+device-bound owner-authenticated route.
 
 When a stop command is accepted, affected runtimes on that device become
 client-visible as `offline` through the same runtime liveness read model. The
