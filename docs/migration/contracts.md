@@ -721,12 +721,14 @@ This slice does:
 
 - require a running daemon to refresh device/runtime liveness with an aggregated
   runtime snapshot every 5 seconds
+- require the same snapshot to carry daemon process facts used by existing
+  daemon-detail fields: profile, PID, started-at, and uptime
 - define the 20 second stale projection rule for device daemon availability,
   runtime availability, and runtime detection state
 - require control-plane to exclude stale runtimes from newly derived
   `AgentRuntimeBinding`
 - preserve the generated frontend route and response shape; clients keep
-  reading existing availability/detection fields
+  reading existing availability/detection and daemon-detail fields
 
 This slice does not add a new frontend generated operation, change assignment
 SSE shape, define credential rotation, add infrastructure resources, or alter

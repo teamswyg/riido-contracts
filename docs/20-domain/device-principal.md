@@ -147,6 +147,13 @@ snapshot is daemon-level and should aggregate the current device runtime rows
 where possible; it must not create one SaaS request per runtime unless a
 provider-specific transport forces that shape.
 
+The same snapshot also carries the daemon process facts that the SaaS read model
+already exposes for device-bound daemon detail: profile, PID when available,
+started-at timestamp, and uptime seconds. The snapshot may include daemon app
+version as server-side telemetry, but the client still reads the existing
+generated daemon-detail response shape and does not call the local daemon
+directly.
+
 SSOT phrase for dependency checks: daemon runtime snapshot every 5 seconds.
 
 The control plane treats a device/runtime read model as stale when the latest
