@@ -122,6 +122,46 @@
       ]
     },
     {
+      "id": "device-runtime-liveness-stale-projection",
+      "fact": "Daemon refreshes device/runtime liveness every 5 seconds; control-plane projects device/runtime read models offline after 20 seconds without a refreshed runtime snapshot",
+      "human_doc_phrase": "Device/runtime liveness snapshot and stale projection",
+      "source_refs": [
+        {
+          "repo": "riido-contracts",
+          "path": "docs/20-domain/device-principal.md",
+          "required_phrase": "daemon runtime snapshot every 5 seconds"
+        },
+        {
+          "repo": "riido-contracts",
+          "path": "docs/20-domain/device-principal.md",
+          "required_phrase": "not been refreshed for 20 seconds"
+        },
+        {
+          "repo": "riido-contracts",
+          "path": "docs/20-domain/device-principal.md",
+          "required_phrase": "stale runtimes must not be used for newly derived `AgentRuntimeBinding`"
+        }
+      ],
+      "owner": {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/device-principal.md"
+      },
+      "downstreams": [
+        {
+          "repo": "riido-control-plane",
+          "local_scope": "projects stale device daemons/runtimes as offline/missing in client reads and excludes stale runtimes from newly derived daemon agent bindings"
+        },
+        {
+          "repo": "riido-daemon",
+          "local_scope": "sends an aggregated daemon runtime snapshot on the 5 second heartbeat cadence even when no assignment is active"
+        },
+        {
+          "repo": "riido-client",
+          "local_scope": "no generated route or response-shape change; existing runtime availability and detection fields drive UI state"
+        }
+      ]
+    },
+    {
       "id": "experimental-runtime-opt-in-assignment-snapshot",
       "fact": "Experimental runtime opt-in is assignment-created snapshot data",
       "human_doc_phrase": "Experimental runtime opt-in is assignment-created snapshot data",
@@ -629,6 +669,7 @@
         "agent-concept",
         "agent-editability",
         "api-projection",
+        "device-runtime-liveness-stale-projection",
         "fixture-created-agent-normal-lifecycle",
         "generated-assignment-excludes-team-openapi-key",
         "generated-client-delivery-review-handoff",
@@ -650,6 +691,7 @@
       "fact_ids": [
         "active-assignment-heartbeat-stale-lease",
         "agent-concept",
+        "device-runtime-liveness-stale-projection",
         "fixture-created-agent-normal-lifecycle",
         "generated-assignment-excludes-team-openapi-key",
         "instruction",
