@@ -178,10 +178,12 @@ The 2026-06-03 Figma Plugin API annotation traversal found:
 | `42:3014` Wireframe - 온보딩 | 6 | 6 | 0 | 0 |
 | `0:1` Wireframe | 0 | 0 | 0 | 0 |
 
-RIID-4898 split the former runtime control label that bundled
-`riido.v2.aiAgent.agents.daemon.start / restart / stop` into three independent
-Mutation annotations. Figma search now resolves each generated path exactly the
-same way frontend code searches the generated client facade.
+RIID-4898 split the former runtime control label into device-bound
+`riido.v2.aiAgent.devices.daemon.start / restart / stop` annotations for `내
+기기` and kept `riido.v2.aiAgent.agents.daemon.start / restart / stop` for
+explicit agent-mediated Mutation annotations. Figma search now resolves each
+generated path exactly the same way frontend code searches the generated client
+facade.
 
 ## UI Top-Level Coverage
 
@@ -195,7 +197,7 @@ same way frontend code searches the generated client facade.
 | `156:18767` | image 13 | non-decision asset | no independent SSOT decision |
 | `156:19307` | 메뉴바 | covered | client route affordance, control-plane data after route open |
 | `156:19308` | Group 6 | non-decision asset | no independent SSOT decision |
-| `162:23090` | 런타임 설정페이지 | covered | device/runtime read model, agent-bound daemon detail/control |
+| `162:23090` | 런타임 설정페이지 | covered | device/runtime read model, device-bound 내 기기 daemon detail/control, agent-bound selected-agent daemon detail/control |
 | `164:30658` | 데스크탑앱 온보딩-런타임 감지 O | covered | workspace-scoped onboarding fixture/direct create |
 | `435:60050` | 데스크탑앱 온보딩-런타임 감지 X | covered | device/runtime liveness, client/product install presentation |
 | `164:45736` | image 8 | non-decision asset | no independent SSOT decision |
@@ -228,11 +230,11 @@ descriptive labels while preserving the node IDs.
 | `42:3014` | `188:27708` | windows | no-diff product surface | Windows install/waitlist/launch-notification presentation stays outside AI Agent generated API |
 | `42:3014` | `432:46849` | Ex AI - 온보딩 순서 변경 메모 | covered | revised onboarding order is client-local draft/config selection first, but durable v2 create still requires selected workspace and runtime at final submit |
 | `0:1` | `13:3789` | 런타임 | covered | legacy runtime list absorbed by current UI runtime settings `162:23090` and `devices.runtimes` generated paths |
-| `0:1` | `86:9988` | 런타임 | covered | expanded legacy runtime frame absorbed by current UI runtime settings `162:23090` and agent-bound daemon detail |
+| `0:1` | `86:9988` | 런타임 | covered | expanded legacy runtime frame absorbed by current UI runtime settings `162:23090`, device-bound 내 기기 daemon detail, and agent-bound selected-agent daemon detail |
 | `0:1` | `17:3551` | 에이전트 | covered | legacy agent list absorbed by current UI agent settings `432:37336` and normal agent lifecycle paths |
 | `0:1` | `17:4231` | 에이전트 수정 | covered | legacy agent edit absorbed by current UI agent settings `432:37336`, editability, and `updateConfiguration` |
 | `0:1` | `84:9846` | 에이전트 추가 | covered | legacy agent add absorbed by current UI agent settings `432:37336` and ordinary direct create paths |
-| `0:1` | `17:2871` | 데몬 상세 | covered | legacy daemon detail absorbed by current UI runtime settings `162:23090` and agent-bound daemon command paths |
+| `0:1` | `17:2871` | 데몬 상세 | covered | legacy daemon detail absorbed by current UI runtime settings `162:23090`, device-bound 내 기기 daemon command paths, and agent-bound selected-agent daemon command paths |
 | `0:1` | `17:3111` | 런타임 상세 | covered | legacy runtime detail absorbed by current UI runtime settings `162:23090`; no standalone runtime-detail operation |
 | `0:1` | `153:15934` | 추가 기획 내용 | covered | legacy planning evidence resolved by UI page `153:15935` and task/subtask assignment scope |
 
@@ -253,7 +255,7 @@ API DSL, not hand-authored route names.
 | --- | --- |
 | Participant dropdown | `aiAgent.tasks.assignableAgents`, `aiAgent.tasks.assign`, `aiAgent.tasks.unassign`, `v2.aiAgent.tasks.assignableAgents`, `v2.aiAgent.tasks.assign`, `v2.aiAgent.tasks.unassign` |
 | Task thread | `aiAgent.tasks.threads`, `aiAgent.tasks.threadMessages.create`, `aiAgent.tasks.submitComment`, `aiAgent.tasks.stop`, `aiAgent.events.stream`, `v2.aiAgent.tasks.threads`, `v2.aiAgent.tasks.threadMessages.create`, `v2.aiAgent.tasks.submitComment`, `v2.aiAgent.tasks.stop`, `v2.aiAgent.events.stream` |
-| Runtime settings | `aiAgent.devices.runtimes`, `aiAgent.agents.daemon.details`, `aiAgent.agents.daemon.*`, `v2.aiAgent.devices.runtimes`, `v2.aiAgent.agents.daemon.details`, `v2.aiAgent.agents.daemon.*` |
+| Runtime settings | `aiAgent.devices.runtimes`, `aiAgent.devices.daemon.details`, `aiAgent.devices.daemon.*`, `aiAgent.agents.daemon.details`, `aiAgent.agents.daemon.*`, `v2.aiAgent.devices.runtimes`, `v2.aiAgent.devices.daemon.details`, `v2.aiAgent.devices.daemon.*`, `v2.aiAgent.agents.daemon.details`, `v2.aiAgent.agents.daemon.*` |
 | Onboarding | `aiAgent.onboarding.fixtures`, `aiAgent.onboarding.fixtures.createAgent`, `aiAgent.agents.create`, `v2.aiAgent.onboarding.fixtures`, `v2.aiAgent.onboarding.fixtures.createAgent`, `v2.aiAgent.agents.create` |
 | Agent settings | `aiAgent.bootstrap`, `aiAgent.agents.create`, `aiAgent.agents.updateConfiguration`, `aiAgent.agents.delete`, `aiAgent.agents.editability`, `v2.aiAgent.bootstrap`, `v2.aiAgent.agents.*` |
 
@@ -310,12 +312,24 @@ projection and generated TypeScript comments, and every group must carry
 | Task thread | `153:8518`, `153:8545`, `236:21379` | `riido.v2.aiAgent.events.stream` | SSE Stream | threads 조회 결과에 active_stream이 있을 때만 연결해 진행 상태와 thread 갱신 이벤트를 받습니다. |
 | Task thread | `153:8518`, `236:20768` | `riido.v2.aiAgent.tasks.stop` | Mutation | 작업 중인 Agent에게 중지 요청을 보냅니다. daemon은 이 요청을 읽어 provider 실행을 강제 중지합니다. |
 | Runtime and agent settings | `160:10339`, `160:10418`, `559:34626`, `559:34704`, `129:17616`, `164:34459`, `164:34470`, `164:34476`, `164:34483`, `164:34496`, `435:72699`, `134:6542`, `417:21753`, `432:22231`, `432:35651`, `432:22617`, `432:35707` | `riido.v2.aiAgent.devices.runtimes` | Query | 계정 소유 device에서 감지된 runtime 목록과 온라인/오프라인 상태를 조회합니다. 화면은 SaaS 값을 신뢰합니다. |
-| Runtime settings | `160:10654`, `559:34714`, `129:17616` | `riido.v2.aiAgent.agents.daemon.details` | Query | Agent에 연결된 daemon/runtime 상세와 제어 가능 상태를 SaaS 기준으로 조회합니다. |
-| Runtime settings | `129:17433`, `164:23586`, `129:17616` | `riido.v2.aiAgent.agents.daemon.start` | Mutation | stopped/offline 상태의 daemon에 시작 요청을 남깁니다. daemon 실행 트리거는 desktop이 담당하고, SaaS는 시작 요청 상태와 runtime projection을 제공합니다. |
-| Runtime settings | `160:14712`, `164:23904`, `129:17616` | `riido.v2.aiAgent.agents.daemon.stop` | Mutation | SaaS에 daemon 중지 요청을 남깁니다. daemon은 요청을 읽은 뒤 스스로 종료합니다. |
-| Runtime settings | `160:16169`, `164:23977`, `129:17616` | `riido.v2.aiAgent.agents.daemon.restart` | Mutation | SaaS에 daemon 재시작 요청을 남깁니다. daemon은 polling으로 요청을 읽어 실행합니다. |
+| Runtime settings - 내 기기 daemon | `160:10654`, `559:34714`, `129:17616` | `riido.v2.aiAgent.devices.daemon.details` | Query | `devices.runtimes`에서 받은 `device_id`로 현재 사용자 본인의 daemon 상세와 제어 가능 상태를 조회합니다. 아무 Agent id를 고르지 않습니다. |
+| Runtime settings - 내 기기 daemon | `129:17433`, `164:23586`, `129:17616` | `riido.v2.aiAgent.devices.daemon.start` | Mutation | `device_id` 기준으로 stopped/offline 상태의 본인 daemon에 시작 요청을 남깁니다. daemon 실행 트리거는 desktop이 담당하고, SaaS는 시작 요청 상태와 runtime projection을 제공합니다. |
+| Runtime settings - 내 기기 daemon | `160:14712`, `164:23904`, `129:17616` | `riido.v2.aiAgent.devices.daemon.stop` | Mutation | `device_id` 기준으로 본인 daemon 중지 요청을 남깁니다. daemon은 요청을 읽은 뒤 스스로 종료합니다. |
+| Runtime settings - 내 기기 daemon | `160:16169`, `164:23977`, `129:17616` | `riido.v2.aiAgent.devices.daemon.restart` | Mutation | `device_id` 기준으로 본인 daemon 재시작 요청을 남깁니다. daemon은 polling으로 요청을 읽어 실행합니다. |
 | Onboarding | `164:30661`, `164:30672`, `164:30681`, `164:30690`, `164:30699` | `riido.v2.aiAgent.onboarding.fixtures` | Query | 리도/영실/홍도/지원처럼 제품이 제공하는 초기값 목록을 조회합니다. template entity가 아니라 fixture입니다. |
 | Onboarding | `164:30661`, `164:33536`, `164:33556` | `riido.v2.aiAgent.onboarding.fixtures.createAgent` | Mutation | 선택한 fixture 값을 기반으로 일반 Agent를 생성합니다. fixture 자체를 생성하는 기능은 아닙니다. |
+
+기존 Figma inventory 문구인 “Agent에 연결된 daemon/runtime 상세와 제어 가능 상태를 SaaS 기준으로 조회합니다.”는 `riido.v2.aiAgent.agents.daemon.details`
+의 agent-bound 의미로 유지됩니다. `내 기기` daemon 영역은
+`riido.v2.aiAgent.devices.daemon.details`를 사용합니다.
+기존 agent-bound daemon command annotations인
+`riido.v2.aiAgent.agents.daemon.start`,
+`riido.v2.aiAgent.agents.daemon.stop`, and
+`riido.v2.aiAgent.agents.daemon.restart`도 명시적으로 선택한 Agent를 통한
+daemon 접근 의미로 유지됩니다. 기존 stop 문구인 “SaaS에 daemon 중지 요청을 남깁니다. daemon은 요청을 읽은 뒤 스스로 종료합니다.”는
+`riido.v2.aiAgent.agents.daemon.stop`의 의미입니다. 기존 start 문구인 “stopped/offline 상태의 daemon에 시작 요청을 남깁니다. daemon 실행 트리거는 desktop이 담당하고, SaaS는 시작 요청 상태와 runtime projection을 제공합니다.”는
+`riido.v2.aiAgent.agents.daemon.start`의 의미입니다. 기존 restart 문구인 “SaaS에 daemon 재시작 요청을 남깁니다. daemon은 polling으로 요청을 읽어 실행합니다.”는
+`riido.v2.aiAgent.agents.daemon.restart`의 의미입니다.
 | Agent settings / direct setting | `164:30661`, `164:30708`, `164:33536`, `164:33556`, `134:6542`, `134:6584`, `432:35493`, `337:24001`, `337:24013`, `432:37349` | `riido.v2.aiAgent.agents.create` | Mutation | 직접 설정 화면에서 워크스페이스 안에 새 Agent를 생성합니다. 신규 v2 create는 workspace_id를 포함합니다. |
 | Agent settings | `160:10335`, `129:17616`, `337:24001`, `337:24013`, `432:37349` | `riido.v2.aiAgent.bootstrap` | Query | AI Agent 설정/온보딩 초기 화면에 필요한 bootstrap.agents[]를 조회합니다. 설정/목록 화면의 agent list와 agent_id 출처이며, task 참여자 드롭다운은 tasks.assignableAgents를 사용합니다. |
 | Agent settings | `417:21753`, `417:21803`, `432:35544` | `riido.v2.aiAgent.agents.updateConfiguration` | Mutation | 할당 작업이 없는 Agent의 이름, 썸네일, 설명, 지침, 런타임, 모델, 공개 범위를 저장합니다. |
