@@ -159,6 +159,14 @@ type PollRequest struct {
 	DaemonID  string `json:"daemon_id"`
 	DeviceID  string `json:"device_id"`
 	RuntimeID string `json:"runtime_id"`
+	// WaitMs is an optional long-poll hint in milliseconds. When greater than
+	// zero the daemon asks the control plane to hold the poll open until a
+	// queued assignment becomes available for this agent/runtime or the
+	// server-clamped budget elapses, then return as usual (action=none on
+	// timeout). Zero/omitted preserves the legacy point-in-time short-poll, so
+	// the field is additive: an old control plane that ignores it still works,
+	// and the omitted wire shape is byte-identical to the legacy request.
+	WaitMs int `json:"wait_ms,omitempty"`
 }
 
 type PollResponse struct {

@@ -102,3 +102,35 @@ func assertJSON(t *testing.T, name string, value any, want string) {
 		t.Fatalf("%s JSON = %s, want %s", name, got, want)
 	}
 }
+
+// TestPollRequestWaitMsAdditive locks the backward-compatibility guarantee for
+// the long-poll hint: an omitted WaitMs marshals byte-identical to the legacy
+// PollRequest (so an old control plane sees no new field), and a set WaitMs
+// round-trips on the wire.
+func TestPollRequestWaitMsAdditive(t *testing.T) {
+	legacy := `{"daemon_id":"daemon-a","device_id":"device-a","runtime_id":"rt-a"}`
+
+	// Omitted -> byte-identical to the pre-wait_ms shape.
+	assertJSON(t, "poll request without wait_ms", PollRequest{
+		DaemonID:  "daemon-a",
+		DeviceID:  "device-a",
+		RuntimeID: "rt-a",
+	}, legacy)
+
+	// Set -> wait_ms present.
+	assertJSON(t, "poll request with wait_ms", PollRequest{
+		DaemonID:  "daemon-a",
+		DeviceID:  "device-a",
+		RuntimeID: "rt-a",
+		WaitMs:    20000,
+	}, `{"daemon_id":"daemon-a","device_id":"device-a","runtime_id":"rt-a","wait_ms":20000}`)
+
+	// Round-trip: a legacy payload decodes with WaitMs == 0.
+	var got PollRequest
+	if err := json.Unmarshal([]byte(legacy), &got); err != nil {
+		t.Fatalf("unmarshal legacy: %v", err)
+	}
+	if got.WaitMs != 0 {
+		t.Fatalf("legacy WaitMs = %d, want 0", got.WaitMs)
+	}
+}

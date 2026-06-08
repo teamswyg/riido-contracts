@@ -99,6 +99,20 @@ revive it. The heartbeat response refreshes only assignments that still hold the
 active lease; a daemon must treat a missing refreshed assignment as a server-side
 stale/cancel signal and stop the local provider run.
 
+`PollRequest.wait_ms` is an optional long-poll hint in milliseconds. When it is
+greater than zero the daemon asks the control plane to hold the poll request
+open until a queued assignment becomes available for the agent/runtime or a
+server-clamped budget elapses, then respond as usual — including `action=none`
+when the budget elapses with nothing queued. The value is a hint, not a hard
+contract: the control plane clamps it to its own maximum hold budget. The field
+is additive and backward compatible. Omitted/zero preserves the legacy
+point-in-time short-poll, and the omitted wire shape is byte-identical to the
+pre-`wait_ms` request, so an old control plane that does not know the field
+keeps working. A daemon that sets `wait_ms` against such an old control plane
+sees an immediate `action=none` and may fall back to interval polling. Because
+control-plane request decoding rejects unknown JSON fields, the rollout order is
+contracts tag → control plane (imports the field) → daemon (emits the field).
+
 `AgentRuntimeBinding` is the shared DTO that lets a daemon know which
 workspace-created agent may poll through one of its runtime slots. The DTO shape
 is shared here, but the binding list is not a static deployment secret in the
