@@ -63,6 +63,7 @@
     {"name": "AssignmentFailed", "value": "assignment_failed"},
     {"name": "AssignmentStateUpdated", "value": "assignment_state_updated"},
     {"name": "RiidoLog", "value": "riido_log"},
+    {"name": "ProviderSessionPinned", "value": "provider_session_pinned"},
     {"name": "ProviderLog", "value": "provider_log"},
     {"name": "ProviderWarning", "value": "provider_warning"},
     {"name": "ProviderError", "value": "provider_error"}

@@ -103,6 +103,7 @@ const (
 	EventAssignmentFailed       = "assignment_failed"
 	EventAssignmentStateUpdated = "assignment_state_updated"
 	EventRiidoLog               = "riido_log"
+	EventProviderSessionPinned  = "provider_session_pinned"
 	EventProviderLog            = "provider_log"
 	EventProviderWarning        = "provider_warning"
 	EventProviderError          = "provider_error"
@@ -120,6 +121,7 @@ func AllTaskEventTypes() []string {
 		EventAssignmentFailed,
 		EventAssignmentStateUpdated,
 		EventRiidoLog,
+		EventProviderSessionPinned,
 		EventProviderLog,
 		EventProviderWarning,
 		EventProviderError,
@@ -134,6 +136,7 @@ type AssignRequest struct {
 	Prompt                   string `json:"prompt"`
 	AgentInstruction         string `json:"agent_instruction,omitempty"`
 	AllowExperimentalRuntime bool   `json:"allow_experimental_runtime,omitempty"`
+	ResumeSessionID          string `json:"resume_session_id,omitempty"`
 	CreatedBy                string `json:"created_by,omitempty"`
 }
 
@@ -147,6 +150,8 @@ type Assignment struct {
 	Prompt                   string          `json:"prompt"`
 	AgentInstruction         string          `json:"agent_instruction,omitempty"`
 	AllowExperimentalRuntime bool            `json:"allow_experimental_runtime,omitempty"`
+	ResumeSessionID          string          `json:"resume_session_id,omitempty"`
+	ProviderSessionID        string          `json:"provider_session_id,omitempty"`
 	State                    AssignmentState `json:"state"`
 	LeaseToken               string          `json:"lease_token,omitempty"`
 	ReplacesAssignmentID     string          `json:"replaces_assignment_id,omitempty"`
@@ -189,15 +194,18 @@ type AgentHeartbeatResponse struct {
 }
 
 type AgentEventRequest struct {
-	AssignmentID string            `json:"assignment_id"`
-	TaskID       string            `json:"task_id"`
-	DaemonID     string            `json:"daemon_id,omitempty"`
-	DeviceID     string            `json:"device_id,omitempty"`
-	RuntimeID    string            `json:"runtime_id,omitempty"`
-	State        AssignmentState   `json:"state,omitempty"`
-	EventType    string            `json:"event_type,omitempty"`
-	Message      string            `json:"message,omitempty"`
-	Metadata     map[string]string `json:"metadata,omitempty"`
+	AssignmentID      string            `json:"assignment_id"`
+	TaskID            string            `json:"task_id"`
+	DaemonID          string            `json:"daemon_id,omitempty"`
+	DeviceID          string            `json:"device_id,omitempty"`
+	RuntimeID         string            `json:"runtime_id,omitempty"`
+	RuntimeProvider   string            `json:"runtime_provider,omitempty"`
+	ModelID           string            `json:"model_id,omitempty"`
+	ProviderSessionID string            `json:"provider_session_id,omitempty"`
+	State             AssignmentState   `json:"state,omitempty"`
+	EventType         string            `json:"event_type,omitempty"`
+	Message           string            `json:"message,omitempty"`
+	Metadata          map[string]string `json:"metadata,omitempty"`
 }
 
 type AgentEventResponse struct {

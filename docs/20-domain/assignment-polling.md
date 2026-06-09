@@ -82,6 +82,16 @@ Daemon consumes this value only as provider runtime model selection input; it
 must not re-resolve model defaults from provider name, environment, team id, or
 Open API key configuration.
 
+`AssignRequest.resume_session_id` is an optional control-plane instruction to
+resume a provider-native session/thread for a follow-up assignment. It is copied
+into `Assignment.resume_session_id` and consumed by the daemon as
+`TaskRequest.ResumeSessionID`. `Assignment.provider_session_id` is the
+provider-native session/thread id most recently pinned by the daemon for that
+assignment. It is learned through the event path, not supplied by a browser
+client. A daemon reports it with `AgentEventRequest.provider_session_id` and
+the `provider_session_pinned` task event; terminal events may repeat the same id
+as a final durability backstop.
+
 `PollResponse.action=start` means the control plane leased a queued assignment
 to the polling daemon/runtime. `PollResponse.action=active` means the same
 daemon/runtime identity is still considered to hold an active assignment. A
