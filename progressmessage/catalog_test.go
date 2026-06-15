@@ -2,11 +2,13 @@ package progressmessage
 
 import (
 	"bytes"
+	"context"
 	"encoding/json"
 	"os"
 	"os/exec"
 	"strings"
 	"testing"
+	"time"
 )
 
 func TestProgressMessageDSLGeneratesIR(t *testing.T) {
@@ -64,15 +66,18 @@ func TestProgressMessageCatalogIsAppendOnlyAgainstHEAD(t *testing.T) {
 }
 
 func baselineCatalogFromGit() ([]byte, error) {
-	if base, err := exec.Command("git", "merge-base", "HEAD", "origin/main").Output(); err == nil {
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+
+	if base, err := exec.CommandContext(ctx, "git", "merge-base", "HEAD", "origin/main").Output(); err == nil {
 		ref := strings.TrimSpace(string(base))
 		if ref != "" {
-			if out, err := exec.Command("git", "show", ref+":progressmessage/catalog.ir.riido.json").Output(); err == nil {
+			if out, err := exec.CommandContext(ctx, "git", "show", ref+":progressmessage/catalog.ir.riido.json").Output(); err == nil {
 				return out, nil
 			}
 		}
 	}
-	return exec.Command("git", "show", "HEAD^:progressmessage/catalog.ir.riido.json").Output()
+	return exec.CommandContext(ctx, "git", "show", "HEAD^:progressmessage/catalog.ir.riido.json").Output()
 }
 
 func loadTestDSL(t *testing.T) DSLDocument {

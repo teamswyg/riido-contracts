@@ -5,10 +5,12 @@ import (
 	"encoding/json"
 	"errors"
 	"io"
+	"net/http"
 	"net/url"
 	"os"
 	"path/filepath"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 	"testing"
@@ -552,7 +554,7 @@ func verifyCoverageEntry(t *testing.T, entry figmaCoverageEntry, openAPIGenerate
 	}
 }
 
-func verifyFigmaAPIGeneratedAnnotations(t *testing.T, annotations []figmaAPIGeneratedAnnotation, docText string, openAPIGeneratedPaths map[string]string, registered map[string]string, entries map[string]figmaCoverageEntry) {
+func verifyFigmaAPIGeneratedAnnotations(t *testing.T, annotations []figmaAPIGeneratedAnnotation, docText string, openAPIGeneratedPaths, registered map[string]string, entries map[string]figmaCoverageEntry) {
 	t.Helper()
 	if got, want := len(annotations), 2; got != want {
 		t.Fatalf("api_generated_annotations = %d, want %d", got, want)
@@ -913,7 +915,7 @@ func operationKindForOpenAPITransport(transport figmaOpenAPITransport) string {
 	if transport.ContentTypes["text/event-stream"] {
 		return "SSE Stream"
 	}
-	if transport.Method == "GET" {
+	if transport.Method == http.MethodGet {
 		return "Query"
 	}
 	return "Mutation"
@@ -931,12 +933,7 @@ func docMentionsGeneratedPath(docText, generatedPath string) bool {
 }
 
 func stringSliceContains(items []string, want string) bool {
-	for _, item := range items {
-		if item == want {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(items, want)
 }
 
 func assertCoverageLocalRefExists(t *testing.T, ref string) {
@@ -1272,7 +1269,7 @@ type figmaCoverageEntry struct {
 	OwnerRepos               []string               `json:"owner_repos,omitempty"`
 	GeneratedPaths           []string               `json:"generated_paths,omitempty"`
 	CoveredFacts             []string               `json:"covered_facts,omitempty"`
-	DirectionLoop            figmaCoverageDirection `json:"direction_loop,omitempty"`
+	DirectionLoop            figmaCoverageDirection `json:"direction_loop"`
 	Reason                   string                 `json:"reason,omitempty"`
 }
 
