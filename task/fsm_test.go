@@ -13,6 +13,28 @@ func TestGeneratedTaskFSM(t *testing.T) {
 	if fsm.Name() != "task" {
 		t.Fatalf("Name() = %q", fsm.Name())
 	}
+	if fsm.TypeUnion() != TaskFSMTypeUnionTaskLifecycleFSM {
+		t.Fatalf("TypeUnion() = %q", fsm.TypeUnion())
+	}
+	if got, want := fsm.StartStates(), []TaskStateCode{TaskStateCodeCreated}; !reflect.DeepEqual(got, want) {
+		t.Fatalf("StartStates() = %#v, want %#v", got, want)
+	}
+	wantEnd := []TaskStateCode{TaskStateCodeCompleted, TaskStateCodeFailed, TaskStateCodeCancelled, TaskStateCodeTimedOut}
+	if got := fsm.EndStates(); !reflect.DeepEqual(got, wantEnd) {
+		t.Fatalf("EndStates() = %#v, want %#v", got, wantEnd)
+	}
+	if fsm.PointKind(TaskStateCodeCreated) != TaskFSMPointStart {
+		t.Fatalf("Created point kind = %d", fsm.PointKind(TaskStateCodeCreated))
+	}
+	if fsm.PointKind(TaskStateCodeCompleted) != TaskFSMPointEnd {
+		t.Fatalf("Completed point kind = %d", fsm.PointKind(TaskStateCodeCompleted))
+	}
+	if fsm.PointKind(TaskStateCodeRunning) != TaskFSMPointIntermediate {
+		t.Fatalf("Running point kind = %d", fsm.PointKind(TaskStateCodeRunning))
+	}
+	if fsm.PointKind(TaskStateCodeUnknown) != TaskFSMPointUnknown {
+		t.Fatalf("Unknown point kind = %d", fsm.PointKind(TaskStateCodeUnknown))
+	}
 	if !fsm.CanTransition(TaskStateCodeRunning, TaskStateCodeValidating, ir.EventTypeCodeRunReportedDone) {
 		t.Fatal("Running --RunReportedDone--> Validating must be legal")
 	}

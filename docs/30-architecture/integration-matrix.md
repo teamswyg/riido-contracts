@@ -15,7 +15,7 @@ compatibility, not live infrastructure.
 | provider capability | fingerprint and protocol-args tests | none |
 | host integration | distribution/routing status vocabulary tests | none |
 | assignment polling | contract JSON and generated Go constants alignment | none |
-| generated FSM projection | `tools/enumgen` and `tools/fsmgen` verify Common Lisp enum/transition, Go SPI, and README Mermaid drift | none |
+| generated FSM projection | `tools/enumgen` and `tools/fsmgen` verify Common Lisp enum/transition/start-end metadata, Go SPI, and README Mermaid drift | none |
 | API contract projection | DSL/IR/OpenAPI drift verification plus agent-catalog and AI Agent client projection tests | none |
 | SSOT dependency direction | `tools/ssotdeps` verifies the machine-readable dependency manifest, source phrases, and acyclic repo dependency graph | none |
 | architecture docs | required docs, package list coverage, stale runtime wording scan | none |

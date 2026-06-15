@@ -102,6 +102,11 @@
     :event-enum ir.EventType
     :all LegalTransitionCodes
     :validate ValidateTransitionCode
+    :fsm-name TaskFSM
+    :fsm-type-union TaskLifecycleFSM
+    :start-points (StateCreated)
+    :end-points (StateCompleted StateFailed StateCancelled StateTimedOut)
+    :readme-section task
     (transition StateCreated StateQueued EventTaskQueued)
     (transition StateQueued StateClaimed EventTaskClaimed)
     (transition StateClaimed StatePreparing EventWorkdirPreparing)
@@ -171,6 +176,11 @@
     :all AssignmentTransitionCodes
     :validate CanTransitionCode
     :allow-same true
+    :fsm-name AssignmentFSM
+    :fsm-type-union AssignmentPollingFSM
+    :start-points (AssignmentQueued)
+    :end-points (AssignmentCancelled AssignmentCompleted AssignmentFailed)
+    :readme-section assignment
     (transition AssignmentQueued AssignmentLeased)
     (transition AssignmentQueued AssignmentCancelling)
     (transition AssignmentQueued AssignmentCancelled)

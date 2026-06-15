@@ -81,6 +81,10 @@ OpenAPI는 사람이 직접 고치는 SSOT가 아닙니다. Domain DSL이 원본
 SSOT입니다. `tools/enumgen`이 iota 기반 enum/transition 코드를 만들고,
 `tools/fsmgen`은 같은 원천의 전이를 Go SPI와 Mermaid 문서 블록으로 투영합니다.
 runtime에서 경로를 조립하지 않고 build 시점에 상태/전이 경로가 확정되어야 합니다.
+각 `transitions` 블록은 `:fsm-type-union`, `:start-points`, `:end-points`,
+`:readme-section` 메타를 가져야 합니다. 이 메타는 생성된 SPI의 `TypeUnion`,
+`StartStates`, `EndStates`, `PointKind`, `IsStartState`, `IsEndState` 메서드와
+README Mermaid 시작/종료 지점으로 투영됩니다.
 
 Task lifecycle:
 
