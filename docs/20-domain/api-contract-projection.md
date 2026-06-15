@@ -169,9 +169,10 @@ meatball edit entry, delete-menu placement, no-description row layout, and
 status-label copy/color.
 
 Agent records also carry optional profile presentation fields:
-`profile_thumbnail_url` is an HTTPS image URL string, `description` is a
-client-authored one-line summary capped at 160 characters, and `instruction` is
-client-authored text capped at 1000 characters by the contract projection.
+`profile_thumbnail_url` is an HTTPS image URL string saved after the profile
+thumbnail upload-intent flow returns a CDN URL, `description` is a client-authored
+one-line summary capped at 160 characters, and `instruction` is client-authored
+text capped at 1000 characters by the contract projection.
 
 For `GET /v1/client/ai-agent/tasks/{task_id}/assignable-agents`, the
 projection preserves the participant-dropdown ordering contract: viewer-owned

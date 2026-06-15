@@ -40,7 +40,7 @@ regenerate or update downstream projections.
 | Fact | Owning SSOT | Downstream projection |
 | --- | --- | --- |
 | Agent means a task-assignable abstraction of a configured runtime | [`../20-domain/ai-agent-policy.md`](../20-domain/ai-agent-policy.md) | Control-plane handlers, daemon runtime prompts, clients, and infra docs link to this language. |
-| `profile_thumbnail_url` is an optional HTTPS image URL string | [`../20-domain/ai-agent-policy.md`](../20-domain/ai-agent-policy.md) plus the AI Agent API DSL fixture | Control-plane validates/stores/projects it. Clients render it. Daemon ignores it. Infra acts only if a future media/storage SSOT replaces URL-only storage. |
+| `profile_thumbnail_url` is an optional HTTPS image URL string produced by the profile thumbnail upload-intent flow | [`../20-domain/ai-agent-policy.md`](../20-domain/ai-agent-policy.md) plus the AI Agent API DSL fixture | Control-plane validates/stores/projects the URL and issues S3 POST upload intents. Clients upload through the returned form, then save the returned URL. Daemon ignores it. Infra owns deployment-side bucket/CDN/IAM configuration without exposing live values in public repos. |
 | `description` is optional client-authored one-line agent summary text capped at 160 characters | [`../20-domain/ai-agent-policy.md`](../20-domain/ai-agent-policy.md) plus the AI Agent API DSL fixture | Control-plane validates/stores/projects it. Clients render or truncate it. Daemon ignores it. Infra acts only if a future search, media, durability, or moderation SSOT changes storage requirements. |
 | `instruction` is optional client-authored provider-neutral agent guidance text capped at 1000 characters | [`../20-domain/ai-agent-policy.md`](../20-domain/ai-agent-policy.md) plus the AI Agent API DSL fixture | Control-plane validates/stores/projects it, then snapshots it into `Assignment.agent_instruction` when an agent is assigned. Daemon consumes only that assignment snapshot for provider-specific placement/effectiveness harnesses and owns those provider-runtime decisions locally. Infra acts only if a future storage/secret/media requirement appears. |
 | Experimental runtime opt-in is assignment-created snapshot data | [`../20-domain/assignment-polling.md`](../20-domain/assignment-polling.md) plus [`../20-domain/ai-agent-policy.md`](../20-domain/ai-agent-policy.md) | Control-plane derives `Assignment.allow_experimental_runtime` from the selected runtime capability at assignment creation time. Daemon consumes only that snapshot for the runtime scheduling gate and must not infer opt-in from provider name or environment. Infra is no-diff. |
@@ -115,9 +115,9 @@ Examples:
   changing the meaning or limit of `instruction` must move up to contracts.
 - A client rendering issue may enter through control-plane/client handoff, but
   changing the meaning or limit of `description` must move up to contracts.
-- A storage or media moderation requirement may enter through infra, but
-  replacing URL-only thumbnail storage must first create or update a media
-  contract instead of silently changing the API fixture.
+- A storage or media moderation requirement may enter through infra, but bucket,
+  IAM, CDN, lifecycle, resizing, or moderation details stay deployment-owned
+  unless a separate media contract promotes them into the public API surface.
 
 ## Duplicate Audit
 
@@ -153,9 +153,10 @@ The current duplicated wording is intentional only in these forms:
 - Daemon docs may describe how instruction text enters runtime prompts or
   native config. They must not redefine storage, length, RBAC, or thumbnail
   policy.
-- Infra docs may explain that no Terraform diff is required for URL-only
-  thumbnails, one-line descriptions, and normal instruction text. They must not
-  redefine API shape or daemon execution.
+- Infra docs may explain that profile thumbnail upload intents require only the
+  deployment-owned media bucket/CDN mapping and task-role `s3:PutObject`
+  permission. They must not redefine API shape, leak live values, or move image
+  binary transfer into daemon execution.
 - Menu-placement docs may restate that Figma shows AI/runtime/agent-management
   route affordances. They must not turn client menu rendering into a new API,
   daemon runtime, or Terraform requirement without a separate owning SSOT.
