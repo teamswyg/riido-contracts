@@ -6,11 +6,32 @@ import (
 	"github.com/teamswyg/riido-contracts/ir"
 )
 
+type TaskFSMTypeUnion string
+
+const (
+	TaskFSMTypeUnionTaskLifecycleFSM TaskFSMTypeUnion = "TaskLifecycleFSM"
+)
+
+type TaskFSMPointKind uint8
+
+const (
+	TaskFSMPointUnknown TaskFSMPointKind = iota
+	TaskFSMPointStart
+	TaskFSMPointIntermediate
+	TaskFSMPointEnd
+)
+
 type TaskFSM interface {
 	Name() string
+	TypeUnion() TaskFSMTypeUnion
 	States() []TaskStateCode
+	StartStates() []TaskStateCode
+	EndStates() []TaskStateCode
 	TerminalStates() []TaskStateCode
 	Transitions() []TaskTransitionCode
+	PointKind(state TaskStateCode) TaskFSMPointKind
+	IsStartState(state TaskStateCode) bool
+	IsEndState(state TaskStateCode) bool
 	CanTransition(from TaskStateCode, to TaskStateCode, trigger ir.EventTypeCode) bool
 	NextStates(from TaskStateCode, trigger ir.EventTypeCode) []TaskStateCode
 	Mermaid() string
@@ -40,8 +61,27 @@ func (generatedTaskFSM) Name() string {
 	return "task"
 }
 
+func (generatedTaskFSM) TypeUnion() TaskFSMTypeUnion {
+	return TaskFSMTypeUnionTaskLifecycleFSM
+}
+
 func (generatedTaskFSM) States() []TaskStateCode {
 	return AllTaskStateCodes()
+}
+
+func (generatedTaskFSM) StartStates() []TaskStateCode {
+	return []TaskStateCode{
+		TaskStateCodeCreated,
+	}
+}
+
+func (generatedTaskFSM) EndStates() []TaskStateCode {
+	return []TaskStateCode{
+		TaskStateCodeCompleted,
+		TaskStateCodeFailed,
+		TaskStateCodeCancelled,
+		TaskStateCodeTimedOut,
+	}
 }
 
 func (generatedTaskFSM) TerminalStates() []TaskStateCode {
@@ -55,6 +95,43 @@ func (generatedTaskFSM) TerminalStates() []TaskStateCode {
 
 func (generatedTaskFSM) Transitions() []TaskTransitionCode {
 	return LegalTransitionCodes()
+}
+
+func (fsm generatedTaskFSM) PointKind(state TaskStateCode) TaskFSMPointKind {
+	switch {
+	case fsm.IsStartState(state):
+		return TaskFSMPointStart
+	case fsm.IsEndState(state):
+		return TaskFSMPointEnd
+	case state.IsKnown():
+		return TaskFSMPointIntermediate
+	default:
+		return TaskFSMPointUnknown
+	}
+}
+
+func (generatedTaskFSM) IsStartState(state TaskStateCode) bool {
+	switch state {
+	case TaskStateCodeCreated:
+		return true
+	default:
+		return false
+	}
+}
+
+func (generatedTaskFSM) IsEndState(state TaskStateCode) bool {
+	switch state {
+	case TaskStateCodeCompleted:
+		return true
+	case TaskStateCodeFailed:
+		return true
+	case TaskStateCodeCancelled:
+		return true
+	case TaskStateCodeTimedOut:
+		return true
+	default:
+		return false
+	}
 }
 
 func (generatedTaskFSM) CanTransition(from TaskStateCode, to TaskStateCode, trigger ir.EventTypeCode) bool {

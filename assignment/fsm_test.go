@@ -11,6 +11,28 @@ func TestGeneratedAssignmentFSM(t *testing.T) {
 	if fsm.Name() != "assignment" {
 		t.Fatalf("Name() = %q", fsm.Name())
 	}
+	if fsm.TypeUnion() != AssignmentFSMTypeUnionAssignmentPollingFSM {
+		t.Fatalf("TypeUnion() = %q", fsm.TypeUnion())
+	}
+	if got, want := fsm.StartStates(), []AssignmentStateCode{AssignmentStateCodeQueued}; !reflect.DeepEqual(got, want) {
+		t.Fatalf("StartStates() = %#v, want %#v", got, want)
+	}
+	wantEnd := []AssignmentStateCode{AssignmentStateCodeCancelled, AssignmentStateCodeCompleted, AssignmentStateCodeFailed}
+	if got := fsm.EndStates(); !reflect.DeepEqual(got, wantEnd) {
+		t.Fatalf("EndStates() = %#v, want %#v", got, wantEnd)
+	}
+	if fsm.PointKind(AssignmentStateCodeQueued) != AssignmentFSMPointStart {
+		t.Fatalf("Queued point kind = %d", fsm.PointKind(AssignmentStateCodeQueued))
+	}
+	if fsm.PointKind(AssignmentStateCodeCompleted) != AssignmentFSMPointEnd {
+		t.Fatalf("Completed point kind = %d", fsm.PointKind(AssignmentStateCodeCompleted))
+	}
+	if fsm.PointKind(AssignmentStateCodeRunning) != AssignmentFSMPointIntermediate {
+		t.Fatalf("Running point kind = %d", fsm.PointKind(AssignmentStateCodeRunning))
+	}
+	if fsm.PointKind(AssignmentStateCodeUnknown) != AssignmentFSMPointUnknown {
+		t.Fatalf("Unknown point kind = %d", fsm.PointKind(AssignmentStateCodeUnknown))
+	}
 	if !fsm.CanTransition(AssignmentStateCodeLeased, AssignmentStateCodeRunning) {
 		t.Fatal("leased -> running must be legal")
 	}

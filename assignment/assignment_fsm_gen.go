@@ -2,11 +2,32 @@
 
 package assignment
 
+type AssignmentFSMTypeUnion string
+
+const (
+	AssignmentFSMTypeUnionAssignmentPollingFSM AssignmentFSMTypeUnion = "AssignmentPollingFSM"
+)
+
+type AssignmentFSMPointKind uint8
+
+const (
+	AssignmentFSMPointUnknown AssignmentFSMPointKind = iota
+	AssignmentFSMPointStart
+	AssignmentFSMPointIntermediate
+	AssignmentFSMPointEnd
+)
+
 type AssignmentFSM interface {
 	Name() string
+	TypeUnion() AssignmentFSMTypeUnion
 	States() []AssignmentStateCode
+	StartStates() []AssignmentStateCode
+	EndStates() []AssignmentStateCode
 	TerminalStates() []AssignmentStateCode
 	Transitions() []AssignmentTransitionCode
+	PointKind(state AssignmentStateCode) AssignmentFSMPointKind
+	IsStartState(state AssignmentStateCode) bool
+	IsEndState(state AssignmentStateCode) bool
 	CanTransition(from AssignmentStateCode, to AssignmentStateCode) bool
 	NextStates(from AssignmentStateCode) []AssignmentStateCode
 	Mermaid() string
@@ -36,8 +57,26 @@ func (generatedAssignmentFSM) Name() string {
 	return "assignment"
 }
 
+func (generatedAssignmentFSM) TypeUnion() AssignmentFSMTypeUnion {
+	return AssignmentFSMTypeUnionAssignmentPollingFSM
+}
+
 func (generatedAssignmentFSM) States() []AssignmentStateCode {
 	return AllAssignmentStateCodes()
+}
+
+func (generatedAssignmentFSM) StartStates() []AssignmentStateCode {
+	return []AssignmentStateCode{
+		AssignmentStateCodeQueued,
+	}
+}
+
+func (generatedAssignmentFSM) EndStates() []AssignmentStateCode {
+	return []AssignmentStateCode{
+		AssignmentStateCodeCancelled,
+		AssignmentStateCodeCompleted,
+		AssignmentStateCodeFailed,
+	}
 }
 
 func (generatedAssignmentFSM) TerminalStates() []AssignmentStateCode {
@@ -50,6 +89,41 @@ func (generatedAssignmentFSM) TerminalStates() []AssignmentStateCode {
 
 func (generatedAssignmentFSM) Transitions() []AssignmentTransitionCode {
 	return AssignmentTransitionCodes()
+}
+
+func (fsm generatedAssignmentFSM) PointKind(state AssignmentStateCode) AssignmentFSMPointKind {
+	switch {
+	case fsm.IsStartState(state):
+		return AssignmentFSMPointStart
+	case fsm.IsEndState(state):
+		return AssignmentFSMPointEnd
+	case state.IsKnown():
+		return AssignmentFSMPointIntermediate
+	default:
+		return AssignmentFSMPointUnknown
+	}
+}
+
+func (generatedAssignmentFSM) IsStartState(state AssignmentStateCode) bool {
+	switch state {
+	case AssignmentStateCodeQueued:
+		return true
+	default:
+		return false
+	}
+}
+
+func (generatedAssignmentFSM) IsEndState(state AssignmentStateCode) bool {
+	switch state {
+	case AssignmentStateCodeCancelled:
+		return true
+	case AssignmentStateCodeCompleted:
+		return true
+	case AssignmentStateCodeFailed:
+		return true
+	default:
+		return false
+	}
 }
 
 func (generatedAssignmentFSM) CanTransition(from AssignmentStateCode, to AssignmentStateCode) bool {
