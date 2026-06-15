@@ -104,6 +104,9 @@
     :validate ValidateTransitionCode
     :fsm-name TaskFSM
     :fsm-type-union TaskLifecycleFSM
+    :pattern-source fsmgen/patterns.lisp
+    :conformance-profile RiidoPublicFlatFSM
+    :patterns (PatternFlat PatternEventDriven PatternExplicitBoundary PatternMultiTerminal PatternMultiTargetEvent)
     :start-points (StateCreated)
     :end-points (StateCompleted StateFailed StateCancelled StateTimedOut)
     :readme-section task
@@ -178,6 +181,9 @@
     :allow-same true
     :fsm-name AssignmentFSM
     :fsm-type-union AssignmentPollingFSM
+    :pattern-source fsmgen/patterns.lisp
+    :conformance-profile RiidoPublicFlatFSM
+    :patterns (PatternFlat PatternStateDriven PatternExplicitBoundary PatternMultiTerminal PatternSameStateAllowed)
     :start-points (AssignmentQueued)
     :end-points (AssignmentCancelled AssignmentCompleted AssignmentFailed)
     :readme-section assignment

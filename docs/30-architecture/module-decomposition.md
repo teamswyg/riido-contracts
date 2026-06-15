@@ -16,10 +16,12 @@ contracts. It is intentionally small and standard-library only.
 | `hostintegration` | C11/C10 distribution and provider routing status vocabulary | app data roots, IPC, consent storage, store helper implementation |
 | `assignment` | C10 assignment polling DTOs and state vocabulary | control-plane store actor, HTTP/SSE handlers, authorization, persistence |
 | `apicontract` | C10 API DSL, API IR, generated OpenAPI projection fixtures, API enum/sum-type vocabulary | control-plane handlers, frontend implementation, authorization/RBAC implementation, generated client code |
+| `fsmmeta` | public FSM pattern vocabulary generated from Common Lisp pattern sources | runtime state execution, provider-specific reducer policy, cloud/workflow orchestration |
 | `progressmessage` | C10 AI Agent runtime progress message DSL/IR, integer code catalog, locale templates, and append-only validation | provider output parsing, control-plane HTTP/SSE handlers, frontend rendering behavior |
 | `tools/apicontract` | deterministic fixture drift verifier/generator | runtime code generation output, network calls, third-party parser dependencies |
 | `tools/progressmessage` | deterministic progress-message DSL -> IR drift verifier/generator | daemon runtime emission, control-plane SSE rendering, frontend message rendering |
-| `tools/fsmgen` | deterministic Common Lisp enum/transition projection into Go FSM SPI and README Mermaid diagrams | runtime path discovery, repository-local process orchestration, provider-specific reducer policy |
+| `tools/fsmgen` | deterministic Common Lisp enum/transition/pattern projection into Go FSM SPI, `fsmmeta`, README Mermaid diagrams, and FSM conformance gates | runtime path discovery, repository-local process orchestration, provider-specific reducer policy |
+| `tools/gotmpl` | repository-local `go tool gotmpl` renderer for generated Go templates | third-party template dependencies, runtime rendering, network calls |
 | `tools/ssotdeps` | deterministic verifier for the SSOT dependency manifest and acyclic repo dependency graph | downstream repository execution gates, live Riido task mutation, third-party graph parsers |
 
 ## Dependency Rules
@@ -49,6 +51,7 @@ A contract package may contain:
 - pure validation helpers
 - pure transition/classification helpers
 - generated projection fixtures
+- generated FSM pattern/conformance vocabulary
 - codegen-safe enum and sum-type contract shapes
 - black-box fixture tests
 
