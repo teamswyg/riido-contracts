@@ -19,6 +19,7 @@ contracts. It is intentionally small and standard-library only.
 | `progressmessage` | C10 AI Agent runtime progress message DSL/IR, integer code catalog, locale templates, and append-only validation | provider output parsing, control-plane HTTP/SSE handlers, frontend rendering behavior |
 | `tools/apicontract` | deterministic fixture drift verifier/generator | runtime code generation output, network calls, third-party parser dependencies |
 | `tools/progressmessage` | deterministic progress-message DSL -> IR drift verifier/generator | daemon runtime emission, control-plane SSE rendering, frontend message rendering |
+| `tools/fsmgen` | deterministic Common Lisp enum/transition projection into Go FSM SPI and README Mermaid diagrams | runtime path discovery, repository-local process orchestration, provider-specific reducer policy |
 | `tools/ssotdeps` | deterministic verifier for the SSOT dependency manifest and acyclic repo dependency graph | downstream repository execution gates, live Riido task mutation, third-party graph parsers |
 
 ## Dependency Rules
