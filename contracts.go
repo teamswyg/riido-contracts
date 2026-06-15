@@ -1,4 +1,6 @@
 // Package contracts anchors shared Riido contract identifiers.
+//
+//go:generate go run ./tools/enumgen generate
 package contracts
 
 const (
