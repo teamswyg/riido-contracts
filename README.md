@@ -65,6 +65,8 @@ OpenAPI는 사람이 직접 고치는 SSOT가 아닙니다. Domain DSL이 원본
   binding DTO를 제공합니다.
 - `apicontract`: API DSL, API IR, OpenAPI projection fixture, enum/sum-type
   contract, drift verifier/generator를 소유합니다.
+- `fsmmeta`: public FSM pattern vocabulary와 conformance profile codegen 결과를
+  제공합니다.
 - `ir`: canonical event envelope, event catalog, reducer contract, envelope
   validation을 소유합니다.
 - `hostintegration`: distribution channel과 provider routing status
@@ -78,13 +80,22 @@ OpenAPI는 사람이 직접 고치는 SSOT가 아닙니다. Domain DSL이 원본
 ## Generated FSM
 
 `enumgen/enums.lisp`는 enum 값만이 아니라 public FSM 전이의 Common Lisp
-SSOT입니다. `tools/enumgen`이 iota 기반 enum/transition 코드를 만들고,
-`tools/fsmgen`은 같은 원천의 전이를 Go SPI와 Mermaid 문서 블록으로 투영합니다.
-runtime에서 경로를 조립하지 않고 build 시점에 상태/전이 경로가 확정되어야 합니다.
-각 `transitions` 블록은 `:fsm-type-union`, `:start-points`, `:end-points`,
-`:readme-section` 메타를 가져야 합니다. 이 메타는 생성된 SPI의 `TypeUnion`,
-`StartStates`, `EndStates`, `PointKind`, `IsStartState`, `IsEndState` 메서드와
-README Mermaid 시작/종료 지점으로 투영됩니다.
+SSOT입니다. `fsmgen/patterns.lisp`는 FSM 패턴 sum type과 conformance profile의
+별도 Common Lisp source입니다. `tools/enumgen`이 iota 기반 enum/transition
+코드를 만들고, `tools/fsmgen`은 같은 원천의 전이를 Go SPI, `fsmmeta` 패턴
+vocabulary, Mermaid 문서 블록으로 투영합니다. runtime에서 경로를 조립하지 않고
+build 시점에 상태/전이 경로가 확정되어야 합니다.
+
+각 `transitions` 블록은 `:fsm-type-union`, `:pattern-source`,
+`:conformance-profile`, `:patterns`, `:start-points`, `:end-points`,
+`:readme-section` 메타를 가져야 합니다. `:pattern-source`는 repository-relative
+Common Lisp source를 import하며, `tools/fsmgen conformance`가 해당 source의
+profile에 맞는지 검증합니다. 현재 public profile은 flat/event-or-state driven FSM만
+허용하고 hierarchical, parallel, history, guard/action 계열 패턴은 명시적으로
+거절합니다. 이 메타는 생성된 SPI의 `TypeUnion`, `StartStates`, `EndStates`,
+`PointKind`, `IsStartState`, `IsEndState` 메서드와 README Mermaid 시작/종료
+지점으로 투영됩니다. 새 `fsmmeta` Go 파일은 repository-local `go tool gotmpl`을
+통해 생성됩니다.
 
 Task lifecycle:
 
@@ -187,6 +198,7 @@ stateDiagram-v2
 go test ./...
 go list -m all
 go run ./tools/enumgen verify
+go run ./tools/fsmgen conformance
 go run ./tools/fsmgen verify
 go run ./tools/apicontract verify
 go run ./tools/progressmessage verify
