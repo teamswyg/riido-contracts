@@ -238,7 +238,7 @@ func parseNode(tokens []string, index *int) (node, error) {
 		return node{}, errors.New("unexpected end of input")
 	}
 	token := tokens[*index]
-	*index = *index + 1
+	*index++
 	switch token {
 	case "(":
 		var list []node
@@ -625,7 +625,7 @@ func generateEnumFile(enum enumSpec) ([]byte, error) {
 	return formatSource(enumOutputPath(enum), b.Bytes())
 }
 
-func writePredicate(b *bytes.Buffer, enum enumSpec, attr string, method string) {
+func writePredicate(b *bytes.Buffer, enum enumSpec, attr, method string) {
 	values := enum.valuesWithAttr(attr, "true")
 	if len(values) == 0 {
 		return
@@ -646,7 +646,7 @@ func writePredicate(b *bytes.Buffer, enum enumSpec, attr string, method string) 
 	fmt.Fprintln(b)
 }
 
-func writePackagePredicate(b *bytes.Buffer, enum enumSpec, attr string, method string) {
+func writePackagePredicate(b *bytes.Buffer, enum enumSpec, attr, method string) {
 	if enum.Package != "assignment" || len(enum.valuesWithAttr(attr, "true")) == 0 {
 		return
 	}
@@ -795,7 +795,7 @@ type transitionTargetGroup struct {
 	Events []string
 }
 
-func groupTransitionTargets(entries []transitionEntry, to enumSpec, event enumSpec) []transitionTargetGroup {
+func groupTransitionTargets(entries []transitionEntry, to, event enumSpec) []transitionTargetGroup {
 	byTo := map[string][]string{}
 	for _, entry := range entries {
 		byTo[entry.To] = append(byTo[entry.To], entry.Event)
@@ -844,7 +844,7 @@ func typeRef(enum enumSpec, currentPackage string) string {
 	return enum.Package + "." + enum.CodeType
 }
 
-func codeRef(enum enumSpec, currentPackage string, constName string) string {
+func codeRef(enum enumSpec, currentPackage, constName string) string {
 	name := enum.codeConst(constName)
 	if enum.Package == currentPackage {
 		return name
@@ -883,7 +883,7 @@ func (e enumSpec) stringConst(constName string) string {
 	return e.StringType + e.suffix(constName)
 }
 
-func (e enumSpec) valuesWithAttr(attr string, want string) []enumValue {
+func (e enumSpec) valuesWithAttr(attr, want string) []enumValue {
 	var out []enumValue
 	for _, value := range e.Values {
 		if value.Attrs[attr] == want {

@@ -6,7 +6,7 @@ import (
 	"errors"
 	"io"
 	"os"
-	"sort"
+	"slices"
 	"testing"
 )
 
@@ -237,7 +237,7 @@ func sortedAssignmentStateSet(values map[AssignmentState]struct{}) []AssignmentS
 	for key := range values {
 		keys = append(keys, key)
 	}
-	sort.Slice(keys, func(i, j int) bool { return keys[i] < keys[j] })
+	slices.Sort(keys)
 	return keys
 }
 
@@ -246,7 +246,7 @@ func sortedPollActionSet(values map[PollAction]struct{}) []PollAction {
 	for key := range values {
 		keys = append(keys, key)
 	}
-	sort.Slice(keys, func(i, j int) bool { return keys[i] < keys[j] })
+	slices.Sort(keys)
 	return keys
 }
 
@@ -255,6 +255,6 @@ func sortedStringSet(values map[string]struct{}) []string {
 	for key := range values {
 		keys = append(keys, key)
 	}
-	sort.Strings(keys)
+	slices.Sort(keys)
 	return keys
 }

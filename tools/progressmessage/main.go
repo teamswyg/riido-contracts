@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"io"
 	"os"
@@ -33,7 +34,7 @@ func run(args []string) error {
 	case "verify":
 		return verify()
 	default:
-		return fmt.Errorf("usage: go run ./tools/progressmessage [verify|generate]")
+		return errors.New("usage: go run ./tools/progressmessage [verify|generate]")
 	}
 }
 
