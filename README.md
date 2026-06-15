@@ -75,6 +75,100 @@ OpenAPI는 사람이 직접 고치는 SSOT가 아닙니다. Domain DSL이 원본
   compatibility status, fingerprint vocabulary를 소유합니다.
 - `task`: task lifecycle state와 transition matrix를 소유합니다.
 
+## Generated FSM
+
+`enumgen/enums.lisp`는 enum 값만이 아니라 public FSM 전이의 Common Lisp
+SSOT입니다. `tools/enumgen`이 iota 기반 enum/transition 코드를 만들고,
+`tools/fsmgen`은 같은 원천의 전이를 Go SPI와 Mermaid 문서 블록으로 투영합니다.
+runtime에서 경로를 조립하지 않고 build 시점에 상태/전이 경로가 확정되어야 합니다.
+
+Task lifecycle:
+
+<!-- fsmgen:task:start -->
+```mermaid
+stateDiagram-v2
+  [*] --> Created
+  Created --> Queued : TaskQueued
+  Queued --> Claimed : TaskClaimed
+  Claimed --> Preparing : WorkdirPreparing
+  Preparing --> Running : RunStarted
+  Running --> Validating : RunReportedDone
+  Validating --> PatchReady : ValidationPassed
+  PatchReady --> HumanReview : ReviewRequested
+  HumanReview --> Completed : HumanApproved
+  PatchReady --> Completed : AutoApproved
+  Running --> NeedsInput : InputRequested
+  NeedsInput --> Running : InputProvided
+  Preparing --> Blocked : BlockerRaised
+  Running --> Blocked : BlockerRaised
+  Blocked --> Running : BlockerResolved
+  Blocked --> Queued : BlockerResolvedRequeue
+  Validating --> Failed : ValidationFailed
+  HumanReview --> ReworkQueued : HumanRejected
+  HumanReview --> Cancelled : HumanRejected
+  ReworkQueued --> Queued : ReworkAccepted
+  Running --> Failed : RuntimePinViolated
+  Validating --> Failed : RuntimePinViolated
+  Claimed --> Failed : TaskFailed
+  Preparing --> Failed : TaskFailed
+  Running --> Failed : TaskFailed
+  NeedsInput --> Failed : TaskFailed
+  Blocked --> Failed : TaskFailed
+  Validating --> Failed : TaskFailed
+  Created --> Cancelled : TaskCancelled
+  Queued --> Cancelled : TaskCancelled
+  Claimed --> Cancelled : TaskCancelled
+  Preparing --> Cancelled : TaskCancelled
+  Running --> Cancelled : TaskCancelled
+  NeedsInput --> Cancelled : TaskCancelled
+  Blocked --> Cancelled : TaskCancelled
+  Validating --> Cancelled : TaskCancelled
+  PatchReady --> Cancelled : TaskCancelled
+  HumanReview --> Cancelled : TaskCancelled
+  ReworkQueued --> Cancelled : TaskCancelled
+  Running --> TimedOut : TaskTimedOut
+  NeedsInput --> TimedOut : TaskTimedOut
+  Blocked --> TimedOut : TaskTimedOut
+  Validating --> TimedOut : TaskTimedOut
+  HumanReview --> TimedOut : TaskTimedOut
+  Completed --> [*]
+  Failed --> [*]
+  Cancelled --> [*]
+  TimedOut --> [*]
+```
+<!-- fsmgen:task:end -->
+
+Assignment polling:
+
+<!-- fsmgen:assignment:start -->
+```mermaid
+stateDiagram-v2
+  [*] --> Queued
+  Queued --> Leased
+  Queued --> Cancelling
+  Queued --> Cancelled
+  Queued --> Failed
+  Leased --> Ready
+  Leased --> Running
+  Leased --> Cancelling
+  Leased --> Cancelled
+  Leased --> Failed
+  Ready --> Running
+  Ready --> Cancelling
+  Ready --> Cancelled
+  Ready --> Failed
+  Running --> Completed
+  Running --> Failed
+  Running --> Cancelling
+  Running --> Cancelled
+  Cancelling --> Cancelled
+  Cancelling --> Failed
+  Cancelled --> [*]
+  Completed --> [*]
+  Failed --> [*]
+```
+<!-- fsmgen:assignment:end -->
+
 ## 중요한 결정
 
 - Go dependency는 표준 라이브러리만 허용합니다.
@@ -88,6 +182,8 @@ OpenAPI는 사람이 직접 고치는 SSOT가 아닙니다. Domain DSL이 원본
 ```bash
 go test ./...
 go list -m all
+go run ./tools/enumgen verify
+go run ./tools/fsmgen verify
 go run ./tools/apicontract verify
 go run ./tools/progressmessage verify
 go run ./tools/ssotdeps verify

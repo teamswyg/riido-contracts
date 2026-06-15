@@ -26,5 +26,11 @@ jobs:
       - name: Lint
         run: golangci-lint run ./... --timeout=5m
 
+      - name: Verify generated enum drift
+        run: go run ./tools/enumgen verify
+
+      - name: Verify generated FSM drift
+        run: go run ./tools/fsmgen verify
+
       - name: Test
         run: go test ./...

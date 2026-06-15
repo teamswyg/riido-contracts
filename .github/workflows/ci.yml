@@ -16,5 +16,9 @@ jobs:
           cache: false
       - name: Verify stdlib-only module
         run: test "$(go list -m all | wc -l | tr -d ' ')" = "1"
+      - name: Verify generated enum drift
+        run: go run ./tools/enumgen verify
+      - name: Verify generated FSM drift
+        run: go run ./tools/fsmgen verify
       - name: Test
         run: go test ./...
