@@ -20,77 +20,14 @@ const (
 	ActiveAssignmentStaleAfterSeconds = 20
 )
 
+// AssignmentState is stored and serialized as the existing contract string.
+// The iota-backed AssignmentStateCode mapping is generated from
+// enumgen/enums.lisp for internal branching.
 type AssignmentState string
 
-const (
-	AssignmentQueued     AssignmentState = "queued"
-	AssignmentLeased     AssignmentState = "leased"
-	AssignmentReady      AssignmentState = "ready"
-	AssignmentRunning    AssignmentState = "running"
-	AssignmentCancelling AssignmentState = "cancelling"
-	AssignmentCancelled  AssignmentState = "cancelled"
-	AssignmentCompleted  AssignmentState = "completed"
-	AssignmentFailed     AssignmentState = "failed"
-)
-
-func AllAssignmentStates() []AssignmentState {
-	return []AssignmentState{
-		AssignmentQueued,
-		AssignmentLeased,
-		AssignmentReady,
-		AssignmentRunning,
-		AssignmentCancelling,
-		AssignmentCancelled,
-		AssignmentCompleted,
-		AssignmentFailed,
-	}
-}
-
-func (s AssignmentState) Valid() bool {
-	switch s {
-	case AssignmentQueued,
-		AssignmentLeased,
-		AssignmentReady,
-		AssignmentRunning,
-		AssignmentCancelling,
-		AssignmentCancelled,
-		AssignmentCompleted,
-		AssignmentFailed:
-		return true
-	default:
-		return false
-	}
-}
-
+// PollAction is stored and serialized as the existing contract string.
+// The iota-backed PollActionCode mapping is generated from enumgen/enums.lisp.
 type PollAction string
-
-const (
-	PollNone   PollAction = "none"
-	PollStart  PollAction = "start"
-	PollCancel PollAction = "cancel"
-	PollActive PollAction = "active"
-)
-
-func AllPollActions() []PollAction {
-	return []PollAction{
-		PollNone,
-		PollStart,
-		PollCancel,
-		PollActive,
-	}
-}
-
-func (a PollAction) Valid() bool {
-	switch a {
-	case PollNone,
-		PollStart,
-		PollCancel,
-		PollActive:
-		return true
-	default:
-		return false
-	}
-}
 
 const (
 	EventAssignmentQueued       = "assignment_queued"

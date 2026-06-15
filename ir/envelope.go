@@ -32,64 +32,10 @@ const (
 	NativeConfigPhaseDependent
 )
 
-// preExecuteOnlyEvents — strictly pre-execute RunScope.
-var preExecuteOnlyEvents = map[EventType]struct{}{
-	EventTaskClaimed:        {},
-	EventWorkdirPreparing:   {},
-	EventWorkdirCreated:     {},
-	EventRuntimePinned:      {},
-	EventRuntimeHandshakeOK: {},
-}
-
-// phaseDependentEvents — may occur either pre-execute OR execution-bound.
-// NCV requirement depends on whether the run has crossed NativeConfigInjected.
-var phaseDependentEvents = map[EventType]struct{}{
-	EventBlockerRaised:          {},
-	EventBlockerResolved:        {},
-	EventBlockerResolvedRequeue: {},
-	EventTaskFailed:             {},
-	EventTaskCancelled:          {},
-	EventTaskTimedOut:           {},
-	EventRuntimePinViolated:     {},
-	EventReworkAccepted:         {},
-}
-
-// nonRunScopeEvents — EventTypes that should never be RunScope; NCV always forbidden.
-// (The scope rule independently forbids NCV in non-RunScope events; this is
-// additional defense-in-depth.)
-var nonRunScopeEvents = map[EventType]struct{}{
-	// Cat A (TaskScope-only)
-	EventTaskCreated: {},
-	EventTaskQueued:  {},
-	// Cat B (RuntimeScope)
-	EventRuntimeRegistered:         {},
-	EventRuntimeRejected:           {},
-	EventRuntimeFingerprintChanged: {},
-	EventCapabilityReevaluated:     {},
-	EventLeaseInvalidated:          {},
-	// Cat F (SystemScope-typical)
-	EventPolicyBundleLoaded:   {},
-	EventPolicyBundleSwitched: {},
-	// Cat G (System/Runtime-scope upgrade signals)
-	EventUpgradeDetected:          {},
-	EventUpgradePolicyReevaluated: {},
-	EventDrainStarted:             {},
-	EventDrainTimedOut:            {},
-}
-
 // NativeConfigRequirementOf returns the static classification for an EventType.
 // Default (unclassified) is NativeConfigRequired — execution-bound RunScope.
 func NativeConfigRequirementOf(t EventType) NativeConfigRequirement {
-	if _, ok := preExecuteOnlyEvents[t]; ok {
-		return NativeConfigOptionalPreExecute
-	}
-	if _, ok := phaseDependentEvents[t]; ok {
-		return NativeConfigPhaseDependent
-	}
-	if _, ok := nonRunScopeEvents[t]; ok {
-		return NativeConfigForbidden
-	}
-	return NativeConfigRequired
+	return t.Code().NativeConfigRequirement()
 }
 
 // RunContext carries the dynamic facts needed to resolve a PhaseDependent
