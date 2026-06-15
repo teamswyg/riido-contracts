@@ -141,6 +141,25 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	if len(agentCreateV2.Parameters) != 1 || agentCreateV2.Parameters[0].Name != "workspace_id" {
 		t.Fatalf("v2 agent create parameters = %#v", agentCreateV2.Parameters)
 	}
+	profileThumbnailUpload := openAPI.Paths["/v1/client/ai-agent/profile-thumbnails/uploads"]["post"]
+	if profileThumbnailUpload.OperationID != "createAIAgentProfileThumbnailUpload" ||
+		profileThumbnailUpload.RequestBody == nil ||
+		profileThumbnailUpload.RiidoClient == nil ||
+		profileThumbnailUpload.RiidoClient.GeneratedPath != "aiAgent.profileThumbnails.uploads.create" ||
+		profileThumbnailUpload.RiidoRBAC != "agent_profile_thumbnail_upload.v1" {
+		t.Fatalf("profile thumbnail upload operation = %#v", profileThumbnailUpload)
+	}
+	profileThumbnailUploadV2 := openAPI.Paths["/v2/client/workspaces/{workspace_id}/ai-agent/profile-thumbnails/uploads"]["post"]
+	if profileThumbnailUploadV2.OperationID != "createAIAgentProfileThumbnailUploadV2" ||
+		profileThumbnailUploadV2.RequestBody == nil ||
+		profileThumbnailUploadV2.RiidoClient == nil ||
+		profileThumbnailUploadV2.RiidoClient.GeneratedPath != "v2.aiAgent.profileThumbnails.uploads.create" ||
+		profileThumbnailUploadV2.RiidoRBAC != "agent_profile_thumbnail_upload.v1" {
+		t.Fatalf("v2 profile thumbnail upload operation = %#v", profileThumbnailUploadV2)
+	}
+	if len(profileThumbnailUploadV2.Parameters) != 1 || profileThumbnailUploadV2.Parameters[0].Name != "workspace_id" {
+		t.Fatalf("v2 profile thumbnail upload parameters = %#v", profileThumbnailUploadV2.Parameters)
+	}
 	createRequest := openAPI.Components.Schemas["CreateAgentConfigurationRequest"]
 	createRequestDescription, ok := createRequest["description"].(string)
 	if !ok ||
@@ -178,6 +197,32 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	createInstruction, ok := createRequestProps["instruction"].(map[string]any)
 	if !ok || createInstruction["maxLength"] != 1000 {
 		t.Fatalf("CreateAgentConfigurationRequest instruction schema = %#v", createRequestProps["instruction"])
+	}
+	profileThumbnailUploadRequest := openAPI.Components.Schemas["CreateAgentProfileThumbnailUploadRequest"]
+	profileThumbnailUploadRequestProps, ok := profileThumbnailUploadRequest["properties"].(map[string]any)
+	if !ok {
+		t.Fatalf("CreateAgentProfileThumbnailUploadRequest properties missing: %#v", profileThumbnailUploadRequest)
+	}
+	if _, ok := profileThumbnailUploadRequestProps["content_type"].(map[string]any); !ok {
+		t.Fatalf("CreateAgentProfileThumbnailUploadRequest content_type missing: %#v", profileThumbnailUploadRequestProps)
+	}
+	if _, ok := profileThumbnailUploadRequestProps["content_length_bytes"].(map[string]any); !ok {
+		t.Fatalf("CreateAgentProfileThumbnailUploadRequest content_length_bytes missing: %#v", profileThumbnailUploadRequestProps)
+	}
+	profileThumbnailUploadResponse := openAPI.Components.Schemas["AgentProfileThumbnailUploadResponse"]
+	profileThumbnailUploadResponseProps, ok := profileThumbnailUploadResponse["properties"].(map[string]any)
+	if !ok {
+		t.Fatalf("AgentProfileThumbnailUploadResponse properties missing: %#v", profileThumbnailUploadResponse)
+	}
+	if _, ok := profileThumbnailUploadResponseProps["upload_url"].(map[string]any); !ok {
+		t.Fatalf("AgentProfileThumbnailUploadResponse upload_url missing: %#v", profileThumbnailUploadResponseProps)
+	}
+	if _, ok := profileThumbnailUploadResponseProps["form_fields"].(map[string]any); !ok {
+		t.Fatalf("AgentProfileThumbnailUploadResponse form_fields missing: %#v", profileThumbnailUploadResponseProps)
+	}
+	responseThumbnail, ok := profileThumbnailUploadResponseProps["profile_thumbnail_url"].(map[string]any)
+	if !ok || responseThumbnail["format"] != "uri" {
+		t.Fatalf("AgentProfileThumbnailUploadResponse profile_thumbnail_url schema = %#v", profileThumbnailUploadResponseProps["profile_thumbnail_url"])
 	}
 	updateRequest := openAPI.Components.Schemas["UpdateAgentConfigurationRequest"]
 	updateRequestDescription, ok := updateRequest["description"].(string)
@@ -381,6 +426,10 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	models, ok := runtimeProps["models"].(map[string]any)
 	if !ok || models["type"] != "array" {
 		t.Fatalf("RuntimeRecord models schema = %#v", runtimeProps["models"])
+	}
+	providerVersion, ok := runtimeProps["provider_version"].(map[string]any)
+	if !ok || providerVersion["type"] != "string" {
+		t.Fatalf("RuntimeRecord provider_version schema = %#v", runtimeProps["provider_version"])
 	}
 	daemonRecord := openAPI.Components.Schemas["DeviceDaemonRecord"]
 	daemonRequired, ok := daemonRecord["required"].([]string)

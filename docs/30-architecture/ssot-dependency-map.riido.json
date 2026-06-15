@@ -423,13 +423,13 @@
     },
     {
       "id": "profile-thumbnail-url",
-      "fact": "profile_thumbnail_url is an optional HTTPS image URL string",
-      "human_doc_phrase": "`profile_thumbnail_url` is an optional HTTPS image URL string",
+      "fact": "profile_thumbnail_url is an optional HTTPS image URL string produced by the profile thumbnail upload-intent flow",
+      "human_doc_phrase": "`profile_thumbnail_url` is an optional HTTPS image URL string produced by the profile thumbnail upload-intent flow",
       "source_refs": [
         {
           "repo": "riido-contracts",
           "path": "docs/20-domain/ai-agent-policy.md",
-          "required_phrase": "HTTPS image URL string"
+          "required_phrase": "thumbnail upload-intent endpoint"
         }
       ],
       "owner": {
@@ -439,11 +439,11 @@
       "downstreams": [
         {
           "repo": "riido-control-plane",
-          "local_scope": "PATCH validation, save/update behavior, and response projection"
+          "local_scope": "profile thumbnail upload-intent endpoint, PATCH validation, save/update behavior, and response projection"
         },
         {
           "repo": "riido-client",
-          "local_scope": "avatar rendering"
+          "local_scope": "uploads image through the returned S3 POST form and renders the saved URL"
         },
         {
           "repo": "riido-daemon",
@@ -451,7 +451,7 @@
         },
         {
           "repo": "riido-infra",
-          "local_scope": "no Terraform diff until hosted media storage is required"
+          "local_scope": "deployment-owned bucket/CDN mapping and task-role S3 PutObject permission without public live-value exposure"
         }
       ]
     },

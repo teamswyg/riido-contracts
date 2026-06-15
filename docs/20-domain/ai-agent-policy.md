@@ -610,9 +610,13 @@ thread or runtime. The client-facing agent record therefore carries optional
 `profile_thumbnail_url`, `tmp_color`, `description`, and `instruction` fields
 wherever agents are returned.
 
-The thumbnail value is an HTTPS image URL string. Binary upload, image
-resizing, CDN storage, and moderation are outside this contract until a separate
-media/storage contract owns them.
+The thumbnail value stored on the agent is an HTTPS image URL string. When the
+client needs to upload a new profile image, it first calls the dedicated profile
+thumbnail upload-intent endpoint, uploads the image through the returned S3 POST
+form, and then saves the returned `profile_thumbnail_url` on create/update.
+Bucket names, IAM policy, CDN origin/base URL, lifecycle, resizing, and
+moderation stay outside the public contract and are owned by deployment/infra
+configuration.
 
 The `tmp_color` value is an optional fixture-provided avatar fallback color.
 Selecting 리도/영실/홍도/지원 may copy this value into the normal created agent so
