@@ -782,6 +782,17 @@ freshest provider-native resume key when present, and fall back to
 This slice does not add a new field, schema version, generated client output,
 or control-plane storage table.
 
+### RIID-4964 — Assignment worktree URL safety semantics
+
+This slice clarifies the existing `AssignmentWorktree.repository_full_name` and
+`repository_url` fields without changing their JSON shape. The values are safe
+public GitHub repository identifiers only; userinfo, query strings, fragments,
+signed URLs, and raw credentials are outside the contract and must be omitted or
+rejected by downstream implementations.
+
+This slice does not add private clone authentication, token references, a
+schema version bump, or generated client changes.
+
 ## Validation Gates
 
 Required for this repository:

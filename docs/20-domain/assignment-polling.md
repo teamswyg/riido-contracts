@@ -105,6 +105,15 @@ the freshest resume key for that assignment and falls back to
 keeps daemon-local recovery from blindly starting over after local in-flight
 state loss.
 
+`AssignmentWorktree.repository_full_name` and `repository_url` are public
+repository identifiers, not secret transports. P0 worktrees allow only public
+GitHub repository identifiers of the form `{owner}/{repo}` and
+`https://github.com/{owner}/{repo}` with no userinfo, query string, fragment, or
+credential-bearing component. Private repositories must be represented as
+private/unsupported until a future token-reference broker exists; raw tokens,
+signed URLs, and credentialed clone URLs must not be serialized into assignment
+payloads, prompts, events, logs, RAG context, or daemon clone arguments.
+
 While an assignment is `leased`, `ready`, or `running`, the daemon sends an
 assignment heartbeat every 5 seconds. The control plane treats the active
 assignment lease as stale when it has not been refreshed for 20 seconds. A stale
