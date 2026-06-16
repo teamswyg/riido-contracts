@@ -30,6 +30,7 @@ func TestStoredKeyCompatibility(t *testing.T) {
 		AWSOperation:                 "aws.operation",
 		RiidoTraceSurface:            "riido.trace.surface",
 		RiidoStoreOperation:          "riido.store.operation",
+		RiidoTaskContextOperation:    "riido.task_context.operation",
 		RiidoPollAction:              "riido.poll.action",
 	}
 	for key, want := range tests {
