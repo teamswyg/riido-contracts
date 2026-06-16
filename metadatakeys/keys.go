@@ -43,9 +43,10 @@ const (
 	AWSOperation Key = "aws.operation"
 	AWSRegion    Key = "aws.region"
 
-	RiidoTraceSurface   Key = "riido.trace.surface"
-	RiidoStoreOperation Key = "riido.store.operation"
-	RiidoPollAction     Key = "riido.poll.action"
+	RiidoTraceSurface         Key = "riido.trace.surface"
+	RiidoStoreOperation       Key = "riido.store.operation"
+	RiidoTaskContextOperation Key = "riido.task_context.operation"
+	RiidoPollAction           Key = "riido.poll.action"
 )
 
 func (key Key) String() string {
@@ -63,6 +64,6 @@ func All() []Key {
 		ProgressMessageCode, ProgressMessageKey, ProgressMessageArgPrefix, ThreadProgressSeq,
 		HTTPRequestMethod, HTTPRoute, HTTPResponseStatusCode, HTTPStatusCode,
 		AWSService, AWSOperation, AWSRegion,
-		RiidoTraceSurface, RiidoStoreOperation, RiidoPollAction,
+		RiidoTraceSurface, RiidoStoreOperation, RiidoTaskContextOperation, RiidoPollAction,
 	}
 }
