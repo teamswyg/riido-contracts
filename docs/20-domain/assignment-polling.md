@@ -99,6 +99,11 @@ daemon that already has the task in local in-flight state may ignore `active`;
 a daemon that lost local in-flight state after restart may rebuild the same
 `TaskRequest` from the returned assignment snapshot. The control plane must
 therefore keep `active` payloads self-contained in the same way as `start`.
+When an active payload includes `provider_session_id`, the daemon treats it as
+the freshest resume key for that assignment and falls back to
+`resume_session_id` only when no provider session has been pinned yet. This
+keeps daemon-local recovery from blindly starting over after local in-flight
+state loss.
 
 While an assignment is `leased`, `ready`, or `running`, the daemon sends an
 assignment heartbeat every 5 seconds. The control plane treats the active

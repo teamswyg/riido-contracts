@@ -771,6 +771,17 @@ This slice does:
 This slice does not change participant dropdown selection, task-thread history,
 daemon polling, assignment commands, or frontend rendering precedence.
 
+### RIID-4964 — Active assignment resume semantics
+
+This slice clarifies the existing assignment polling contract without changing
+the JSON wire shape. A daemon rebuilding a lost local in-flight task from
+`PollResponse.action=active` must use `Assignment.provider_session_id` as the
+freshest provider-native resume key when present, and fall back to
+`Assignment.resume_session_id` only before a provider session has been pinned.
+
+This slice does not add a new field, schema version, generated client output,
+or control-plane storage table.
+
 ## Validation Gates
 
 Required for this repository:
