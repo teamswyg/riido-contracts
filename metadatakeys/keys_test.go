@@ -24,6 +24,13 @@ func TestStoredKeyCompatibility(t *testing.T) {
 		RuntimeCapabilityFingerprint: "runtime_capability_fingerprint",
 		ProgressMessageCode:          "riido_progress_message_code",
 		ThreadProgressSeq:            "thread_progress_seq",
+		HTTPRoute:                    "http.route",
+		HTTPResponseStatusCode:       "http.response.status_code",
+		HTTPStatusCode:               "http.status_code",
+		AWSOperation:                 "aws.operation",
+		RiidoTraceSurface:            "riido.trace.surface",
+		RiidoStoreOperation:          "riido.store.operation",
+		RiidoPollAction:              "riido.poll.action",
 	}
 	for key, want := range tests {
 		if got := key.String(); got != want {

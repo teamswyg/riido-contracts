@@ -33,6 +33,19 @@ const (
 	ProgressMessageKey       Key = "riido_progress_message_key"
 	ProgressMessageArgPrefix Key = "riido_progress_message_arg."
 	ThreadProgressSeq        Key = "thread_progress_seq"
+
+	HTTPRequestMethod      Key = "http.request.method"
+	HTTPRoute              Key = "http.route"
+	HTTPResponseStatusCode Key = "http.response.status_code"
+	HTTPStatusCode         Key = "http.status_code"
+
+	AWSService   Key = "aws.service"
+	AWSOperation Key = "aws.operation"
+	AWSRegion    Key = "aws.region"
+
+	RiidoTraceSurface   Key = "riido.trace.surface"
+	RiidoStoreOperation Key = "riido.store.operation"
+	RiidoPollAction     Key = "riido.poll.action"
 )
 
 func (key Key) String() string {
@@ -48,5 +61,8 @@ func All() []Key {
 		RequiredSurfaces, AllowExperimentalRuntime,
 		RuntimeLeaseID, RuntimeFencingToken, RuntimeCapabilityFingerprint,
 		ProgressMessageCode, ProgressMessageKey, ProgressMessageArgPrefix, ThreadProgressSeq,
+		HTTPRequestMethod, HTTPRoute, HTTPResponseStatusCode, HTTPStatusCode,
+		AWSService, AWSOperation, AWSRegion,
+		RiidoTraceSurface, RiidoStoreOperation, RiidoPollAction,
 	}
 }
