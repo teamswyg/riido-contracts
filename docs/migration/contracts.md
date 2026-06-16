@@ -793,6 +793,17 @@ rejected by downstream implementations.
 This slice does not add private clone authentication, token references, a
 schema version bump, or generated client changes.
 
+### RIID-4964 — Assignment worktree identifier executable SSOT
+
+The public repository identifier rule is now executable in the `assignment`
+package through `NormalizePublicGitHubRepositoryFullName` and
+`NormalizePublicGitHubRepositoryURL`. Downstream repositories should consume
+these helpers instead of reimplementing URL parsing, path validation, or
+credential-bearing component rejection.
+
+This slice does not add a new `AssignmentWorktree` field, private repository
+authentication, a schema version bump, or generated client changes.
+
 ## Validation Gates
 
 Required for this repository:

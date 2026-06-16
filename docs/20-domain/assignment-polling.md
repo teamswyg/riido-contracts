@@ -113,6 +113,9 @@ credential-bearing component. Private repositories must be represented as
 private/unsupported until a future token-reference broker exists; raw tokens,
 signed URLs, and credentialed clone URLs must not be serialized into assignment
 payloads, prompts, events, logs, RAG context, or daemon clone arguments.
+Downstream runtimes must use the executable normalization helpers in the
+`assignment` package as the shared SSOT for accepting or dropping these
+identifiers.
 
 While an assignment is `leased`, `ready`, or `running`, the daemon sends an
 assignment heartbeat every 5 seconds. The control plane treats the active
