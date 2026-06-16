@@ -8,6 +8,12 @@ import (
 
 func TestAssignmentAPIJSONShapes(t *testing.T) {
 	now := time.Date(2026, 5, 27, 11, 0, 0, 0, time.UTC)
+	worktree := &AssignmentWorktree{
+		RepositoryFullName: "teamswyg/riido-daemon",
+		RepositoryURL:      "https://github.com/teamswyg/riido-daemon",
+		BranchName:         "RIID-4964-agent-profile-upload",
+		Source:             "connected_pull_request",
+	}
 	assignment := Assignment{
 		ID:                       "asn-000001",
 		TaskID:                   "task-a",
@@ -20,6 +26,7 @@ func TestAssignmentAPIJSONShapes(t *testing.T) {
 		AllowExperimentalRuntime: true,
 		ResumeSessionID:          "th-prev",
 		ProviderSessionID:        "th-current",
+		Worktree:                 worktree,
 		State:                    AssignmentLeased,
 		LeaseToken:               "lease-1",
 		ReplacesAssignmentID:     "asn-old",
@@ -36,8 +43,9 @@ func TestAssignmentAPIJSONShapes(t *testing.T) {
 		AgentInstruction:         "act as QA",
 		AllowExperimentalRuntime: true,
 		ResumeSessionID:          "th-prev",
+		Worktree:                 worktree,
 		CreatedBy:                "user-a",
-	}, `{"component_id":"component-1","agent_id":"agent-a","runtime_provider":"codex","model_id":"gpt-5.5","prompt":"run tests","agent_instruction":"act as QA","allow_experimental_runtime":true,"resume_session_id":"th-prev","created_by":"user-a"}`)
+	}, `{"component_id":"component-1","agent_id":"agent-a","runtime_provider":"codex","model_id":"gpt-5.5","prompt":"run tests","agent_instruction":"act as QA","allow_experimental_runtime":true,"resume_session_id":"th-prev","worktree":{"repository_full_name":"teamswyg/riido-daemon","repository_url":"https://github.com/teamswyg/riido-daemon","branch_name":"RIID-4964-agent-profile-upload","source":"connected_pull_request"},"created_by":"user-a"}`)
 	assertJSON(t, "poll request", PollRequest{
 		DaemonID:  "daemon-a",
 		DeviceID:  "device-a",
@@ -47,7 +55,7 @@ func TestAssignmentAPIJSONShapes(t *testing.T) {
 		SchemaVersion: SchemaVersion,
 		Action:        PollStart,
 		Assignment:    &assignment,
-	}, `{"schema_version":"riido-ai-server.v1","action":"start","assignment":{"assignment_id":"asn-000001","task_id":"task-a","component_id":"component-1","agent_id":"agent-a","runtime_provider":"codex","model_id":"gpt-5.5","prompt":"run tests","agent_instruction":"act as QA","allow_experimental_runtime":true,"resume_session_id":"th-prev","provider_session_id":"th-current","state":"leased","lease_token":"lease-1","replaces_assignment_id":"asn-old","blocked_by_assignment_id":"asn-blocker","created_at":"2026-05-27T11:00:00Z","updated_at":"2026-05-27T11:00:00Z"}}`)
+	}, `{"schema_version":"riido-ai-server.v1","action":"start","assignment":{"assignment_id":"asn-000001","task_id":"task-a","component_id":"component-1","agent_id":"agent-a","runtime_provider":"codex","model_id":"gpt-5.5","prompt":"run tests","agent_instruction":"act as QA","allow_experimental_runtime":true,"resume_session_id":"th-prev","provider_session_id":"th-current","worktree":{"repository_full_name":"teamswyg/riido-daemon","repository_url":"https://github.com/teamswyg/riido-daemon","branch_name":"RIID-4964-agent-profile-upload","source":"connected_pull_request"},"state":"leased","lease_token":"lease-1","replaces_assignment_id":"asn-old","blocked_by_assignment_id":"asn-blocker","created_at":"2026-05-27T11:00:00Z","updated_at":"2026-05-27T11:00:00Z"}}`)
 	assertJSON(t, "heartbeat request", AgentHeartbeatRequest{
 		DaemonID:            "daemon-a",
 		DeviceID:            "device-a",
@@ -58,7 +66,7 @@ func TestAssignmentAPIJSONShapes(t *testing.T) {
 	assertJSON(t, "heartbeat response", AgentHeartbeatResponse{
 		SchemaVersion:        SchemaVersion,
 		RefreshedAssignments: []Assignment{assignment},
-	}, `{"schema_version":"riido-ai-server.v1","refreshed_assignments":[{"assignment_id":"asn-000001","task_id":"task-a","component_id":"component-1","agent_id":"agent-a","runtime_provider":"codex","model_id":"gpt-5.5","prompt":"run tests","agent_instruction":"act as QA","allow_experimental_runtime":true,"resume_session_id":"th-prev","provider_session_id":"th-current","state":"leased","lease_token":"lease-1","replaces_assignment_id":"asn-old","blocked_by_assignment_id":"asn-blocker","created_at":"2026-05-27T11:00:00Z","updated_at":"2026-05-27T11:00:00Z"}]}`)
+	}, `{"schema_version":"riido-ai-server.v1","refreshed_assignments":[{"assignment_id":"asn-000001","task_id":"task-a","component_id":"component-1","agent_id":"agent-a","runtime_provider":"codex","model_id":"gpt-5.5","prompt":"run tests","agent_instruction":"act as QA","allow_experimental_runtime":true,"resume_session_id":"th-prev","provider_session_id":"th-current","worktree":{"repository_full_name":"teamswyg/riido-daemon","repository_url":"https://github.com/teamswyg/riido-daemon","branch_name":"RIID-4964-agent-profile-upload","source":"connected_pull_request"},"state":"leased","lease_token":"lease-1","replaces_assignment_id":"asn-old","blocked_by_assignment_id":"asn-blocker","created_at":"2026-05-27T11:00:00Z","updated_at":"2026-05-27T11:00:00Z"}]}`)
 	assertJSON(t, "agent event request", AgentEventRequest{
 		AssignmentID:      "asn-000001",
 		TaskID:            "task-a",
@@ -88,7 +96,7 @@ func TestAssignmentAPIJSONShapes(t *testing.T) {
 		SchemaVersion: SchemaVersion,
 		Assignment:    &assignment,
 		Event:         event,
-	}, `{"schema_version":"riido-ai-server.v1","assignment":{"assignment_id":"asn-000001","task_id":"task-a","component_id":"component-1","agent_id":"agent-a","runtime_provider":"codex","model_id":"gpt-5.5","prompt":"run tests","agent_instruction":"act as QA","allow_experimental_runtime":true,"resume_session_id":"th-prev","provider_session_id":"th-current","state":"leased","lease_token":"lease-1","replaces_assignment_id":"asn-old","blocked_by_assignment_id":"asn-blocker","created_at":"2026-05-27T11:00:00Z","updated_at":"2026-05-27T11:00:00Z"},"event":{"seq":1,"task_id":"task-a","assignment_id":"asn-000001","agent_id":"agent-a","type":"assignment_running","state":"running","message":"running","metadata":{"step":"run"},"at":"2026-05-27T11:00:00Z"}}`)
+	}, `{"schema_version":"riido-ai-server.v1","assignment":{"assignment_id":"asn-000001","task_id":"task-a","component_id":"component-1","agent_id":"agent-a","runtime_provider":"codex","model_id":"gpt-5.5","prompt":"run tests","agent_instruction":"act as QA","allow_experimental_runtime":true,"resume_session_id":"th-prev","provider_session_id":"th-current","worktree":{"repository_full_name":"teamswyg/riido-daemon","repository_url":"https://github.com/teamswyg/riido-daemon","branch_name":"RIID-4964-agent-profile-upload","source":"connected_pull_request"},"state":"leased","lease_token":"lease-1","replaces_assignment_id":"asn-old","blocked_by_assignment_id":"asn-blocker","created_at":"2026-05-27T11:00:00Z","updated_at":"2026-05-27T11:00:00Z"},"event":{"seq":1,"task_id":"task-a","assignment_id":"asn-000001","agent_id":"agent-a","type":"assignment_running","state":"running","message":"running","metadata":{"step":"run"},"at":"2026-05-27T11:00:00Z"}}`)
 	assertJSON(t, "agent runtime binding", AgentRuntimeBinding{
 		AgentID:         "agent-a",
 		DaemonID:        "daemon-a",
