@@ -4324,6 +4324,10 @@
       "AIAgentTaskActionResponse": {
         "description": "task thread action 요청 이후 client가 즉시 반영할 agent 작업 상태 응답입니다.",
         "properties": {
+          "active_stream": {
+            "$ref": "#/components/schemas/AIAgentTaskThreadStreamLink",
+            "description": "queued/running/stopping action response에서 client가 refetch 없이 즉시 SSE 구독을 시작할 수 있는 thread progress handoff link입니다. terminal 응답에서는 생략합니다."
+          },
           "agent_id": {
             "type": "string"
           },

@@ -364,6 +364,7 @@
         "server: persist and return visible task threads even when the assignment/message was created while the viewer was on another screen",
         "server: include at most one active_stream link because one task can have only one active AI agent assignment at a time",
         "server: omit active_stream for completed, stopped, failed, or fully cold task-thread collections",
+        "server: include active_stream in queued/running/stopping AIAgentTaskActionResponse payloads so assignment UI can start SSE without waiting for a cold collection refetch",
         "stream: every task-thread progress event carries thread_id so the client updates the targeted thread without inferring from task_id alone",
         "client: never open the SSE stream solely because a task has historical AI Agent thread rows",
         "client: owns long-body scroll/focus, hover, modal, and animation presentation around the returned thread records"
@@ -1977,6 +1978,54 @@
       }
     },
     {
+      "name": "AIAgentTaskThreadStreamLink",
+      "schema": {
+        "name": "AIAgentTaskThreadStreamLink",
+        "description": "활성 task thread가 있을 때 client가 연결할 SSE stream handoff link입니다.",
+        "type": "object",
+        "required": [
+          "rel",
+          "href",
+          "event_type",
+          "task_id",
+          "thread_id",
+          "run_id"
+        ],
+        "properties": [
+          {
+            "name": "rel",
+            "type": "string",
+            "enum": [
+              "agent_thread_progress_stream"
+            ]
+          },
+          {
+            "name": "href",
+            "type": "string"
+          },
+          {
+            "name": "event_type",
+            "type": "string",
+            "enum": [
+              "agent_thread_progress"
+            ]
+          },
+          {
+            "name": "task_id",
+            "type": "string"
+          },
+          {
+            "name": "thread_id",
+            "type": "string"
+          },
+          {
+            "name": "run_id",
+            "type": "string"
+          }
+        ]
+      }
+    },
+    {
       "name": "AIAgentTaskActionResponse",
       "schema": {
         "name": "AIAgentTaskActionResponse",
@@ -2042,6 +2091,11 @@
           {
             "name": "failure_diagnostics",
             "ref": "AIAgentTaskThreadFailureDiagnostics"
+          },
+          {
+            "name": "active_stream",
+            "description": "queued/running/stopping action response에서 client가 refetch 없이 즉시 SSE 구독을 시작할 수 있는 thread progress handoff link입니다. terminal 응답에서는 생략합니다.",
+            "ref": "AIAgentTaskThreadStreamLink"
           }
         ]
       }
@@ -2318,54 +2372,6 @@
             "items": {
               "ref": "AgentThreadProgressLine"
             }
-          }
-        ]
-      }
-    },
-    {
-      "name": "AIAgentTaskThreadStreamLink",
-      "schema": {
-        "name": "AIAgentTaskThreadStreamLink",
-        "description": "활성 task thread가 있을 때 client가 연결할 SSE stream handoff link입니다.",
-        "type": "object",
-        "required": [
-          "rel",
-          "href",
-          "event_type",
-          "task_id",
-          "thread_id",
-          "run_id"
-        ],
-        "properties": [
-          {
-            "name": "rel",
-            "type": "string",
-            "enum": [
-              "agent_thread_progress_stream"
-            ]
-          },
-          {
-            "name": "href",
-            "type": "string"
-          },
-          {
-            "name": "event_type",
-            "type": "string",
-            "enum": [
-              "agent_thread_progress"
-            ]
-          },
-          {
-            "name": "task_id",
-            "type": "string"
-          },
-          {
-            "name": "thread_id",
-            "type": "string"
-          },
-          {
-            "name": "run_id",
-            "type": "string"
           }
         ]
       }
