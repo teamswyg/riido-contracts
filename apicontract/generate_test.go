@@ -470,6 +470,10 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	if !ok || resultMessage["type"] != "string" {
 		t.Fatalf("AIAgentTaskActionResponse result_message schema = %#v", actionResponseProps["result_message"])
 	}
+	failureDiagnostics, ok := actionResponseProps["failure_diagnostics"].(map[string]any)
+	if !ok || failureDiagnostics["$ref"] != "#/components/schemas/AIAgentTaskThreadFailureDiagnostics" {
+		t.Fatalf("AIAgentTaskActionResponse failure_diagnostics schema = %#v", actionResponseProps["failure_diagnostics"])
+	}
 	threadRecord := openAPI.Components.Schemas["AIAgentTaskThreadRecord"]
 	threadRecordProps, ok := threadRecord["properties"].(map[string]any)
 	if !ok {
@@ -479,6 +483,10 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	if !ok || resultMessage["type"] != "string" {
 		t.Fatalf("AIAgentTaskThreadRecord result_message schema = %#v", threadRecordProps["result_message"])
 	}
+	failureDiagnostics, ok = threadRecordProps["failure_diagnostics"].(map[string]any)
+	if !ok || failureDiagnostics["$ref"] != "#/components/schemas/AIAgentTaskThreadFailureDiagnostics" {
+		t.Fatalf("AIAgentTaskThreadRecord failure_diagnostics schema = %#v", threadRecordProps["failure_diagnostics"])
+	}
 	workStatusEvent := openAPI.Components.Schemas["AgentWorkStatusChangedEvent"]
 	workStatusEventProps, ok := workStatusEvent["properties"].(map[string]any)
 	if !ok {
@@ -487,6 +495,10 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	resultMessage, ok = workStatusEventProps["result_message"].(map[string]any)
 	if !ok || resultMessage["type"] != "string" {
 		t.Fatalf("AgentWorkStatusChangedEvent result_message schema = %#v", workStatusEventProps["result_message"])
+	}
+	failureDiagnostics, ok = workStatusEventProps["failure_diagnostics"].(map[string]any)
+	if !ok || failureDiagnostics["$ref"] != "#/components/schemas/AIAgentTaskThreadFailureDiagnostics" {
+		t.Fatalf("AgentWorkStatusChangedEvent failure_diagnostics schema = %#v", workStatusEventProps["failure_diagnostics"])
 	}
 	progressEvent := openAPI.Components.Schemas["AgentThreadProgressEvent"]
 	progressRequired, ok := progressEvent["required"].([]string)
