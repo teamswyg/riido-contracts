@@ -474,6 +474,10 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	if !ok || failureDiagnostics["$ref"] != "#/components/schemas/AIAgentTaskThreadFailureDiagnostics" {
 		t.Fatalf("AIAgentTaskActionResponse failure_diagnostics schema = %#v", actionResponseProps["failure_diagnostics"])
 	}
+	activeStream, ok := actionResponseProps["active_stream"].(map[string]any)
+	if !ok || activeStream["$ref"] != "#/components/schemas/AIAgentTaskThreadStreamLink" {
+		t.Fatalf("AIAgentTaskActionResponse active_stream schema = %#v", actionResponseProps["active_stream"])
+	}
 	threadRecord := openAPI.Components.Schemas["AIAgentTaskThreadRecord"]
 	threadRecordProps, ok := threadRecord["properties"].(map[string]any)
 	if !ok {
