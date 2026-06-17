@@ -34,6 +34,11 @@ const (
 	ProgressMessageArgPrefix Key = "riido_progress_message_arg."
 	ThreadProgressSeq        Key = "thread_progress_seq"
 
+	// AssignmentRecovery records machine-readable recovery classification for
+	// daemon-authored assignment terminal events. The stored key remains the
+	// legacy "recovery" string for DynamoDB/event-history compatibility.
+	AssignmentRecovery Key = "recovery"
+
 	HTTPRequestMethod      Key = "http.request.method"
 	HTTPRoute              Key = "http.route"
 	HTTPResponseStatusCode Key = "http.response.status_code"
@@ -62,6 +67,7 @@ func All() []Key {
 		RequiredSurfaces, AllowExperimentalRuntime,
 		RuntimeLeaseID, RuntimeFencingToken, RuntimeCapabilityFingerprint,
 		ProgressMessageCode, ProgressMessageKey, ProgressMessageArgPrefix, ThreadProgressSeq,
+		AssignmentRecovery,
 		HTTPRequestMethod, HTTPRoute, HTTPResponseStatusCode, HTTPStatusCode,
 		AWSService, AWSOperation, AWSRegion,
 		RiidoTraceSurface, RiidoStoreOperation, RiidoTaskContextOperation, RiidoPollAction,
