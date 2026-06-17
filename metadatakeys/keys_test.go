@@ -33,6 +33,8 @@ func TestStoredKeyCompatibility(t *testing.T) {
 		RiidoStoreOperation:          "riido.store.operation",
 		RiidoTaskContextOperation:    "riido.task_context.operation",
 		RiidoPollAction:              "riido.poll.action",
+		AssignmentResultStatus:       "assignment_result_status",
+		AssignmentFailureCategory:    "assignment_failure_category",
 	}
 	for key, want := range tests {
 		if got := key.String(); got != want {
