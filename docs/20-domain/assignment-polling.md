@@ -36,6 +36,7 @@ That fixture owns the canonical lists for:
 - legal transitions from each state
 - poll actions
 - task event type values
+- tool approval status/decision values and timeout terminal status
 - assignment payload fields that the control plane snapshots for daemon runtime
   composition
 
@@ -58,6 +59,9 @@ The public shared DTOs are:
 - `AgentEventResponse`
 - `TaskEvent`
 - `AgentRuntimeBinding`
+- `ToolApprovalRequest`
+- `ToolApprovalDecision`
+- `ToolApprovalResult`
 
 `Assignment.agent_instruction` is the assignment-created snapshot of the
 configured agent's `instruction` value. It is optional and keeps the same
@@ -125,6 +129,15 @@ Downstream runtimes must use the executable normalization helpers in the
 `assignment` package as the shared SSOT for accepting or dropping these
 identifiers.
 
+`ToolApprovalRequest`, `ToolApprovalDecision`, and `ToolApprovalResult` define
+the shared web-approval contract surface. They do not by themselves open a
+control-plane endpoint or client UI. They fix the DTO vocabulary for the next
+round-trip slice: a daemon/provider asks for a tool approval with a stable
+`approval_id`, the web side resolves it with `approve` or `deny`, and a request
+that expires resolves to the terminal `timed_out` status. The canonical
+statuses are `pending`, `approved`, `denied`, and `timed_out`; the canonical
+decisions are `approve` and `deny`.
+
 While an assignment is `leased`, `ready`, or `running`, the daemon sends an
 assignment heartbeat every 5 seconds. The control plane treats the active
 assignment lease as stale when it has not been refreshed for 20 seconds. A stale
@@ -166,5 +179,5 @@ assignment constants and DTO declarations with aliases or imports from
 `github.com/teamswyg/riido-contracts/assignment`.
 
 After the control-plane consumer is on the tagged contract, `riido-daemon` can
-migrate its control-plane SaaS adapter without importing private
-`internal/riidoaiserver` packages.
+migrate its control-plane SaaS adapter without importing runtime-internal
+control-plane packages.
