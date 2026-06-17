@@ -38,6 +38,13 @@ const (
 	// daemon-authored assignment terminal events. The stored key remains the
 	// legacy "recovery" string for DynamoDB/event-history compatibility.
 	AssignmentRecovery Key = "recovery"
+	// AssignmentResultStatus records the daemon's terminal result status on
+	// assignment terminal events, so consumers can distinguish blocked/timeout
+	// outcomes from generic failed assignment projections.
+	AssignmentResultStatus Key = "assignment_result_status"
+	// AssignmentFailureCategory records a coarse machine-readable terminal
+	// failure class on failed assignment events.
+	AssignmentFailureCategory Key = "assignment_failure_category"
 
 	HTTPRequestMethod      Key = "http.request.method"
 	HTTPRoute              Key = "http.route"
@@ -67,7 +74,7 @@ func All() []Key {
 		RequiredSurfaces, AllowExperimentalRuntime,
 		RuntimeLeaseID, RuntimeFencingToken, RuntimeCapabilityFingerprint,
 		ProgressMessageCode, ProgressMessageKey, ProgressMessageArgPrefix, ThreadProgressSeq,
-		AssignmentRecovery,
+		AssignmentRecovery, AssignmentResultStatus, AssignmentFailureCategory,
 		HTTPRequestMethod, HTTPRoute, HTTPResponseStatusCode, HTTPStatusCode,
 		AWSService, AWSOperation, AWSRegion,
 		RiidoTraceSurface, RiidoStoreOperation, RiidoTaskContextOperation, RiidoPollAction,
