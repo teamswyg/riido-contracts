@@ -740,6 +740,7 @@
           "kind",
           "availability",
           "detection_state",
+          "provider_version",
           "has_assigned_agent",
           "requires_experimental_opt_in",
           "models"
