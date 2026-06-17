@@ -4994,7 +4994,7 @@
             "type": "string"
           },
           "profile_thumbnail_url": {
-            "description": "업로드 성공 후 agent create/update 요청의 profile_thumbnail_url에 저장할 CDN URL입니다.",
+            "description": "업로드 성공 후 agent create/update 요청의 profile_thumbnail_url에 저장할 Riido CDN URL입니다.",
             "format": "uri",
             "type": "string"
           },
@@ -5388,7 +5388,7 @@
             "type": "string"
           },
           "profile_thumbnail_url": {
-            "description": "agent 프로필 사진 URL입니다. createAIAgentProfileThumbnailUpload 응답의 profile_thumbnail_url 값을 저장합니다.",
+            "description": "agent 프로필 사진 URL입니다. createAIAgentProfileThumbnailUpload 응답의 Riido CDN profile_thumbnail_url 값을 저장합니다.",
             "format": "uri",
             "type": "string"
           },
@@ -5883,7 +5883,7 @@
             "type": "string"
           },
           "profile_thumbnail_url": {
-            "description": "agent 프로필 사진 URL입니다. createAIAgentProfileThumbnailUpload 응답의 profile_thumbnail_url 값을 저장합니다.",
+            "description": "agent 프로필 사진 URL입니다. createAIAgentProfileThumbnailUpload 응답의 Riido CDN profile_thumbnail_url 값을 저장합니다.",
             "format": "uri",
             "type": "string"
           },

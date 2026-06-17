@@ -401,7 +401,7 @@
       "kind": "profile",
       "description": "Agent profile presentation fields and server-authored creation/update timestamps are saved with the agent configuration and projected to client bootstrap, task assignment, and update responses.",
       "rules": [
-        "profile_thumbnail_url: optional HTTPS image URL string; profile image binary transfer uses the dedicated profile thumbnail upload-intent endpoint and deployment-owned media storage",
+        "profile_thumbnail_url: optional Riido CDN HTTPS image URL string; profile image binary transfer uses the dedicated profile thumbnail upload-intent endpoint and deployment-owned media storage",
         "tmp_color: optional fixture-provided avatar fallback color preserved on fixture-created agents for list/card presentation; clients still own final rendering precedence",
         "description: optional client-authored one-line summary with a maximum of 160 characters; empty string is allowed; client UI owns truncation and wrapping",
         "instruction: optional client-authored text with a maximum of 1000 characters; empty string is allowed",
@@ -1628,7 +1628,7 @@
           "name": "profile_thumbnail_url",
           "type": "string",
           "format": "uri",
-          "description": "업로드 성공 후 agent create/update 요청의 profile_thumbnail_url에 저장할 CDN URL입니다."
+          "description": "업로드 성공 후 agent create/update 요청의 profile_thumbnail_url에 저장할 Riido CDN URL입니다."
         },
         {
           "name": "expires_at",
@@ -1660,7 +1660,7 @@
           "name": "profile_thumbnail_url",
           "type": "string",
           "format": "uri",
-          "description": "agent 프로필 사진 URL입니다. createAIAgentProfileThumbnailUpload 응답의 profile_thumbnail_url 값을 저장합니다."
+          "description": "agent 프로필 사진 URL입니다. createAIAgentProfileThumbnailUpload 응답의 Riido CDN profile_thumbnail_url 값을 저장합니다."
         },
         {
           "name": "description",
@@ -1705,7 +1705,7 @@
           "name": "profile_thumbnail_url",
           "type": "string",
           "format": "uri",
-          "description": "agent 프로필 사진 URL입니다. createAIAgentProfileThumbnailUpload 응답의 profile_thumbnail_url 값을 저장합니다."
+          "description": "agent 프로필 사진 URL입니다. createAIAgentProfileThumbnailUpload 응답의 Riido CDN profile_thumbnail_url 값을 저장합니다."
         },
         {
           "name": "description",
@@ -3330,13 +3330,13 @@
           "name": "profile image upload precedes agent save",
           "given": "the Figma agent add/edit screen AvatarInput receives a local image file",
           "when": "the client requests an upload intent with image content type and size",
-          "then": "the API returns one-time S3 POST form fields plus a CDN profile_thumbnail_url that the client can save through createAIAgent or updateAIAgentConfiguration"
+          "then": "the API returns one-time S3 POST form fields plus a Riido CDN profile_thumbnail_url that the client can save through createAIAgent or updateAIAgentConfiguration"
         },
         {
           "name": "media storage stays deployment-owned",
           "given": "production uses an existing CDN and S3 media bucket path",
           "when": "the upload intent is created",
-          "then": "the public contract exposes only the upload intent and resulting profile_thumbnail_url while bucket, IAM, and lifecycle details stay in infra/operator configuration"
+          "then": "the public contract exposes only the upload intent and resulting Riido CDN profile_thumbnail_url while bucket, IAM, and lifecycle details stay in infra/operator configuration"
         }
       ]
     },
@@ -4424,7 +4424,7 @@
           "name": "workspace-scoped profile image upload precedes agent save",
           "given": "the v2 workspace-scoped Figma agent add/edit screen AvatarInput receives a local image file",
           "when": "the client calls riido.v2.aiAgent.profileThumbnails.uploads.create",
-          "then": "the API returns one-time S3 POST form fields plus a CDN profile_thumbnail_url that the client can save through v2 agent create/update"
+          "then": "the API returns one-time S3 POST form fields plus a Riido CDN profile_thumbnail_url that the client can save through v2 agent create/update"
         }
       ]
     },

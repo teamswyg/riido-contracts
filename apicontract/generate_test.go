@@ -191,6 +191,9 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	if !ok || createThumbnail["format"] != "uri" {
 		t.Fatalf("CreateAgentConfigurationRequest profile_thumbnail_url schema = %#v", createRequestProps["profile_thumbnail_url"])
 	}
+	if description, _ := createThumbnail["description"].(string); !strings.Contains(description, "Riido CDN") {
+		t.Fatalf("CreateAgentConfigurationRequest profile_thumbnail_url must document Riido CDN storage: %#v", createThumbnail)
+	}
 	createDescription, ok := createRequestProps["description"].(map[string]any)
 	if !ok || createDescription["maxLength"] != 160 {
 		t.Fatalf("CreateAgentConfigurationRequest description schema = %#v", createRequestProps["description"])
@@ -224,6 +227,9 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	responseThumbnail, ok := profileThumbnailUploadResponseProps["profile_thumbnail_url"].(map[string]any)
 	if !ok || responseThumbnail["format"] != "uri" {
 		t.Fatalf("AgentProfileThumbnailUploadResponse profile_thumbnail_url schema = %#v", profileThumbnailUploadResponseProps["profile_thumbnail_url"])
+	}
+	if description, _ := responseThumbnail["description"].(string); !strings.Contains(description, "Riido CDN") {
+		t.Fatalf("AgentProfileThumbnailUploadResponse profile_thumbnail_url must document Riido CDN storage: %#v", responseThumbnail)
 	}
 	updateRequest := openAPI.Components.Schemas["UpdateAgentConfigurationRequest"]
 	updateRequestDescription, ok := updateRequest["description"].(string)
