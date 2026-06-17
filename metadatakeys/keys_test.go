@@ -24,6 +24,7 @@ func TestStoredKeyCompatibility(t *testing.T) {
 		RuntimeCapabilityFingerprint: "runtime_capability_fingerprint",
 		ProgressMessageCode:          "riido_progress_message_code",
 		ThreadProgressSeq:            "thread_progress_seq",
+		AssignmentRecovery:           "recovery",
 		HTTPRoute:                    "http.route",
 		HTTPResponseStatusCode:       "http.response.status_code",
 		HTTPStatusCode:               "http.status_code",

@@ -105,6 +105,14 @@ the freshest resume key for that assignment and falls back to
 keeps daemon-local recovery from blindly starting over after local in-flight
 state loss.
 
+If an active assignment cannot be resumed safely because neither
+`provider_session_id` nor `resume_session_id` is available, the daemon must fail
+the assignment instead of starting fresh. The terminal event records
+`metadatakeys.AssignmentRecovery` (`"recovery"`) with
+`RecoveryFreshStartRefused` (`"fresh_start_refused"`) so control-plane logs,
+event history, and operator analysis can distinguish this safe refusal from a
+provider failure.
+
 `AssignmentWorktree.repository_full_name` and `repository_url` are public
 repository identifiers, not secret transports. P0 worktrees allow only public
 GitHub repository identifiers of the form `{owner}/{repo}` and
