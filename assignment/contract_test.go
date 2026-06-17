@@ -88,6 +88,16 @@ func TestAssignmentContractMatchesPackageSurface(t *testing.T) {
 		t.Fatalf("package task events missing from contract: %v", sortedStringSet(remainingTaskEvents))
 	}
 
+	if got, want := contract.ExecutionIdentity.ExecutionKeyOrder, []string{"assignment_id", "run_id", "task_id"}; !slices.Equal(got, want) {
+		t.Fatalf("execution key order drifted: got %v want %v", got, want)
+	}
+	if got, want := contract.ExecutionIdentity.ResumeSessionKeyOrder, []string{"provider_session_id", "resume_session_id"}; !slices.Equal(got, want) {
+		t.Fatalf("resume session key order drifted: got %v want %v", got, want)
+	}
+	if got := contract.ExecutionIdentity.RunIDDefaultSource; got != "assignment_id" {
+		t.Fatalf("run id default source drifted: %q", got)
+	}
+
 	if len(contract.AssignmentPayloadFields) != 3 {
 		t.Fatalf("assignment payload fields drifted: %#v", contract.AssignmentPayloadFields)
 	}
@@ -207,6 +217,7 @@ type executableContract struct {
 	AssignmentStates        []contractState                  `json:"assignment_states"`
 	PollActions             []contractValue                  `json:"poll_actions"`
 	TaskEvents              []contractValue                  `json:"task_events"`
+	ExecutionIdentity       contractExecutionIdentity        `json:"execution_identity"`
 	AssignmentPayloadFields []contractAssignmentPayloadField `json:"assignment_payload_fields"`
 }
 
@@ -221,6 +232,12 @@ type contractState struct {
 type contractValue struct {
 	Name  string `json:"name"`
 	Value string `json:"value"`
+}
+
+type contractExecutionIdentity struct {
+	ExecutionKeyOrder     []string `json:"execution_key_order"`
+	ResumeSessionKeyOrder []string `json:"resume_session_key_order"`
+	RunIDDefaultSource    string   `json:"run_id_default_source"`
 }
 
 type contractAssignmentPayloadField struct {
