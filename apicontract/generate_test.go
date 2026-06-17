@@ -432,6 +432,9 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	if !ok || providerVersion["type"] != "string" {
 		t.Fatalf("RuntimeRecord provider_version schema = %#v", runtimeProps["provider_version"])
 	}
+	if !contains(runtimeRequired, "provider_version") {
+		t.Fatalf("RuntimeRecord required = %#v", runtimeRecord["required"])
+	}
 	daemonRecord := openAPI.Components.Schemas["DeviceDaemonRecord"]
 	daemonRequired, ok := daemonRecord["required"].([]string)
 	if !ok || !contains(daemonRequired, "supported_actions") {
