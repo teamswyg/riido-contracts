@@ -16,8 +16,8 @@ func TestGeneratedFilesFromCommonLispSource(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	if got := len(doc.Enums); got != 5 {
-		t.Fatalf("enum count = %d, want 5", got)
+	if got := len(doc.Enums); got != 7 {
+		t.Fatalf("enum count = %d, want 7", got)
 	}
 	if got := len(doc.Transitions); got != 2 {
 		t.Fatalf("transition count = %d, want 2", got)
@@ -34,6 +34,8 @@ func TestGeneratedFilesFromCommonLispSource(t *testing.T) {
 		"assignment/assignment_state_enum_gen.go",
 		"assignment/assignment_transition_code_enum_gen.go",
 		"assignment/poll_action_enum_gen.go",
+		"assignment/approval_status_enum_gen.go",
+		"assignment/approval_decision_enum_gen.go",
 	} {
 		if len(files[path]) == 0 {
 			t.Fatalf("missing generated file %s", path)

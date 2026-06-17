@@ -241,4 +241,28 @@
     (value PollNone "none")
     (value PollStart "start")
     (value PollCancel "cancel")
-    (value PollActive "active")))
+    (value PollActive "active"))
+
+  (enum
+    :package assignment
+    :type ApprovalStatus
+    :code-type ApprovalStatusCode
+    :string-type ApprovalStatusString
+    :const-prefix Approval
+    :all AllApprovalStatuses
+    :code-all AllApprovalStatusCodes
+    (value ApprovalPending "pending")
+    (value ApprovalApproved "approved")
+    (value ApprovalDenied "denied")
+    (value ApprovalTimedOut "timed_out"))
+
+  (enum
+    :package assignment
+    :type ApprovalDecision
+    :code-type ApprovalDecisionCode
+    :string-type ApprovalDecisionString
+    :const-prefix ApprovalDecision
+    :all AllApprovalDecisions
+    :code-all AllApprovalDecisionCodes
+    (value ApprovalDecisionApprove "approve")
+    (value ApprovalDecisionDeny "deny")))

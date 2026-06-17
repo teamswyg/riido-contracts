@@ -97,6 +97,7 @@ func TestAssignmentContractMatchesPackageSurface(t *testing.T) {
 	if got := contract.ExecutionIdentity.RunIDDefaultSource; got != "assignment_id" {
 		t.Fatalf("run id default source drifted: %q", got)
 	}
+	assertApprovalContract(t, contract.ApprovalContract)
 
 	if len(contract.AssignmentPayloadFields) != 3 {
 		t.Fatalf("assignment payload fields drifted: %#v", contract.AssignmentPayloadFields)
@@ -137,6 +138,28 @@ func TestAssignmentContractMatchesPackageSurface(t *testing.T) {
 	}
 	if modelID.Consumer != "riido-daemon provider runtime model selection" {
 		t.Fatalf("model_id consumer drifted: %q", modelID.Consumer)
+	}
+}
+
+func assertApprovalContract(t *testing.T, contract contractApproval) {
+	t.Helper()
+	if contract.Owner != ApprovalContractOwner {
+		t.Fatalf("approval owner drifted: %q", contract.Owner)
+	}
+	if contract.TimeoutTerminalStatus != string(ApprovalTimeoutTerminalStatus) {
+		t.Fatalf("approval timeout terminal status drifted: %q", contract.TimeoutTerminalStatus)
+	}
+	for _, status := range contract.Statuses {
+		value := ApprovalStatus(status.Value)
+		if !value.Code().IsKnown() || value.IsTerminal() != status.Terminal {
+			t.Fatalf("approval status drifted: %#v", status)
+		}
+	}
+	for _, decision := range contract.Decisions {
+		value := ApprovalDecision(decision.Value)
+		if !value.Code().IsKnown() {
+			t.Fatalf("approval decision drifted: %#v", decision)
+		}
 	}
 }
 
@@ -218,6 +241,7 @@ type executableContract struct {
 	PollActions             []contractValue                  `json:"poll_actions"`
 	TaskEvents              []contractValue                  `json:"task_events"`
 	ExecutionIdentity       contractExecutionIdentity        `json:"execution_identity"`
+	ApprovalContract        contractApproval                 `json:"approval_contract"`
 	AssignmentPayloadFields []contractAssignmentPayloadField `json:"assignment_payload_fields"`
 }
 
@@ -238,6 +262,19 @@ type contractExecutionIdentity struct {
 	ExecutionKeyOrder     []string `json:"execution_key_order"`
 	ResumeSessionKeyOrder []string `json:"resume_session_key_order"`
 	RunIDDefaultSource    string   `json:"run_id_default_source"`
+}
+
+type contractApproval struct {
+	Owner                 string                `json:"owner"`
+	TimeoutTerminalStatus string                `json:"timeout_terminal_status"`
+	Statuses              []contractStatusValue `json:"statuses"`
+	Decisions             []contractValue       `json:"decisions"`
+}
+
+type contractStatusValue struct {
+	Name     string `json:"name"`
+	Value    string `json:"value"`
+	Terminal bool   `json:"terminal"`
 }
 
 type contractAssignmentPayloadField struct {
