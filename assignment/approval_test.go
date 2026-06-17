@@ -37,6 +37,58 @@ func TestAssignmentContractToolApprovalWireShape(t *testing.T) {
 	assertApprovalJSON(t, decision, `{"approval_id":"approval-1","assignment_id":"asn-1","decision":"approve","decided_by":"user-1","reason":"reviewed in web","decided_at":"2026-06-17T10:01:00Z"}`)
 }
 
+func TestAssignmentContractToolApprovalResponseWireShape(t *testing.T) {
+	at := time.Date(2026, 6, 17, 10, 0, 0, 0, time.UTC)
+	request := ToolApprovalRequest{
+		ApprovalID:   "approval-1",
+		AssignmentID: "asn-1",
+		TaskID:       "task-1",
+		ToolID:       "tool-1",
+		Status:       ApprovalPending,
+		RequestedAt:  at,
+		ExpiresAt:    at.Add(5 * time.Minute),
+	}
+	assertApprovalJSON(t, ToolApprovalCreateResponse{
+		SchemaVersion: SchemaVersion,
+		Approval:      request,
+	}, `{"schema_version":"riido-ai-server.v1","approval":{"approval_id":"approval-1","assignment_id":"asn-1","task_id":"task-1","tool_id":"tool-1","status":"pending","requested_at":"2026-06-17T10:00:00Z","expires_at":"2026-06-17T10:05:00Z"}}`)
+	assertApprovalJSON(t, ToolApprovalListResponse{
+		SchemaVersion: SchemaVersion,
+		Approvals:     []ToolApprovalRequest{request},
+	}, `{"schema_version":"riido-ai-server.v1","approvals":[{"approval_id":"approval-1","assignment_id":"asn-1","task_id":"task-1","tool_id":"tool-1","status":"pending","requested_at":"2026-06-17T10:00:00Z","expires_at":"2026-06-17T10:05:00Z"}]}`)
+}
+
+func TestAssignmentContractToolApprovalDecisionResponseWireShape(t *testing.T) {
+	at := time.Date(2026, 6, 17, 10, 0, 0, 0, time.UTC)
+	decision := &ToolApprovalDecision{
+		ApprovalID:   "approval-1",
+		AssignmentID: "asn-1",
+		Decision:     ApprovalDecisionDeny,
+		DecidedBy:    "user-1",
+		DecidedAt:    at,
+	}
+	result := ToolApprovalResult{
+		ApprovalID:   "approval-1",
+		AssignmentID: "asn-1",
+		Status:       ApprovalDenied,
+		ResolvedAt:   at,
+	}
+	assertApprovalJSON(t, ToolApprovalWaitRequest{
+		AssignmentID: "asn-1",
+		WaitMs:       30000,
+	}, `{"assignment_id":"asn-1","wait_ms":30000}`)
+	assertApprovalJSON(t, ToolApprovalWaitResponse{
+		SchemaVersion: SchemaVersion,
+		Result:        result,
+		Decision:      decision,
+	}, `{"schema_version":"riido-ai-server.v1","result":{"approval_id":"approval-1","assignment_id":"asn-1","status":"denied","resolved_at":"2026-06-17T10:00:00Z"},"decision":{"approval_id":"approval-1","assignment_id":"asn-1","decision":"deny","decided_by":"user-1","decided_at":"2026-06-17T10:00:00Z"}}`)
+	assertApprovalJSON(t, ToolApprovalDecisionResponse{
+		SchemaVersion: SchemaVersion,
+		Result:        result,
+		Decision:      decision,
+	}, `{"schema_version":"riido-ai-server.v1","result":{"approval_id":"approval-1","assignment_id":"asn-1","status":"denied","resolved_at":"2026-06-17T10:00:00Z"},"decision":{"approval_id":"approval-1","assignment_id":"asn-1","decision":"deny","decided_by":"user-1","decided_at":"2026-06-17T10:00:00Z"}}`)
+}
+
 func TestAssignmentContractToolApprovalEnumRoundTrip(t *testing.T) {
 	for _, status := range AllApprovalStatuses() {
 		code := status.Code()
