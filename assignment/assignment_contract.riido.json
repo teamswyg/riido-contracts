@@ -68,6 +68,11 @@
     {"name": "ProviderWarning", "value": "provider_warning"},
     {"name": "ProviderError", "value": "provider_error"}
   ],
+  "execution_identity": {
+    "execution_key_order": ["assignment_id", "run_id", "task_id"],
+    "resume_session_key_order": ["provider_session_id", "resume_session_id"],
+    "run_id_default_source": "assignment_id"
+  },
   "assignment_payload_fields": [
     {
       "name": "agent_instruction",
