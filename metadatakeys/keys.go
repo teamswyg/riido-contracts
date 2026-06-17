@@ -45,6 +45,9 @@ const (
 	// AssignmentFailureCategory records a coarse machine-readable terminal
 	// failure class on failed assignment events.
 	AssignmentFailureCategory Key = "assignment_failure_category"
+	// AssignmentEventKey records a daemon-generated idempotency key for a
+	// single assignment event request.
+	AssignmentEventKey Key = "assignment_event_key"
 
 	HTTPRequestMethod      Key = "http.request.method"
 	HTTPRoute              Key = "http.route"
@@ -74,7 +77,7 @@ func All() []Key {
 		RequiredSurfaces, AllowExperimentalRuntime,
 		RuntimeLeaseID, RuntimeFencingToken, RuntimeCapabilityFingerprint,
 		ProgressMessageCode, ProgressMessageKey, ProgressMessageArgPrefix, ThreadProgressSeq,
-		AssignmentRecovery, AssignmentResultStatus, AssignmentFailureCategory,
+		AssignmentRecovery, AssignmentResultStatus, AssignmentFailureCategory, AssignmentEventKey,
 		HTTPRequestMethod, HTTPRoute, HTTPResponseStatusCode, HTTPStatusCode,
 		AWSService, AWSOperation, AWSRegion,
 		RiidoTraceSurface, RiidoStoreOperation, RiidoTaskContextOperation, RiidoPollAction,
