@@ -458,6 +458,33 @@ func TestAIAgentClientDSLKeepsEnumsAndSumTypesCodegenSafe(t *testing.T) {
 	if _, ok := threadCollectionProps["active_stream"].(map[string]any); !ok {
 		t.Fatalf("active_stream schema missing: %#v", threadCollectionProps["active_stream"])
 	}
+	actionResponse := openAPI.Components.Schemas["AIAgentTaskActionResponse"]
+	actionResponseProps, ok := actionResponse["properties"].(map[string]any)
+	if !ok {
+		t.Fatalf("AIAgentTaskActionResponse properties missing: %#v", actionResponse)
+	}
+	resultMessage, ok := actionResponseProps["result_message"].(map[string]any)
+	if !ok || resultMessage["type"] != "string" {
+		t.Fatalf("AIAgentTaskActionResponse result_message schema = %#v", actionResponseProps["result_message"])
+	}
+	threadRecord := openAPI.Components.Schemas["AIAgentTaskThreadRecord"]
+	threadRecordProps, ok := threadRecord["properties"].(map[string]any)
+	if !ok {
+		t.Fatalf("AIAgentTaskThreadRecord properties missing: %#v", threadRecord)
+	}
+	resultMessage, ok = threadRecordProps["result_message"].(map[string]any)
+	if !ok || resultMessage["type"] != "string" {
+		t.Fatalf("AIAgentTaskThreadRecord result_message schema = %#v", threadRecordProps["result_message"])
+	}
+	workStatusEvent := openAPI.Components.Schemas["AgentWorkStatusChangedEvent"]
+	workStatusEventProps, ok := workStatusEvent["properties"].(map[string]any)
+	if !ok {
+		t.Fatalf("AgentWorkStatusChangedEvent properties missing: %#v", workStatusEvent)
+	}
+	resultMessage, ok = workStatusEventProps["result_message"].(map[string]any)
+	if !ok || resultMessage["type"] != "string" {
+		t.Fatalf("AgentWorkStatusChangedEvent result_message schema = %#v", workStatusEventProps["result_message"])
+	}
 	progressEvent := openAPI.Components.Schemas["AgentThreadProgressEvent"]
 	progressRequired, ok := progressEvent["required"].([]string)
 	if !ok || !contains(progressRequired, "thread_id") {
