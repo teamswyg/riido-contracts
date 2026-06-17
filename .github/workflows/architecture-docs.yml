@@ -13,6 +13,7 @@ on:
       - "docs/30-architecture/**"
       - "docs/50-roadmap/open-questions.md"
       - "docs/migration/contracts.md"
+      - "tools/refactorcharter/**"
       - "tools/ssotdeps/**"
   pull_request:
     paths:
@@ -25,6 +26,7 @@ on:
       - "docs/30-architecture/**"
       - "docs/50-roadmap/open-questions.md"
       - "docs/migration/contracts.md"
+      - "tools/refactorcharter/**"
       - "tools/ssotdeps/**"
 
 jobs:
@@ -58,6 +60,8 @@ jobs:
           fi
       - name: Verify SSOT dependency manifest
         run: go run ./tools/ssotdeps verify
+      - name: Verify refactoring charter manifest
+        run: go run ./tools/refactorcharter
       - name: Verify stdlib-only module
         run: test "$(go list -m all | wc -l | tr -d ' ')" = "1"
       - name: Test

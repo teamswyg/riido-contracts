@@ -1,0 +1,72 @@
+{
+  "schema_version": "riido-refactoring-charter.v1",
+  "id": "surface-area-refactoring-charter",
+  "riido_task": "RIID-4964",
+  "mode": "advisory",
+  "line_budget": {
+    "target_max_lines": 75,
+    "recommended_min_lines": 20,
+    "recommended_max_lines": 50
+  },
+  "semantic_units": [
+    "concept",
+    "policy",
+    "specification",
+    "contract",
+    "projection",
+    "rule",
+    "command",
+    "query",
+    "event",
+    "aggregate",
+    "adapter",
+    "provider"
+  ],
+  "required_artifacts": [
+    "runtime",
+    "verification",
+    "contract",
+    "policy",
+    "ir",
+    "code",
+    "test",
+    "visualization",
+    "evidence"
+  ],
+  "scan": {
+    "roots": [
+      "apicontract",
+      "assignment",
+      "docs",
+      "enumgen",
+      "fsmgen",
+      "fsmmeta",
+      "hostintegration",
+      "ir",
+      "metadatakeys",
+      "progressmessage",
+      "provider",
+      "runstate",
+      "task",
+      "tools"
+    ],
+    "include_extensions": [
+      ".go",
+      ".json",
+      ".lisp",
+      ".md",
+      ".yml",
+      ".yaml"
+    ],
+    "generated_path_fragments": [
+      "/fixtures/",
+      "/generated/",
+      "/schema/",
+      "/templates/"
+    ],
+    "generated_markers": [
+      "Code generated",
+      "DO NOT EDIT"
+    ]
+  }
+}
