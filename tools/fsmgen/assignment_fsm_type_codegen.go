@@ -1,0 +1,47 @@
+package main
+
+import (
+	"bytes"
+	"fmt"
+)
+
+func writeAssignmentFSMTypes(b *bytes.Buffer, model assignmentFSMModel) {
+	fmt.Fprintln(b, "type AssignmentFSMTypeUnion string")
+	fmt.Fprintln(b)
+	fmt.Fprintln(b, "const (")
+	fmt.Fprintf(b, "\tAssignmentFSMTypeUnion%s AssignmentFSMTypeUnion = %q\n", model.Meta.TypeUnion, model.Meta.TypeUnion)
+	fmt.Fprintln(b, ")")
+	fmt.Fprintln(b)
+	fmt.Fprintln(b, "type AssignmentFSMPointKind uint8")
+	fmt.Fprintln(b)
+	fmt.Fprintln(b, "const (")
+	fmt.Fprintln(b, "\tAssignmentFSMPointUnknown AssignmentFSMPointKind = iota")
+	fmt.Fprintln(b, "\tAssignmentFSMPointStart")
+	fmt.Fprintln(b, "\tAssignmentFSMPointIntermediate")
+	fmt.Fprintln(b, "\tAssignmentFSMPointEnd")
+	fmt.Fprintln(b, ")")
+	fmt.Fprintln(b)
+	fmt.Fprintln(b, "type AssignmentFSM interface {")
+	fmt.Fprintln(b, "\tName() string")
+	fmt.Fprintln(b, "\tTypeUnion() AssignmentFSMTypeUnion")
+	fmt.Fprintln(b, "\tStates() []AssignmentStateCode")
+	fmt.Fprintln(b, "\tStartStates() []AssignmentStateCode")
+	fmt.Fprintln(b, "\tEndStates() []AssignmentStateCode")
+	fmt.Fprintln(b, "\tTerminalStates() []AssignmentStateCode")
+	fmt.Fprintln(b, "\tTransitions() []AssignmentTransitionCode")
+	fmt.Fprintln(b, "\tPointKind(state AssignmentStateCode) AssignmentFSMPointKind")
+	fmt.Fprintln(b, "\tIsStartState(state AssignmentStateCode) bool")
+	fmt.Fprintln(b, "\tIsEndState(state AssignmentStateCode) bool")
+	fmt.Fprintln(b, "\tCanTransition(from AssignmentStateCode, to AssignmentStateCode) bool")
+	fmt.Fprintln(b, "\tNextStates(from AssignmentStateCode) []AssignmentStateCode")
+	fmt.Fprintln(b, "\tMermaid() string")
+	fmt.Fprintln(b, "}")
+	fmt.Fprintln(b)
+	fmt.Fprintln(b, "type AssignmentFSMServiceProvider interface {")
+	fmt.Fprintln(b, "\tAssignmentFSM() AssignmentFSM")
+	fmt.Fprintln(b, "}")
+	fmt.Fprintln(b)
+	fmt.Fprintln(b, "type generatedAssignmentFSM struct{}")
+	fmt.Fprintln(b)
+	fmt.Fprintln(b, "type generatedAssignmentFSMServiceProvider struct{}")
+}

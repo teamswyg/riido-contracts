@@ -1,0 +1,47 @@
+package main
+
+import (
+	"bytes"
+	"fmt"
+)
+
+func writeTaskFSMTypes(b *bytes.Buffer, model taskFSMModel) {
+	fmt.Fprintln(b, "type TaskFSMTypeUnion string")
+	fmt.Fprintln(b)
+	fmt.Fprintln(b, "const (")
+	fmt.Fprintf(b, "\tTaskFSMTypeUnion%s TaskFSMTypeUnion = %q\n", model.Meta.TypeUnion, model.Meta.TypeUnion)
+	fmt.Fprintln(b, ")")
+	fmt.Fprintln(b)
+	fmt.Fprintln(b, "type TaskFSMPointKind uint8")
+	fmt.Fprintln(b)
+	fmt.Fprintln(b, "const (")
+	fmt.Fprintln(b, "\tTaskFSMPointUnknown TaskFSMPointKind = iota")
+	fmt.Fprintln(b, "\tTaskFSMPointStart")
+	fmt.Fprintln(b, "\tTaskFSMPointIntermediate")
+	fmt.Fprintln(b, "\tTaskFSMPointEnd")
+	fmt.Fprintln(b, ")")
+	fmt.Fprintln(b)
+	fmt.Fprintln(b, "type TaskFSM interface {")
+	fmt.Fprintln(b, "\tName() string")
+	fmt.Fprintln(b, "\tTypeUnion() TaskFSMTypeUnion")
+	fmt.Fprintln(b, "\tStates() []TaskStateCode")
+	fmt.Fprintln(b, "\tStartStates() []TaskStateCode")
+	fmt.Fprintln(b, "\tEndStates() []TaskStateCode")
+	fmt.Fprintln(b, "\tTerminalStates() []TaskStateCode")
+	fmt.Fprintln(b, "\tTransitions() []TaskTransitionCode")
+	fmt.Fprintln(b, "\tPointKind(state TaskStateCode) TaskFSMPointKind")
+	fmt.Fprintln(b, "\tIsStartState(state TaskStateCode) bool")
+	fmt.Fprintln(b, "\tIsEndState(state TaskStateCode) bool")
+	fmt.Fprintln(b, "\tCanTransition(from TaskStateCode, to TaskStateCode, trigger ir.EventTypeCode) bool")
+	fmt.Fprintln(b, "\tNextStates(from TaskStateCode, trigger ir.EventTypeCode) []TaskStateCode")
+	fmt.Fprintln(b, "\tMermaid() string")
+	fmt.Fprintln(b, "}")
+	fmt.Fprintln(b)
+	fmt.Fprintln(b, "type TaskFSMServiceProvider interface {")
+	fmt.Fprintln(b, "\tTaskFSM() TaskFSM")
+	fmt.Fprintln(b, "}")
+	fmt.Fprintln(b)
+	fmt.Fprintln(b, "type generatedTaskFSM struct{}")
+	fmt.Fprintln(b)
+	fmt.Fprintln(b, "type generatedTaskFSMServiceProvider struct{}")
+}
