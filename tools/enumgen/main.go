@@ -496,133 +496,24 @@ func generatedFiles(doc document) (map[string][]byte, error) {
 	enums := map[string]enumSpec{}
 	for _, enum := range doc.Enums {
 		enums[enum.Package+"."+enum.Type] = enum
-		body, err := generateEnumFile(enum)
+		enumFiles, err := generateEnumFiles(enum)
 		if err != nil {
 			return nil, err
 		}
-		files[enumOutputPath(enum)] = body
+		for name, body := range enumFiles {
+			files[name] = body
+		}
 	}
 	for _, transitions := range doc.Transitions {
-		body, err := generateTransitionFile(transitions, enums)
+		transitionFiles, err := generateTransitionFiles(transitions, enums)
 		if err != nil {
 			return nil, err
 		}
-		files[transitionOutputPath(transitions)] = body
+		for name, body := range transitionFiles {
+			files[name] = body
+		}
 	}
 	return files, nil
-}
-
-func enumOutputPath(enum enumSpec) string {
-	return enum.Package + "/" + snake(enum.Type) + "_enum_gen.go"
-}
-
-func transitionOutputPath(transitions transitionSpec) string {
-	return transitions.Package + "/" + snake(transitions.Name) + "_enum_gen.go"
-}
-
-func generateEnumFile(enum enumSpec) ([]byte, error) {
-	var b bytes.Buffer
-	writeHeader(&b, enum.Package)
-	fmt.Fprintf(&b, "type %s uint16\n\n", enum.CodeType)
-	fmt.Fprintf(&b, "type %s string\n\n", enum.StringType)
-
-	fmt.Fprintln(&b, "const (")
-	fmt.Fprintf(&b, "\t%sUnknown %s = iota\n", enum.CodeType, enum.CodeType)
-	for _, value := range enum.Values {
-		fmt.Fprintf(&b, "\t%s\n", enum.codeConst(value.Const))
-	}
-	fmt.Fprintln(&b, ")")
-	fmt.Fprintln(&b)
-
-	fmt.Fprintln(&b, "const (")
-	for _, value := range enum.Values {
-		fmt.Fprintf(&b, "\t%s %s = %q\n", enum.stringConst(value.Const), enum.StringType, value.Value)
-	}
-	fmt.Fprintln(&b, ")")
-	fmt.Fprintln(&b)
-
-	fmt.Fprintln(&b, "const (")
-	for _, value := range enum.Values {
-		fmt.Fprintf(&b, "\t%s %s = %s(%s)\n", value.Const, enum.Type, enum.Type, enum.stringConst(value.Const))
-	}
-	fmt.Fprintln(&b, ")")
-	fmt.Fprintln(&b)
-
-	fmt.Fprintf(&b, "func (value %s) Code() %s {\n", enum.Type, enum.CodeType)
-	fmt.Fprintf(&b, "\treturn Parse%sCode(string(value))\n", enum.Type)
-	fmt.Fprintln(&b, "}")
-	fmt.Fprintln(&b)
-
-	fmt.Fprintf(&b, "func Parse%sCode(value string) %s {\n", enum.Type, enum.CodeType)
-	fmt.Fprintf(&b, "\tswitch %s(value) {\n", enum.StringType)
-	for _, value := range enum.Values {
-		fmt.Fprintf(&b, "\tcase %s:\n\t\treturn %s\n", enum.stringConst(value.Const), enum.codeConst(value.Const))
-	}
-	fmt.Fprintln(&b, "\tdefault:")
-	fmt.Fprintf(&b, "\t\treturn %sUnknown\n", enum.CodeType)
-	fmt.Fprintln(&b, "\t}")
-	fmt.Fprintln(&b, "}")
-	fmt.Fprintln(&b)
-
-	fmt.Fprintf(&b, "func (code %s) IsKnown() bool {\n", enum.CodeType)
-	fmt.Fprintf(&b, "\treturn code >= %s && code <= %s\n", enum.codeConst(enum.Values[0].Const), enum.codeConst(enum.Values[len(enum.Values)-1].Const))
-	fmt.Fprintln(&b, "}")
-	fmt.Fprintln(&b)
-
-	fmt.Fprintf(&b, "func (code %s) StringValue() %s {\n", enum.CodeType, enum.StringType)
-	fmt.Fprintln(&b, "\tswitch code {")
-	for _, value := range enum.Values {
-		fmt.Fprintf(&b, "\tcase %s:\n\t\treturn %s\n", enum.codeConst(value.Const), enum.stringConst(value.Const))
-	}
-	fmt.Fprintln(&b, "\tdefault:")
-	fmt.Fprintf(&b, "\t\treturn %s(\"\")\n", enum.StringType)
-	fmt.Fprintln(&b, "\t}")
-	fmt.Fprintln(&b, "}")
-	fmt.Fprintln(&b)
-
-	fmt.Fprintf(&b, "func (code %s) String() string {\n", enum.CodeType)
-	fmt.Fprintln(&b, "\treturn string(code.StringValue())")
-	fmt.Fprintln(&b, "}")
-	fmt.Fprintln(&b)
-
-	fmt.Fprintf(&b, "func (code %s) %s() %s {\n", enum.CodeType, enum.Type, enum.Type)
-	fmt.Fprintf(&b, "\treturn %s(code.StringValue())\n", enum.Type)
-	fmt.Fprintln(&b, "}")
-	fmt.Fprintln(&b)
-
-	fmt.Fprintf(&b, "func (value %s) Valid() bool {\n", enum.Type)
-	fmt.Fprintln(&b, "\treturn value.Code().IsKnown()")
-	fmt.Fprintln(&b, "}")
-	fmt.Fprintln(&b)
-
-	fmt.Fprintf(&b, "func %s() []%s {\n", enum.CodeAllFunc, enum.CodeType)
-	fmt.Fprintf(&b, "\treturn []%s{\n", enum.CodeType)
-	for _, value := range enum.Values {
-		fmt.Fprintf(&b, "\t\t%s,\n", enum.codeConst(value.Const))
-	}
-	fmt.Fprintln(&b, "\t}")
-	fmt.Fprintln(&b, "}")
-	fmt.Fprintln(&b)
-
-	fmt.Fprintf(&b, "func %s() []%s {\n", enum.AllFunc, enum.Type)
-	fmt.Fprintf(&b, "\tcodes := %s()\n", enum.CodeAllFunc)
-	fmt.Fprintf(&b, "\tout := make([]%s, len(codes))\n", enum.Type)
-	fmt.Fprintln(&b, "\tfor index, code := range codes {")
-	fmt.Fprintf(&b, "\t\tout[index] = code.%s()\n", enum.Type)
-	fmt.Fprintln(&b, "\t}")
-	fmt.Fprintln(&b, "\treturn out")
-	fmt.Fprintln(&b, "}")
-	fmt.Fprintln(&b)
-
-	writePredicate(&b, enum, "terminal", "IsTerminal")
-	writePredicate(&b, enum, "active", "IsActive")
-	writePredicate(&b, enum, "agent-active", "IsAgentActive")
-	writePredicate(&b, enum, "transition", "IsTransition")
-	writeNativeConfigRequirement(&b, enum)
-	writePackagePredicate(&b, enum, "terminal", "IsTerminal")
-	writePackagePredicate(&b, enum, "agent-active", "IsAgentActive")
-
-	return formatSource(enumOutputPath(enum), b.Bytes())
 }
 
 func writePredicate(b *bytes.Buffer, enum enumSpec, attr, method string) {
@@ -696,128 +587,6 @@ func writeNativeConfigRequirement(b *bytes.Buffer, enum enumSpec) {
 	fmt.Fprintln(b, "\treturn value.Code().NativeConfigRequirement()")
 	fmt.Fprintln(b, "}")
 	fmt.Fprintln(b)
-}
-
-func generateTransitionFile(transitions transitionSpec, enums map[string]enumSpec) ([]byte, error) {
-	from := enums[transitions.FromEnum]
-	to := enums[transitions.ToEnum]
-	event := enumSpec{}
-	if transitions.EventEnum != "" {
-		event = enums[transitions.EventEnum]
-	}
-
-	var b bytes.Buffer
-	writeHeader(&b, transitions.Package)
-	imports := transitionImports(transitions, from, to, event)
-	if len(imports) > 0 {
-		fmt.Fprintln(&b, "import (")
-		for _, imp := range imports {
-			fmt.Fprintf(&b, "\t%q\n", imp)
-		}
-		fmt.Fprintln(&b, ")")
-		fmt.Fprintln(&b)
-	}
-	fmt.Fprintf(&b, "type %s struct {\n", transitions.Name)
-	fmt.Fprintf(&b, "\tFrom %s\n", typeRef(from, transitions.Package))
-	fmt.Fprintf(&b, "\tTo %s\n", typeRef(to, transitions.Package))
-	if transitions.EventEnum != "" {
-		fmt.Fprintf(&b, "\tTrigger %s\n", typeRef(event, transitions.Package))
-	}
-	fmt.Fprintln(&b, "}")
-	fmt.Fprintln(&b)
-
-	fmt.Fprintf(&b, "func %s() []%s {\n", transitions.AllFunc, transitions.Name)
-	fmt.Fprintf(&b, "\treturn []%s{\n", transitions.Name)
-	for _, entry := range transitions.Entries {
-		fmt.Fprintf(&b, "\t\t{From: %s, To: %s", codeRef(from, transitions.Package, entry.From), codeRef(to, transitions.Package, entry.To))
-		if transitions.EventEnum != "" {
-			fmt.Fprintf(&b, ", Trigger: %s", codeRef(event, transitions.Package, entry.Event))
-		}
-		fmt.Fprintln(&b, "},")
-	}
-	fmt.Fprintln(&b, "\t}")
-	fmt.Fprintln(&b, "}")
-	fmt.Fprintln(&b)
-
-	fmt.Fprintf(&b, "func %s(from %s, to %s", transitions.Validate, typeRef(from, transitions.Package), typeRef(to, transitions.Package))
-	if transitions.EventEnum != "" {
-		fmt.Fprintf(&b, ", trigger %s", typeRef(event, transitions.Package))
-	}
-	fmt.Fprintln(&b, ") bool {")
-	if transitions.AllowSame {
-		fmt.Fprintln(&b, "\tif from == to && from.IsKnown() {")
-		fmt.Fprintln(&b, "\t\treturn true")
-		fmt.Fprintln(&b, "\t}")
-	}
-	fmt.Fprintln(&b, "\tswitch from {")
-	byFrom := map[string][]transitionEntry{}
-	for _, entry := range transitions.Entries {
-		byFrom[entry.From] = append(byFrom[entry.From], entry)
-	}
-	fromKeys := make([]string, 0, len(byFrom))
-	for key := range byFrom {
-		fromKeys = append(fromKeys, key)
-	}
-	sort.SliceStable(fromKeys, func(i, j int) bool {
-		return from.indexOfConst(fromKeys[i]) < from.indexOfConst(fromKeys[j])
-	})
-	for _, fromConst := range fromKeys {
-		fmt.Fprintf(&b, "\tcase %s:\n", codeRef(from, transitions.Package, fromConst))
-		fmt.Fprintln(&b, "\t\tswitch to {")
-		groups := groupTransitionTargets(byFrom[fromConst], to, event)
-		for _, group := range groups {
-			fmt.Fprintf(&b, "\t\tcase %s:\n", codeRef(to, transitions.Package, group.To))
-			if transitions.EventEnum == "" {
-				fmt.Fprintln(&b, "\t\t\treturn true")
-				continue
-			}
-			fmt.Fprint(&b, "\t\t\treturn ")
-			for index, trigger := range group.Events {
-				if index > 0 {
-					fmt.Fprint(&b, " || ")
-				}
-				fmt.Fprintf(&b, "trigger == %s", codeRef(event, transitions.Package, trigger))
-			}
-			fmt.Fprintln(&b)
-		}
-		fmt.Fprintln(&b, "\t\t}")
-	}
-	fmt.Fprintln(&b, "\t}")
-	fmt.Fprintln(&b, "\treturn false")
-	fmt.Fprintln(&b, "}")
-	fmt.Fprintln(&b)
-
-	return formatSource(transitionOutputPath(transitions), b.Bytes())
-}
-
-type transitionTargetGroup struct {
-	To     string
-	Events []string
-}
-
-func groupTransitionTargets(entries []transitionEntry, to, event enumSpec) []transitionTargetGroup {
-	byTo := map[string][]string{}
-	for _, entry := range entries {
-		byTo[entry.To] = append(byTo[entry.To], entry.Event)
-	}
-	toKeys := make([]string, 0, len(byTo))
-	for key := range byTo {
-		toKeys = append(toKeys, key)
-	}
-	sort.SliceStable(toKeys, func(i, j int) bool {
-		return to.indexOfConst(toKeys[i]) < to.indexOfConst(toKeys[j])
-	})
-	groups := make([]transitionTargetGroup, 0, len(toKeys))
-	for _, toConst := range toKeys {
-		events := byTo[toConst]
-		if event.Type != "" {
-			sort.SliceStable(events, func(i, j int) bool {
-				return event.indexOfConst(events[i]) < event.indexOfConst(events[j])
-			})
-		}
-		groups = append(groups, transitionTargetGroup{To: toConst, Events: events})
-	}
-	return groups
 }
 
 func transitionImports(transitions transitionSpec, enums ...enumSpec) []string {
@@ -910,15 +679,6 @@ func writeCaseList(b *bytes.Buffer, indent string, refs []string) {
 		fmt.Fprint(b, ref)
 	}
 	fmt.Fprintln(b, ":")
-}
-
-func (e enumSpec) indexOfConst(name string) int {
-	for index, value := range e.Values {
-		if value.Const == name {
-			return index
-		}
-	}
-	return len(e.Values)
 }
 
 func snake(value string) string {
