@@ -22,6 +22,7 @@ func run(args []string, out io.Writer) error {
 	fs.SetOutput(io.Discard)
 	manifestPath := fs.String("manifest", defaultManifest, "refactoring charter manifest path")
 	root := fs.String("root", ".", "repo root to scan")
+	evidenceOut := fs.String("evidence-out", "", "optional evidence JSON output path")
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
@@ -47,6 +48,11 @@ func run(args []string, out io.Writer) error {
 		return err
 	}
 	writeReport(out, c, report)
+	if *evidenceOut != "" {
+		if err := writeEvidence(*evidenceOut, newEvidence(c, report)); err != nil {
+			return err
+		}
+	}
 	if enforced(c) && len(report.Findings) > 0 {
 		return fmt.Errorf("%d files exceed target_max_lines", len(report.Findings))
 	}

@@ -12,6 +12,7 @@ func runVerify(args []string, out io.Writer) error {
 	fs.SetOutput(io.Discard)
 	manifestPath := fs.String("manifest", defaultManifest, "SSOT dependency manifest path")
 	checkDoc := fs.Bool("check-doc", false, "verify generated markdown is up to date")
+	evidenceOut := fs.String("evidence-out", "", "optional evidence JSON output path")
 	if err := fs.Parse(args); err != nil {
 		return err
 	}
@@ -34,6 +35,18 @@ func runVerify(args []string, out io.Writer) error {
 	}
 	if *checkDoc {
 		if err := verifyRenderedDoc(root, m); err != nil {
+			return err
+		}
+	}
+	if *evidenceOut != "" {
+		if err := writeEvidence(*evidenceOut, evidence{
+			SchemaVersion:           evidenceSchemaVersion,
+			ID:                      m.ID,
+			Status:                  "verified",
+			FactsVerified:           len(m.Facts),
+			RepoDependenciesChecked: len(m.RepoDependencies),
+			CheckDoc:                *checkDoc,
+		}); err != nil {
 			return err
 		}
 	}
