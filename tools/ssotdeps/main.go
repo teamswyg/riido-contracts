@@ -21,9 +21,11 @@ func run(args []string, out io.Writer) error {
 		args = args[1:]
 	}
 	switch command {
+	case "render":
+		return runRender(args, out)
 	case "verify":
 		return runVerify(args, out)
 	default:
-		return fmt.Errorf("usage: go run ./tools/ssotdeps [verify] [-manifest %s]", defaultManifest)
+		return fmt.Errorf("usage: go run ./tools/ssotdeps [render|verify] [-manifest %s]", defaultManifest)
 	}
 }
