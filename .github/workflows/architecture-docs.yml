@@ -14,6 +14,7 @@ on:
       - "docs/50-roadmap/open-questions.md"
       - "docs/migration/contracts.md"
       - "tools/figmacoverage/**"
+      - "tools/promotionpolicy/**"
       - "tools/refactorcharter/**"
       - "tools/ssotdeps/**"
   pull_request:
@@ -28,6 +29,7 @@ on:
       - "docs/50-roadmap/open-questions.md"
       - "docs/migration/contracts.md"
       - "tools/figmacoverage/**"
+      - "tools/promotionpolicy/**"
       - "tools/refactorcharter/**"
       - "tools/ssotdeps/**"
 
@@ -64,6 +66,8 @@ jobs:
         run: go run ./tools/ssotdeps verify -check-doc
       - name: Verify Figma coverage manifest
         run: go run ./tools/figmacoverage verify -check-doc
+      - name: Verify contract promotion policy manifest
+        run: go run ./tools/promotionpolicy verify -check-doc
       - name: Verify refactoring charter manifest
         run: go run ./tools/refactorcharter
       - name: Verify stdlib-only module

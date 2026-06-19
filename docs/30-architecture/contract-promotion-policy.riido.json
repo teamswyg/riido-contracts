@@ -1,0 +1,57 @@
+{
+  "schema_version": "riido-contract-promotion-policy.v1",
+  "id": "contract-promotion-policy",
+  "riido_task": "RIID-4713",
+  "generated_doc": "docs/30-architecture/contract-promotion-policy.md",
+  "summary": "This policy decides when a fact belongs in riido-contracts.",
+  "promotion_conditions": [
+    "At least two repositories must agree on the same fact at build time or black-box test time.",
+    "The fact can be represented without importing runtime implementation packages.",
+    "The fact can be versioned and tested independently.",
+    "The owning domain SSOT and docs/migration/contracts.md are updated in the same PR.",
+    "At least one downstream repository has a planned or completed import gate."
+  ],
+  "single_runtime_rule": "If only one runtime owns the fact, keep it local to that runtime repository.",
+  "schema_version_axes": [
+    {
+      "axis": "task.FSMSchemaVersion",
+      "rule": "changes when the task transition matrix makes a version-affecting change"
+    },
+    {
+      "axis": "IR event schema versions",
+      "rule": "change per event type"
+    },
+    {
+      "axis": "assignment.SchemaVersion",
+      "rule": "changes when the shared assignment polling API changes"
+    },
+    {
+      "axis": "provider capability and host-integration vocabulary",
+      "rule": "remain additive unless an existing value changes meaning or is removed"
+    }
+  ],
+  "module_tag_rule": "Changing a package schema constant does not automatically create a tag. A tag is created only after the PR is merged and downstream consumers are ready to import it.",
+  "runtime_tag_model": [
+    {
+      "pattern": "v0.0.x",
+      "meaning": "bootstrap/testnet runtime artifact releases that do not promise a stable external API"
+    },
+    {
+      "pattern": "v0.y.z",
+      "meaning": "pre-1.0 additive runtime/API delivery slices while client and daemon integration is still moving"
+    },
+    {
+      "pattern": "v1.0.0",
+      "meaning": "first stable runtime/API line after the owning runtime repository declares production compatibility and downstream clients have an import/use gate"
+    }
+  ],
+  "runtime_tag_rule": "Runtime tags are not riido-contracts module versions and must not reset or fork this module's tag line.",
+  "breaking_change_rules": [
+    "removing or renaming a state, event type, enum value, DTO field, or JSON field",
+    "changing the meaning of an existing value",
+    "changing transition legality for an existing C1/C10 state pair",
+    "changing required field presence for an existing DTO or IR envelope scope"
+  ],
+  "additive_change_rule": "Additive changes are allowed when older consumers can ignore the new value or field safely and tests document that compatibility.",
+  "downstream_import_rule": "Promotion is complete when downstream runtime repos import the tagged module and remove duplicated facts. Migration docs must name the downstream repo and expected import gate."
+}
