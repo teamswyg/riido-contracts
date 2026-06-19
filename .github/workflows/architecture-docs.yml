@@ -59,7 +59,7 @@ jobs:
             exit 1
           fi
       - name: Verify SSOT dependency manifest
-        run: go run ./tools/ssotdeps verify
+        run: go run ./tools/ssotdeps verify -check-doc
       - name: Verify refactoring charter manifest
         run: go run ./tools/refactorcharter
       - name: Verify stdlib-only module
