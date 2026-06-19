@@ -13,6 +13,7 @@ on:
       - "docs/30-architecture/**"
       - "docs/50-roadmap/open-questions.md"
       - "docs/migration/contracts.md"
+      - "tools/figmacoverage/**"
       - "tools/refactorcharter/**"
       - "tools/ssotdeps/**"
   pull_request:
@@ -26,6 +27,7 @@ on:
       - "docs/30-architecture/**"
       - "docs/50-roadmap/open-questions.md"
       - "docs/migration/contracts.md"
+      - "tools/figmacoverage/**"
       - "tools/refactorcharter/**"
       - "tools/ssotdeps/**"
 
@@ -60,6 +62,8 @@ jobs:
           fi
       - name: Verify SSOT dependency manifest
         run: go run ./tools/ssotdeps verify -check-doc
+      - name: Verify Figma coverage manifest
+        run: go run ./tools/figmacoverage verify -check-doc
       - name: Verify refactoring charter manifest
         run: go run ./tools/refactorcharter
       - name: Verify stdlib-only module
