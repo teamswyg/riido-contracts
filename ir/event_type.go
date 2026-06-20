@@ -1,15 +1,15 @@
 // Package ir owns the C2 IR Event Log domain types: CanonicalEvent, EventType,
 // ActorKind, and the pure Reducer contract.
 //
-// The catalog and dispatch rules implemented here are the code-level reflection
-// of docs/20-domain/ir-event-log.md. The CanonicalEvent field requirements
-// follow docs/20-domain/ir-schema-versioning.md §2.
+// The catalog and dispatch rules implemented here are generated from
+// enumgen/enums.lisp and summarized by docs/20-domain/ir-event-log.md.
+// CanonicalEvent field requirements follow ir-schema-versioning.
 //
-// PURITY INVARIANT (ir-event-log.md §5.0): Reducer MUST NOT append events.
+// PURITY INVARIANT: Reducer MUST NOT append events.
 // This package contains NO writer / appender / I/O dependency.
 package ir
 
-// EventType is one of the catalog entries from ir-event-log.md §3.
+// EventType is one of the generated IR event catalog entries.
 //
 // Categories:
 //

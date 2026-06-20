@@ -1,0 +1,55 @@
+name: ir-event-log
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/ir-event-log.yml"
+      - "docs/20-domain/ir-event-log.md"
+      - "docs/20-domain/ir-event-log.riido.json"
+      - "enumgen/**"
+      - "ir/**"
+      - "task/**"
+      - "tools/enumgen/**"
+      - "tools/fsmgen/**"
+      - "tools/ireventlog/**"
+      - "go.mod"
+  pull_request:
+    paths:
+      - ".github/workflows/ir-event-log.yml"
+      - "docs/20-domain/ir-event-log.md"
+      - "docs/20-domain/ir-event-log.riido.json"
+      - "enumgen/**"
+      - "ir/**"
+      - "task/**"
+      - "tools/enumgen/**"
+      - "tools/fsmgen/**"
+      - "tools/ireventlog/**"
+      - "go.mod"
+
+jobs:
+  ir-event-log:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: false
+      - name: Verify stdlib-only module
+        run: test "$(go list -m all | wc -l | tr -d ' ')" = "1"
+      - name: Verify IR event log
+        run: |
+          mkdir -p out
+          go run ./tools/enumgen verify
+          go run ./tools/fsmgen verify
+          go test ./ir ./task ./tools/ireventlog -count=1
+          go run ./tools/ireventlog \
+            -check-doc \
+            -evidence-out out/ir-event-log-evidence.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ir-event-log-evidence
+          path: out/ir-event-log-evidence.json
+          if-no-files-found: error

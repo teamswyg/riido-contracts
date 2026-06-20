@@ -3,8 +3,8 @@ package ir
 // NativeConfigRequirement classifies an EventType by how it treats
 // NativeConfigVersion (NCV) in RunScope contexts.
 //
-// Source of truth: ir-event-log.md §3.0.1 / §3.0.2,
-// ir-schema-versioning.md §1.5.3.1 / §1.5.3.2.
+// Source of truth: generated EventType predicates from enumgen/enums.lisp,
+// summarized by ir-event-log and enforced with ir-schema-versioning rules.
 type NativeConfigRequirement int
 
 const (

@@ -2,7 +2,7 @@ package ir
 
 // ActorKind is the server-decided attribution of an event's origin.
 //
-// INVARIANT (docs/20-domain/ir-event-log.md §9): ActorKind and ActorID are
+// INVARIANT from the generated IR Event Log reader: ActorKind and ActorID are
 // determined by the server transition layer, NOT by client/CLI/agent input.
 // Provider raw stdout never sets these directly.
 type ActorKind string

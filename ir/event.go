@@ -39,7 +39,7 @@ type CanonicalEvent struct {
 	EventSchemaVersion  int
 	Scope               EventScope
 	Type                EventType
-	ActorKind           ActorKind // server-decided (ir-event-log.md §9)
+	ActorKind           ActorKind // server-decided attribution
 	ActorID             string    // server-decided
 	RiidoDaemonVersion  string
 	PolicyBundleVersion string

@@ -1,0 +1,53 @@
+{
+  "schema_version": "riido-contracts-ir-event-log-doc.v1",
+  "id": "ir-event-log",
+  "title": "IR Event Log",
+  "riido_task": "RIID-4687",
+  "summary": "Generated reader for the C2 IR Event Log: EventType catalog size, transition classification, native-config classification, reducer purity surface, and adjacent contract anchors.",
+  "generated_doc": "docs/20-domain/ir-event-log.md",
+  "workflow": ".github/workflows/ir-event-log.yml",
+  "evidence_artifact": "ir-event-log-evidence",
+  "source_dsl": "enumgen/enums.lisp",
+  "package": "ir",
+  "expected_event_count": 62,
+  "expected_transition_count": 23,
+  "expected_non_transition_count": 39,
+  "expected_task_fsm_transition_count": 43,
+  "expected_task_fsm_trigger_count": 21,
+  "expected_canonical_event_fields": 23,
+  "expected_reduce_result_fields": 4,
+  "expected_native_config_counts": {
+    "forbidden": 13,
+    "pre_execute": 5,
+    "required": 36,
+    "phase_dependent": 8
+  },
+  "responsibilities": [
+    "`ir` owns CanonicalEvent, EventScope, ActorKind, EventType, native-config classification, and the pure Reducer contract.",
+    "`enumgen/enums.lisp` is the executable source for EventType values and generated transition/native-config predicates.",
+    "`task` owns the legal FSM transition triples that consume IR transition events."
+  ],
+  "invariants": [
+    "The append-only IR event log is the truth-of-record; views are reducer outputs.",
+    "Every EventType is generated from `enumgen/enums.lisp`; markdown is not the catalog source.",
+    "Only transition EventTypes may change TaskState.",
+    "Every task FSM transition trigger must be an IR transition EventType.",
+    "RunScope NativeConfigVersion follows forbidden, pre-execute, required, or phase-dependent classification.",
+    "Reducer output is data only: no writer, appender, outbound event, or IO authority.",
+    "Unknown provider raw event types collapse to ProviderUnknownEvent and do not transition the FSM.",
+    "ActorKind and ActorID are server-decided attribution, not provider/client input."
+  ],
+  "adjacent_contracts": [
+    "`task-lifecycle` owns TaskState and legal transition triples.",
+    "`ir-schema-versioning` owns CanonicalEvent envelope field requirements.",
+    "`provider-capability` owns capability fingerprint vocabulary used by runtime events.",
+    "`open-questions` owns unresolved physical storage and snapshot policy questions."
+  ],
+  "loop": {
+    "observation": "IR Event Log knowledge had executable enum/reducer code, but its reader was a long hand-maintained markdown SSOT with section-number coupling.",
+    "hypothesis": "A generated reader backed by enumgen, ir predicates, reducer reflection, and task FSM trigger checks will reduce drift between event vocabulary, reducer guarantees, and prose.",
+    "execute": "Load generated IR EventTypes, count transition and native-config classifications, verify task FSM triggers, verify reducer surface, render the reader, and upload evidence in CI.",
+    "evaluate": "The verifier fails on stale markdown, malformed manifest, workflow evidence gaps, EventType count drift, native-config drift, reducer surface drift, or non-transition task triggers.",
+    "retrospective": "IR event-log knowledge becomes executable; detailed prose debt is replaced by measured package contracts and generated evidence."
+  }
+}
