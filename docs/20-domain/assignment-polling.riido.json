@@ -1,0 +1,40 @@
+{
+  "schema_version": "riido-contracts-assignment-polling-doc.v1",
+  "id": "assignment-polling-contract",
+  "title": "Assignment Polling Contract",
+  "riido_task": "RIID-4687",
+  "summary": "This is the public generated reader for the C10 assignment polling contract shared by riido-daemon and riido-control-plane.",
+  "generated_doc": "docs/20-domain/assignment-polling.md",
+  "workflow": ".github/workflows/assignment-contract.yml",
+  "evidence_artifact": "assignment-contract-evidence",
+  "contract": "assignment/assignment_contract.riido.json",
+  "responsibilities": [
+    "`assignment` owns the shared `riido-ai-server.v1` DTO contract, assignment states, legal transitions, poll actions, task events, approval values, execution identity, payload snapshot fields, and runtime binding DTOs.",
+    "Markdown readers must link to `assignment/assignment_contract.riido.json` instead of redefining the matrix by hand.",
+    "The contract fixture is decoded as one strict JSON document; unknown fields and trailing JSON are failures."
+  ],
+  "boundaries": [
+    "This package does not own control-plane store actors, HTTP handlers, SSE fan-out, request authorization, provider process execution, Terraform, DynamoDB/EventBridge adapters, AWS account settings, secret values, or deployment evidence.",
+    "`Health` and `MetricsSnapshot` remain in `riido-control-plane` until they are promoted from adapter/read-model contracts.",
+    "Private repositories remain private/unsupported until a future token-reference broker exists; raw tokens, signed URLs, and credentialed clone URLs must not enter assignment payloads, prompts, events, logs, RAG context, or daemon clone arguments."
+  ],
+  "invariants": [
+    "`Assignment.allow_experimental_runtime` is assignment-created snapshot data derived by control-plane and consumed by daemon; daemon must not infer it from provider name or local environment.",
+    "`Assignment.model_id` is assignment-created snapshot data for runtime model selection; daemon must not re-resolve model defaults from provider name, environment, team id, or Open API key configuration.",
+    "While an assignment is `leased`, `ready`, or `running`, the daemon sends an assignment heartbeat every 5 seconds.",
+    "The control plane treats the active assignment lease as stale when it has not been refreshed for 20 seconds, and late heartbeats/events must not revive it.",
+    "`PollRequest.wait_ms` is an optional long-poll hint. Omitted or zero preserves the legacy short-poll wire shape.",
+    "`PollResponse.action=active` must include a self-contained assignment snapshot so a restarted daemon can recover local in-flight state without starting fresh."
+  ],
+  "handoff": [
+    "`riido-control-plane` should import tagged assignment constants/DTOs instead of duplicating them.",
+    "`riido-daemon` should consume the tagged contract through its SaaS adapter without importing runtime-internal control-plane packages."
+  ],
+  "loop": {
+    "observation": "Assignment polling had a strict executable contract and package tests, but the public reader was hand-maintained prose and the workflow did not publish JSON evidence.",
+    "hypothesis": "Generating the reader and evidence from the assignment contract manifest will keep state/action/payload governance aligned across daemon and control-plane while preserving dependency-map anchors.",
+    "execute": "Strictly decode the assignment contract, render the generated reader, check reader drift, and publish assignment-contract evidence in public CI.",
+    "evaluate": "The verifier fails on malformed manifest, stale generated reader, missing workflow evidence binding, malformed contract JSON, unknown fields, or missing strict artifact upload.",
+    "retrospective": "Assignment polling governance becomes a contract-backed loop instead of prose maintained from memory."
+  }
+}
