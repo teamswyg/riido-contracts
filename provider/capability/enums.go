@@ -34,7 +34,8 @@ const (
 // Auxiliary fields on ProviderCapability (ProtocolMaturity, MissingCapabilities,
 // BlockedReasons, DegradedReasons, RequiresExperimentalOptIn) carry the
 // reasons. Readers MUST consult them — relying on the summary alone loses
-// information about *why* a status was assigned. See provider-capability.md §5.
+// information about *why* a status was assigned. See provider-capability
+// invariant anchors.
 type CompatibilityStatus string
 
 const (

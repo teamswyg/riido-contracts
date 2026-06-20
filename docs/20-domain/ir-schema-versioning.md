@@ -100,7 +100,7 @@ scope 의 관계는 부분 순서가 아니라 **분류** 다. 한 이벤트는 
 
 이 동적 규칙은 EventIngestor / FSM Orchestrator / reducer 같이 run 별 view 가 있는 계층이 강제한다. envelope validator 는 EventType 만으로 단정할 수 있는 부분까지만 책임진다.
 
-> **요약**: `runtime pinning` = `(RuntimeID, CapabilityFingerprint)`. **execution pinning** = 그 위에 `PolicyBundleVersion` + `NativeConfigVersion` 추가. NCV 는 capability fingerprint 의 입력이 아니다 (`provider-capability.md` §2.1 의 명시적 결정 — #27i 라운드). NCV 의 의무 여부는 EventType 의 정적 분류(PreExecuteOnly / ExecutionBoundOnly / PhaseDependent) + run context (PhaseDependent 일 때만) 의 조합으로 결정된다 (#27j 라운드).
+> **요약**: `runtime pinning` = `(RuntimeID, CapabilityFingerprint)`. **execution pinning** = 그 위에 `PolicyBundleVersion` + `NativeConfigVersion` 추가. NCV 는 capability fingerprint 의 입력이 아니다 (provider-capability generated Invariant Anchors 의 명시적 결정 — #27i 라운드). NCV 의 의무 여부는 EventType 의 정적 분류(PreExecuteOnly / ExecutionBoundOnly / PhaseDependent) + run context (PhaseDependent 일 때만) 의 조합으로 결정된다 (#27j 라운드).
 
 ### 1.5.4 멀티 scope EventType
 
@@ -178,7 +178,7 @@ const (
 | `CapabilityFingerprint` | 중간 — capability 스냅샷이 바뀔 때마다 | provider binary, 어댑터, surface flag, 기본 sandbox/approval, policy bundle 중 하나라도 바뀔 때. `NativeConfigVersion` 은 task/run execution context 라서 입력이 아니다. |
 | `ProviderVersion` (raw `DetectedFingerprint`) | 가장 변동성 큼 | provider binary 자체가 바뀔 때 |
 
-`CapabilityFingerprint` 의 정확한 입력은 [`provider-capability.md`](./provider-capability.md) §2.1 가 소유한다. 본 문서는 “이벤트에 필수” 라는 강제 규칙만 가진다.
+`CapabilityFingerprint` 의 정확한 입력은 [`provider-capability.md`](./provider-capability.md) generated reader 와 `provider/capability.CapabilityFingerprintInput` 이 소유한다. 본 문서는 “이벤트에 필수” 라는 강제 규칙만 가진다.
 
 ### 2.2 runtime pinning 과의 정합 (RunScope 한정)
 
