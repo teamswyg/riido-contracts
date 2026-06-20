@@ -1,0 +1,45 @@
+name: ir-schema-versioning
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/ir-schema-versioning.yml"
+      - "docs/20-domain/ir-schema-versioning.md"
+      - "docs/20-domain/ir-schema-versioning.riido.json"
+      - "ir/**"
+      - "tools/irschemaversioning/**"
+      - "go.mod"
+  pull_request:
+    paths:
+      - ".github/workflows/ir-schema-versioning.yml"
+      - "docs/20-domain/ir-schema-versioning.md"
+      - "docs/20-domain/ir-schema-versioning.riido.json"
+      - "ir/**"
+      - "tools/irschemaversioning/**"
+      - "go.mod"
+
+jobs:
+  ir-schema-versioning:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: false
+      - name: Verify stdlib-only module
+        run: test "$(go list -m all | wc -l | tr -d ' ')" = "1"
+      - name: Verify IR schema versioning
+        run: |
+          mkdir -p out
+          go test ./ir ./tools/irschemaversioning -count=1
+          go run ./tools/irschemaversioning \
+            -check-doc \
+            -evidence-out out/ir-schema-versioning-evidence.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ir-schema-versioning-evidence
+          path: out/ir-schema-versioning-evidence.json
+          if-no-files-found: error
