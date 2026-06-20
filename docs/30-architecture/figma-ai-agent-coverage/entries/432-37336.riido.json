@@ -1,0 +1,43 @@
+{
+  "schema_version": "riido-figma-ai-agent-coverage-entry.v1",
+  "entry": {
+    "node_id": "432:37336",
+    "name": "에이전트 설정페이지",
+    "coverage_status": "covered",
+    "evidence_kind": "figma_section",
+    "ssot_docs": [
+      "docs/20-domain/ai-agent-policy.md",
+      "docs/30-architecture/ssot-dependency-map.md",
+      "apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json"
+    ],
+    "owner_repos": [
+      "riido-contracts",
+      "riido-control-plane",
+      "riido-daemon",
+      "riido-client"
+    ],
+    "generated_paths": [
+      "aiAgent.bootstrap",
+      "aiAgent.agents.create",
+      "aiAgent.agents.updateConfiguration",
+      "aiAgent.agents.delete",
+      "aiAgent.agents.editability",
+      "aiAgent.devices.runtimes",
+      "v2.aiAgent.bootstrap",
+      "v2.aiAgent.agents.create",
+      "v2.aiAgent.agents.updateConfiguration",
+      "v2.aiAgent.agents.delete",
+      "v2.aiAgent.agents.editability",
+      "v2.aiAgent.devices.runtimes"
+    ],
+    "covered_facts": [
+      "agent profile thumbnail, description, instruction, visibility, runtime, model, editability, and timestamps are contract fields",
+      "model candidates are runtime-scoped catalog records, not enum members",
+      "agent add availability is derived from selectable runtime data"
+    ],
+    "direction_loop": {
+      "top_down": "New saved agent fields or mutation safety rules enter ai-agent-policy and API DSL first.",
+      "bottom_up": "A control-plane validation or client usability contradiction escalates to the field owner before local divergence."
+    }
+  }
+}

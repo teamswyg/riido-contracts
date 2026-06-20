@@ -1,0 +1,15 @@
+{
+  "schema_version": "riido-figma-ai-agent-api-annotation.v1",
+  "annotation": {
+    "node_id": "236:20768",
+    "top_level_node_id": "153:15931",
+    "coverage_entry_node_id": "153:15931",
+    "category_id": "700:0",
+    "category_label": "API Generated",
+    "figma_label": "riido.v2.aiAgent.tasks.stop\n종류: Mutation\n배경: 작업 중인 Agent에게 중지 요청을 보냅니다. daemon은 이 요청을 읽어 provider 실행을 강제 중지합니다.",
+    "figma_generated_path": "riido.v2.aiAgent.tasks.stop",
+    "canonical_generated_path": "aiAgent.tasks.stop",
+    "resolution_status": "resolved_consumption_hint",
+    "resolution": "The Figma handoff note keeps the facade path on the first line, marks it as a Mutation, and explains the daemon/provider stop handoff."
+  }
+}

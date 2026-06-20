@@ -1,0 +1,53 @@
+{
+  "schema_version": "riido-figma-ai-agent-api-annotation-inventory.v1",
+  "inventory": {
+    "ui_area": "Runtime and agent settings",
+    "category_id": "700:0",
+    "category_label": "API Generated",
+    "figma_generated_path": "riido.v2.aiAgent.devices.runtimes",
+    "canonical_generated_path": "aiAgent.devices.runtimes",
+    "operation_kind": "Query",
+    "background": "계정 소유 device에서 감지된 runtime 목록과 온라인/오프라인 상태를 조회합니다. 화면은 SaaS 값을 신뢰합니다.",
+    "annotation_count": 17,
+    "sources": [
+      {
+        "page_id": "129:5215",
+        "top_level_node_id": "162:23090",
+        "coverage_entry_node_id": "162:23090",
+        "node_ids": [
+          "160:10339",
+          "160:10418",
+          "559:34626",
+          "559:34704",
+          "129:17616"
+        ]
+      },
+      {
+        "page_id": "129:5215",
+        "top_level_node_id": "435:60050",
+        "coverage_entry_node_id": "435:60050",
+        "node_ids": [
+          "164:34459",
+          "164:34470",
+          "164:34476",
+          "164:34483",
+          "164:34496",
+          "435:72699"
+        ]
+      },
+      {
+        "page_id": "129:5215",
+        "top_level_node_id": "432:37336",
+        "coverage_entry_node_id": "432:37336",
+        "node_ids": [
+          "134:6542",
+          "417:21753",
+          "432:22231",
+          "432:35651",
+          "432:22617",
+          "432:35707"
+        ]
+      }
+    ]
+  }
+}

@@ -40,13 +40,21 @@ func runVerify(args []string, out io.Writer) error {
 	}
 	if *evidenceOut != "" {
 		if err := writeEvidence(*evidenceOut, evidence{
-			SchemaVersion:               evidenceSchemaVersion,
-			ID:                          m.ID,
-			Status:                      "verified",
-			EntriesVerified:             len(m.Entries),
-			GeneratedAnnotationsChecked: len(m.APIGeneratedAnnotationInventory),
-			EvidenceNodesVerified:       len(m.VerifiedEvidenceNodes),
-			CheckDoc:                    *checkDoc,
+			SchemaVersion:                     evidenceSchemaVersion,
+			ID:                                m.ID,
+			Status:                            "verified",
+			ToolLimitationFilesLoaded:         len(m.ToolLimitationFiles),
+			ExpectedTopLevelNodeFilesLoaded:   len(m.ExpectedTopLevelNodeFiles),
+			PageInventoryFilesLoaded:          len(m.PageInventoryFiles),
+			CoverageEntryFilesLoaded:          len(m.CoverageEntryFiles),
+			NonUICoverageEntryFilesLoaded:     len(m.NonUICoverageEntryFiles),
+			APIAnnotationInventoryFilesLoaded: len(m.APIAnnotationInventoryFiles),
+			APIAnnotationFilesLoaded:          len(m.APIAnnotationFiles),
+			VerifiedEvidenceNodeFilesLoaded:   len(m.VerifiedEvidenceNodeFiles),
+			EntriesVerified:                   len(m.Entries),
+			GeneratedAnnotationsChecked:       len(m.APIGeneratedAnnotationInventory),
+			EvidenceNodesVerified:             len(m.VerifiedEvidenceNodes),
+			CheckDoc:                          *checkDoc,
 		}); err != nil {
 			return err
 		}

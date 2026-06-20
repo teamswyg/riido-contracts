@@ -10,13 +10,21 @@ import (
 const evidenceSchemaVersion = "riido-figma-coverage-evidence.v1"
 
 type evidence struct {
-	SchemaVersion               string `json:"schema_version"`
-	ID                          string `json:"id"`
-	Status                      string `json:"status"`
-	EntriesVerified             int    `json:"entries_verified"`
-	GeneratedAnnotationsChecked int    `json:"generated_annotations_checked"`
-	EvidenceNodesVerified       int    `json:"evidence_nodes_verified"`
-	CheckDoc                    bool   `json:"check_doc"`
+	SchemaVersion                     string `json:"schema_version"`
+	ID                                string `json:"id"`
+	Status                            string `json:"status"`
+	ToolLimitationFilesLoaded         int    `json:"tool_limitation_files_loaded"`
+	ExpectedTopLevelNodeFilesLoaded   int    `json:"expected_top_level_node_files_loaded"`
+	PageInventoryFilesLoaded          int    `json:"page_inventory_files_loaded"`
+	CoverageEntryFilesLoaded          int    `json:"coverage_entry_files_loaded"`
+	NonUICoverageEntryFilesLoaded     int    `json:"non_ui_coverage_entry_files_loaded"`
+	APIAnnotationInventoryFilesLoaded int    `json:"api_annotation_inventory_files_loaded"`
+	APIAnnotationFilesLoaded          int    `json:"api_annotation_files_loaded"`
+	VerifiedEvidenceNodeFilesLoaded   int    `json:"verified_evidence_node_files_loaded"`
+	EntriesVerified                   int    `json:"entries_verified"`
+	GeneratedAnnotationsChecked       int    `json:"generated_annotations_checked"`
+	EvidenceNodesVerified             int    `json:"evidence_nodes_verified"`
+	CheckDoc                          bool   `json:"check_doc"`
 }
 
 func writeEvidence(path string, value evidence) error {

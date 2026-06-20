@@ -1,0 +1,33 @@
+{
+  "schema_version": "riido-figma-ai-agent-coverage-entry.v1",
+  "entry": {
+    "node_id": "275:22731",
+    "name": "런타임 설정페이지 엠티",
+    "coverage_status": "covered",
+    "evidence_kind": "figma_section",
+    "ssot_docs": [
+      "docs/20-domain/ai-agent-policy.md",
+      "docs/30-architecture/ssot-dependency-map.md",
+      "docs/50-roadmap/open-questions.md",
+      "apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json"
+    ],
+    "owner_repos": [
+      "riido-contracts",
+      "riido-control-plane",
+      "riido-daemon",
+      "riido-client"
+    ],
+    "generated_paths": [
+      "aiAgent.devices.runtimes",
+      "v2.aiAgent.devices.runtimes"
+    ],
+    "covered_facts": [
+      "empty state is derived from the device/runtime read model",
+      "provider install-card hover and Windows waitlist UI do not add AI Agent API operations"
+    ],
+    "direction_loop": {
+      "top_down": "New empty-state data must extend the device/runtime read model through contracts.",
+      "bottom_up": "Client presentation-only variants stay out of contracts unless they need typed server data."
+    }
+  }
+}

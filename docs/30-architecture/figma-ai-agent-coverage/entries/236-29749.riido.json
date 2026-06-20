@@ -1,0 +1,28 @@
+{
+  "schema_version": "riido-figma-ai-agent-coverage-entry.v1",
+  "entry": {
+    "node_id": "236:29749",
+    "name": "웹 온보딩",
+    "coverage_status": "no_diff_product_surface",
+    "evidence_kind": "figma_section",
+    "ssot_docs": [
+      "docs/20-domain/ai-agent-policy.md",
+      "docs/30-architecture/ssot-dependency-map.md",
+      "docs/50-roadmap/open-questions.md"
+    ],
+    "owner_repos": [
+      "riido-client",
+      "riido-desktop",
+      "riido-control-plane",
+      "riido-infra"
+    ],
+    "covered_facts": [
+      "auth, terms, invite, app download, and Windows waitlist are product/client/distribution surfaces",
+      "AI Agent API does not expose waitlist or marketing-consent operations"
+    ],
+    "direction_loop": {
+      "top_down": "If web onboarding needs AI Agent data, route it through the existing generated AI Agent API or create a new SSOT.",
+      "bottom_up": "Marketing/waitlist implementation work must not silently add AI Agent API fields."
+    }
+  }
+}

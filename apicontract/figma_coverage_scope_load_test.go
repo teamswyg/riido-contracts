@@ -48,5 +48,23 @@ func loadFigmaCoverageManifest(t *testing.T, path string) figmaCoverageManifest 
 	if err := dec.Decode(&trailing); !errors.Is(err, io.EOF) {
 		t.Fatalf("decode coverage manifest: trailing JSON document: %v", err)
 	}
+	loadFigmaCoverageIncludes(t, filepath.Dir(path), &manifest)
 	return manifest
+}
+
+func loadFigmaCoverageStrictJSON(t *testing.T, path string, dest any) {
+	t.Helper()
+	data, err := os.ReadFile(path)
+	if err != nil {
+		t.Fatalf("read coverage include %s: %v", path, err)
+	}
+	dec := json.NewDecoder(bytes.NewReader(data))
+	dec.DisallowUnknownFields()
+	if err := dec.Decode(dest); err != nil {
+		t.Fatalf("decode coverage include %s: %v", path, err)
+	}
+	var trailing struct{}
+	if err := dec.Decode(&trailing); !errors.Is(err, io.EOF) {
+		t.Fatalf("decode coverage include %s trailing JSON: %v", path, err)
+	}
 }
