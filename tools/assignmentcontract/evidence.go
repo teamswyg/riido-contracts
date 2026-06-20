@@ -10,9 +10,13 @@ type evidence struct {
 	ContractSchema       string            `json:"contract_schema"`
 	ServiceSchema        string            `json:"service_schema"`
 	AssignmentStateCount int               `json:"assignment_state_count"`
+	AssignmentStateFiles int               `json:"assignment_state_files"`
 	PollActionCount      int               `json:"poll_action_count"`
+	PollActionFiles      int               `json:"poll_action_files"`
 	TaskEventCount       int               `json:"task_event_count"`
+	TaskEventFiles       int               `json:"task_event_files"`
 	PayloadFieldCount    int               `json:"payload_field_count"`
+	PayloadFieldFiles    int               `json:"payload_field_files"`
 	PayloadFields        []payloadEvidence `json:"payload_fields"`
 	EvidenceArtifact     string            `json:"evidence_artifact"`
 	Workflow             string            `json:"workflow"`

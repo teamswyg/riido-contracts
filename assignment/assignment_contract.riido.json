@@ -1,116 +1,43 @@
 {
   "schema_version": "riido-ai-server-contract.v1",
   "service_schema_version": "riido-ai-server.v1",
-  "assignment_states": [
-    {
-      "name": "Queued",
-      "value": "queued",
-      "transitions": ["leased", "cancelling", "cancelled", "failed"]
-    },
-    {
-      "name": "Leased",
-      "value": "leased",
-      "agent_active": true,
-      "transitions": ["ready", "running", "cancelling", "cancelled", "failed"]
-    },
-    {
-      "name": "Ready",
-      "value": "ready",
-      "agent_active": true,
-      "transitions": ["running", "cancelling", "cancelled", "failed"]
-    },
-    {
-      "name": "Running",
-      "value": "running",
-      "agent_active": true,
-      "transitions": ["completed", "failed", "cancelling", "cancelled"]
-    },
-    {
-      "name": "Cancelling",
-      "value": "cancelling",
-      "transitions": ["cancelled", "failed"]
-    },
-    {
-      "name": "Cancelled",
-      "value": "cancelled",
-      "terminal": true
-    },
-    {
-      "name": "Completed",
-      "value": "completed",
-      "terminal": true
-    },
-    {
-      "name": "Failed",
-      "value": "failed",
-      "terminal": true
-    }
+  "assignment_state_files": [
+    "assignment_contract/states/queued.riido.json",
+    "assignment_contract/states/leased.riido.json",
+    "assignment_contract/states/ready.riido.json",
+    "assignment_contract/states/running.riido.json",
+    "assignment_contract/states/cancelling.riido.json",
+    "assignment_contract/states/cancelled.riido.json",
+    "assignment_contract/states/completed.riido.json",
+    "assignment_contract/states/failed.riido.json"
   ],
-  "poll_actions": [
-    {"name": "None", "value": "none"},
-    {"name": "Start", "value": "start"},
-    {"name": "Cancel", "value": "cancel"},
-    {"name": "Active", "value": "active"}
+  "poll_action_files": [
+    "assignment_contract/poll-actions/none.riido.json",
+    "assignment_contract/poll-actions/start.riido.json",
+    "assignment_contract/poll-actions/cancel.riido.json",
+    "assignment_contract/poll-actions/active.riido.json"
   ],
-  "task_events": [
-    {"name": "AssignmentQueued", "value": "assignment_queued"},
-    {"name": "AssignmentLeased", "value": "assignment_leased"},
-    {"name": "AssignmentReady", "value": "assignment_ready"},
-    {"name": "AssignmentRunning", "value": "assignment_running"},
-    {"name": "AssignmentCancelling", "value": "assignment_cancelling"},
-    {"name": "AssignmentCancelled", "value": "assignment_cancelled"},
-    {"name": "AssignmentCompleted", "value": "assignment_completed"},
-    {"name": "AssignmentFailed", "value": "assignment_failed"},
-    {"name": "AssignmentStateUpdated", "value": "assignment_state_updated"},
-    {"name": "RiidoLog", "value": "riido_log"},
-    {"name": "ProviderSessionPinned", "value": "provider_session_pinned"},
-    {"name": "ProviderLog", "value": "provider_log"},
-    {"name": "ProviderWarning", "value": "provider_warning"},
-    {"name": "ProviderError", "value": "provider_error"}
+  "task_event_files": [
+    "assignment_contract/task-events/assignment-queued.riido.json",
+    "assignment_contract/task-events/assignment-leased.riido.json",
+    "assignment_contract/task-events/assignment-ready.riido.json",
+    "assignment_contract/task-events/assignment-running.riido.json",
+    "assignment_contract/task-events/assignment-cancelling.riido.json",
+    "assignment_contract/task-events/assignment-cancelled.riido.json",
+    "assignment_contract/task-events/assignment-completed.riido.json",
+    "assignment_contract/task-events/assignment-failed.riido.json",
+    "assignment_contract/task-events/assignment-state-updated.riido.json",
+    "assignment_contract/task-events/riido-log.riido.json",
+    "assignment_contract/task-events/provider-session-pinned.riido.json",
+    "assignment_contract/task-events/provider-log.riido.json",
+    "assignment_contract/task-events/provider-warning.riido.json",
+    "assignment_contract/task-events/provider-error.riido.json"
   ],
-  "execution_identity": {
-    "execution_key_order": ["assignment_id", "run_id", "task_id"],
-    "resume_session_key_order": ["provider_session_id", "resume_session_id"],
-    "run_id_default_source": "assignment_id"
-  },
-  "approval_contract": {
-    "owner": "contracts-control-plane-client",
-    "timeout_terminal_status": "timed_out",
-    "statuses": [
-      {"name": "Pending", "value": "pending", "terminal": false},
-      {"name": "Approved", "value": "approved", "terminal": true},
-      {"name": "Denied", "value": "denied", "terminal": true},
-      {"name": "TimedOut", "value": "timed_out", "terminal": true}
-    ],
-    "decisions": [
-      {"name": "Approve", "value": "approve"},
-      {"name": "Deny", "value": "deny"}
-    ]
-  },
-  "assignment_payload_fields": [
-    {
-      "name": "agent_instruction",
-      "source": "agent.instruction",
-      "max_length": 1000,
-      "required": false,
-      "snapshot": "assignment-created",
-      "consumer": "riido-daemon provider-specific runtime instruction placement"
-    },
-    {
-      "name": "allow_experimental_runtime",
-      "source": "agent.runtime.requires_experimental_opt_in",
-      "max_length": 0,
-      "required": false,
-      "snapshot": "assignment-created",
-      "consumer": "riido-daemon runtime scheduling experimental opt-in gate"
-    },
-    {
-      "name": "model_id",
-      "source": "agent.model_id",
-      "max_length": 128,
-      "required": false,
-      "snapshot": "assignment-created",
-      "consumer": "riido-daemon provider runtime model selection"
-    }
+  "execution_identity_file": "assignment_contract/execution-identity.riido.json",
+  "approval_contract_file": "assignment_contract/approval-contract.riido.json",
+  "assignment_payload_field_files": [
+    "assignment_contract/payload-fields/agent-instruction.riido.json",
+    "assignment_contract/payload-fields/allow-experimental-runtime.riido.json",
+    "assignment_contract/payload-fields/model-id.riido.json"
   ]
 }

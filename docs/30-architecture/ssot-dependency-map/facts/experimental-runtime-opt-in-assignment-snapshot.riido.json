@@ -12,7 +12,7 @@
       },
       {
         "repo": "riido-contracts",
-        "path": "assignment/assignment_contract.riido.json",
+        "path": "assignment/assignment_contract/payload-fields/allow-experimental-runtime.riido.json",
         "required_phrase": "agent.runtime.requires_experimental_opt_in"
       }
     ],

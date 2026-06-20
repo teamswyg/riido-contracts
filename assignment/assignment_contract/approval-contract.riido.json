@@ -1,0 +1,39 @@
+{
+  "schema_version": "riido-ai-server-contract-approval.v1",
+  "approval_contract": {
+    "owner": "contracts-control-plane-client",
+    "timeout_terminal_status": "timed_out",
+    "statuses": [
+      {
+        "name": "Pending",
+        "value": "pending",
+        "terminal": false
+      },
+      {
+        "name": "Approved",
+        "value": "approved",
+        "terminal": true
+      },
+      {
+        "name": "Denied",
+        "value": "denied",
+        "terminal": true
+      },
+      {
+        "name": "TimedOut",
+        "value": "timed_out",
+        "terminal": true
+      }
+    ],
+    "decisions": [
+      {
+        "name": "Approve",
+        "value": "approve"
+      },
+      {
+        "name": "Deny",
+        "value": "deny"
+      }
+    ]
+  }
+}

@@ -12,7 +12,7 @@
       },
       {
         "repo": "riido-contracts",
-        "path": "assignment/assignment_contract.riido.json",
+        "path": "assignment/assignment_contract/payload-fields/model-id.riido.json",
         "required_phrase": "agent.model_id"
       }
     ],

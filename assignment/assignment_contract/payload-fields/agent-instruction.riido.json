@@ -1,0 +1,11 @@
+{
+  "schema_version": "riido-ai-server-contract-assignment-payload-field.v1",
+  "field": {
+    "name": "agent_instruction",
+    "source": "agent.instruction",
+    "max_length": 1000,
+    "required": false,
+    "snapshot": "assignment-created",
+    "consumer": "riido-daemon provider-specific runtime instruction placement"
+  }
+}

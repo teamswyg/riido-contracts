@@ -1,0 +1,14 @@
+{
+  "schema_version": "riido-ai-server-contract-assignment-state.v1",
+  "state": {
+    "name": "Ready",
+    "value": "ready",
+    "agent_active": true,
+    "transitions": [
+      "running",
+      "cancelling",
+      "cancelled",
+      "failed"
+    ]
+  }
+}

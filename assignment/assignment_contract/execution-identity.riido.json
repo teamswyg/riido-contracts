@@ -1,0 +1,15 @@
+{
+  "schema_version": "riido-ai-server-contract-execution-identity.v1",
+  "execution_identity": {
+    "execution_key_order": [
+      "assignment_id",
+      "run_id",
+      "task_id"
+    ],
+    "resume_session_key_order": [
+      "provider_session_id",
+      "resume_session_id"
+    ],
+    "run_id_default_source": "assignment_id"
+  }
+}
