@@ -1,0 +1,7 @@
+{
+  "schema_version": "riido-ai-server-contract-task-event.v1",
+  "value": {
+    "name": "AssignmentStateUpdated",
+    "value": "assignment_state_updated"
+  }
+}

@@ -25,5 +25,6 @@ func loadContract(t *testing.T) executableContract {
 	if err := decoder.Decode(&trailing); !errors.Is(err, io.EOF) {
 		t.Fatal("assignment contract must contain exactly one JSON document")
 	}
+	loadContractIncludes(t, &contract)
 	return contract
 }

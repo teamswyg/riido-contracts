@@ -11,7 +11,7 @@ func build(root string, opt options) (manifest, contract, string, error) {
 	if err := verifyWorkflow(root, m); err != nil {
 		return manifest{}, contract{}, "", err
 	}
-	c, err := loadJSON[contract](resolve(root, m.Contract), "assignment contract")
+	c, err := loadContract(resolve(root, m.Contract))
 	if err != nil {
 		return manifest{}, contract{}, "", err
 	}
