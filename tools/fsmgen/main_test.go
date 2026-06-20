@@ -22,3 +22,20 @@ func TestConformanceCommand(t *testing.T) {
 		t.Fatalf("conformance output = %q", out.String())
 	}
 }
+
+func TestFSMMetadataLoadsIncludedTransitions(t *testing.T) {
+	root, err := findRepoRoot()
+	if err != nil {
+		t.Fatal(err)
+	}
+	metadata, err := loadFSMMetadata(root + "/" + sourcePath)
+	if err != nil {
+		t.Fatal(err)
+	}
+	if _, ok := metadata["task.TaskTransitionCode"]; !ok {
+		t.Fatal("missing task FSM metadata from include")
+	}
+	if _, ok := metadata["assignment.AssignmentTransitionCode"]; !ok {
+		t.Fatal("missing assignment FSM metadata from include")
+	}
+}

@@ -1,12 +1,25 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 	"os"
+	"path/filepath"
 )
 
 func loadFSMMetadata(path string) (map[string]fsmMetadata, error) {
+	abs, err := filepath.Abs(path)
+	if err != nil {
+		return nil, fmt.Errorf("resolve %s: %w", path, err)
+	}
+	return loadFSMMetadataAt(abs, filepath.Dir(abs), map[string]bool{})
+}
+
+func loadFSMMetadataAt(path, base string, seen map[string]bool) (map[string]fsmMetadata, error) {
+	if seen[path] {
+		return nil, fmt.Errorf("include cycle at %s", path)
+	}
+	seen[path] = true
+	defer delete(seen, path)
 	body, err := os.ReadFile(path)
 	if err != nil {
 		return nil, fmt.Errorf("read %s: %w", path, err)
@@ -15,25 +28,5 @@ func loadFSMMetadata(path string) (map[string]fsmMetadata, error) {
 	if err != nil {
 		return nil, err
 	}
-	if root.isAtom() || len(root.list) == 0 || atom(root.list[0]) != "enum-gen" {
-		return nil, errors.New("root form must be (enum-gen ...)")
-	}
-	return fsmMetadataFromRoot(root)
-}
-
-func fsmMetadataFromRoot(root node) (map[string]fsmMetadata, error) {
-	metadata := map[string]fsmMetadata{}
-	for _, form := range root.list[1:] {
-		if !isTransitionForm(form) {
-			continue
-		}
-		if err := addFSMMetadataForm(metadata, form); err != nil {
-			return nil, err
-		}
-	}
-	return metadata, nil
-}
-
-func isTransitionForm(form node) bool {
-	return !form.isAtom() && len(form.list) > 0 && atom(form.list[0]) == "transitions"
+	return fsmMetadataFromLoadedNode(root, base, seen)
 }

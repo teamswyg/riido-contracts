@@ -9,10 +9,14 @@ func addFSMMetadataForm(metadata map[string]fsmMetadata, form node) error {
 	}
 	key := fsmMetadataKey(spec.Package, spec.TransitionName)
 	if _, ok := metadata[key]; ok {
-		return fmt.Errorf("duplicate fsm metadata for %s", key)
+		return duplicateFSMMetadataError(key)
 	}
 	metadata[key] = spec
 	return nil
+}
+
+func duplicateFSMMetadataError(key string) error {
+	return fmt.Errorf("duplicate fsm metadata for %s", key)
 }
 
 func fsmMetadataKey(packageName, transitionName string) string {
