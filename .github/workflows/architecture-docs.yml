@@ -13,6 +13,7 @@ on:
       - "docs/30-architecture/**"
       - "docs/50-roadmap/open-questions.md"
       - "docs/migration/contracts.md"
+      - "tools/architecturedocs/**"
       - "tools/figmacoverage/**"
       - "tools/promotionpolicy/**"
       - "tools/refactorcharter/**"
@@ -28,6 +29,7 @@ on:
       - "docs/30-architecture/**"
       - "docs/50-roadmap/open-questions.md"
       - "docs/migration/contracts.md"
+      - "tools/architecturedocs/**"
       - "tools/figmacoverage/**"
       - "tools/promotionpolicy/**"
       - "tools/refactorcharter/**"
@@ -42,29 +44,10 @@ jobs:
         with:
           go-version-file: go.mod
           cache: false
-      - name: Verify required architecture docs
-        run: |
-          test -f docs/20-domain/context-map.md
-          test -f docs/20-domain/ai-agent-policy.md
-          test -f docs/30-architecture/module-decomposition.md
-          test -f docs/30-architecture/contract-promotion-policy.md
-          test -f docs/30-architecture/integration-matrix.md
-          test -f docs/50-roadmap/open-questions.md
-      - name: Verify package coverage
-        run: |
-          for pkg in task ir provider/capability hostintegration assignment apicontract fsmmeta; do
-            grep -R "$pkg" docs/20-domain/context-map.md docs/30-architecture/module-decomposition.md >/dev/null
-          done
-      - name: Verify architecture docs avoid runtime ownership drift
-        run: |
-          stale="$(grep -R --line-number -E 'cmd/riido|cmd/riido_ai_server|internal/riidoaiserver|internal/agentbridge|packaging/terraform|terraform\\.tfstate|terraform\\.tfvars|AWS_ACCESS_KEY|AWS_SECRET|provider CLI binaries' docs/20-domain/context-map.md docs/30-architecture docs/50-roadmap || true)"
-          if [ -n "$stale" ]; then
-            printf 'Runtime/private ownership wording found:\n%s\n' "$stale"
-            exit 1
-          fi
       - name: Verify executable architecture manifests
         run: |
           mkdir -p out
+          go run ./tools/architecturedocs verify -check-doc -evidence-out out/architecturedocs-evidence.json
           go run ./tools/ssotdeps verify -check-doc -evidence-out out/ssotdeps-evidence.json
           go run ./tools/figmacoverage verify -check-doc -evidence-out out/figmacoverage-evidence.json
           go run ./tools/promotionpolicy verify -check-doc -evidence-out out/promotionpolicy-evidence.json
