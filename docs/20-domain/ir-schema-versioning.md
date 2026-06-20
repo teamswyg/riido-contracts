@@ -56,7 +56,7 @@ scope 의 관계는 부분 순서가 아니라 **분류** 다. 한 이벤트는 
 | `OccurredAt` | RFC3339Nano timestamp |
 | `EventSchemaVersion` | (Type, SchemaVersion) 의 의미는 영구 동결 |
 | `EventScope` | 본 §1.5 의 4 종 중 하나 |
-| `Type` | EventType 카탈로그 멤버 ([`./ir-event-log.md`](./ir-event-log.md) §3) |
+| `Type` | EventType 카탈로그 멤버 ([`./ir-event-log.md`](./ir-event-log.md)) |
 | `ActorKind` | 서버 결정 — `agent`/`daemon`/`human`/`system` |
 | `ActorID` | 서버 결정 |
 | `RiidoDaemonVersion` | 이벤트를 만든 데몬 semver |
@@ -87,7 +87,7 @@ scope 의 관계는 부분 순서가 아니라 **분류** 다. 한 이벤트는 
   | **ExecutionBoundOnly** | **필수** | `NativeConfigInjected`, `ConfigTemplateReinjected`, `RunStarted`, `RunReportedDone`, 모든 Cat C, 모든 Cat D, `ReviewRequested`/`AutoApproved`/`HumanApproved`/`HumanRejected`, `WorkdirArchived`, `InputRequested`/`InputProvided` |
   | **PhaseDependent** | 단독 결정 불가 — run phase 필요 | `BlockerRaised`, `BlockerResolved`, `BlockerResolvedRequeue`, `TaskFailed`, `TaskCancelled`, `TaskTimedOut`, `RuntimePinViolated`, `ReworkAccepted` |
 
-  분류 전체 표의 정식 owner 는 [`./ir-event-log.md`](./ir-event-log.md) §3.0.1 / §3.0.2.
+  분류 전체 표의 정식 owner 는 [`./ir-event-log.md`](./ir-event-log.md) 와 `ir.NativeConfigRequirementOf`.
 
 #### 1.5.3.2 PhaseDependent 의 동적 규칙
 
@@ -110,7 +110,7 @@ scope 의 관계는 부분 순서가 아니라 **분류** 다. 한 이벤트는 
 - `BlockerRaised` / `BlockerResolved` / `BlockerResolvedRequeue` — task-pre-claim 사유면 `TaskScope`, run 중이면 `RunScope`.
 - `Correction` / `OperatorNote` — system-wide 면 `SystemScope`, task 묶이면 `TaskScope` 또는 `RunScope`.
 
-이 경우 **인스턴스의 실제 scope** 는 발행 시점에 ingest 가 결정해 `EventScope` 필드에 박는다. 멀티 scope 인 EventType 의 합법 scope 집합은 [`./ir-event-log.md`](./ir-event-log.md) §3 카탈로그가 owner.
+이 경우 **인스턴스의 실제 scope** 는 발행 시점에 ingest 가 결정해 `EventScope` 필드에 박는다. 멀티 scope 인 EventType 의 합법 scope 집합은 [`./ir-event-log.md`](./ir-event-log.md) 와 `ir` envelope validator 가 owner.
 
 ### 1.5.5 fake placeholder 절대 금지
 
@@ -191,7 +191,7 @@ TaskScope / RuntimeScope / SystemScope 이벤트는 본 invariant 의 적용 대
 - **강제**: TaskScope 또는 RunScope 이벤트 중 `Type` 이 FSM 전이를 일으키는 이벤트(예: `TaskQueued`, `TaskClaimed`, `RuntimePinned`, `BlockerRaised`, `ValidationPassed`, `TaskCompleted`, `ReworkQueued` 등) 면 `FSMVersion` 이 0 이 아닌 값이어야 한다.
 - **선택**: 비-transition 이벤트(예: `TextDelta`, `ReasoningDelta`, `ToolCallStarted`, `FileChanged`, `CommandFinished`) 면 `FSMVersion` 을 0(미기재) 으로 둘 수 있다.
 - **부재**: SystemScope / RuntimeScope 이벤트는 FSM 영향이 없으므로 `FSMVersion` 을 0(부재)로 둔다.
-- 어느 EventType 이 transition 인가의 정식 분류 + 어느 scope 가 합법인가는 [`ir-event-log.md`](./ir-event-log.md) §3 가 소유한다. 본 문서는 강제 규칙만 둔다.
+- 어느 EventType 이 transition 인가의 정식 분류 + 어느 scope 가 합법인가는 [`ir-event-log.md`](./ir-event-log.md) 와 `ir` package predicates 가 소유한다. 본 문서는 강제 규칙만 둔다.
 
 규칙:
 
