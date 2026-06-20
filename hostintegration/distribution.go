@@ -15,20 +15,38 @@ const (
 // Valid reports whether channel is one of the SSOT-defined distribution
 // channels.
 func (c DistributionChannel) Valid() bool {
-	switch c {
-	case DistributionChannelDeveloperID,
-		DistributionChannelMacAppStore,
-		DistributionChannelMSIXSideload,
-		DistributionChannelMSIXStore,
-		DistributionChannelDevLocal:
-		return true
-	default:
-		return false
+	for _, channel := range DistributionChannels() {
+		if c == channel {
+			return true
+		}
 	}
+	return false
 }
 
 // StoreManaged reports whether the channel is subject to app store review
 // constraints.
 func (c DistributionChannel) StoreManaged() bool {
-	return c == DistributionChannelMacAppStore || c == DistributionChannelMSIXStore
+	for _, channel := range StoreManagedDistributionChannels() {
+		if c == channel {
+			return true
+		}
+	}
+	return false
+}
+
+func DistributionChannels() []DistributionChannel {
+	return []DistributionChannel{
+		DistributionChannelDeveloperID,
+		DistributionChannelMacAppStore,
+		DistributionChannelMSIXSideload,
+		DistributionChannelMSIXStore,
+		DistributionChannelDevLocal,
+	}
+}
+
+func StoreManagedDistributionChannels() []DistributionChannel {
+	return []DistributionChannel{
+		DistributionChannelMacAppStore,
+		DistributionChannelMSIXStore,
+	}
 }

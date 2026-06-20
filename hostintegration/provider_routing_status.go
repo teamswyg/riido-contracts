@@ -12,13 +12,19 @@ const (
 )
 
 func (s ProviderRoutingStatus) Valid() bool {
-	switch s {
-	case ProviderRoutingAvailable,
+	for _, status := range ProviderRoutingStatuses() {
+		if s == status {
+			return true
+		}
+	}
+	return false
+}
+
+func ProviderRoutingStatuses() []ProviderRoutingStatus {
+	return []ProviderRoutingStatus{
+		ProviderRoutingAvailable,
 		ProviderRoutingLoginRequired,
 		ProviderRoutingUnsupported,
-		ProviderRoutingStoreBlocked:
-		return true
-	default:
-		return false
+		ProviderRoutingStoreBlocked,
 	}
 }
