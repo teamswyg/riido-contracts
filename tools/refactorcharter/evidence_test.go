@@ -22,7 +22,7 @@ func TestRunWritesEvidence(t *testing.T) {
 	if err := json.Unmarshal(body, &got); err != nil {
 		t.Fatalf("decode evidence: %v", err)
 	}
-	if got.SchemaVersion != evidenceSchemaVersion || got.Status != "verified" {
+	if got.SchemaVersion != evidenceSchemaVersion || got.Status != "advisory_findings" {
 		t.Fatalf("unexpected evidence: %+v", got)
 	}
 	if got.FilesScanned == 0 || got.TargetMaxLines == 0 {

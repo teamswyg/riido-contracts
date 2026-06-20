@@ -24,13 +24,20 @@ func newEvidence(c charter, report scanReport) evidence {
 	return evidence{
 		SchemaVersion:  evidenceSchemaVersion,
 		ID:             c.ID,
-		Status:         "verified",
+		Status:         evidenceStatus(c, report),
 		Mode:           c.Mode,
 		FilesScanned:   report.FilesScanned,
 		OverTarget:     len(report.Findings),
 		TargetMaxLines: c.LineBudget.TargetMaxLines,
 		Findings:       report.Findings,
 	}
+}
+
+func evidenceStatus(c charter, report scanReport) string {
+	if c.Mode == "advisory" && len(report.Findings) > 0 {
+		return "advisory_findings"
+	}
+	return "verified"
 }
 
 func writeEvidence(path string, value evidence) error {
