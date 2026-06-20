@@ -3,14 +3,7 @@ package hostintegration
 import "testing"
 
 func TestDistributionChannelContract(t *testing.T) {
-	valid := []DistributionChannel{
-		DistributionChannelDeveloperID,
-		DistributionChannelMacAppStore,
-		DistributionChannelMSIXSideload,
-		DistributionChannelMSIXStore,
-		DistributionChannelDevLocal,
-	}
-	for _, channel := range valid {
+	for _, channel := range DistributionChannels() {
 		if !channel.Valid() {
 			t.Fatalf("%q should be a valid distribution channel", channel)
 		}
@@ -34,18 +27,18 @@ func TestDistributionChannelContract(t *testing.T) {
 }
 
 func TestProviderRoutingStatusContract(t *testing.T) {
-	valid := []ProviderRoutingStatus{
-		ProviderRoutingAvailable,
-		ProviderRoutingLoginRequired,
-		ProviderRoutingUnsupported,
-		ProviderRoutingStoreBlocked,
-	}
-	for _, status := range valid {
+	for _, status := range ProviderRoutingStatuses() {
 		if !status.Valid() {
 			t.Fatalf("%q should be a valid provider routing status", status)
 		}
 	}
 	if ProviderRoutingStatus("unknown").Valid() {
 		t.Fatal("unknown provider routing status should be invalid")
+	}
+}
+
+func TestHostIntegrationBoundaryContract(t *testing.T) {
+	if len(NonOwnedSurfaces()) == 0 {
+		t.Fatal("non-owned surfaces must be explicit")
 	}
 }

@@ -1,0 +1,45 @@
+name: host-integration
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/host-integration.yml"
+      - "docs/20-domain/distribution-host-integration.md"
+      - "docs/20-domain/distribution-host-integration.riido.json"
+      - "hostintegration/**"
+      - "tools/hostintegrationdoc/**"
+      - "go.mod"
+  pull_request:
+    paths:
+      - ".github/workflows/host-integration.yml"
+      - "docs/20-domain/distribution-host-integration.md"
+      - "docs/20-domain/distribution-host-integration.riido.json"
+      - "hostintegration/**"
+      - "tools/hostintegrationdoc/**"
+      - "go.mod"
+
+jobs:
+  host-integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: false
+      - name: Verify stdlib-only module
+        run: test "$(go list -m all | wc -l | tr -d ' ')" = "1"
+      - name: Verify host integration evidence
+        run: |
+          mkdir -p out
+          go test ./hostintegration ./tools/hostintegrationdoc -count=1
+          go run ./tools/hostintegrationdoc \
+            -check-doc \
+            -evidence-out out/host-integration-evidence.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: host-integration-evidence
+          path: out/host-integration-evidence.json
+          if-no-files-found: error

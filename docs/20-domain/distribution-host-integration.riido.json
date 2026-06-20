@@ -1,0 +1,28 @@
+{
+  "schema_version": "riido-host-integration-evidence-manifest.v1",
+  "id": "distribution-host-integration",
+  "title": "Distribution Host Integration Contracts",
+  "riido_task": "RIID-4670 [Contracts] distribution/provider routing status contract migration",
+  "summary": "The hostintegration package owns public distribution-channel and provider-routing vocabulary only; runtime host behavior stays downstream.",
+  "generated_doc": "docs/20-domain/distribution-host-integration.md",
+  "workflow": ".github/workflows/host-integration.yml",
+  "evidence_artifact": "host-integration-evidence",
+  "package": "github.com/teamswyg/riido-contracts/hostintegration",
+  "expected_distribution_channel_count": 5,
+  "expected_store_managed_channel_count": 2,
+  "expected_provider_routing_status_count": 4,
+  "expected_non_owned_surface_count": 11,
+  "invariants": [
+    "DistributionChannel.Valid is the executable gate for distribution channel vocabulary",
+    "DistributionChannel.StoreManaged is true only for app-store managed channels",
+    "ProviderRoutingStatus.Valid is the executable gate for server-facing provider routing status",
+    "hostintegration never exposes provider paths, provider tokens, API keys, or raw environment values"
+  ],
+  "loop": {
+    "observation": "The hostintegration package already contained executable vocabulary, but the public reader was still hand-maintained prose.",
+    "hypothesis": "A manifest-backed verifier can prove the reader, channel/status constants, store-managed classification, and boundary list stay aligned.",
+    "execute": "Read the hostintegration package functions, verify counts and validity methods, regenerate the reader, and publish evidence from CI.",
+    "evaluate": "CI fails when distribution channels, store-managed channels, provider routing statuses, boundary counts, or the generated reader drift.",
+    "retrospective": "Future host integration vocabulary should extend the package and manifest first, then regenerate the reader instead of editing prose."
+  }
+}
