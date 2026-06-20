@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -18,6 +19,11 @@ func verifyManifest(root string, m manifest) error {
 	}
 	if !filled(m.Loop.Observation, m.Loop.Hypothesis, m.Loop.Execute, m.Loop.Evaluate, m.Loop.Retrospective) {
 		return errors.New("complete evidence loop is required")
+	}
+	for _, scanFile := range m.ScanFiles {
+		if _, err := os.Stat(filepath.Join(root, filepath.FromSlash(scanFile))); err != nil {
+			return err
+		}
 	}
 	return verifyWorkflow(root, m)
 }

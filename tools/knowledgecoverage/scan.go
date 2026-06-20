@@ -26,6 +26,13 @@ func scanDocs(root string, m manifest) (scanReport, error) {
 			return scanReport{}, err
 		}
 	}
+	for _, scanFile := range m.ScanFiles {
+		record, err := classifyDoc(root, resolve(root, scanFile), m.GeneratedMarkers)
+		if err != nil {
+			return scanReport{}, err
+		}
+		docs = append(docs, record)
+	}
 	sort.Slice(docs, func(i, j int) bool { return docs[i].Path < docs[j].Path })
 	return summarize(root, docs)
 }
