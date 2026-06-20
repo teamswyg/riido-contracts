@@ -102,7 +102,7 @@ A lower-layer contradiction must be recorded locally, escalated to the owning SS
 - Owner: `riido-contracts:docs/20-domain/assignment-polling.md`
 - Source refs:
   - `riido-contracts:docs/20-domain/assignment-polling.md` requires `Assignment.allow_experimental_runtime`
-  - `riido-contracts:docs/20-domain/ai-agent-policy.md` requires `requires experimental opt-in`
+  - `riido-contracts:assignment/assignment_contract.riido.json` requires `agent.runtime.requires_experimental_opt_in`
 - Downstreams:
   - `riido-control-plane`: derives Assignment.allow_experimental_runtime from the selected agent runtime capability at assignment creation time
   - `riido-daemon`: uses only Assignment.allow_experimental_runtime for the experimental runtime scheduling gate
@@ -229,7 +229,7 @@ A lower-layer contradiction must be recorded locally, escalated to the owning SS
 - Owner: `riido-contracts:docs/20-domain/assignment-polling.md`
 - Source refs:
   - `riido-contracts:docs/20-domain/assignment-polling.md` requires `Assignment.model_id`
-  - `riido-contracts:docs/20-domain/ai-agent-policy.md` requires `runtime-scoped identifier`
+  - `riido-contracts:assignment/assignment_contract.riido.json` requires `agent.model_id`
 - Downstreams:
   - `riido-control-plane`: copies the selected agent model_id into Assignment.model_id at assignment creation time
   - `riido-daemon`: uses only Assignment.model_id for provider runtime model selection
