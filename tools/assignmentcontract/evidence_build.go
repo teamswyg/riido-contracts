@@ -12,8 +12,17 @@ func newEvidence(m manifest, c contract) evidence {
 		PollActionCount:      len(c.PollActions),
 		TaskEventCount:       len(c.TaskEvents),
 		PayloadFieldCount:    len(c.AssignmentPayloadFields),
+		PayloadFields:        payloadEvidenceFrom(c.AssignmentPayloadFields),
 		EvidenceArtifact:     m.EvidenceArtifact,
 		Workflow:             m.Workflow,
 		Loop:                 m.Loop,
 	}
+}
+
+func payloadEvidenceFrom(fields []payloadField) []payloadEvidence {
+	out := make([]payloadEvidence, 0, len(fields))
+	for _, field := range fields {
+		out = append(out, payloadEvidence(field))
+	}
+	return out
 }

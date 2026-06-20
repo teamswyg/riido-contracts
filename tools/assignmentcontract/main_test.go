@@ -37,9 +37,24 @@ func TestAssignmentContractEvidence(t *testing.T) {
 	c.AssignmentStates = []state{{Value: "queued"}}
 	c.PollActions = []namedValue{{Value: "none"}}
 	c.TaskEvents = []namedValue{{Value: "assignment_queued"}}
-	c.AssignmentPayloadFields = []payloadField{{Name: "model_id"}}
+	c.AssignmentPayloadFields = []payloadField{
+		{
+			Name:      "model_id",
+			Source:    "agent.model_id",
+			MaxLength: 128,
+			Snapshot:  "assignment-created",
+			Consumer:  "riido-daemon provider runtime model selection",
+		},
+	}
 	got := newEvidence(manifest{ID: "id", Contract: defaultContract}, c)
-	if got.Status != "verified" || got.PayloadFieldCount != 1 {
+	if got.Status != "verified" || got.PayloadFieldCount != 1 || len(got.PayloadFields) != 1 {
 		t.Fatalf("evidence = %#v", got)
+	}
+	field := got.PayloadFields[0]
+	if field.Name != "model_id" || field.Source != "agent.model_id" {
+		t.Fatalf("payload evidence = %#v", field)
+	}
+	if field.Snapshot != "assignment-created" || !strings.Contains(field.Consumer, "model selection") {
+		t.Fatalf("payload evidence = %#v", field)
 	}
 }
