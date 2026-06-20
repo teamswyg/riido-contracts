@@ -1,0 +1,46 @@
+{
+  "schema_version": "riido-ai-agent-api-surface-evidence-manifest.v1",
+  "id": "ai-agent-api-surface",
+  "title": "AI Agent API Surface",
+  "riido_task": "RIID-4720 [Contracts] AI Agent policy vocabulary and client API projection",
+  "summary": "AI Agent client API surface is generated from the DSL/IR/OpenAPI fixture set; manual route lists are not an authority.",
+  "generated_doc": "docs/20-domain/ai-agent-api-surface.md",
+  "workflow": ".github/workflows/ai-agent-api-surface.yml",
+  "evidence_artifact": "ai-agent-api-surface-evidence",
+  "contract_id": "control-plane-ai-agent-client-api.v2",
+  "dsl_fixture": "apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json",
+  "ir_fixture": "apicontract/fixtures/control-plane-ai-agent-client.ir.riido.json",
+  "openapi_fixture": "apicontract/fixtures/control-plane-ai-agent-client.openapi.json",
+  "expected_operation_count": 55,
+  "expected_v1_operation_count": 25,
+  "expected_v2_operation_count": 30,
+  "expected_v2_workspace_only_operation_count": 5,
+  "expected_openapi_path_count": 51,
+  "expected_openapi_operation_count": 55,
+  "expected_client_stream_variant_count": 5,
+  "required_stream_variants": [
+    "device_runtime_snapshot",
+    "device_daemon_status_changed",
+    "agent_editability_changed",
+    "agent_work_status_changed",
+    "agent_thread_progress"
+  ],
+  "codegen_rules": [
+    "Control-plane API enum values and sum-type variants are contract values, not free text.",
+    "Domain DSL is the authoring surface, API IR preserves it, and OpenAPI is the generated client projection.",
+    "Generated client code is not owned by this repository."
+  ],
+  "invariants": [
+    "DSL and IR operation tuples must match exactly.",
+    "OpenAPI operation tuples must match the IR projection exactly.",
+    "Every v1 operation must have an equivalent workspace-scoped v2 operation.",
+    "v2 may add workspace-specific task assignment/read-model operations beyond v1 compatibility."
+  ],
+  "loop": {
+    "observation": "The AI Agent policy manual route list was narrower than the current DSL/IR/OpenAPI fixture surface.",
+    "hypothesis": "A fixture-backed verifier can make API surface drift observable and keep prose from becoming a second source of truth.",
+    "execute": "Compare DSL, IR, and OpenAPI operation tuples, count v1/v2 surfaces, verify v2-only operations, and verify ClientStreamEvent variants.",
+    "evaluate": "CI fails when route count, route tuple parity, stream variants, generated reader, or workflow artifact binding drift.",
+    "retrospective": "Future AI Agent endpoints should update the DSL/IR/OpenAPI fixture and this manifest before reader text changes."
+  }
+}

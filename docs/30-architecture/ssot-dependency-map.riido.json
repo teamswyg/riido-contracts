@@ -629,7 +629,7 @@
       "source_refs": [
         {
           "repo": "riido-contracts",
-          "path": "docs/20-domain/ai-agent-policy.md",
+          "path": "docs/20-domain/ai-agent-api-surface.md",
           "required_phrase": "/v2/client/workspaces/{workspace_id}/ai-agent/..."
         },
         {
@@ -640,7 +640,7 @@
       ],
       "owner": {
         "repo": "riido-contracts",
-        "path": "docs/20-domain/ai-agent-policy.md"
+        "path": "docs/20-domain/ai-agent-api-surface.md"
       },
       "downstreams": [
         {

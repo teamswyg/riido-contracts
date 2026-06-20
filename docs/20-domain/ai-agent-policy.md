@@ -771,56 +771,14 @@ screen is open; if the viewer opens the task later, the cold collection alone is
 sufficient and `active_stream` stays absent unless a new active assignment
 exists.
 
-## API Codegen Rule
+## API Surface Projection
 
-Control-plane API enum values and sum-type variants are contract values, not
-free text. They must be defined in the Domain DSL, preserved in the API IR, and
-then projected into OpenAPI for client code generation.
-
-OpenAPI is a generated projection. Clients may consume the OpenAPI projection
-with Orval or a compatible generator, but generated client code is not owned by
-this repository.
-
-## Contract Fixtures
-
-The client-facing contract fixture is
-`control-plane-ai-agent-client-api.v2`:
-
-- DSL: `../../apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json`
-- IR: `../../apicontract/fixtures/control-plane-ai-agent-client.ir.riido.json`
-- OpenAPI:
-  `../../apicontract/fixtures/control-plane-ai-agent-client.openapi.json`
-
-It covers:
-
-- `GET /v1/client/ai-agent/bootstrap`
-- `GET /v1/client/ai-agent/onboarding/fixtures`
-- `POST /v1/client/ai-agent/onboarding/fixtures/{fixture_id}/agents`
-- `GET /v1/client/ai-agent/devices`
-- `GET /v1/client/ai-agent/tasks/{task_id}/assignable-agents`
-- `POST /v1/client/ai-agent/tasks/{task_id}/assignment`
-- `DELETE /v1/client/ai-agent/tasks/{task_id}/assignment`
-- `GET /v1/client/ai-agent/tasks/{task_id}/threads`
-- `POST /v1/client/ai-agent/tasks/{task_id}/comments`
-- `POST /v1/client/ai-agent/tasks/{task_id}/stop`
-- `POST /v1/client/ai-agent/agents`
-- `GET /v1/client/ai-agent/agents/{agent_id}/editability`
-- `PATCH /v1/client/ai-agent/agents/{agent_id}`
-- `DELETE /v1/client/ai-agent/agents/{agent_id}`
-- `GET /v1/client/ai-agent/events`
-
-The authoritative new client surface duplicates the AI Agent routes under
-`/v2/client/workspaces/{workspace_id}/ai-agent/...`. Generated client metadata
-uses the `v2` module, so frontend access paths are shaped like
-`riido.v2.aiAgent.agents.create`, `riido.v2.aiAgent.bootstrap`, and
-`riido.v2.aiAgent.tasks.assign`. v1 remains available only as a compatibility
-surface; it must not own the new workspace-scoped semantics.
-
-The event stream uses a discriminated sum type, `ClientStreamEvent`, so client
-codegen can produce safe branches for runtime snapshots, agent editability, and
-agent work-status updates. Runtime progress intended for the task thread is the
-`agent_thread_progress` variant and carries `thread_id` plus ordered progress
-lines.
+The executable AI Agent client API surface is generated and verified in
+[`ai-agent-api-surface.md`](ai-agent-api-surface.md). That generated reader is
+the only reader-facing route inventory. This policy owns the vocabulary and
+product boundary; the API surface verifier owns DSL/IR/OpenAPI route parity,
+v1/v2 counts, workspace-scoped v2 coverage, v2-only task operations, and
+`ClientStreamEvent` variant evidence.
 
 ## Boundary
 
