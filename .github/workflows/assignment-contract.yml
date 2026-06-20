@@ -6,12 +6,16 @@ on:
     paths:
       - "assignment/**"
       - "docs/20-domain/assignment-polling.md"
+      - "docs/20-domain/assignment-polling.riido.json"
+      - "tools/assignmentcontract/**"
       - ".github/workflows/assignment-contract.yml"
       - "go.mod"
   pull_request:
     paths:
       - "assignment/**"
       - "docs/20-domain/assignment-polling.md"
+      - "docs/20-domain/assignment-polling.riido.json"
+      - "tools/assignmentcontract/**"
       - ".github/workflows/assignment-contract.yml"
       - "go.mod"
 
@@ -27,4 +31,15 @@ jobs:
       - name: Verify stdlib-only module
         run: test "$(go list -m all | wc -l | tr -d ' ')" = "1"
       - name: Verify assignment contract
-        run: go test ./assignment -run 'AssignmentContract|AssignmentTransition|AssignmentAPI' -count=1
+        run: |
+          mkdir -p out
+          go test ./assignment ./tools/assignmentcontract -run 'AssignmentContract|AssignmentTransition|AssignmentAPI' -count=1
+          go run ./tools/assignmentcontract \
+            -check-doc \
+            -evidence-out out/assignment-contract-evidence.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: assignment-contract-evidence
+          path: out/assignment-contract-evidence.json
+          if-no-files-found: error
