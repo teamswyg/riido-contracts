@@ -4,18 +4,18 @@
 
 Executable SSOT: [`docs/executable-knowledge.riido.json`](docs/executable-knowledge.riido.json).
 
-- Status: `advisory_findings`
+- Status: `verified`
 - Evidence artifact: `executable-knowledge-coverage`
 - Markdown readers scanned: `27`
-- Generated readers: `26`
+- Generated readers: `27`
 - Executable readers: `0`
-- Adjacent manifests: `24`
-- Manual reader candidates: `1`
-- Manifest inventory: `329`
+- Adjacent manifests: `25`
+- Manual reader candidates: `0`
+- Manifest inventory: `330`
 
 ## Manual Reader Candidates
 
-- `README.md` (219 lines)
+None.
 
 ## Evidence Loop
 
