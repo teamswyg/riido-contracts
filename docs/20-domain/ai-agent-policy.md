@@ -502,20 +502,20 @@ The client API may display the runtime fact as
 override the assignment opt-in decision.
 
 Profile field creation and updates follow the same RBAC and mutation safety
-rules as name, visibility, and runtime binding updates. v2 creation stamps
+rules as name, visibility, and runtime binding updates. RBAC visibility
+vocabulary is generated in [`ai-agent-visibility.md`](ai-agent-visibility.md).
+v2 creation stamps
 `workspace_id` from the URL path, stamps `owner_principal_id` from the
 authorized principal, and binds only a selected runtime that is present in the
 authorized selectable device/runtime read model. v1 creation remains present as
 a compatibility route for existing UI tests and must not be treated as the
 authoritative new integration path.
-For a non-admin viewer this normally means a viewer-owned runtime or a runtime
-made available through a public agent; an admin can use runtime rows made
-visible by workspace RBAC. Admin role never means "all persisted devices in the
-control-plane snapshot"; device/runtime rows from another workspace stay hidden
-unless they are exposed through a visible agent/runtime access path in the
-current workspace. Local daemon detail/control follows the agent access
-boundary, not a standalone device-owner-only rule. After creation, admin may mutate all agents.
-Owners may mutate owned agents subject to generated mutation-safety evidence.
+Admin role never means "all persisted devices in the control-plane snapshot";
+device/runtime rows from another workspace stay hidden unless exposed through a
+visible agent/runtime access path in the current workspace. Local daemon
+detail/control follows the agent access boundary, not a standalone
+device-owner-only rule. Mutation eligibility remains constrained by generated
+mutation-safety evidence.
 
 ### Agent List Timestamps
 

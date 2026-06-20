@@ -32,7 +32,7 @@ A lower-layer contradiction must be recorded locally, escalated to the owning SS
 | `participant-dropdown-agent-ordering` | Participant dropdown agent ordering is owned-first, display-name ordered, then agent_id tied | `riido-contracts:docs/20-domain/ai-agent-task-assignment.md` | riido-control-plane, riido-client |
 | `profile-thumbnail-url` | profile_thumbnail_url is an optional HTTPS image URL string produced by the profile thumbnail upload-intent flow | `riido-contracts:docs/20-domain/ai-agent-policy.md` | riido-control-plane, riido-client, riido-daemon, riido-infra |
 | `progress-message-catalog` | AI Agent runtime progress messages are fixed, translated, integer-coded, append-only, and rendered before public SSE delivery | `riido-contracts:progressmessage/catalog.dsl.riido.json` | riido-control-plane, riido-daemon |
-| `rbac-vocabulary` | Admin, owner, public, and private visibility vocabulary | `riido-contracts:docs/20-domain/ai-agent-policy.md` | riido-control-plane, riido-client |
+| `rbac-vocabulary` | Admin, owner, public, and private visibility vocabulary | `riido-contracts:docs/20-domain/ai-agent-visibility.md` | riido-control-plane, riido-client |
 | `runtime-model-selection-assignment-snapshot` | Runtime model selection is assignment-created snapshot data | `riido-contracts:docs/20-domain/assignment-polling.md` | riido-control-plane, riido-daemon, riido-infra |
 | `runtime-prompt-consumption` | Runtime prompt and native-config consumption | `riido-daemon:docs/20-domain/workspace.md` | riido-control-plane |
 | `storage-topology` | Production deployment and storage topology | `riido-infra:docs/architecture/terraform-authoring.md` | riido-control-plane |
@@ -215,9 +215,10 @@ A lower-layer contradiction must be recorded locally, escalated to the owning SS
 ### `rbac-vocabulary`
 
 - Human phrase: Admin/owner/public-private visibility vocabulary
-- Owner: `riido-contracts:docs/20-domain/ai-agent-policy.md`
+- Owner: `riido-contracts:docs/20-domain/ai-agent-visibility.md`
 - Source refs:
-  - `riido-contracts:docs/20-domain/ai-agent-policy.md` requires `admin may mutate all agents`
+  - `riido-contracts:docs/20-domain/ai-agent-visibility.md` requires `admin: read public and private agents`
+  - `riido-contracts:docs/20-domain/ai-agent-visibility.md` requires `AgentVisibility`
 - Downstreams:
   - `riido-control-plane`: executable RBAC evaluator and request authorization
   - `riido-client`: visible list and edit/delete affordance

@@ -39,6 +39,8 @@ RIID-4720 adds:
   [`ai-agent-onboarding.md`](ai-agent-onboarding.md)
 - generated AI Agent configuration and mutation-safety evidence in
   [`ai-agent-configuration.md`](ai-agent-configuration.md)
+- generated AI Agent RBAC and visibility evidence in
+  [`ai-agent-visibility.md`](ai-agent-visibility.md)
 - generated AI Agent task participant assignment evidence in
   [`ai-agent-task-assignment.md`](ai-agent-task-assignment.md)
 - `control-plane-ai-agent-client-api.v2` API projection fixtures, including
