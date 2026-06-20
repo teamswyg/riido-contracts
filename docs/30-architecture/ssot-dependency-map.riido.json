@@ -247,13 +247,18 @@
       "source_refs": [
         {
           "repo": "riido-contracts",
-          "path": "docs/20-domain/ai-agent-policy.md",
-          "required_phrase": "are outside the AI Agent assignment problem"
+          "path": "docs/20-domain/ai-agent-task-assignment.md",
+          "required_phrase": "generated assignment requests carry agent_id only"
+        },
+        {
+          "repo": "riido-contracts",
+          "path": "docs/20-domain/ai-agent-task-assignment.md",
+          "required_phrase": "X-Workspace-Api-Key"
         }
       ],
       "owner": {
         "repo": "riido-contracts",
-        "path": "docs/20-domain/ai-agent-policy.md"
+        "path": "docs/20-domain/ai-agent-task-assignment.md"
       },
       "downstreams": [
         {
@@ -402,13 +407,18 @@
       "source_refs": [
         {
           "repo": "riido-contracts",
-          "path": "docs/20-domain/ai-agent-policy.md",
-          "required_phrase": "stable tie-breaker"
+          "path": "docs/20-domain/ai-agent-task-assignment.md",
+          "required_phrase": "owned agents appear first"
+        },
+        {
+          "repo": "riido-contracts",
+          "path": "docs/20-domain/ai-agent-task-assignment.md",
+          "required_phrase": "equal names are tied by agent_id"
         }
       ],
       "owner": {
         "repo": "riido-contracts",
-        "path": "docs/20-domain/ai-agent-policy.md"
+        "path": "docs/20-domain/ai-agent-task-assignment.md"
       },
       "downstreams": [
         {
