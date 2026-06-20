@@ -37,7 +37,7 @@ A lower-layer contradiction must be recorded locally, escalated to the owning SS
 | `runtime-prompt-consumption` | Runtime prompt and native-config consumption | `riido-daemon:docs/20-domain/workspace.md` | riido-control-plane |
 | `storage-topology` | Production deployment and storage topology | `riido-infra:docs/architecture/terraform-authoring.md` | riido-control-plane |
 | `workspace-assigned-agent-profile-map` | Workspace task/card lists read current assigned AI Agent profile hints from a component_id keyed v2 map | `riido-contracts:docs/20-domain/api-contract-projection.md` | riido-control-plane, riido-client |
-| `workspace-scoped-ai-agent-v2-api` | AI Agent v2 client API is scoped by workspace_id path parameters while workspace list/create remains outside the AI Agent contract | `riido-contracts:docs/20-domain/ai-agent-policy.md` | riido-control-plane, riido-client |
+| `workspace-scoped-ai-agent-v2-api` | AI Agent v2 client API is scoped by workspace_id path parameters while workspace list/create remains outside the AI Agent contract | `riido-contracts:docs/20-domain/ai-agent-api-surface.md` | riido-control-plane, riido-client |
 
 ### `active-assignment-heartbeat-stale-lease`
 
@@ -264,9 +264,9 @@ A lower-layer contradiction must be recorded locally, escalated to the owning SS
 ### `workspace-scoped-ai-agent-v2-api`
 
 - Human phrase: Workspace-scoped AI Agent v2 API
-- Owner: `riido-contracts:docs/20-domain/ai-agent-policy.md`
+- Owner: `riido-contracts:docs/20-domain/ai-agent-api-surface.md`
 - Source refs:
-  - `riido-contracts:docs/20-domain/ai-agent-policy.md` requires `/v2/client/workspaces/{workspace_id}/ai-agent/...`
+  - `riido-contracts:docs/20-domain/ai-agent-api-surface.md` requires `/v2/client/workspaces/{workspace_id}/ai-agent/...`
   - `riido-contracts:docs/20-domain/api-contract-projection.md` requires `generated client paths under `riido.v2.aiAgent.*``
 - Downstreams:
   - `riido-control-plane`: v2 route parsing, workspace-scoped store records, authorization context, and persistence schema version marker
