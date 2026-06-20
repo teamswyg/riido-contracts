@@ -1,0 +1,29 @@
+{
+  "schema_version": "riido-ssot-dependency-fact.v1",
+  "fact": {
+    "id": "api-projection",
+    "fact": "DSL to IR to OpenAPI projection rules",
+    "human_doc_phrase": "DSL -> IR -> OpenAPI projection rules",
+    "source_refs": [
+      {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/api-contract-projection.md",
+        "required_phrase": "OpenAPI is not the SSOT"
+      }
+    ],
+    "owner": {
+      "repo": "riido-contracts",
+      "path": "docs/20-domain/api-contract-projection.md"
+    },
+    "downstreams": [
+      {
+        "repo": "riido-control-plane",
+        "local_scope": "checked-in OpenAPI copy, HTTP test behavior, and generated client handoff"
+      },
+      {
+        "repo": "riido-client",
+        "local_scope": "generated TypeScript/React Query consumer surface"
+      }
+    ]
+  }
+}

@@ -1,0 +1,33 @@
+{
+  "schema_version": "riido-ssot-dependency-fact.v1",
+  "fact": {
+    "id": "instruction",
+    "fact": "instruction is optional client-authored provider-neutral agent guidance text capped at 1000 characters and snapshotted into Assignment.agent_instruction at assignment creation",
+    "human_doc_phrase": "`instruction` is optional client-authored provider-neutral agent guidance text capped at 1000 characters",
+    "source_refs": [
+      {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/ai-agent-configuration.md",
+        "required_phrase": "capped at 1000 characters"
+      }
+    ],
+    "owner": {
+      "repo": "riido-contracts",
+      "path": "docs/20-domain/ai-agent-configuration.md"
+    },
+    "downstreams": [
+      {
+        "repo": "riido-control-plane",
+        "local_scope": "PATCH validation, save/update behavior, response projection, and Assignment.agent_instruction snapshotting"
+      },
+      {
+        "repo": "riido-daemon",
+        "local_scope": "provider-specific placement/effectiveness harnesses from Assignment.agent_instruction"
+      },
+      {
+        "repo": "riido-infra",
+        "local_scope": "no Terraform diff unless future secret/media/durability policy appears"
+      }
+    ]
+  }
+}

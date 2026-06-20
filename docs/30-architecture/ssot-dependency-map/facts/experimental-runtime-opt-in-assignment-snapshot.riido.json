@@ -1,0 +1,38 @@
+{
+  "schema_version": "riido-ssot-dependency-fact.v1",
+  "fact": {
+    "id": "experimental-runtime-opt-in-assignment-snapshot",
+    "fact": "Experimental runtime opt-in is assignment-created snapshot data",
+    "human_doc_phrase": "Experimental runtime opt-in is assignment-created snapshot data",
+    "source_refs": [
+      {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/assignment-polling.md",
+        "required_phrase": "Assignment.allow_experimental_runtime"
+      },
+      {
+        "repo": "riido-contracts",
+        "path": "assignment/assignment_contract.riido.json",
+        "required_phrase": "agent.runtime.requires_experimental_opt_in"
+      }
+    ],
+    "owner": {
+      "repo": "riido-contracts",
+      "path": "docs/20-domain/assignment-polling.md"
+    },
+    "downstreams": [
+      {
+        "repo": "riido-control-plane",
+        "local_scope": "derives Assignment.allow_experimental_runtime from the selected agent runtime capability at assignment creation time"
+      },
+      {
+        "repo": "riido-daemon",
+        "local_scope": "uses only Assignment.allow_experimental_runtime for the experimental runtime scheduling gate"
+      },
+      {
+        "repo": "riido-infra",
+        "local_scope": "no Terraform diff"
+      }
+    ]
+  }
+}

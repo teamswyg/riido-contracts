@@ -23,6 +23,12 @@ func verifyManifest(m manifest, root string) error {
 	if len(m.Facts) == 0 {
 		return errors.New("facts are required")
 	}
+	if !stringsSorted(m.FactFiles) {
+		return errors.New("fact_files must be sorted")
+	}
+	if !stringsSorted(m.RepoDependencyFiles) {
+		return errors.New("repo_dependency_files must be sorted")
+	}
 	if !factsSorted(m.Facts) {
 		return errors.New("facts must be sorted by id")
 	}

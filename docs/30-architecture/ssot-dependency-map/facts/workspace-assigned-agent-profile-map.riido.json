@@ -1,0 +1,34 @@
+{
+  "schema_version": "riido-ssot-dependency-fact.v1",
+  "fact": {
+    "id": "workspace-assigned-agent-profile-map",
+    "fact": "Workspace task/card lists read current assigned AI Agent profile hints from a component_id keyed v2 map",
+    "human_doc_phrase": "Workspace assigned-agent profile map",
+    "source_refs": [
+      {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/ai-agent-assigned-profile-map.md",
+        "required_phrase": "assigned_agent_profiles is keyed by the exact component_id/task_id string"
+      },
+      {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/ai-agent-assigned-profile-map.md",
+        "required_phrase": "v2.aiAgent.tasks.assignedAgentProfiles"
+      }
+    ],
+    "owner": {
+      "repo": "riido-contracts",
+      "path": "docs/20-domain/ai-agent-assigned-profile-map.md"
+    },
+    "downstreams": [
+      {
+        "repo": "riido-control-plane",
+        "local_scope": "v2 HTTP route, current assignment projection, fixture color persistence, and generated-client handoff"
+      },
+      {
+        "repo": "riido-client",
+        "local_scope": "Task/card list avatar hints use the generated query without replacing participant dropdown or task-thread reads."
+      }
+    ]
+  }
+}

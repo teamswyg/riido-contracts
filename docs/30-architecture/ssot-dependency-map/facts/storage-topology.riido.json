@@ -1,0 +1,25 @@
+{
+  "schema_version": "riido-ssot-dependency-fact.v1",
+  "fact": {
+    "id": "storage-topology",
+    "fact": "Production deployment and storage topology",
+    "human_doc_phrase": "Production deployment/storage topology",
+    "source_refs": [
+      {
+        "repo": "riido-infra",
+        "path": "docs/architecture/terraform-authoring.md",
+        "required_phrase": "Terraform diff"
+      }
+    ],
+    "owner": {
+      "repo": "riido-infra",
+      "path": "docs/architecture/terraform-authoring.md"
+    },
+    "downstreams": [
+      {
+        "repo": "riido-control-plane",
+        "local_scope": "runtime config only after infra publishes deployment inputs"
+      }
+    ]
+  }
+}

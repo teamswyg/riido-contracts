@@ -40,12 +40,14 @@ func runVerify(args []string, out io.Writer) error {
 	}
 	if *evidenceOut != "" {
 		if err := writeEvidence(*evidenceOut, evidence{
-			SchemaVersion:           evidenceSchemaVersion,
-			ID:                      m.ID,
-			Status:                  "verified",
-			FactsVerified:           len(m.Facts),
-			RepoDependenciesChecked: len(m.RepoDependencies),
-			CheckDoc:                *checkDoc,
+			SchemaVersion:             evidenceSchemaVersion,
+			ID:                        m.ID,
+			Status:                    "verified",
+			FactFilesLoaded:           len(m.FactFiles),
+			FactsVerified:             len(m.Facts),
+			RepoDependencyFilesLoaded: len(m.RepoDependencyFiles),
+			RepoDependenciesChecked:   len(m.RepoDependencies),
+			CheckDoc:                  *checkDoc,
 		}); err != nil {
 			return err
 		}
