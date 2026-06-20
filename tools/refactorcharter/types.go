@@ -25,8 +25,8 @@ type scanConfig struct {
 }
 
 type finding struct {
-	Path  string
-	Lines int
+	Path  string `json:"path"`
+	Lines int    `json:"lines"`
 }
 
 type scanReport struct {

@@ -62,14 +62,19 @@ jobs:
             printf 'Runtime/private ownership wording found:\n%s\n' "$stale"
             exit 1
           fi
-      - name: Verify SSOT dependency manifest
-        run: go run ./tools/ssotdeps verify -check-doc
-      - name: Verify Figma coverage manifest
-        run: go run ./tools/figmacoverage verify -check-doc
-      - name: Verify contract promotion policy manifest
-        run: go run ./tools/promotionpolicy verify -check-doc
-      - name: Verify refactoring charter manifest
-        run: go run ./tools/refactorcharter
+      - name: Verify executable architecture manifests
+        run: |
+          mkdir -p out
+          go run ./tools/ssotdeps verify -check-doc -evidence-out out/ssotdeps-evidence.json
+          go run ./tools/figmacoverage verify -check-doc -evidence-out out/figmacoverage-evidence.json
+          go run ./tools/promotionpolicy verify -check-doc -evidence-out out/promotionpolicy-evidence.json
+          go run ./tools/refactorcharter -evidence-out out/refactorcharter-evidence.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: architecture-docs-evidence
+          path: out/*.json
+          if-no-files-found: warn
       - name: Verify stdlib-only module
         run: test "$(go list -m all | wc -l | tr -d ' ')" = "1"
       - name: Test
