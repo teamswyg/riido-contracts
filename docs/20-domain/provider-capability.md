@@ -143,7 +143,7 @@ type CompatibilityReason struct {
 > - `TaskClaimed` 시점에는 아직 workspace 가 준비되지 않아 `NativeConfigVersion` 이 존재하지 않는다. 그런데 `TaskClaimed` 는 RunScope 이고 `CapabilityFingerprint` 를 요구한다. fingerprint 가 NCV 를 입력으로 가지면 claim 자체가 불가능해진다(`#27i` 라운드의 발견).
 > - runtime lease / heartbeat / re-detection trigger 는 “runtime 이 같은가” 만 판단하면 된다. native config 는 task 별로 다르고 lease 단위로 변하므로 runtime fingerprint 와 묶일 일이 없다.
 >
-> 따라서 **runtime pinning** 의 정확한 페어는 `(RuntimeID, CapabilityFingerprint)` 이지만, **실행 맥락 pinning** 은 추가로 `(PolicyBundleVersion, NativeConfigVersion)` 을 동반한다 (`task-lifecycle.md` §5 invariant 9 / `runtime-upgrade-flow.md` §3).
+> 따라서 **runtime pinning** 의 정확한 페어는 `(RuntimeID, CapabilityFingerprint)` 이지만, **실행 맥락 pinning** 은 추가로 `(PolicyBundleVersion, NativeConfigVersion)` 을 동반한다 (`task-lifecycle.md` Invariant Anchors / `runtime-upgrade-flow.md` §3).
 
 `CapabilityFingerprint` 는 다음 10 개 입력 + 1 surface flag 집합을 정렬된 JSON 으로 직렬화한 뒤 SHA-256 으로 해시한 hex 문자열이다. 입력 순서/직렬화 형식은 본 문서가 소유한다(어댑터 별 자유 구현 불가 — 같은 capability 가 다른 데몬에서도 같은 fingerprint 를 만들어야 lease handoff 가 동작한다).
 

@@ -2,8 +2,8 @@ package task
 
 import "github.com/teamswyg/riido-contracts/ir"
 
-// Transition encodes one legal (from, to, trigger) triple from the matrix in
-// docs/20-domain/task-lifecycle.md §3 + §4.
+// Transition encodes one legal (from, to, trigger) triple from the generated
+// Task Lifecycle FSM.
 //
 // The matrix only checks "is this state-to-state move structurally legal".
 // It does NOT enforce the contextual invariants 2/3/4/6 (which need the full
