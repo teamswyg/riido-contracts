@@ -9,6 +9,7 @@ on:
       - "docs/20-domain/context-map.md"
       - "docs/20-domain/context-map.riido.json"
       - "docs/20-domain/README.md"
+      - "docs/20-domain/README.riido.json"
       - "docs/20-domain/api-contract-projection.md"
       - "docs/20-domain/ai-agent-policy.md"
       - "docs/30-architecture/**"
@@ -16,6 +17,7 @@ on:
       - "docs/migration/contracts.md"
       - "tools/architecturedocs/**"
       - "tools/contextmap/**"
+      - "tools/domaindocs/**"
       - "tools/figmacoverage/**"
       - "tools/promotionpolicy/**"
       - "tools/refactorcharter/**"
@@ -27,6 +29,7 @@ on:
       - "docs/20-domain/context-map.md"
       - "docs/20-domain/context-map.riido.json"
       - "docs/20-domain/README.md"
+      - "docs/20-domain/README.riido.json"
       - "docs/20-domain/api-contract-projection.md"
       - "docs/20-domain/ai-agent-policy.md"
       - "docs/30-architecture/**"
@@ -34,6 +37,7 @@ on:
       - "docs/migration/contracts.md"
       - "tools/architecturedocs/**"
       - "tools/contextmap/**"
+      - "tools/domaindocs/**"
       - "tools/figmacoverage/**"
       - "tools/promotionpolicy/**"
       - "tools/refactorcharter/**"
@@ -53,6 +57,7 @@ jobs:
           mkdir -p out
           go run ./tools/architecturedocs verify -check-doc -evidence-out out/architecturedocs-evidence.json
           go run ./tools/contextmap verify -check-doc -evidence-out out/context-map-evidence.json
+          go run ./tools/domaindocs verify -check-doc -evidence-out out/domain-docs-index-evidence.json
           go run ./tools/ssotdeps verify -check-doc -evidence-out out/ssotdeps-evidence.json
           go run ./tools/figmacoverage verify -check-doc -evidence-out out/figmacoverage-evidence.json
           go run ./tools/promotionpolicy verify -check-doc -evidence-out out/promotionpolicy-evidence.json
