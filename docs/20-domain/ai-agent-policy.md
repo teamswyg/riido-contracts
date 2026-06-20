@@ -523,55 +523,25 @@ the enrolled device owner from those credentials.
 
 ### Agent Editing
 
-An agent is editable only when it has no assigned tasks. Clients must be able to
-ask whether an agent can be edited before enabling edit controls, and the
-control plane must also emit editability changes through the client event
-stream.
-
-Agent names are mutable and not unique.
+Agent configuration, editability, and mutation-safety details are generated in
+[`ai-agent-configuration.md`](ai-agent-configuration.md) from the API policy,
+schema, DSL, IR, and OpenAPI fixtures. Agent names remain mutable and
+non-unique; clients use `agent_id` for identity and mutation targets.
 
 ### Agent Profile Configuration
 
 Agent profile presentation belongs to the agent configuration, not to a task
-thread or runtime. The client-facing agent record therefore carries optional
-`profile_thumbnail_url`, `tmp_color`, `description`, and `instruction` fields
-wherever agents are returned.
+thread or runtime. The generated configuration reader owns the create/update
+field set, description/instruction bounds, editability query/SSE surface,
+server-authored timestamps, visibility/editability enums, and mutation safety
+policy.
 
-The thumbnail value stored on the agent is an HTTPS image URL string. When the
-client needs to upload a new profile image, it first calls the dedicated profile
-thumbnail upload-intent endpoint, uploads the image through the returned S3 POST
-form, and then saves the returned `profile_thumbnail_url` on create/update.
+The thumbnail value stored on the agent is an HTTPS image URL string produced by
+the profile thumbnail upload-intent endpoint. Clients upload binary data through
+the returned S3 POST form and save only `profile_thumbnail_url` on create/update.
 Bucket names, IAM policy, CDN origin/base URL, lifecycle, resizing, and
 moderation stay outside the public contract and are owned by deployment/infra
 configuration.
-
-The `tmp_color` value is an optional fixture-provided avatar fallback color.
-Selecting 리도/영실/홍도/지원 may copy this value into the normal created agent so
-workspace task/card lists can show the same product-provided color without
-hard-coding fixture names. Directly configured agents may omit it, and clients
-own whether `avatar_url` or `tmp_color` wins when both are present.
-
-The description value is client-authored text used as a short, one-line agent
-summary in agent list and edit surfaces. Empty text is allowed. The current
-client API limit is 160 characters. Longer values are rejected by the control
-plane before the agent configuration is saved. UI truncation/wrapping policy is
-owned by the client and must not change the stored value.
-
-The instruction value is client-authored text that is saved with the agent and
-copied into `Assignment.agent_instruction` when the control plane creates an
-agent assignment. Empty text is allowed. The current client API limit is 1000
-characters. Longer values are rejected by the control plane before the agent
-configuration is saved. Assignment-time snapshotting is intentional: editing an
-agent after a task has been assigned does not rewrite already-queued or running
-runtime instructions.
-
-This contract treats `instruction` as provider-neutral agent guidance. It does
-not decide whether Claude, Codex, OpenClaw, Cursor, or a future runtime obeys
-the text more effectively through a prompt prefix, system prompt, native config,
-or another provider surface. That placement/effectiveness strategy is owned by
-the daemon provider-runtime SSOT. Cross-provider evidence must consume the
-assignment-created `Assignment.agent_instruction` snapshot and link back here
-only for the value semantics and limit.
 
 When the selected runtime capability requires experimental opt-in, the control
 plane snapshots that decision into
@@ -595,9 +565,8 @@ visible by workspace RBAC. Admin role never means "all persisted devices in the
 control-plane snapshot"; device/runtime rows from another workspace stay hidden
 unless they are exposed through a visible agent/runtime access path in the
 current workspace. Local daemon detail/control follows the agent access
-boundary, not a standalone device-owner-only rule. After creation, admin may mutate all agents,
-owner may mutate owned agents, and no agent can be edited while it has assigned
-tasks.
+boundary, not a standalone device-owner-only rule. After creation, admin may mutate all agents.
+Owners may mutate owned agents subject to generated mutation-safety evidence.
 
 ### Agent List Timestamps
 

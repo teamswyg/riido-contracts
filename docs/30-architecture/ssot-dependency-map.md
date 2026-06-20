@@ -19,7 +19,7 @@ A lower-layer contradiction must be recorded locally, escalated to the owning SS
 | --- | --- | --- | --- |
 | `active-assignment-heartbeat-stale-lease` | Daemon sends active assignment heartbeats every 5 seconds; control-plane treats 20 seconds without refresh as stale and must not let late traffic revive the lease | `riido-contracts:docs/20-domain/assignment-polling.md` | riido-control-plane, riido-daemon, riido-client |
 | `agent-concept` | Agent means a task-assignable abstraction of a configured runtime | `riido-contracts:docs/20-domain/ai-agent-policy.md` | riido-control-plane, riido-daemon, riido-infra |
-| `agent-editability` | Agent editability requires zero assigned tasks | `riido-contracts:docs/20-domain/ai-agent-policy.md` | riido-control-plane, riido-client |
+| `agent-editability` | Agent editability requires zero assigned tasks | `riido-contracts:docs/20-domain/ai-agent-configuration.md` | riido-control-plane, riido-client |
 | `api-projection` | DSL to IR to OpenAPI projection rules | `riido-contracts:docs/20-domain/api-contract-projection.md` | riido-control-plane, riido-client |
 | `device-runtime-liveness-stale-projection` | Daemon refreshes device/runtime liveness every 5 seconds and carries daemon process facts in the same snapshot; control-plane projects device/runtime read models offline after 20 seconds without a refreshed runtime snapshot | `riido-contracts:docs/20-domain/device-principal.md` | riido-control-plane, riido-daemon, riido-client |
 | `experimental-runtime-opt-in-assignment-snapshot` | Experimental runtime opt-in is assignment-created snapshot data | `riido-contracts:docs/20-domain/assignment-polling.md` | riido-control-plane, riido-daemon, riido-infra |
@@ -27,7 +27,7 @@ A lower-layer contradiction must be recorded locally, escalated to the owning SS
 | `generated-assignment-excludes-team-openapi-key` | Generated AI Agent assignment excludes team_id, teamId, OpenAPI task-context paths, Open API keys, and X-Workspace-Api-Key from client, agent, daemon, deployment, and smoke-test boundaries | `riido-contracts:docs/20-domain/ai-agent-policy.md` | riido-control-plane, riido-client, riido-daemon, riido-infra |
 | `generated-client-delivery-review-handoff` | Generated client delivery PRs are review handoffs and must not be auto-merged by delivery automation | `riido-contracts:docs/20-domain/api-contract-projection.md` | riido-control-plane, riido-client |
 | `generated-client-path-searchability` | Generated client path searchability is derived from client.module and client.facade_path | `riido-contracts:docs/20-domain/api-contract-projection.md` | riido-control-plane, riido-client |
-| `instruction` | instruction is optional client-authored provider-neutral agent guidance text capped at 1000 characters and snapshotted into Assignment.agent_instruction at assignment creation | `riido-contracts:docs/20-domain/ai-agent-policy.md` | riido-control-plane, riido-daemon, riido-infra |
+| `instruction` | instruction is optional client-authored provider-neutral agent guidance text capped at 1000 characters and snapshotted into Assignment.agent_instruction at assignment creation | `riido-contracts:docs/20-domain/ai-agent-configuration.md` | riido-control-plane, riido-daemon, riido-infra |
 | `onboarding-draft-ordering` | Onboarding draft ordering is client-local until final workspace/runtime-scoped create | `riido-contracts:docs/20-domain/ai-agent-onboarding.md` | riido-control-plane, riido-client, riido-daemon, riido-infra |
 | `participant-dropdown-agent-ordering` | Participant dropdown agent ordering is owned-first, display-name ordered, then agent_id tied | `riido-contracts:docs/20-domain/ai-agent-policy.md` | riido-control-plane, riido-client |
 | `profile-thumbnail-url` | profile_thumbnail_url is an optional HTTPS image URL string produced by the profile thumbnail upload-intent flow | `riido-contracts:docs/20-domain/ai-agent-policy.md` | riido-control-plane, riido-client, riido-daemon, riido-infra |
@@ -65,9 +65,9 @@ A lower-layer contradiction must be recorded locally, escalated to the owning SS
 ### `agent-editability`
 
 - Human phrase: Agent editability requires zero assigned tasks
-- Owner: `riido-contracts:docs/20-domain/ai-agent-policy.md`
+- Owner: `riido-contracts:docs/20-domain/ai-agent-configuration.md`
 - Source refs:
-  - `riido-contracts:docs/20-domain/ai-agent-policy.md` requires `An agent is editable only when it has no assigned tasks`
+  - `riido-contracts:docs/20-domain/ai-agent-configuration.md` requires `agent edits are blocked when assigned_task_count is non-zero`
 - Downstreams:
   - `riido-control-plane`: editability projection and HTTP write rejection
   - `riido-client`: button state and user-facing affordance
@@ -156,9 +156,9 @@ A lower-layer contradiction must be recorded locally, escalated to the owning SS
 ### `instruction`
 
 - Human phrase: `instruction` is optional client-authored provider-neutral agent guidance text capped at 1000 characters
-- Owner: `riido-contracts:docs/20-domain/ai-agent-policy.md`
+- Owner: `riido-contracts:docs/20-domain/ai-agent-configuration.md`
 - Source refs:
-  - `riido-contracts:docs/20-domain/ai-agent-policy.md` requires `current client API limit is 1000`
+  - `riido-contracts:docs/20-domain/ai-agent-configuration.md` requires `capped at 1000 characters`
 - Downstreams:
   - `riido-control-plane`: PATCH validation, save/update behavior, response projection, and Assignment.agent_instruction snapshotting
   - `riido-daemon`: provider-specific placement/effectiveness harnesses from Assignment.agent_instruction

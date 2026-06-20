@@ -76,13 +76,13 @@
       "source_refs": [
         {
           "repo": "riido-contracts",
-          "path": "docs/20-domain/ai-agent-policy.md",
-          "required_phrase": "An agent is editable only when it has no assigned tasks"
+          "path": "docs/20-domain/ai-agent-configuration.md",
+          "required_phrase": "agent edits are blocked when assigned_task_count is non-zero"
         }
       ],
       "owner": {
         "repo": "riido-contracts",
-        "path": "docs/20-domain/ai-agent-policy.md"
+        "path": "docs/20-domain/ai-agent-configuration.md"
       },
       "downstreams": [
         {
@@ -333,13 +333,13 @@
       "source_refs": [
         {
           "repo": "riido-contracts",
-          "path": "docs/20-domain/ai-agent-policy.md",
-          "required_phrase": "current client API limit is 1000"
+          "path": "docs/20-domain/ai-agent-configuration.md",
+          "required_phrase": "capped at 1000 characters"
         }
       ],
       "owner": {
         "repo": "riido-contracts",
-        "path": "docs/20-domain/ai-agent-policy.md"
+        "path": "docs/20-domain/ai-agent-configuration.md"
       },
       "downstreams": [
         {
