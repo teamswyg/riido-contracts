@@ -1,0 +1,41 @@
+name: open-questions
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/open-questions.yml"
+      - "docs/50-roadmap/open-questions.md"
+      - "docs/50-roadmap/open-questions.riido.json"
+      - "tools/openquestions/**"
+      - "go.mod"
+  pull_request:
+    paths:
+      - ".github/workflows/open-questions.yml"
+      - "docs/50-roadmap/open-questions.md"
+      - "docs/50-roadmap/open-questions.riido.json"
+      - "tools/openquestions/**"
+      - "go.mod"
+
+jobs:
+  open-questions:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: false
+      - name: Verify open questions
+        run: |
+          mkdir -p out
+          go test ./tools/openquestions -count=1
+          go run ./tools/openquestions \
+            -check-doc \
+            -evidence-out out/open-questions-evidence.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: open-questions-evidence
+          path: out/open-questions-evidence.json
+          if-no-files-found: error
