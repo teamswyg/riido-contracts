@@ -1,0 +1,49 @@
+name: ai-agent-policy
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/ai-agent-policy.yml"
+      - "docs/20-domain/ai-agent-policy.md"
+      - "docs/20-domain/ai-agent-policy.riido.json"
+      - "docs/20-domain/ai-agent-api-surface.md"
+      - "docs/20-domain/ai-agent-configuration.md"
+      - "docs/20-domain/ai-agent-onboarding.md"
+      - "docs/20-domain/ai-agent-task-assignment.md"
+      - "docs/20-domain/ai-agent-visibility.md"
+      - "tools/aiagentpolicy/**"
+  pull_request:
+    paths:
+      - ".github/workflows/ai-agent-policy.yml"
+      - "docs/20-domain/ai-agent-policy.md"
+      - "docs/20-domain/ai-agent-policy.riido.json"
+      - "docs/20-domain/ai-agent-api-surface.md"
+      - "docs/20-domain/ai-agent-configuration.md"
+      - "docs/20-domain/ai-agent-onboarding.md"
+      - "docs/20-domain/ai-agent-task-assignment.md"
+      - "docs/20-domain/ai-agent-visibility.md"
+      - "tools/aiagentpolicy/**"
+
+jobs:
+  policy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: false
+      - name: Verify AI Agent policy evidence
+        run: |
+          mkdir -p out
+          go test ./tools/aiagentpolicy -count=1
+          go run ./tools/aiagentpolicy \
+            -check-doc \
+            -evidence-out out/ai-agent-policy-evidence.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ai-agent-policy-evidence
+          path: out/ai-agent-policy-evidence.json
+          if-no-files-found: error
