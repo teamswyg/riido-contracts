@@ -1,0 +1,55 @@
+{
+  "schema_version": "riido-ai-agent-configuration-evidence-manifest.v1",
+  "id": "ai-agent-configuration",
+  "title": "AI Agent Configuration",
+  "riido_task": "RIID-4720 [Contracts] AI Agent configuration and mutation safety",
+  "summary": "AI Agent profile/configuration and editability semantics are generated from API policy, schema, DSL, IR, and OpenAPI fixtures.",
+  "generated_doc": "docs/20-domain/ai-agent-configuration.md",
+  "workflow": ".github/workflows/ai-agent-configuration.yml",
+  "evidence_artifact": "ai-agent-configuration-evidence",
+  "dsl_fixture": "apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json",
+  "ir_fixture": "apicontract/fixtures/control-plane-ai-agent-client.ir.riido.json",
+  "openapi_fixture": "apicontract/fixtures/control-plane-ai-agent-client.openapi.json",
+  "expected_operation_count": 10,
+  "expected_schema_count": 6,
+  "expected_policy_count": 2,
+  "expected_enum_count": 2,
+  "expected_scenario_count": 20,
+  "required_operations": [
+    {"operation_id": "createAIAgent", "kind": "command", "method": "POST", "path": "/v1/client/ai-agent/agents", "request_ref": "CreateAgentConfigurationRequest", "response_status": 201, "response_ref": "AgentClientRecordResponse"},
+    {"operation_id": "getAIAgentEditability", "kind": "query", "method": "GET", "path": "/v1/client/ai-agent/agents/{agent_id}/editability", "response_status": 200, "response_ref": "AgentEditabilityResponse"},
+    {"operation_id": "updateAIAgentConfiguration", "kind": "command", "method": "PATCH", "path": "/v1/client/ai-agent/agents/{agent_id}", "request_ref": "UpdateAgentConfigurationRequest", "response_status": 200, "response_ref": "AgentClientRecordResponse"},
+    {"operation_id": "deleteAIAgent", "kind": "command", "method": "DELETE", "path": "/v1/client/ai-agent/agents/{agent_id}", "response_status": 200, "response_ref": "DeleteAgentResponse"},
+    {"operation_id": "streamAIAgentClientEvents", "kind": "query", "method": "GET", "path": "/v1/client/ai-agent/events", "response_status": 200, "response_ref": "ClientStreamEvent"},
+    {"operation_id": "createAIAgentV2", "kind": "command", "method": "POST", "path": "/v2/client/workspaces/{workspace_id}/ai-agent/agents", "request_ref": "CreateAgentConfigurationRequest", "response_status": 201, "response_ref": "AgentClientRecordResponseV2"},
+    {"operation_id": "getAIAgentEditabilityV2", "kind": "query", "method": "GET", "path": "/v2/client/workspaces/{workspace_id}/ai-agent/agents/{agent_id}/editability", "response_status": 200, "response_ref": "AgentEditabilityResponse"},
+    {"operation_id": "updateAIAgentConfigurationV2", "kind": "command", "method": "PATCH", "path": "/v2/client/workspaces/{workspace_id}/ai-agent/agents/{agent_id}", "request_ref": "UpdateAgentConfigurationRequest", "response_status": 200, "response_ref": "AgentClientRecordResponseV2"},
+    {"operation_id": "deleteAIAgentV2", "kind": "command", "method": "DELETE", "path": "/v2/client/workspaces/{workspace_id}/ai-agent/agents/{agent_id}", "response_status": 200, "response_ref": "DeleteAgentResponse"},
+    {"operation_id": "streamAIAgentClientEventsV2", "kind": "query", "method": "GET", "path": "/v2/client/workspaces/{workspace_id}/ai-agent/events", "response_status": 200, "response_ref": "ClientStreamEvent"}
+  ],
+  "required_policies": ["agent_profile_configuration.v1", "agent_mutation_safety.v1"],
+  "required_enums": [{"name": "AgentVisibility", "values": ["public", "private"]}, {"name": "AgentEditability", "values": ["editable", "blocked_assigned_tasks"]}],
+  "required_stream_variant": "agent_editability_changed",
+  "required_schema_fields": [
+    {"schema": "AgentClientRecord", "fields": ["agent_id", "owner_principal_id", "is_owned_by_viewer", "name", "profile_thumbnail_url", "tmp_color", "description", "instruction", "visibility", "runtime_id", "runtime_kind", "model_id", "model_label", "work_status", "editability", "assigned_task_count", "created_at", "updated_at"]},
+    {"schema": "AgentClientRecordV2", "fields": ["agent_id", "owner_principal_id", "workspace_id", "is_owned_by_viewer", "name", "profile_thumbnail_url", "tmp_color", "description", "instruction", "visibility", "runtime_id", "runtime_kind", "model_id", "model_label", "work_status", "editability", "assigned_task_count", "created_at", "updated_at"]},
+    {"schema": "CreateAgentConfigurationRequest", "fields": ["name", "profile_thumbnail_url", "description", "instruction", "visibility", "runtime_id", "model_id"]},
+    {"schema": "UpdateAgentConfigurationRequest", "fields": ["name", "profile_thumbnail_url", "description", "instruction", "visibility", "runtime_id", "model_id"]},
+    {"schema": "AgentEditabilityResponse", "fields": ["schema_version", "agent_id", "editability", "assigned_task_count", "reason"]},
+    {"schema": "DeleteAgentResponse", "fields": ["schema_version", "agent_id", "queued_tasks_unassigned", "running_tasks_force_stopped"]}
+  ],
+  "bounded_fields": [{"schema": "CreateAgentConfigurationRequest", "field": "description", "max_length": 160}, {"schema": "UpdateAgentConfigurationRequest", "field": "description", "max_length": 160}, {"schema": "CreateAgentConfigurationRequest", "field": "instruction", "max_length": 1000}, {"schema": "UpdateAgentConfigurationRequest", "field": "instruction", "max_length": 1000}],
+  "invariants": [
+    "agent edits are blocked when assigned_task_count is non-zero and editability is exposed by query plus SSE.",
+    "instruction is provider-neutral client-authored text capped at 1000 characters and later snapshotted into Assignment.agent_instruction.",
+    "agent create/update fields are ordinary configuration fields guarded by agent_mutation_safety.v1.",
+    "v2 creation stamps workspace_id from the URL path and owner_principal_id from authorization."
+  ],
+  "loop": {
+    "observation": "Agent configuration, instruction, timestamps, editability, and mutation-safety rules were long policy prose even though API policy and schema fixtures already contained executable facts.",
+    "hypothesis": "A focused verifier can turn agent configuration semantics into evidence and prevent downstream repos from reinterpreting editability or profile field limits.",
+    "execute": "Verify configuration operations, policies, schema fields, bounded fields, enum values, stream variant, DSL/IR tuple parity, and OpenAPI projection.",
+    "evaluate": "CI fails when agent configuration operations, profile field shape, editability semantics, generated reader, or policy anchors drift.",
+    "retrospective": "Future agent configuration changes should update API policy/schema fixtures and this manifest before reader text changes."
+  }
+}

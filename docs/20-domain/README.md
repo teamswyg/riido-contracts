@@ -37,6 +37,8 @@ RIID-4720 adds:
 - C10 AI Agent policy vocabulary in [`ai-agent-policy.md`](ai-agent-policy.md)
 - generated AI Agent onboarding fixture evidence in
   [`ai-agent-onboarding.md`](ai-agent-onboarding.md)
+- generated AI Agent configuration and mutation-safety evidence in
+  [`ai-agent-configuration.md`](ai-agent-configuration.md)
 - `control-plane-ai-agent-client-api.v2` API projection fixtures, including
   top-level enum and sum-type definitions for client codegen safety
 

@@ -1,0 +1,53 @@
+name: ai-agent-configuration
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/ai-agent-configuration.yml"
+      - "docs/20-domain/ai-agent-configuration.md"
+      - "docs/20-domain/ai-agent-configuration.riido.json"
+      - "docs/20-domain/ai-agent-policy.md"
+      - "docs/30-architecture/ssot-dependency-map.riido.json"
+      - "apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json"
+      - "apicontract/fixtures/control-plane-ai-agent-client.ir.riido.json"
+      - "apicontract/fixtures/control-plane-ai-agent-client.openapi.json"
+      - "tools/aiagentconfiguration/**"
+      - "go.mod"
+  pull_request:
+    paths:
+      - ".github/workflows/ai-agent-configuration.yml"
+      - "docs/20-domain/ai-agent-configuration.md"
+      - "docs/20-domain/ai-agent-configuration.riido.json"
+      - "docs/20-domain/ai-agent-policy.md"
+      - "docs/30-architecture/ssot-dependency-map.riido.json"
+      - "apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json"
+      - "apicontract/fixtures/control-plane-ai-agent-client.ir.riido.json"
+      - "apicontract/fixtures/control-plane-ai-agent-client.openapi.json"
+      - "tools/aiagentconfiguration/**"
+      - "go.mod"
+
+jobs:
+  ai-agent-configuration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: false
+      - name: Verify stdlib-only module
+        run: test "$(go list -m all | wc -l | tr -d ' ')" = "1"
+      - name: Verify AI Agent configuration evidence
+        run: |
+          mkdir -p out
+          go test ./tools/aiagentconfiguration -count=1
+          go run ./tools/aiagentconfiguration \
+            -check-doc \
+            -evidence-out out/ai-agent-configuration-evidence.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ai-agent-configuration-evidence
+          path: out/ai-agent-configuration-evidence.json
+          if-no-files-found: error
