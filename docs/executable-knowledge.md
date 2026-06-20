@@ -7,11 +7,11 @@ Executable SSOT: [`docs/executable-knowledge.riido.json`](docs/executable-knowle
 - Status: `advisory_findings`
 - Evidence artifact: `executable-knowledge-coverage`
 - Markdown readers scanned: `20`
-- Generated readers: `4`
+- Generated readers: `5`
 - Executable readers: `0`
-- Adjacent manifests: `4`
-- Manual reader candidates: `16`
-- Manifest inventory: `12`
+- Adjacent manifests: `5`
+- Manual reader candidates: `15`
+- Manifest inventory: `13`
 
 ## Manual Reader Candidates
 
