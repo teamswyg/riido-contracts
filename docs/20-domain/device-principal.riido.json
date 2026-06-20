@@ -1,0 +1,47 @@
+{
+  "schema_version": "riido-device-principal-evidence-manifest.v1",
+  "id": "device-principal",
+  "title": "Device Principal",
+  "riido_task": "RIID-4868 [Contracts] device principal 소유권 SSOT 정의",
+  "summary": "DevicePrincipal separates daemon credentials from browser user tokens and fixes account-owned device/runtime liveness evidence.",
+  "generated_doc": "docs/20-domain/device-principal.md",
+  "workflow": ".github/workflows/device-principal.yml",
+  "evidence_artifact": "device-principal-evidence",
+  "package": "github.com/teamswyg/riido-contracts/deviceprincipal",
+  "api_policy_id": "device_principal_enrollment.v1",
+  "dependency_fact_id": "device-runtime-liveness-stale-projection",
+  "expected_principal_count": 2,
+  "expected_daemon_header_count": 2,
+  "expected_client_header_count": 1,
+  "expected_runtime_snapshot_interval_seconds": 5,
+  "expected_runtime_stale_after_seconds": 20,
+  "expected_ownership_edge_count": 4,
+  "expected_binding_source_count": 3,
+  "expected_excluded_fallback_count": 5,
+  "expected_secret_non_exposure_sink_count": 7,
+  "expected_dependency_phrase_count": 4,
+  "expected_binding_field_count": 5,
+  "policy_rule_prefixes": [
+    "principal:",
+    "ownership:",
+    "enrollment:",
+    "credential:",
+    "daemon_headers:",
+    "no_browser_jwt:",
+    "frontend_boundary:",
+    "revocation_future:"
+  ],
+  "invariants": [
+    "daemon identity uses DevicePrincipal credentials, not browser JWT",
+    "workspace_id scopes agent APIs but does not own device records",
+    "device_secret is one-time readable and never exposed to generated frontend state",
+    "stale runtimes are historical records, not new assignment binding candidates"
+  ],
+  "loop": {
+    "observation": "DevicePrincipal ownership and secret-boundary rules existed as long prose plus policy strings, while CI could not prove the prose, API metadata, dependency map, and runtime binding DTO stayed aligned.",
+    "hypothesis": "A small executable vocabulary package plus a verifier can turn the principal model into evidence instead of hand-maintained explanation.",
+    "execute": "Verify package constants, generated API policy metadata, dependency-map liveness phrases, and assignment.AgentRuntimeBinding shape from one manifest.",
+    "evaluate": "CI emits device-principal evidence JSON and regenerates this reader; drift in headers, cadence, policy rules, dependency phrases, or DTO fields fails the verifier.",
+    "retrospective": "Future revocation, rotation, or storage changes should extend this manifest/tool before downstream repos reinterpret daemon identity semantics."
+  }
+}
