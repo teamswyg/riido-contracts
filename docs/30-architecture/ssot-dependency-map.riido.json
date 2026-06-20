@@ -208,7 +208,7 @@
       "source_refs": [
         {
           "repo": "riido-contracts",
-          "path": "docs/20-domain/ai-agent-policy.md",
+          "path": "docs/20-domain/ai-agent-onboarding.md",
           "required_phrase": "fixture-created agents are ordinary agents"
         },
         {
@@ -219,7 +219,7 @@
       ],
       "owner": {
         "repo": "riido-contracts",
-        "path": "docs/20-domain/ai-agent-policy.md"
+        "path": "docs/20-domain/ai-agent-onboarding.md"
       },
       "downstreams": [
         {
@@ -363,7 +363,7 @@
       "source_refs": [
         {
           "repo": "riido-contracts",
-          "path": "docs/20-domain/ai-agent-policy.md",
+          "path": "docs/20-domain/ai-agent-onboarding.md",
           "required_phrase": "client-local onboarding draft/configuration selection"
         },
         {
@@ -374,7 +374,7 @@
       ],
       "owner": {
         "repo": "riido-contracts",
-        "path": "docs/20-domain/ai-agent-policy.md"
+        "path": "docs/20-domain/ai-agent-onboarding.md"
       },
       "downstreams": [
         {

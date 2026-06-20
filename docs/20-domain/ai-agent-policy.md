@@ -485,100 +485,27 @@ stream also includes typed daemon status changes so clients can render
 
 ### Agent Onboarding
 
-The AI Agent onboarding flow is a client composition over bootstrap, device
-runtime data, and agent creation.
+AI Agent onboarding fixture details are generated in
+[`ai-agent-onboarding.md`](ai-agent-onboarding.md) from
+[`ai-agent-onboarding.riido.json`](ai-agent-onboarding.riido.json), the client
+API DSL, API IR, and OpenAPI projection. This policy keeps only the boundary:
+onboarding is client composition over fixture/direct-configuration draft state,
+device runtime read-model data, workspace selection, and final agent creation.
 
-Figma `node-id=432:46849` revises the explanation order from
-`런타임 선택 → 워크스페이스 선택 → 에이전트 생성` to
-`에이전트 생성 → 런타임 선택 → 워크스페이스 선택`. Contracts interpret that
-as client-local onboarding draft/configuration selection, not as a durable
-workspace-less agent create command. A client may let the user choose a fixture
-or type direct configuration first, but the control plane persists an agent only
-on final submit after the selected `workspace_id` and `runtime_id` are known.
-The v2 workspace-scoped create routes remain the durable contract; v1 remains a
-compatibility surface for existing UI tests.
+The durable create remains workspace/runtime scoped. v2 create routes require
+`workspace_id` in the URL path and `runtime_id` in
+`CreateAgentConfigurationRequest`; v1 routes remain compatibility surfaces.
+Runtime selection, no-runtime rows, `직접 설정`, disabled-next state, provider
+install cards, waitlist/marketing variants, scroll behavior, and preview layout
+are client or product presentation unless a future executable SSOT adds a new
+operation.
 
-The runtime selection step from `node-id=137-6746` is composed from
-`DeviceRecord.runtimes`. A runtime is selectable for onboarding only when the
-client can submit its `runtime_id` to agent creation and the read model marks
-that runtime `availability=online` and `detection_state=detected`. Korean
-labels such as `감지됨` / `감지 안 됨`, radio state, row dimming, and `다음` /
-`다음에 하기` button presentation are client-owned rendering. The control
-plane still validates the selected `runtime_id` at agent create/update time.
-
-The control plane exposes an ordered onboarding fixture catalog at
-`GET /v1/client/ai-agent/onboarding/fixtures`. A fixture is a copyable default
-for an agent configuration and contains `fixture_id`, `name`, optional
-`role_label`, optional `profile_thumbnail_url`, optional `tmp_color`,
-`description`, `instruction`, `default_visibility`, and optional
-`recommended_runtime_kind`. Fixture text, fallback color, and instruction
-defaults are contract data so frontend clients do not hard-code the behavioral
-meaning or presentation fallback of product-provided agent defaults.
-
-The fixture-selection step from `node-id=138-7389` is projected from
-`AgentOnboardingFixtureListResponse.fixtures` in response order. Current Figma
-evidence shows four onboarding fixture rows, `리도`, `영실`, `홍도`, and
-`지원`. Their current avatar fallback colors are `#C9A452`, `#6AA437`,
-`#B87EAD`, and `#2F84DE` in that order, but the rows are not frontend-owned copy
-and they are not backend-managed templates. The
-`직접 설정` row is not an `AgentOnboardingFixture`; it is a client presentation
-entry that lets the user continue to explicit agent configuration. The
-pre-selection disabled `다음` button and the right-side preview skeleton/popover
-are also client presentation over the selected or unselected fixture state.
-
-Selecting a fixture does not create a separate domain entity. The client creates
-a normal agent through
-`POST /v1/client/ai-agent/onboarding/fixtures/{fixture_id}/agents` with the
-selected runtime, visibility, and the complete `CreateAgentConfigurationRequest`
-body copied or edited from the fixture. Direct configuration uses
-`POST /v1/client/ai-agent/agents` without choosing a fixture.
-
-The Figma discussion evidence in `node-id=162-23475` resolves the fixture
-identity rule: fixture-created agents are ordinary agents. Their names remain
-mutable and non-unique, and the control plane must not auto-suffix or rewrite a
-duplicate display name such as `리도(1)`. `agent_id` remains the durable identity
-and ordering tie-breaker, and fixture-created agents follow the same
-editability, update, delete, and RBAC rules as directly configured agents.
-
-The direct-configuration expansion from `node-id=164-26969` also does not create
-a separate command or fixture row. The expanded `이름`, `설명`, and `지침`
-fields project to `CreateAgentConfigurationRequest.name`, `description`, and
-`instruction`. The previously selected runtime continues to supply `runtime_id`,
-and visibility uses the create request policy/default chosen by the client. The
-dimmed onboarding fixture rows, scroll bar, placeholder copy, and expanded-row
-layout are client presentation facts.
-
-If no selectable runtime is online/detected for the viewer, the client skips the
-fixture-selection and direct-setting steps and shows the no-installed-AI start
-state from the planning screen. That branch does not introduce a new control
-plane command. It is derived from the existing runtime/device read model.
-In `node-id=164-30206`, the client can still show provider rows for Claude Code,
-Codex, OpenClaw, and Cursor Agent as `연결 안 됨` and let the user continue with
-`시작하기`; those rows and CTA are not executable provider install/start
-operations.
-
-Runtime settings empty states from `node-id=275-22731` use the same read model.
-When the current device has no daemon, no runtime, or no selectable current
-runtime, the API does not add a provider-install command. Clients can render
-provider install cards and hover states from product copy and external provider
-links, but provider CLIs remain external user-installed tools. The Windows app
-waitlist and marketing-consent button states shown in the Figma section are not
-part of this AI Agent client API. `Q-CON-007` fixes this as a no-diff decision:
-they require a separate product/marketing SSOT and a separate generated
-operation before any API helper can exist.
-
-Web onboarding from `node-id=236-29749` reinforces that boundary. The macOS app
-download CTA is a product/distribution route to a desktop artifact, not a
-provider CLI install command. The Windows launch-notification and
-marketing-consent variants follow the same `Q-CON-007` no-diff decision as
-`node-id=275-22731`. Google sign-up terms consent, email sign-up terms rows,
-member invite input/link-copy, and animation references are client/auth/team
-presentation surfaces and do not change the AI Agent DSL/IR/OpenAPI projection.
-
-Workspace selection, workspace creation entry points, fixture row selection,
-`직접 설정` row rendering, disabled-next state before selection, scroll
-behavior, description ellipsis, and preview-popover layout remain client-owned
-presentation behavior.
+The generated onboarding reader owns the fixture list/create routes, direct
+configuration create routes, fixture schema fields, create request fields,
+product fixture row anchors, direct-setting boundary, no-diff route fragments,
+and the ordinary lifecycle rule for fixture-created agents. Future onboarding
+changes must update that manifest and API fixture first, then regenerate the
+reader; editing this policy prose is not sufficient evidence.
 
 ### Device Principal Boundary
 
