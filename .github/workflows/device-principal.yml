@@ -1,0 +1,53 @@
+name: device-principal
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/device-principal.yml"
+      - "docs/20-domain/device-principal.md"
+      - "docs/20-domain/device-principal.riido.json"
+      - "docs/30-architecture/ssot-dependency-map.riido.json"
+      - "apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json"
+      - "apicontract/fixtures/control-plane-ai-agent-client.ir.riido.json"
+      - "assignment/**"
+      - "deviceprincipal/**"
+      - "tools/deviceprincipal/**"
+      - "go.mod"
+  pull_request:
+    paths:
+      - ".github/workflows/device-principal.yml"
+      - "docs/20-domain/device-principal.md"
+      - "docs/20-domain/device-principal.riido.json"
+      - "docs/30-architecture/ssot-dependency-map.riido.json"
+      - "apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json"
+      - "apicontract/fixtures/control-plane-ai-agent-client.ir.riido.json"
+      - "assignment/**"
+      - "deviceprincipal/**"
+      - "tools/deviceprincipal/**"
+      - "go.mod"
+
+jobs:
+  device-principal:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: false
+      - name: Verify stdlib-only module
+        run: test "$(go list -m all | wc -l | tr -d ' ')" = "1"
+      - name: Verify device principal evidence
+        run: |
+          mkdir -p out
+          go test ./deviceprincipal ./assignment ./tools/deviceprincipal -count=1
+          go run ./tools/deviceprincipal \
+            -check-doc \
+            -evidence-out out/device-principal-evidence.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: device-principal-evidence
+          path: out/device-principal-evidence.json
+          if-no-files-found: error
