@@ -1,0 +1,39 @@
+name: executable-knowledge-coverage
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/executable-knowledge-coverage.yml"
+      - "docs/**"
+      - "tools/knowledgecoverage/**"
+      - "go.mod"
+  pull_request:
+    paths:
+      - ".github/workflows/executable-knowledge-coverage.yml"
+      - "docs/**"
+      - "tools/knowledgecoverage/**"
+      - "go.mod"
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: false
+      - name: Verify executable knowledge coverage
+        run: |
+          mkdir -p out
+          go test ./tools/knowledgecoverage -count=1
+          go run ./tools/knowledgecoverage \
+            -check-doc \
+            -evidence-out out/executable-knowledge-coverage.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: executable-knowledge-coverage
+          path: out/executable-knowledge-coverage.json
+          if-no-files-found: error
