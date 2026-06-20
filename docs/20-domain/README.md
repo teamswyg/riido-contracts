@@ -43,6 +43,8 @@ RIID-4720 adds:
   [`ai-agent-visibility.md`](ai-agent-visibility.md)
 - generated AI Agent task participant assignment evidence in
   [`ai-agent-task-assignment.md`](ai-agent-task-assignment.md)
+- generated AI Agent assigned profile map evidence in
+  [`ai-agent-assigned-profile-map.md`](ai-agent-assigned-profile-map.md)
 - `control-plane-ai-agent-client-api.v2` API projection fixtures, including
   top-level enum and sum-type definitions for client codegen safety
 

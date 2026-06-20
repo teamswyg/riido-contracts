@@ -302,11 +302,10 @@ For agent settings specifically:
 - Figma additional planning section (`node-id=153-15935`) can cite agent-bound
   device/runtime actions, while task/subtask-only assignment and non-target
   exclusions are generated in `ai-agent-task-assignment.md`.
-- The workspace assigned-agent profile map starts here and in the API DSL
-  fixture. It is a v2 workspace read model keyed by the actual component/task id
-  string and returns only `avatar_url`/`tmp_color` presentation hints for
-  currently active AI Agent assignments. It does not replace
-  `tasks.assignableAgents`, task-thread history, or daemon assignment polling.
+- The workspace assigned-agent profile map is generated in
+  `ai-agent-assigned-profile-map.md`. This policy file keeps only the boundary:
+  list/card avatar hints must not replace participant dropdown candidates, task
+  thread history, or daemon assignment polling.
 - Figma runtime settings annotations (`node-id=162-23090`) can cite runtime
   liveness, agent hover, daemon stop modal, and restart animation behavior. This
   repo owns the device/runtime read-model policy, device-bound `내 기기` daemon
