@@ -1,0 +1,33 @@
+{
+  "schema_version": "riido-contracts-repository-readme-fragment.v1",
+  "id": "contracts-readme-verification",
+  "verification": [
+    "go test ./...",
+    "go list -m all",
+    "go run ./tools/enumgen verify",
+    "go run ./tools/fsmgen conformance",
+    "go run ./tools/fsmgen verify",
+    "go run ./tools/apicontract verify",
+    "go run ./tools/progressmessage verify",
+    "go run ./tools/ssotdeps verify",
+    "go run ./tools/repositoryreadme -check-doc -evidence-out out/repository-readme-evidence.json",
+    "go run ./tools/knowledgecoverage -check-doc -evidence-out out/executable-knowledge-coverage.json"
+  ],
+  "rules": [
+    "`go list -m all`은 이 module만 보여야 합니다. 새 third-party dependency가 필요해지면 먼저 별도 결정 문서가 필요합니다.",
+    "README의 FSM Mermaid 블록은 `tools/fsmgen`이 소유합니다. repository README generator는 블록 위치와 주변 문서 골격만 소유합니다.",
+    "새 공유 vocabulary는 package code만 추가하지 말고, DSL/IR/fixture/evidence tool 중 어느 SSOT가 원천인지 먼저 정해야 합니다."
+  ],
+  "required_markers": [
+    "Executable SSOT",
+    "fsmgen:task:start",
+    "fsmgen:assignment:start",
+    "go run ./tools/repositoryreadme"
+  ],
+  "forbidden_literals": [
+    "arn:aws:",
+    "AKIA",
+    "plain-text-password",
+    "githubusercontent.com | sh"
+  ]
+}

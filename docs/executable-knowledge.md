@@ -11,7 +11,7 @@ Executable SSOT: [`docs/executable-knowledge.riido.json`](docs/executable-knowle
 - Executable readers: `0`
 - Adjacent manifests: `25`
 - Manual reader candidates: `0`
-- Manifest inventory: `330`
+- Manifest inventory: `335`
 
 ## Manual Reader Candidates
 
