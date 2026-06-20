@@ -74,7 +74,7 @@ jobs:
         with:
           name: architecture-docs-evidence
           path: out/*.json
-          if-no-files-found: warn
+          if-no-files-found: error
       - name: Verify stdlib-only module
         run: test "$(go list -m all | wc -l | tr -d ' ')" = "1"
       - name: Test
