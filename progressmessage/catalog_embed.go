@@ -1,6 +1,6 @@
 package progressmessage
 
-import _ "embed"
+import "embed"
 
-//go:embed catalog.ir.riido.json
-var embeddedIR []byte
+//go:embed catalog.ir.riido.json catalog.ir.messages/*.riido.json
+var embeddedCatalog embed.FS

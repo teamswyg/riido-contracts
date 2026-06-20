@@ -12,6 +12,8 @@ type evidence struct {
 	Status           string            `json:"status"`
 	ContractID       string            `json:"contract_id"`
 	MessageCount     int               `json:"message_count"`
+	DSLMessageFiles  int               `json:"dsl_message_files"`
+	IRMessageFiles   int               `json:"ir_message_files"`
 	MaxMessages      int               `json:"max_messages"`
 	UsageCounts      map[string]int    `json:"usage_counts"`
 	GeneratedDoc     string            `json:"generated_doc"`
@@ -30,8 +32,8 @@ type evidenceMessage struct {
 	Category string `json:"category"`
 }
 
-func writeEvidence(path string, m docManifest, ir progressmessage.IRDocument) error {
-	body, err := json.MarshalIndent(newEvidence(m, ir), "", "  ")
+func writeEvidence(path string, m docManifest, dsl progressmessage.DSLDocument, ir progressmessage.IRDocument) error {
+	body, err := json.MarshalIndent(newEvidence(m, dsl, ir), "", "  ")
 	if err != nil {
 		return err
 	}

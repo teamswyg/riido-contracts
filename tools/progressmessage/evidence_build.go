@@ -2,10 +2,11 @@ package main
 
 import "github.com/teamswyg/riido-contracts/progressmessage"
 
-func newEvidence(m docManifest, ir progressmessage.IRDocument) evidence {
+func newEvidence(m docManifest, dsl progressmessage.DSLDocument, ir progressmessage.IRDocument) evidence {
 	return evidence{
 		SchemaVersion: evidenceVersion, ID: m.ID, Status: status(ir),
 		ContractID: ir.ContractID, MessageCount: len(ir.Messages),
+		DSLMessageFiles: len(dsl.MessageFiles), IRMessageFiles: len(irMessageFileRefs(ir.Messages)),
 		MaxMessages: ir.MaxMessages, UsageCounts: usageCounts(ir),
 		GeneratedDoc: m.GeneratedDoc, EvidenceArtifact: m.EvidenceArtifact,
 		Workflow: m.Workflow, DSL: m.DSL, IR: m.IR, Loop: m.Loop,

@@ -1,0 +1,14 @@
+{
+  "schema_version": "riido-progress-message-ir-message.v1",
+  "message": {
+    "code": 1202,
+    "key": "assignment.completed",
+    "usage": "reserved",
+    "category": "assignment",
+    "description": "Reserved for future explicit completion-copy once product copy is finalized.",
+    "locales": {
+      "en": "The task is complete.",
+      "ko": "작업을 완료했어요."
+    }
+  }
+}

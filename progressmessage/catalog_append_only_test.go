@@ -1,18 +1,11 @@
 package progressmessage
 
-import (
-	"encoding/json"
-	"testing"
-)
+import "testing"
 
 func TestProgressMessageCatalogIsAppendOnlyAgainstHEAD(t *testing.T) {
-	out, err := baselineCatalogFromGit()
+	previous, err := baselineCatalogFromGit()
 	if err != nil {
 		t.Skip("progress message catalog is new in this checkout")
-	}
-	var previous IRDocument
-	if err := json.Unmarshal(out, &previous); err != nil {
-		t.Fatalf("decode previous catalog: %v", err)
 	}
 	current, err := Catalog()
 	if err != nil {

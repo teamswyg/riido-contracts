@@ -6,7 +6,13 @@ type DSLDocument struct {
 	Description   string              `json:"description,omitempty"`
 	AppendOnly    bool                `json:"append_only"`
 	MaxMessages   int                 `json:"max_messages"`
-	Messages      []MessageDefinition `json:"messages"`
+	MessageFiles  []string            `json:"message_files,omitempty"`
+	Messages      []MessageDefinition `json:"messages,omitempty"`
+}
+
+type MessageDocument struct {
+	SchemaVersion string            `json:"schema_version"`
+	Message       MessageDefinition `json:"message"`
 }
 
 type MessageDefinition struct {
@@ -31,5 +37,6 @@ type IRDocument struct {
 	SourceSchemaVersion string              `json:"source_schema_version"`
 	AppendOnly          bool                `json:"append_only"`
 	MaxMessages         int                 `json:"max_messages"`
-	Messages            []MessageDefinition `json:"messages"`
+	MessageFiles        []string            `json:"message_files,omitempty"`
+	Messages            []MessageDefinition `json:"messages,omitempty"`
 }

@@ -1,0 +1,14 @@
+{
+  "schema_version": "riido-progress-message-dsl-message.v1",
+  "message": {
+    "code": 1001,
+    "key": "agent.thinking",
+    "usage": "required",
+    "category": "agent",
+    "description": "Provider has not produced a more specific structured tool/progress signal yet.",
+    "locales": {
+      "ko": "생각 중. . .",
+      "en": "Thinking. . ."
+    }
+  }
+}

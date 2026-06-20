@@ -1,0 +1,14 @@
+{
+  "schema_version": "riido-progress-message-dsl-message.v1",
+  "message": {
+    "code": 1203,
+    "key": "assignment.failed",
+    "usage": "reserved",
+    "category": "assignment",
+    "description": "Reserved for future explicit failure-copy once product copy is finalized.",
+    "locales": {
+      "ko": "작업을 계속 진행하지 못했어요.",
+      "en": "The task could not continue."
+    }
+  }
+}
