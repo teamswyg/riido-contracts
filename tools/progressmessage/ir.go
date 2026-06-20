@@ -10,20 +10,26 @@ import (
 	"github.com/teamswyg/riido-contracts/progressmessage"
 )
 
-func generatedIR() ([]byte, error) {
-	data, err := os.ReadFile(dslPath)
+func generatedIR(root string) ([]byte, error) {
+	_, _, body, err := buildIR(root)
+	return body, err
+}
+
+func buildIR(root string) (progressmessage.DSLDocument, progressmessage.IRDocument, []byte, error) {
+	data, err := os.ReadFile(resolve(root, dslPath))
 	if err != nil {
-		return nil, fmt.Errorf("read %s: %w", dslPath, err)
+		return progressmessage.DSLDocument{}, progressmessage.IRDocument{}, nil, fmt.Errorf("read %s: %w", dslPath, err)
 	}
 	dsl, err := decodeDSL(data)
 	if err != nil {
-		return nil, err
+		return progressmessage.DSLDocument{}, progressmessage.IRDocument{}, nil, err
 	}
 	ir, err := progressmessage.GenerateIR(dsl)
 	if err != nil {
-		return nil, err
+		return progressmessage.DSLDocument{}, progressmessage.IRDocument{}, nil, err
 	}
-	return progressmessage.MarshalCanonical(ir)
+	body, err := progressmessage.MarshalCanonical(ir)
+	return dsl, ir, body, err
 }
 
 func decodeDSL(data []byte) (progressmessage.DSLDocument, error) {

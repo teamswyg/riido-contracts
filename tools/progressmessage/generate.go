@@ -1,11 +1,13 @@
 package main
 
-import "os"
-
 func generate() error {
-	body, err := generatedIR()
+	root, err := resolveRoot(".")
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(irPath, body, 0o644)
+	body, err := generatedIR(root)
+	if err != nil {
+		return err
+	}
+	return writeFile(resolve(root, irPath), body)
 }
