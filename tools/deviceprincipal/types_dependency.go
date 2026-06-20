@@ -1,7 +1,12 @@
 package main
 
 type dependencyMap struct {
-	Facts []dependencyFact `json:"facts"`
+	FactFiles []string         `json:"fact_files"`
+	Facts     []dependencyFact `json:"facts"`
+}
+
+type dependencyFactDocument struct {
+	Fact dependencyFact `json:"fact"`
 }
 
 type dependencyFact struct {

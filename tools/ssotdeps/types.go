@@ -1,12 +1,24 @@
 package main
 
 type manifest struct {
-	SchemaVersion    string           `json:"schema_version"`
-	ID               string           `json:"id"`
-	RiidoTask        string           `json:"riido_task"`
-	HumanDoc         string           `json:"human_doc"`
-	Facts            []fact           `json:"facts"`
-	RepoDependencies []repoDependency `json:"repo_dependencies"`
+	SchemaVersion       string           `json:"schema_version"`
+	ID                  string           `json:"id"`
+	RiidoTask           string           `json:"riido_task"`
+	HumanDoc            string           `json:"human_doc"`
+	FactFiles           []string         `json:"fact_files"`
+	RepoDependencyFiles []string         `json:"repo_dependency_files"`
+	Facts               []fact           `json:"facts"`
+	RepoDependencies    []repoDependency `json:"repo_dependencies"`
+}
+
+type factDocument struct {
+	SchemaVersion string `json:"schema_version"`
+	Fact          fact   `json:"fact"`
+}
+
+type repoDependencyDocument struct {
+	SchemaVersion  string         `json:"schema_version"`
+	RepoDependency repoDependency `json:"repo_dependency"`
 }
 
 type fact struct {

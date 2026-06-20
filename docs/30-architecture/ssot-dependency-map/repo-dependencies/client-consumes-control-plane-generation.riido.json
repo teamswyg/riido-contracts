@@ -1,0 +1,13 @@
+{
+  "schema_version": "riido-ssot-repo-dependency.v1",
+  "repo_dependency": {
+    "id": "client-consumes-control-plane-generation",
+    "from_repo": "riido-client",
+    "to_repo": "riido-control-plane",
+    "fact_ids": [
+      "api-projection",
+      "generated-client-delivery-review-handoff"
+    ],
+    "local_scope": "Generated React Query code and API history are delivered by the control-plane workflow."
+  }
+}

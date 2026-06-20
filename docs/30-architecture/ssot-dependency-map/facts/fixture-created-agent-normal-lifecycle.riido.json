@@ -1,0 +1,42 @@
+{
+  "schema_version": "riido-ssot-dependency-fact.v1",
+  "fact": {
+    "id": "fixture-created-agent-normal-lifecycle",
+    "fact": "Fixture-created agents are ordinary agents with non-unique display names and normal update/delete/editability lifecycle",
+    "human_doc_phrase": "Fixture-created agents are ordinary agents",
+    "source_refs": [
+      {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/ai-agent-onboarding.md",
+        "required_phrase": "fixture-created agents are ordinary agents"
+      },
+      {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/api-contract-projection.md",
+        "required_phrase": "duplicate display names are allowed and are not auto-suffixed"
+      }
+    ],
+    "owner": {
+      "repo": "riido-contracts",
+      "path": "docs/20-domain/ai-agent-onboarding.md"
+    },
+    "downstreams": [
+      {
+        "repo": "riido-control-plane",
+        "local_scope": "fixture create keeps submitted duplicate names and reuses normal agent update/delete/editability behavior"
+      },
+      {
+        "repo": "riido-client",
+        "local_scope": "renders display names without treating them as identity; uses agent_id and generated lifecycle calls"
+      },
+      {
+        "repo": "riido-daemon",
+        "local_scope": "does not branch on fixture origin; assignment snapshots are keyed by agent_id"
+      },
+      {
+        "repo": "riido-infra",
+        "local_scope": "no Terraform diff unless a future fixture registry, media, search, durability, or evidence axis appears"
+      }
+    ]
+  }
+}

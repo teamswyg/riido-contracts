@@ -28,4 +28,7 @@ func TestVerifyWritesEvidence(t *testing.T) {
 	if got.FactsVerified == 0 || got.RepoDependenciesChecked == 0 {
 		t.Fatalf("missing evidence counts: %+v", got)
 	}
+	if got.FactFilesLoaded == 0 || got.RepoDependencyFilesLoaded == 0 {
+		t.Fatalf("missing include evidence counts: %+v", got)
+	}
 }

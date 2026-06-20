@@ -1,0 +1,34 @@
+{
+  "schema_version": "riido-ssot-dependency-fact.v1",
+  "fact": {
+    "id": "rbac-vocabulary",
+    "fact": "Admin, owner, public, and private visibility vocabulary",
+    "human_doc_phrase": "Admin/owner/public-private visibility vocabulary",
+    "source_refs": [
+      {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/ai-agent-visibility.md",
+        "required_phrase": "admin: read public and private agents"
+      },
+      {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/ai-agent-visibility.md",
+        "required_phrase": "AgentVisibility"
+      }
+    ],
+    "owner": {
+      "repo": "riido-contracts",
+      "path": "docs/20-domain/ai-agent-visibility.md"
+    },
+    "downstreams": [
+      {
+        "repo": "riido-control-plane",
+        "local_scope": "executable RBAC evaluator and request authorization"
+      },
+      {
+        "repo": "riido-client",
+        "local_scope": "visible list and edit/delete affordance"
+      }
+    ]
+  }
+}
