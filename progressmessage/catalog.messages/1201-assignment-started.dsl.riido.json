@@ -1,0 +1,14 @@
+{
+  "schema_version": "riido-progress-message-dsl-message.v1",
+  "message": {
+    "code": 1201,
+    "key": "assignment.started",
+    "usage": "reserved",
+    "category": "assignment",
+    "description": "Reserved for future explicit start-copy once product copy is finalized.",
+    "locales": {
+      "ko": "작업을 시작했어요.",
+      "en": "The task has started."
+    }
+  }
+}

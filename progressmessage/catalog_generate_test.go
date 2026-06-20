@@ -8,5 +8,9 @@ func TestProgressMessageDSLGeneratesIR(t *testing.T) {
 	if err != nil {
 		t.Fatalf("GenerateIR: %v", err)
 	}
-	assertFixture(t, "catalog.ir.riido.json", ir)
+	catalog, err := Catalog()
+	if err != nil {
+		t.Fatalf("Catalog: %v", err)
+	}
+	assertCatalogEqual(t, ir, catalog)
 }

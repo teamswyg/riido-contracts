@@ -1,0 +1,26 @@
+{
+  "schema_version": "riido-progress-message-dsl-message.v1",
+  "message": {
+    "code": 1101,
+    "key": "tool.collecting",
+    "usage": "active",
+    "category": "tool",
+    "description": "A tool-backed collection/read operation is in progress. The label argument must be a state-neutral noun phrase and must not include rendered state copy such as collecting/running/completed.",
+    "args": [
+      {
+        "name": "label",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "locales": {
+      "ko": "{{label}} 수집 중 - {{description}}",
+      "en": "Collecting {{label}} - {{description}}"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "schema_version": "riido-progress-message-ir-message.v1",
+  "message": {
+    "code": 1103,
+    "key": "tool.running",
+    "usage": "active",
+    "category": "tool",
+    "description": "A tool/action is executing. The label argument must be a state-neutral noun phrase and must not include rendered state copy such as collecting/running/completed.",
+    "args": [
+      {
+        "name": "label",
+        "type": "string",
+        "required": true
+      },
+      {
+        "name": "description",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "locales": {
+      "en": "Running {{label}} - {{description}}",
+      "ko": "{{label}} 실행 중 - {{description}}"
+    }
+  }
+}

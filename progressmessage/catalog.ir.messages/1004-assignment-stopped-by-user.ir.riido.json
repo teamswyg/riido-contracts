@@ -1,0 +1,21 @@
+{
+  "schema_version": "riido-progress-message-ir-message.v1",
+  "message": {
+    "code": 1004,
+    "key": "assignment.stopped.by_user",
+    "usage": "active",
+    "category": "assignment",
+    "description": "A user explicitly stopped the active assignment.",
+    "args": [
+      {
+        "name": "actor_name",
+        "type": "string",
+        "required": true
+      }
+    ],
+    "locales": {
+      "en": "{{actor_name}} stopped this task.",
+      "ko": "{{actor_name}}님이 직접 종료하였습니다"
+    }
+  }
+}

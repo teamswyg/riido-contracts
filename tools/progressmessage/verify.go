@@ -1,9 +1,7 @@
 package main
 
 import (
-	"bytes"
 	"fmt"
-	"os"
 
 	"github.com/teamswyg/riido-contracts/progressmessage"
 )
@@ -36,7 +34,7 @@ func verify(opt options) error {
 		}
 	}
 	if opt.evidenceOut != "" {
-		if err := writeEvidence(resolve(root, opt.evidenceOut), m, ir); err != nil {
+		if err := writeEvidence(resolve(root, opt.evidenceOut), m, dsl, ir); err != nil {
 			return err
 		}
 	}
@@ -45,16 +43,12 @@ func verify(opt options) error {
 }
 
 func verifyIR(root string) (progressmessage.DSLDocument, progressmessage.IRDocument, error) {
-	dsl, ir, want, err := buildIR(root)
+	dsl, ir, err := buildIR(root)
 	if err != nil {
 		return progressmessage.DSLDocument{}, progressmessage.IRDocument{}, err
 	}
-	got, err := os.ReadFile(resolve(root, irPath))
-	if err != nil {
-		return progressmessage.DSLDocument{}, progressmessage.IRDocument{}, fmt.Errorf("read %s: %w", irPath, err)
-	}
-	if !bytes.Equal(got, want) {
-		return progressmessage.DSLDocument{}, progressmessage.IRDocument{}, fmt.Errorf("%s drifted; run go run ./tools/progressmessage generate", irPath)
+	if err := verifyGeneratedIR(root, ir); err != nil {
+		return progressmessage.DSLDocument{}, progressmessage.IRDocument{}, err
 	}
 	return dsl, ir, nil
 }
