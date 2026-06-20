@@ -1,0 +1,52 @@
+{
+  "schema_version": "riido-ai-agent-visibility-evidence-manifest.v1",
+  "id": "ai-agent-visibility",
+  "title": "AI Agent Visibility",
+  "riido_task": "RIID-4720 [Contracts] AI Agent RBAC and visibility vocabulary",
+  "summary": "AI Agent admin, owner, public, private, and visible-agent vocabulary is generated from API policy, schema, enum, DSL, IR, and OpenAPI fixtures.",
+  "generated_doc": "docs/20-domain/ai-agent-visibility.md",
+  "workflow": ".github/workflows/ai-agent-visibility.yml",
+  "evidence_artifact": "ai-agent-visibility-evidence",
+  "dsl_fixture": "apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json",
+  "ir_fixture": "apicontract/fixtures/control-plane-ai-agent-client.ir.riido.json",
+  "openapi_fixture": "apicontract/fixtures/control-plane-ai-agent-client.openapi.json",
+  "expected_operation_count": 4,
+  "expected_schema_count": 6,
+  "expected_policy_rule_count": 3,
+  "expected_enum_value_count": 2,
+  "expected_scenario_count": 7,
+  "policy_id": "ai_agent_rbac.v1",
+  "required_operations": [
+    {"operation_id": "getAIAgentClientBootstrap", "kind": "query", "method": "GET", "path": "/v1/client/ai-agent/bootstrap", "response_status": 200, "response_ref": "ClientBootstrapResponse"},
+    {"operation_id": "listAIAgentTaskAssignableAgents", "kind": "query", "method": "GET", "path": "/v1/client/ai-agent/tasks/{task_id}/assignable-agents", "response_status": 200, "response_ref": "AgentClientListResponse"},
+    {"operation_id": "getAIAgentClientBootstrapV2", "kind": "query", "method": "GET", "path": "/v2/client/workspaces/{workspace_id}/ai-agent/bootstrap", "response_status": 200, "response_ref": "ClientBootstrapResponseV2"},
+    {"operation_id": "listAIAgentTaskAssignableAgentsV2", "kind": "query", "method": "GET", "path": "/v2/client/workspaces/{workspace_id}/ai-agent/tasks/{task_id}/assignable-agents", "response_status": 200, "response_ref": "AgentClientListResponseV2"}
+  ],
+  "required_policy_rules": [
+    "admin: read public and private agents, update all, delete all",
+    "owner: read owned agents, update owned agents, delete owned agents",
+    "user: read owned agents and other users' public agents only"
+  ],
+  "required_enum": {"name": "AgentVisibility", "values": ["public", "private"]},
+  "required_schema_fields": [
+    {"schema": "AgentClientRecord", "fields": ["agent_id", "owner_principal_id", "is_owned_by_viewer", "visibility"]},
+    {"schema": "AgentClientRecordV2", "fields": ["agent_id", "owner_principal_id", "workspace_id", "is_owned_by_viewer", "visibility"]},
+    {"schema": "ClientBootstrapResponse", "fields": ["schema_version", "workspace_id", "agents"]},
+    {"schema": "ClientBootstrapResponseV2", "fields": ["schema_version", "workspace_id", "agents"]},
+    {"schema": "AgentClientListResponse", "fields": ["schema_version", "agents"]},
+    {"schema": "AgentClientListResponseV2", "fields": ["schema_version", "agents"]}
+  ],
+  "invariants": [
+    "admin may read public and private agents and may update or delete all agents.",
+    "owner may read, update, and delete owned agents.",
+    "user may read owned agents and other users' public agents only.",
+    "AgentVisibility is a closed public/private enum in generated client contracts."
+  ],
+  "loop": {
+    "observation": "Admin/owner/public/private visibility vocabulary lived in policy prose while DSL policy, schemas, enum, and query operations already defined the machine-readable contract.",
+    "hypothesis": "A focused visibility verifier can make RBAC vocabulary drift observable without expanding mutation-safety or thumbnail scope.",
+    "execute": "Verify RBAC policy rules, visibility enum values, visible-agent response schemas, RBAC-bound query operations, DSL/IR tuple parity, and OpenAPI projection.",
+    "evaluate": "CI fails when RBAC rules, public/private enum values, schema identity fields, generated reader, or v1/v2 visibility query projections drift.",
+    "retrospective": "Future visibility semantics should update API policy/schema fixtures and this manifest before reader text changes."
+  }
+}

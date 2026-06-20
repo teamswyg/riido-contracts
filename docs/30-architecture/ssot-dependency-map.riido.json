@@ -503,13 +503,18 @@
       "source_refs": [
         {
           "repo": "riido-contracts",
-          "path": "docs/20-domain/ai-agent-policy.md",
-          "required_phrase": "admin may mutate all agents"
+          "path": "docs/20-domain/ai-agent-visibility.md",
+          "required_phrase": "admin: read public and private agents"
+        },
+        {
+          "repo": "riido-contracts",
+          "path": "docs/20-domain/ai-agent-visibility.md",
+          "required_phrase": "AgentVisibility"
         }
       ],
       "owner": {
         "repo": "riido-contracts",
-        "path": "docs/20-domain/ai-agent-policy.md"
+        "path": "docs/20-domain/ai-agent-visibility.md"
       },
       "downstreams": [
         {
