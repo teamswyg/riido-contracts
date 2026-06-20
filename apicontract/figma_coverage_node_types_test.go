@@ -12,8 +12,9 @@ type figmaCoveragePage struct {
 }
 
 type figmaNonUITopLevelInventory struct {
-	PageID string              `json:"page_id"`
-	Nodes  []figmaCoverageNode `json:"nodes"`
+	PageID    string              `json:"page_id"`
+	NodeFiles []string            `json:"node_files,omitempty"`
+	Nodes     []figmaCoverageNode `json:"nodes"`
 }
 
 type figmaCoverageEntry struct {

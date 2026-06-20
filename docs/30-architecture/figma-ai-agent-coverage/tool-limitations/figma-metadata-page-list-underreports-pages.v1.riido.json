@@ -1,0 +1,16 @@
+{
+  "schema_version": "riido-figma-ai-agent-tool-limitation.v1",
+  "limitation": {
+    "id": "figma-metadata-page-list-underreports-pages.v1",
+    "tool": "Figma get_metadata without nodeId",
+    "observed_at": "2026-06-02",
+    "observed_result": "No-nodeId get_metadata listed only page 129:5215 UI for file MUOd9lctoEHASUStN3vUuK.",
+    "authoritative_source": "Figma Plugin API figma.root.children after loaded-page inspection",
+    "authoritative_result": [
+      "129:5215",
+      "42:3014",
+      "0:1"
+    ],
+    "rule": "metadata page-list output is supporting evidence only and must not remove expected_pages or non-UI inventories."
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "schema_version": "riido-figma-ai-agent-api-annotation-inventory.v1",
+  "inventory": {
+    "ui_area": "Agent settings",
+    "category_id": "700:0",
+    "category_label": "API Generated",
+    "figma_generated_path": "riido.v2.aiAgent.agents.updateConfiguration",
+    "canonical_generated_path": "aiAgent.agents.updateConfiguration",
+    "operation_kind": "Mutation",
+    "background": "할당 작업이 없는 Agent의 이름, 썸네일, 설명, 지침, 런타임, 모델, 공개 범위를 저장합니다.",
+    "annotation_count": 3,
+    "sources": [
+      {
+        "page_id": "129:5215",
+        "top_level_node_id": "432:37336",
+        "coverage_entry_node_id": "432:37336",
+        "node_ids": [
+          "417:21753",
+          "417:21803",
+          "432:35544"
+        ]
+      }
+    ]
+  }
+}

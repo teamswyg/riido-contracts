@@ -1,0 +1,31 @@
+{
+  "schema_version": "riido-figma-ai-agent-coverage-entry.v1",
+  "entry": {
+    "page_id": "42:3014",
+    "node_id": "164:30657",
+    "name": "데스크탑앱 온보딩",
+    "coverage_status": "covered",
+    "evidence_kind": "figma_wireframe_section",
+    "ssot_docs": [
+      "docs/20-domain/ai-agent-policy.md",
+      "docs/30-architecture/ssot-dependency-map.md",
+      "apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json"
+    ],
+    "owner_repos": [
+      "riido-contracts",
+      "riido-control-plane",
+      "riido-daemon",
+      "riido-client",
+      "riido-desktop"
+    ],
+    "covered_facts": [
+      "wireframe onboarding is absorbed by the UI page onboarding sections",
+      "desktop webview creates agents only through workspace-scoped fixture/direct-create generated paths",
+      "desktop app owns daemon launch trigger presentation and does not create a separate SaaS API"
+    ],
+    "direction_loop": {
+      "top_down": "A new onboarding business rule in this wireframe updates ai-agent-policy and API DSL before client or daemon changes.",
+      "bottom_up": "A desktop implementation constraint stays desktop/daemon-local unless it changes the SaaS read model or agent creation contract."
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "schema_version": "riido-figma-ai-agent-coverage-entry.v1",
+  "entry": {
+    "page_id": "42:3014",
+    "node_id": "188:27707",
+    "name": "macOS",
+    "coverage_status": "no_diff_product_surface",
+    "evidence_kind": "figma_platform_wireframe",
+    "ssot_docs": [
+      "docs/20-domain/ai-agent-policy.md",
+      "docs/30-architecture/ssot-dependency-map.md"
+    ],
+    "owner_repos": [
+      "riido-desktop",
+      "riido-daemon",
+      "riido-client"
+    ],
+    "covered_facts": [
+      "macOS onboarding/install presentation is a desktop/client product surface",
+      "AI Agent API coverage still comes from device/runtime liveness and onboarding generated paths",
+      "no macOS-specific control-plane endpoint is created by this wireframe"
+    ],
+    "direction_loop": {
+      "top_down": "A macOS product rule becomes an API/daemon contract only after policy names a new durable fact.",
+      "bottom_up": "A macOS packaging or launch finding stays desktop/daemon-local unless it changes SaaS runtime liveness semantics."
+    }
+  }
+}

@@ -1,0 +1,35 @@
+{
+  "schema_version": "riido-figma-ai-agent-coverage-entry.v1",
+  "entry": {
+    "page_id": "0:1",
+    "node_id": "13:3789",
+    "name": "런타임",
+    "coverage_status": "covered",
+    "evidence_kind": "figma_legacy_wireframe_section",
+    "absorbed_by_top_level_node_id": "162:23090",
+    "ssot_docs": [
+      "docs/20-domain/ai-agent-policy.md",
+      "docs/30-architecture/ssot-dependency-map.md",
+      "apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json"
+    ],
+    "owner_repos": [
+      "riido-contracts",
+      "riido-control-plane",
+      "riido-daemon",
+      "riido-client"
+    ],
+    "generated_paths": [
+      "aiAgent.devices.runtimes",
+      "v2.aiAgent.devices.runtimes"
+    ],
+    "covered_facts": [
+      "legacy runtime list wireframe is absorbed by the current UI runtime settings section",
+      "device/runtime liveness stays the durable read-model contract",
+      "runtime list rendering does not create a separate legacy endpoint"
+    ],
+    "direction_loop": {
+      "top_down": "A revived runtime-list business rule from this legacy frame updates ai-agent-policy and API DSL before control-plane or client changes.",
+      "bottom_up": "A control-plane or daemon runtime-liveness contradiction escalates to the current runtime settings entry instead of reviving this legacy frame as a second source."
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "schema_version": "riido-figma-ai-agent-tool-limitation.v1",
+  "limitation": {
+    "id": "figma-headless-file-key-placeholder.v1",
+    "tool": "Figma Plugin API use_figma figma.fileKey",
+    "observed_at": "2026-06-02",
+    "observed_result": "A live use_figma root/category inspection for file MUOd9lctoEHASUStN3vUuK returned figma.fileKey=headless while the same invocation successfully read the AI Agent file pages and annotation categories.",
+    "authoritative_source": "User-provided Figma URL/tool input fileKey and this manifest's figma.file_key",
+    "authoritative_result": [
+      "MUOd9lctoEHASUStN3vUuK",
+      "v.1.22 AI Agent"
+    ],
+    "rule": "The use_figma runtime's figma.fileKey value is supporting evidence only and must not overwrite figma.file_key, expected_pages, or downstream projection source identity."
+  }
+}

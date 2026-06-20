@@ -1,0 +1,23 @@
+{
+  "schema_version": "riido-figma-ai-agent-api-annotation-inventory.v1",
+  "inventory": {
+    "ui_area": "Task thread",
+    "category_id": "700:0",
+    "category_label": "API Generated",
+    "figma_generated_path": "riido.v2.aiAgent.tasks.submitComment",
+    "canonical_generated_path": "aiAgent.tasks.submitComment",
+    "operation_kind": "Mutation",
+    "background": "호환용 댓글 제출 경로입니다. thread_id 없이 입력하면 서버가 적절한 thread 응답 흐름을 처리합니다.",
+    "annotation_count": 1,
+    "sources": [
+      {
+        "page_id": "129:5215",
+        "top_level_node_id": "153:15931",
+        "coverage_entry_node_id": "153:15931",
+        "node_ids": [
+          "153:8588"
+        ]
+      }
+    ]
+  }
+}

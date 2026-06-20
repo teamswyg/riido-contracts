@@ -28,4 +28,10 @@ func TestVerifyWritesEvidence(t *testing.T) {
 	if got.EntriesVerified == 0 || got.GeneratedAnnotationsChecked == 0 {
 		t.Fatalf("missing evidence counts: %+v", got)
 	}
+	if got.CoverageEntryFilesLoaded == 0 || got.APIAnnotationInventoryFilesLoaded == 0 {
+		t.Fatalf("missing include evidence counts: %+v", got)
+	}
+	if got.VerifiedEvidenceNodeFilesLoaded == 0 || got.ExpectedTopLevelNodeFilesLoaded == 0 {
+		t.Fatalf("missing node include evidence counts: %+v", got)
+	}
 }

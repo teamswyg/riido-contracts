@@ -1,0 +1,10 @@
+{
+  "schema_version": "riido-figma-ai-agent-coverage-entry.v1",
+  "entry": {
+    "node_id": "156:19308",
+    "name": "Group 6",
+    "coverage_status": "non_decision_asset",
+    "evidence_kind": "figma_group",
+    "reason": "Static grouping near menu evidence; no independent contract or implementation decision."
+  }
+}

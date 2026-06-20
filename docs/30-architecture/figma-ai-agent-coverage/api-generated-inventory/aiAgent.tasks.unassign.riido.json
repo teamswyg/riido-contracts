@@ -1,0 +1,34 @@
+{
+  "schema_version": "riido-figma-ai-agent-api-annotation-inventory.v1",
+  "inventory": {
+    "ui_area": "Participant dropdown / task details",
+    "category_id": "700:0",
+    "category_label": "API Generated",
+    "figma_generated_path": "riido.v2.aiAgent.tasks.unassign",
+    "canonical_generated_path": "aiAgent.tasks.unassign",
+    "operation_kind": "Mutation",
+    "background": "참여자에서 Agent를 제거합니다. 진행 중이면 중지 요청/큐 해제 흐름으로 이어집니다.",
+    "annotation_count": 5,
+    "sources": [
+      {
+        "page_id": "129:5215",
+        "top_level_node_id": "153:12742",
+        "coverage_entry_node_id": "153:12742",
+        "node_ids": [
+          "153:8342",
+          "227:16920",
+          "227:17993"
+        ]
+      },
+      {
+        "page_id": "42:3014",
+        "top_level_node_id": "236:33845",
+        "coverage_entry_node_id": "153:12742",
+        "node_ids": [
+          "236:33845",
+          "236:33847"
+        ]
+      }
+    ]
+  }
+}

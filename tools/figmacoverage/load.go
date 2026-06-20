@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"os"
+	"path/filepath"
 	"strings"
 )
 
@@ -23,6 +24,9 @@ func loadManifest(path string) (manifest, error) {
 	var extra struct{}
 	if err := dec.Decode(&extra); err != io.EOF {
 		return manifest{}, errors.New("decode manifest: trailing data")
+	}
+	if err := loadManifestIncludes(filepath.Dir(path), &m); err != nil {
+		return manifest{}, err
 	}
 	return m, nil
 }

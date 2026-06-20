@@ -1,0 +1,27 @@
+{
+  "schema_version": "riido-figma-ai-agent-api-annotation-inventory.v1",
+  "inventory": {
+    "ui_area": "Onboarding",
+    "category_id": "700:0",
+    "category_label": "API Generated",
+    "figma_generated_path": "riido.v2.aiAgent.onboarding.fixtures",
+    "canonical_generated_path": "aiAgent.onboarding.fixtures",
+    "operation_kind": "Query",
+    "background": "리도/영실/홍도/지원처럼 제품이 제공하는 초기값 목록을 조회합니다. template entity가 아니라 fixture입니다.",
+    "annotation_count": 5,
+    "sources": [
+      {
+        "page_id": "129:5215",
+        "top_level_node_id": "164:30658",
+        "coverage_entry_node_id": "164:30658",
+        "node_ids": [
+          "164:30661",
+          "164:30672",
+          "164:30681",
+          "164:30690",
+          "164:30699"
+        ]
+      }
+    ]
+  }
+}

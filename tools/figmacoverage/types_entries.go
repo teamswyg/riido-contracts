@@ -12,8 +12,14 @@ type node struct {
 }
 
 type pageInventory struct {
-	PageID string `json:"page_id"`
-	Nodes  []node `json:"nodes"`
+	PageID    string   `json:"page_id"`
+	NodeFiles []string `json:"node_files,omitempty"`
+	Nodes     []node   `json:"nodes"`
+}
+
+type nodeDocument struct {
+	SchemaVersion string `json:"schema_version"`
+	Node          node   `json:"node"`
 }
 
 type coverageEntry struct {
