@@ -24,12 +24,12 @@ A lower-layer contradiction must be recorded locally, escalated to the owning SS
 | `device-runtime-liveness-stale-projection` | Daemon refreshes device/runtime liveness every 5 seconds and carries daemon process facts in the same snapshot; control-plane projects device/runtime read models offline after 20 seconds without a refreshed runtime snapshot | `riido-contracts:docs/20-domain/device-principal.md` | riido-control-plane, riido-daemon, riido-client |
 | `experimental-runtime-opt-in-assignment-snapshot` | Experimental runtime opt-in is assignment-created snapshot data | `riido-contracts:docs/20-domain/assignment-polling.md` | riido-control-plane, riido-daemon, riido-infra |
 | `fixture-created-agent-normal-lifecycle` | Fixture-created agents are ordinary agents with non-unique display names and normal update/delete/editability lifecycle | `riido-contracts:docs/20-domain/ai-agent-onboarding.md` | riido-control-plane, riido-client, riido-daemon, riido-infra |
-| `generated-assignment-excludes-team-openapi-key` | Generated AI Agent assignment excludes team_id, teamId, OpenAPI task-context paths, Open API keys, and X-Workspace-Api-Key from client, agent, daemon, deployment, and smoke-test boundaries | `riido-contracts:docs/20-domain/ai-agent-policy.md` | riido-control-plane, riido-client, riido-daemon, riido-infra |
+| `generated-assignment-excludes-team-openapi-key` | Generated AI Agent assignment excludes team_id, teamId, OpenAPI task-context paths, Open API keys, and X-Workspace-Api-Key from client, agent, daemon, deployment, and smoke-test boundaries | `riido-contracts:docs/20-domain/ai-agent-task-assignment.md` | riido-control-plane, riido-client, riido-daemon, riido-infra |
 | `generated-client-delivery-review-handoff` | Generated client delivery PRs are review handoffs and must not be auto-merged by delivery automation | `riido-contracts:docs/20-domain/api-contract-projection.md` | riido-control-plane, riido-client |
 | `generated-client-path-searchability` | Generated client path searchability is derived from client.module and client.facade_path | `riido-contracts:docs/20-domain/api-contract-projection.md` | riido-control-plane, riido-client |
 | `instruction` | instruction is optional client-authored provider-neutral agent guidance text capped at 1000 characters and snapshotted into Assignment.agent_instruction at assignment creation | `riido-contracts:docs/20-domain/ai-agent-configuration.md` | riido-control-plane, riido-daemon, riido-infra |
 | `onboarding-draft-ordering` | Onboarding draft ordering is client-local until final workspace/runtime-scoped create | `riido-contracts:docs/20-domain/ai-agent-onboarding.md` | riido-control-plane, riido-client, riido-daemon, riido-infra |
-| `participant-dropdown-agent-ordering` | Participant dropdown agent ordering is owned-first, display-name ordered, then agent_id tied | `riido-contracts:docs/20-domain/ai-agent-policy.md` | riido-control-plane, riido-client |
+| `participant-dropdown-agent-ordering` | Participant dropdown agent ordering is owned-first, display-name ordered, then agent_id tied | `riido-contracts:docs/20-domain/ai-agent-task-assignment.md` | riido-control-plane, riido-client |
 | `profile-thumbnail-url` | profile_thumbnail_url is an optional HTTPS image URL string produced by the profile thumbnail upload-intent flow | `riido-contracts:docs/20-domain/ai-agent-policy.md` | riido-control-plane, riido-client, riido-daemon, riido-infra |
 | `progress-message-catalog` | AI Agent runtime progress messages are fixed, translated, integer-coded, append-only, and rendered before public SSE delivery | `riido-contracts:progressmessage/catalog.dsl.riido.json` | riido-control-plane, riido-daemon |
 | `rbac-vocabulary` | Admin, owner, public, and private visibility vocabulary | `riido-contracts:docs/20-domain/ai-agent-policy.md` | riido-control-plane, riido-client |
@@ -124,9 +124,10 @@ A lower-layer contradiction must be recorded locally, escalated to the owning SS
 ### `generated-assignment-excludes-team-openapi-key`
 
 - Human phrase: Generated assignment excludes team/OpenAPI key
-- Owner: `riido-contracts:docs/20-domain/ai-agent-policy.md`
+- Owner: `riido-contracts:docs/20-domain/ai-agent-task-assignment.md`
 - Source refs:
-  - `riido-contracts:docs/20-domain/ai-agent-policy.md` requires `are outside the AI Agent assignment problem`
+  - `riido-contracts:docs/20-domain/ai-agent-task-assignment.md` requires `generated assignment requests carry agent_id only`
+  - `riido-contracts:docs/20-domain/ai-agent-task-assignment.md` requires `X-Workspace-Api-Key`
 - Downstreams:
   - `riido-control-plane`: private task context may resolve task location from task_id internally, but generated client requests and deployment/smoke criteria do not require team_id, OpenAPI keys, or Open API keys
   - `riido-client`: calls generated assignment with agent_id in the body and route-supplied task/workspace ids only
@@ -180,9 +181,10 @@ A lower-layer contradiction must be recorded locally, escalated to the owning SS
 ### `participant-dropdown-agent-ordering`
 
 - Human phrase: Participant dropdown agent ordering is owned-first, display-name ordered, then `agent_id` tied
-- Owner: `riido-contracts:docs/20-domain/ai-agent-policy.md`
+- Owner: `riido-contracts:docs/20-domain/ai-agent-task-assignment.md`
 - Source refs:
-  - `riido-contracts:docs/20-domain/ai-agent-policy.md` requires `stable tie-breaker`
+  - `riido-contracts:docs/20-domain/ai-agent-task-assignment.md` requires `owned agents appear first`
+  - `riido-contracts:docs/20-domain/ai-agent-task-assignment.md` requires `equal names are tied by agent_id`
 - Downstreams:
   - `riido-control-plane`: assignable-agent response sorting and black-box HTTP coverage
   - `riido-client`: participant dropdown renders the returned order and handles long labels locally

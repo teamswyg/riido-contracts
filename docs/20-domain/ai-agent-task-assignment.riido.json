@@ -1,0 +1,51 @@
+{
+  "schema_version": "riido-ai-agent-task-assignment-evidence-manifest.v1",
+  "id": "ai-agent-task-assignment",
+  "title": "AI Agent Task Assignment",
+  "riido_task": "RIID-4720 [Contracts] AI Agent task participant assignment",
+  "summary": "Task participant AI Agent assignment semantics are generated from API policy, schema, DSL, IR, and OpenAPI fixtures.",
+  "generated_doc": "docs/20-domain/ai-agent-task-assignment.md",
+  "workflow": ".github/workflows/ai-agent-task-assignment.yml",
+  "evidence_artifact": "ai-agent-task-assignment-evidence",
+  "dsl_fixture": "apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json",
+  "ir_fixture": "apicontract/fixtures/control-plane-ai-agent-client.ir.riido.json",
+  "openapi_fixture": "apicontract/fixtures/control-plane-ai-agent-client.openapi.json",
+  "expected_operation_count": 9,
+  "expected_schema_count": 5,
+  "expected_policy_count": 2,
+  "expected_scenario_count": 11,
+  "required_operations": [
+    {"operation_id": "listAIAgentTaskAssignableAgents", "kind": "query", "method": "GET", "path": "/v1/client/ai-agent/tasks/{task_id}/assignable-agents", "response_status": 200, "response_ref": "AgentClientListResponse"},
+    {"operation_id": "assignAIAgentTask", "kind": "command", "method": "POST", "path": "/v1/client/ai-agent/tasks/{task_id}/assignment", "request_ref": "AssignAIAgentTaskRequest", "response_status": 202, "response_ref": "AIAgentTaskActionResponse"},
+    {"operation_id": "unassignAIAgentTask", "kind": "command", "method": "DELETE", "path": "/v1/client/ai-agent/tasks/{task_id}/assignment", "request_ref": "UnassignAIAgentTaskRequest", "response_status": 202, "response_ref": "AIAgentTaskActionResponse"},
+    {"operation_id": "listAIAgentTaskAssignableAgentsV2", "kind": "query", "method": "GET", "path": "/v2/client/workspaces/{workspace_id}/ai-agent/tasks/{task_id}/assignable-agents", "response_status": 200, "response_ref": "AgentClientListResponseV2"},
+    {"operation_id": "assignAIAgentTaskV2", "kind": "command", "method": "POST", "path": "/v2/client/workspaces/{workspace_id}/ai-agent/tasks/{task_id}/assignment", "request_ref": "AssignAIAgentTaskRequest", "response_status": 202, "response_ref": "AIAgentTaskActionResponse"},
+    {"operation_id": "unassignAIAgentTaskV2", "kind": "command", "method": "DELETE", "path": "/v2/client/workspaces/{workspace_id}/ai-agent/tasks/{task_id}/assignment", "request_ref": "UnassignAIAgentTaskRequest", "response_status": 202, "response_ref": "AIAgentTaskActionResponse"},
+    {"operation_id": "createAIAgentTaskAgentAssignmentV2", "kind": "command", "method": "POST", "path": "/v2/client/workspaces/{workspace_id}/ai-agent/tasks/{task_id}/agent-assignments", "request_ref": "AssignAIAgentTaskRequest", "response_status": 202, "response_ref": "AIAgentTaskActionResponse"},
+    {"operation_id": "deleteAIAgentTaskAgentAssignmentV2", "kind": "command", "method": "DELETE", "path": "/v2/client/workspaces/{workspace_id}/ai-agent/tasks/{task_id}/agent-assignments/{agent_id}", "response_status": 202, "response_ref": "AIAgentTaskActionResponse"},
+    {"operation_id": "stopAIAgentTaskAgentAssignmentV2", "kind": "command", "method": "POST", "path": "/v2/client/workspaces/{workspace_id}/ai-agent/tasks/{task_id}/agent-assignments/{agent_id}/stop", "response_status": 202, "response_ref": "AIAgentTaskActionResponse"}
+  ],
+  "required_policies": ["agent_assignment_target_scope.v1", "api_codegen_safety.v1"],
+  "required_schema_fields": [
+    {"schema": "AgentClientListResponse", "fields": ["schema_version", "agents"]},
+    {"schema": "AgentClientListResponseV2", "fields": ["schema_version", "agents"]},
+    {"schema": "AssignAIAgentTaskRequest", "fields": ["agent_id"]},
+    {"schema": "UnassignAIAgentTaskRequest", "fields": ["agent_id", "reason"]},
+    {"schema": "AIAgentTaskActionResponse", "fields": ["schema_version", "task_id", "agent_id", "thread_id", "run_id", "work_status", "assignment_state", "comment_kind", "message"]}
+  ],
+  "forbidden_request_fields": ["team_id", "teamId", "OpenAPI", "Open API key", "X-Workspace-Api-Key"],
+  "no_diff_path_fragments": ["projects", "milestones", "intakes", "mentions"],
+  "invariants": [
+    "assignable agents include viewer-owned agents and other users' public agents only.",
+    "owned agents appear first, display names order inside each group, and equal names are tied by agent_id.",
+    "generated assignment requests carry agent_id only; task_id and workspace_id come from URL paths.",
+    "projects, milestones, intakes, AI property filler, and mention surfaces have no generated AI Agent assignment operations."
+  ],
+  "loop": {
+    "observation": "Participant dropdown ordering and assignment target scope lived in long policy prose while DSL scenarios already defined assignable, assign, unassign, and v2 agent-assignment routes.",
+    "hypothesis": "A focused verifier can make task participant assignment drift observable and prevent downstream repos from adding hidden team/API-key assignment inputs.",
+    "execute": "Verify assignment operations, request/response schemas, policy anchors, forbidden request fields, non-target path absence, DSL/IR tuple parity, and OpenAPI projection.",
+    "evaluate": "CI fails when assignment operations, schema fields, participant ordering anchors, generated reader, or task-scope boundaries drift.",
+    "retrospective": "Future assignment surfaces should update API policy/schema fixtures and this manifest before reader text changes."
+  }
+}

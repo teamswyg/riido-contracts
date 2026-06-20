@@ -84,36 +84,17 @@ screens do not add a new AI Agent contract operation by themselves:
   `Q-CON-007` as no-diff for the AI Agent generated API
 
 Participant dropdown evidence is `node-id=153-12742`
-(`컴포넌트 참여자 드롭다운`). Its annotations state:
-
-- member sorting is 가나다 order and belongs to the existing member/client
-  surface
-- agent sorting places viewer-owned agents first, then sorts names inside each
-  ownership group
-- long member/agent names, maximum dropdown height, scrollbar width, and visual
-  overflow behavior are client UI composition details
-
-The durable AI Agent contract fact is therefore only the agent side of that
-dropdown: visible assignable agents are the viewer's owned agents plus other
-users' public agents, and owned agents are ordered first.
+(`컴포넌트 참여자 드롭다운`). Member sorting, long label containment,
+maximum height, scrollbar width, and visual overflow are client UI composition
+facts. The generated AI Agent task-assignment reader owns the durable agent
+visibility and ordering evidence.
 
 Additional planning evidence is `node-id=153-15935` (`추가 기획 내용`). The
-section has no annotation nodes; the visible planning text is the evidence. It
-confirms the cross-surface assignment target scope and several non-target
-surfaces:
-
-- AI Agent assignment is available only on Riido task and subtask surfaces.
-- Existing Riido AI property filling must not recommend or select agents.
-- Agent mention is not a supported command surface.
-- Device/runtime actions are mediated by the agent access model: public agents
-  delegate indirect daemon/runtime execution to workspace members, while private
-  agents delegate it only to admins and owners.
-
-The durable contract fact is the target scope, not the page drawing. The
-`task_id` path parameter in AI Agent task APIs means a Riido task or subtask id.
-Projects, milestones, intakes, generic comments, AI property filling, and
-mention surfaces must not reuse task assignment/comment/stop/thread endpoints
-without a future owning SSOT and a newly generated operation.
+durable target-scope contract is now generated in
+[`ai-agent-task-assignment.md`](ai-agent-task-assignment.md). Device/runtime
+access remains owned here: public agents delegate indirect daemon/runtime
+execution to workspace members, while private agents delegate it only to admins
+and owners.
 
 Task thread annotation evidence is `node-id=153-15931` (`댓글 소통`).
 The file contains Dev Mode annotation categories including `API Generated`.
@@ -207,14 +188,10 @@ durable contract facts are:
   description truncation/wrapping, status-label copy/color, and timestamp
   formatting are client-owned
 
-The participant dropdown policy shown in the handoff is:
-
-- member sorting belongs to the existing Riido member/client surface
-- agent sorting belongs to this contract: owned agents first, then public
-  agents visible through RBAC, with display-name ordering inside each group
-- agent names are mutable and non-unique, so equal display names use
-  `agent_id` as the stable tie-breaker. Clients render the display name, but
-  must not treat it as identity.
+The participant dropdown contract is generated in
+[`ai-agent-task-assignment.md`](ai-agent-task-assignment.md). Member sorting
+belongs to the existing Riido member/client surface, while clients render the
+returned AI Agent order without treating mutable display names as identity.
 
 The same handoff marks participant-dropdown presentation constraints at
 `node-id=153-12742`: long member/agent names must remain visually contained,
@@ -229,27 +206,11 @@ typed comment-status value instead of asking clients to parse rendered text.
 The client command contract also includes explicit task-thread comment submit
 and stop actions so web and desktop webview clients do not infer AI Agent work
 from generic task comments alone.
-Selecting an agent from the task participant dropdown is a separate generated
-assignment command, not a generic task participant mutation. The command creates
-the initial AI Agent task-thread row with typed
-`comment_kind=assignment_started` unless the selected agent is already busy, in
-which case the existing queued tuple applies. Removing an active or queued agent
-from task participants uses the generated unassign command, which stops the
-agent work with `comment_kind=stopped_by_user_request`; hiding stopped content is
-client-owned presentation around the returned typed status.
-Generated assignment does not make the agent team-aware. The generated request
-body carries `agent_id` only; `task_id` and, in v2, `workspace_id` come from the
-URL. `team_id`, `teamId`, OpenAPI task-context paths, and Open API key transport
-such as `X-Workspace-Api-Key` are outside the AI Agent assignment problem
-entirely. They are not generated request fields, agent fields, daemon polling
-inputs, deployment prerequisites, or smoke acceptance criteria. A downstream
-control plane may resolve a task's team location internally from `task_id` to
-read the existing task document, but that resolved value is an internal
-task-context lookup result and must not be persisted into the agent or exposed
-to generated clients.
-This exclusion is canonical for the generated AI Agent flow; it is not a mock
-environment shortcut and must not be reintroduced by daemon, deployment, or E2E
-test harness logic.
+Selecting or removing an agent from the task participant dropdown uses the
+generated task-assignment command surface, not a generic task participant
+mutation. The generated reader owns assignment request shape, target scope,
+non-target exclusions, and DSL/IR/OpenAPI projection parity. Client presentation
+around stopped content remains UI-owned.
 In the normal active screen (`node-id=236-21379`), generic task comments and
 AI-Agent-directed thread replies are visually adjacent. The contract boundary is
 that AI-Agent-directed messages use the explicit comments operation with
@@ -335,24 +296,12 @@ For agent settings specifically:
   The exact Korean copy, Riido actor label, timestamp wording, row layout,
   hidden action state, and agent/avatar rendering are client/task presentation
   facts.
-- Figma participant dropdown annotations (`node-id=153-12742`) can cite sort and
-  overflow behavior, but this repo owns only AI Agent visibility and owned-first
-  agent ordering. Member sorting and visual dropdown constraints are client
-  surface facts.
+- Figma participant dropdown annotations (`node-id=153-12742`) can cite visual
+  overflow behavior, but generated AI Agent visibility and ordering evidence
+  lives in `ai-agent-task-assignment.md`.
 - Figma additional planning section (`node-id=153-15935`) can cite agent-bound
-  device/runtime actions, no agent recommendation in existing AI property
-  filling, no agent mention command surface, and task/subtask-only assignment.
-  This repo owns the target-scope contract fact and the access fact that public
-  agents delegate indirect daemon/runtime execution to workspace members while
-  private agents delegate it only to admins and owners. Project, milestone,
-  intake, property-filling, and mention surfaces need a separate owning SSOT
-  before they become generated AI Agent operations.
-- The generated assignment task-context boundary starts here and in the API DSL
-  fixture. Downstream control-plane may resolve private task location from
-  `task_id`, but `team_id`, `teamId`, OpenAPI task-context paths, and Open API
-  key transport such as `X-Workspace-Api-Key` are not generated client inputs,
-  agent fields, daemon inputs, deployment prerequisites, or smoke-test
-  acceptance criteria.
+  device/runtime actions, while task/subtask-only assignment and non-target
+  exclusions are generated in `ai-agent-task-assignment.md`.
 - The workspace assigned-agent profile map starts here and in the API DSL
   fixture. It is a v2 workspace read model keyed by the actual component/task id
   string and returns only `avatar_url`/`tmp_color` presentation hints for
