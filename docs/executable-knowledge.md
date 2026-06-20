@@ -7,11 +7,11 @@ Executable SSOT: [`docs/executable-knowledge.riido.json`](docs/executable-knowle
 - Status: `advisory_findings`
 - Evidence artifact: `executable-knowledge-coverage`
 - Markdown readers scanned: `20`
-- Generated readers: `5`
+- Generated readers: `6`
 - Executable readers: `0`
-- Adjacent manifests: `5`
-- Manual reader candidates: `15`
-- Manifest inventory: `13`
+- Adjacent manifests: `6`
+- Manual reader candidates: `14`
+- Manifest inventory: `14`
 
 ## Manual Reader Candidates
 
@@ -24,7 +24,7 @@ Executable SSOT: [`docs/executable-knowledge.riido.json`](docs/executable-knowle
 - `docs/20-domain/distribution-host-integration.md` (61 lines)
 - `docs/20-domain/ir-event-log.md` (326 lines)
 - `docs/20-domain/ir-schema-versioning.md` (299 lines)
-- `docs/20-domain/progress-message-catalog.md` (57 lines)
+- `docs/20-domain/provider-capability.md` (436 lines)
 
 ## Evidence Loop
 

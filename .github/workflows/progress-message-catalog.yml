@@ -1,0 +1,43 @@
+name: progress-message-catalog
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/progress-message-catalog.yml"
+      - "docs/20-domain/progress-message-catalog.md"
+      - "docs/20-domain/progress-message-catalog.riido.json"
+      - "progressmessage/**"
+      - "tools/progressmessage/**"
+      - "go.mod"
+  pull_request:
+    paths:
+      - ".github/workflows/progress-message-catalog.yml"
+      - "docs/20-domain/progress-message-catalog.md"
+      - "docs/20-domain/progress-message-catalog.riido.json"
+      - "progressmessage/**"
+      - "tools/progressmessage/**"
+      - "go.mod"
+
+jobs:
+  catalog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: false
+      - name: Verify progress message catalog
+        run: |
+          mkdir -p out
+          go test ./progressmessage ./tools/progressmessage -count=1
+          go run ./tools/progressmessage verify \
+            -check-doc \
+            -evidence-out out/progress-message-catalog-evidence.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: progress-message-catalog-evidence
+          path: out/progress-message-catalog-evidence.json
+          if-no-files-found: error

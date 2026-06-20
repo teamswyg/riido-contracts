@@ -1,0 +1,38 @@
+{
+  "schema_version": "riido-contracts-progress-message-catalog-doc.v1",
+  "id": "progress-message-catalog",
+  "title": "AI Agent Progress Message Catalog",
+  "riido_task": "RIID-4964",
+  "summary": "AI Agent runtime progress messages are fixed, translated, integer-coded, append-only, and rendered before public SSE delivery.",
+  "generated_doc": "docs/20-domain/progress-message-catalog.md",
+  "workflow": ".github/workflows/progress-message-catalog.yml",
+  "evidence_artifact": "progress-message-catalog-evidence",
+  "dsl": "progressmessage/catalog.dsl.riido.json",
+  "ir": "progressmessage/catalog.ir.riido.json",
+  "rules": [
+    "Message codes are integer, stable, and append-only.",
+    "A code must never be removed or reassigned. If product copy is no longer used, keep the code and mark usage as `reserved`.",
+    "The active catalog is intentionally small. `max_messages=15` prevents the SSE surface from becoming an unbounded prompt-generated copy channel.",
+    "`usage=required` messages are system-critical and must remain supported by daemon/control-plane fallbacks.",
+    "`usage=active` messages may be emitted by current daemon runtime parsing.",
+    "`usage=reserved` messages are not part of active daemon emission yet, but are held for compatibility or future product copy.",
+    "Public frontend SSE shape does not change. Generated/internal code may carry `message_code` and `message_args`, but public UI still consumes rendered `message`.",
+    "Tool message `label` arguments are state-neutral nouns or noun phrases. They must not include rendered state suffixes such as `수집 중`, `조회 완료`, `실행 중`, `실행`, or `완료`.",
+    "Daemon and control-plane renderers defensively normalize `label` before rendering so persisted/provider telemetry does not duplicate public state copy."
+  ],
+  "projection": [
+    "progressmessage/catalog.dsl.riido.json",
+    "progressmessage/catalog.ir.riido.json",
+    "daemon structured telemetry parser",
+    "control-plane progress renderer",
+    "existing SSE message string"
+  ],
+  "example_payload": "<riido_log>{\"code\":1101,\"args\":{\"label\":\"팀 프로젝트\",\"description\":\"팀의 프로젝트 목록, 진행 상태, 우선순위와 담당자 정보를 조회해 요약을 준비 중. . .\" }}<end>",
+  "loop": {
+    "observation": "Progress message copy already had DSL, IR, and runtime code, but the reader document was hand-maintained prose without a strict evidence artifact.",
+    "hypothesis": "Generating the reader and evidence from the catalog manifest plus DSL/IR will remove interpretation drift between daemon, control-plane, and client-facing SSE behavior.",
+    "execute": "Verify DSL to IR drift, render the catalog reader, validate workflow evidence binding, and upload a JSON evidence artifact in public CI.",
+    "evaluate": "The verifier fails on stale IR, stale generated reader, missing workflow binding, malformed manifest, or missing strict artifact upload.",
+    "retrospective": "Progress copy governance becomes an executable loop: fixed integer code catalog in SSOT, generated reader for humans, and evidence artifact for agents."
+  }
+}
