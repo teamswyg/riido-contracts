@@ -4,18 +4,18 @@
 
 Executable SSOT: [`docs/executable-knowledge.riido.json`](docs/executable-knowledge.riido.json).
 
-- Status: `advisory_findings`
+- Status: `verified`
 - Evidence artifact: `executable-knowledge-coverage`
 - Markdown readers scanned: `26`
-- Generated readers: `25`
+- Generated readers: `26`
 - Executable readers: `0`
-- Adjacent manifests: `23`
-- Manual reader candidates: `1`
-- Manifest inventory: `32`
+- Adjacent manifests: `24`
+- Manual reader candidates: `0`
+- Manifest inventory: `33`
 
 ## Manual Reader Candidates
 
-- `docs/20-domain/ai-agent-policy.md` (634 lines)
+None.
 
 ## Evidence Loop
 
