@@ -272,7 +272,7 @@ reducer 는 `(Type, EventSchemaVersion) → state_delta + view_delta` 로 dispat
 
 어댑터(C4)는 provider raw 표현을 `CanonicalEvent` 로 변환할 때 다음을 지킨다.
 
-1. raw payload 의 **알려지지 않은 키** 는 `CanonicalEvent.Unknown` 에 보존 (provider-capability.md §6 + ir-schema-versioning.md §2.1 의 unknown 정신).
+1. raw payload 의 **알려지지 않은 키** 는 `CanonicalEvent.Unknown` 에 보존 (provider-capability Invariant Anchors + ir-schema-versioning.md §2.1 의 unknown 정신).
 2. raw event 의 **알려지지 않은 type** 은 `ProviderUnknownEvent(rawType, rawPayload)` 로 변환. FSM 전이 없음.
 3. raw 표현을 “해석” 해서 의미를 추가한 경우 `CanonicalEvent.Payload.derived = true` 표기.
 

@@ -1,0 +1,45 @@
+name: provider-capability
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/provider-capability.yml"
+      - "docs/20-domain/provider-capability.md"
+      - "docs/20-domain/provider-capability.riido.json"
+      - "provider/capability/**"
+      - "tools/providercapability/**"
+      - "go.mod"
+  pull_request:
+    paths:
+      - ".github/workflows/provider-capability.yml"
+      - "docs/20-domain/provider-capability.md"
+      - "docs/20-domain/provider-capability.riido.json"
+      - "provider/capability/**"
+      - "tools/providercapability/**"
+      - "go.mod"
+
+jobs:
+  provider-capability:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: false
+      - name: Verify stdlib-only module
+        run: test "$(go list -m all | wc -l | tr -d ' ')" = "1"
+      - name: Verify provider capability
+        run: |
+          mkdir -p out
+          go test ./provider/capability ./tools/providercapability -count=1
+          go run ./tools/providercapability \
+            -check-doc \
+            -evidence-out out/provider-capability-evidence.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: provider-capability-evidence
+          path: out/provider-capability-evidence.json
+          if-no-files-found: error
