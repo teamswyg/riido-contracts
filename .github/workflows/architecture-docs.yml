@@ -15,9 +15,11 @@ on:
       - "docs/30-architecture/**"
       - "docs/50-roadmap/open-questions.md"
       - "docs/migration/contracts.md"
+      - "docs/migration/contracts.riido.json"
       - "tools/architecturedocs/**"
       - "tools/contextmap/**"
       - "tools/domaindocs/**"
+      - "tools/migrationdocs/**"
       - "tools/figmacoverage/**"
       - "tools/promotionpolicy/**"
       - "tools/refactorcharter/**"
@@ -35,9 +37,11 @@ on:
       - "docs/30-architecture/**"
       - "docs/50-roadmap/open-questions.md"
       - "docs/migration/contracts.md"
+      - "docs/migration/contracts.riido.json"
       - "tools/architecturedocs/**"
       - "tools/contextmap/**"
       - "tools/domaindocs/**"
+      - "tools/migrationdocs/**"
       - "tools/figmacoverage/**"
       - "tools/promotionpolicy/**"
       - "tools/refactorcharter/**"
@@ -58,6 +62,7 @@ jobs:
           go run ./tools/architecturedocs verify -check-doc -evidence-out out/architecturedocs-evidence.json
           go run ./tools/contextmap verify -check-doc -evidence-out out/context-map-evidence.json
           go run ./tools/domaindocs verify -check-doc -evidence-out out/domain-docs-index-evidence.json
+          go run ./tools/migrationdocs verify -check-doc -evidence-out out/migration-ledger-evidence.json
           go run ./tools/ssotdeps verify -check-doc -evidence-out out/ssotdeps-evidence.json
           go run ./tools/figmacoverage verify -check-doc -evidence-out out/figmacoverage-evidence.json
           go run ./tools/promotionpolicy verify -check-doc -evidence-out out/promotionpolicy-evidence.json
