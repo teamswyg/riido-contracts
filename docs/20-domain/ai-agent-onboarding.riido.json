@@ -1,0 +1,49 @@
+{
+  "schema_version": "riido-ai-agent-onboarding-evidence-manifest.v1",
+  "id": "ai-agent-onboarding",
+  "title": "AI Agent Onboarding",
+  "riido_task": "RIID-4720 [Contracts] AI Agent onboarding fixture projection",
+  "summary": "AI Agent onboarding fixture behavior is generated from the client API DSL/IR/OpenAPI fixture set; policy prose is not a second authority.",
+  "generated_doc": "docs/20-domain/ai-agent-onboarding.md",
+  "workflow": ".github/workflows/ai-agent-onboarding.yml",
+  "evidence_artifact": "ai-agent-onboarding-evidence",
+  "dsl_fixture": "apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json",
+  "ir_fixture": "apicontract/fixtures/control-plane-ai-agent-client.ir.riido.json",
+  "openapi_fixture": "apicontract/fixtures/control-plane-ai-agent-client.openapi.json",
+  "expected_operation_count": 6,
+  "expected_onboarding_operation_count": 4,
+  "expected_direct_create_operation_count": 2,
+  "expected_fixture_field_count": 9,
+  "expected_create_request_field_count": 7,
+  "expected_scenario_count": 14,
+  "required_operations": [
+    {"operation_id": "listAIAgentOnboardingFixtures", "kind": "query", "method": "GET", "path": "/v1/client/ai-agent/onboarding/fixtures", "response_status": 200, "response_ref": "AgentOnboardingFixtureListResponse"},
+    {"operation_id": "createAIAgentFromOnboardingFixture", "kind": "command", "method": "POST", "path": "/v1/client/ai-agent/onboarding/fixtures/{fixture_id}/agents", "request_ref": "CreateAgentConfigurationRequest", "response_status": 201, "response_ref": "AgentClientRecordResponse"},
+    {"operation_id": "listAIAgentOnboardingFixturesV2", "kind": "query", "method": "GET", "path": "/v2/client/workspaces/{workspace_id}/ai-agent/onboarding/fixtures", "response_status": 200, "response_ref": "AgentOnboardingFixtureListResponse"},
+    {"operation_id": "createAIAgentFromOnboardingFixtureV2", "kind": "command", "method": "POST", "path": "/v2/client/workspaces/{workspace_id}/ai-agent/onboarding/fixtures/{fixture_id}/agents", "request_ref": "CreateAgentConfigurationRequest", "response_status": 201, "response_ref": "AgentClientRecordResponseV2"},
+    {"operation_id": "createAIAgent", "kind": "command", "method": "POST", "path": "/v1/client/ai-agent/agents", "request_ref": "CreateAgentConfigurationRequest", "response_status": 201, "response_ref": "AgentClientRecordResponse"},
+    {"operation_id": "createAIAgentV2", "kind": "command", "method": "POST", "path": "/v2/client/workspaces/{workspace_id}/ai-agent/agents", "request_ref": "CreateAgentConfigurationRequest", "response_status": 201, "response_ref": "AgentClientRecordResponseV2"}
+  ],
+  "required_fixture_fields": ["fixture_id", "name", "role_label", "profile_thumbnail_url", "tmp_color", "description", "instruction", "default_visibility", "recommended_runtime_kind"],
+  "required_create_request_fields": ["name", "profile_thumbnail_url", "description", "instruction", "visibility", "runtime_id", "model_id"],
+  "fixture_rows": [
+    {"name": "리도", "tmp_color": "#C9A452"},
+    {"name": "영실", "tmp_color": "#6AA437"},
+    {"name": "홍도", "tmp_color": "#B87EAD"},
+    {"name": "지원", "tmp_color": "#2F84DE"}
+  ],
+  "no_diff_path_fragments": ["provider-install", "waitlist", "marketing"],
+  "invariants": [
+    "client-local onboarding draft/configuration selection remains non-durable until workspace_id and runtime_id are known.",
+    "fixture-created agents are ordinary agents with non-unique names; the control plane must not auto-suffix display names.",
+    "Direct setting is client presentation, not an AgentOnboardingFixture.",
+    "Runtime/provider install rows are presentation over device/runtime liveness, not provider-install commands."
+  ],
+  "loop": {
+    "observation": "Onboarding fixture rules existed in the AI Agent policy prose and API fixture scenarios, but no focused CI artifact proved the fixture catalog, direct-setting boundary, and final create routes together.",
+    "hypothesis": "A small verifier can make onboarding drift observable by deriving a reader and evidence from DSL, IR, OpenAPI, and product fixture-row anchors.",
+    "execute": "Verify onboarding list/create routes, direct create routes, fixture schema fields, create request fields, scenario count, OpenAPI projections, and no-diff provider/waitlist boundaries.",
+    "evaluate": "CI fails when onboarding operation tuples, schema fields, fixture row anchors, generated reader text, or no-diff route boundaries drift.",
+    "retrospective": "Future onboarding behavior should update this manifest and API fixture first, then regenerate the reader instead of editing long-form policy prose."
+  }
+}

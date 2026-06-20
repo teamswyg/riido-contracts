@@ -1,0 +1,53 @@
+name: ai-agent-onboarding
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/ai-agent-onboarding.yml"
+      - "docs/20-domain/ai-agent-onboarding.md"
+      - "docs/20-domain/ai-agent-onboarding.riido.json"
+      - "docs/20-domain/ai-agent-policy.md"
+      - "docs/30-architecture/ssot-dependency-map.riido.json"
+      - "apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json"
+      - "apicontract/fixtures/control-plane-ai-agent-client.ir.riido.json"
+      - "apicontract/fixtures/control-plane-ai-agent-client.openapi.json"
+      - "tools/aiagentonboarding/**"
+      - "go.mod"
+  pull_request:
+    paths:
+      - ".github/workflows/ai-agent-onboarding.yml"
+      - "docs/20-domain/ai-agent-onboarding.md"
+      - "docs/20-domain/ai-agent-onboarding.riido.json"
+      - "docs/20-domain/ai-agent-policy.md"
+      - "docs/30-architecture/ssot-dependency-map.riido.json"
+      - "apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json"
+      - "apicontract/fixtures/control-plane-ai-agent-client.ir.riido.json"
+      - "apicontract/fixtures/control-plane-ai-agent-client.openapi.json"
+      - "tools/aiagentonboarding/**"
+      - "go.mod"
+
+jobs:
+  ai-agent-onboarding:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: false
+      - name: Verify stdlib-only module
+        run: test "$(go list -m all | wc -l | tr -d ' ')" = "1"
+      - name: Verify AI Agent onboarding evidence
+        run: |
+          mkdir -p out
+          go test ./tools/aiagentonboarding -count=1
+          go run ./tools/aiagentonboarding \
+            -check-doc \
+            -evidence-out out/ai-agent-onboarding-evidence.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ai-agent-onboarding-evidence
+          path: out/ai-agent-onboarding-evidence.json
+          if-no-files-found: error
