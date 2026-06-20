@@ -1,0 +1,42 @@
+{
+  "schema_version": "riido-contracts-context-map.v1",
+  "id": "contracts-context-map",
+  "riido_task": "RIID-4713",
+  "generated_doc": "docs/20-domain/context-map.md",
+  "module": "github.com/teamswyg/riido-contracts",
+  "role": "riido-contracts owns shared, versioned facts that more than one Riido repository must agree on at build time or black-box test time. It is a contract module, not a runtime module.",
+  "boundary_rule": "Contracts may describe shared DTOs and state vocabulary. They must not import or redefine runtime adapters, stores, Terraform modules, credentials, provider CLI invocation, or deployment evidence.",
+  "owned_contexts": [
+    {"context":"C1 Task Lifecycle","package":"task","responsibility":"task states, terminal/active classification, legal transition matrix, FSM schema version"},
+    {"context":"C2 IR Event Log","package":"ir","responsibility":"canonical event envelope, actor/scope/event type catalog, envelope validation, pure reducer contract"},
+    {"context":"C3 Provider Capability","package":"provider/capability","responsibility":"provider capability model, protocol vocabulary, compatibility status, protocol-critical args, capability fingerprint"},
+    {"context":"C10 Assignment Polling Contract","package":"assignment","responsibility":"assignment state, poll action, heartbeat/event DTOs, task-event DTOs, service schema version"},
+    {"context":"C10 API Contract Projection","package":"apicontract","responsibility":"shared API DSL, canonical API IR, generated OpenAPI projection fixtures, drift verification"},
+    {"context":"C10 AI Agent Policy","package":"docs + apicontract","responsibility":"AI Agent ubiquitous language, agent/runtime/device lifecycle policy, client-facing API enum and sum-type vocabulary"},
+    {"context":"C11/C10 Host Integration Vocabulary","package":"hostintegration","responsibility":"distribution channel and provider routing status vocabulary shared by daemon/control-plane"}
+  ],
+  "non_owned_contexts": [
+    {"context":"Daemon runtime","owner":"riido-daemon","boundary":"provider process execution, local API, task DB, workspace projection, store-app helper behavior"},
+    {"context":"SaaS control plane","owner":"riido-control-plane","boundary":"HTTP/SSE routes, authorization, assignment store actors, metrics, review seed, public AWS adapter behavior"},
+    {"context":"Infrastructure","owner":"riido-infra","boundary":"Terraform, AWS accounts, deployment evidence, private release tooling"},
+    {"context":"CLI surface","owner":"riido-daemon","boundary":"user-facing local commands and flags"}
+  ],
+  "direction_rules": ["`task` may import `ir` because FSM transitions are driven by IR event types.", "`ir` must not import `task`.", "Runtime repositories may import tagged `riido-contracts` releases.", "Contract packages must stay standard-library only.", "OpenAPI artifacts are generated projections from `apicontract` IR, not SSOT.", "A new shared package requires a promotion decision and `docs/migration/contracts.md` update."],
+  "ssot_links": [
+    {"label":"Promotion policy","path":"../30-architecture/contract-promotion-policy.md"},
+    {"label":"Module decomposition","path":"../30-architecture/module-decomposition.md"},
+    {"label":"Integration matrix","path":"../30-architecture/integration-matrix.md"},
+    {"label":"API contract projection","path":"api-contract-projection.md"},
+    {"label":"AI Agent policy","path":"ai-agent-policy.md"},
+    {"label":"Open questions","path":"../50-roadmap/open-questions.md"}
+  ],
+  "workflow": ".github/workflows/architecture-docs.yml",
+  "evidence_artifact": "context-map-evidence",
+  "loop": {
+    "observation": "The split-repo context map was a hand-maintained reader document even though it defines repo ownership boundaries consumed by architecture CI.",
+    "hypothesis": "A compact context-map manifest can generate the reader and verify ownership boundaries in public CI without introducing runtime dependencies.",
+    "execute": "Render context-map.md from this manifest and publish context-map evidence in the architecture-docs workflow.",
+    "evaluate": "The verifier fails on stale generated docs, missing workflow binding, malformed context ownership entries, or missing direction rules.",
+    "retrospective": "Repo ownership knowledge becomes executable boundary evidence instead of prose carried by memory."
+  }
+}
