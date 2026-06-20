@@ -36,7 +36,7 @@ A lower-layer contradiction must be recorded locally, escalated to the owning SS
 | `runtime-model-selection-assignment-snapshot` | Runtime model selection is assignment-created snapshot data | `riido-contracts:docs/20-domain/assignment-polling.md` | riido-control-plane, riido-daemon, riido-infra |
 | `runtime-prompt-consumption` | Runtime prompt and native-config consumption | `riido-daemon:docs/20-domain/workspace.md` | riido-control-plane |
 | `storage-topology` | Production deployment and storage topology | `riido-infra:docs/architecture/terraform-authoring.md` | riido-control-plane |
-| `workspace-assigned-agent-profile-map` | Workspace task/card lists read current assigned AI Agent profile hints from a component_id keyed v2 map | `riido-contracts:docs/20-domain/api-contract-projection.md` | riido-control-plane, riido-client |
+| `workspace-assigned-agent-profile-map` | Workspace task/card lists read current assigned AI Agent profile hints from a component_id keyed v2 map | `riido-contracts:docs/20-domain/ai-agent-assigned-profile-map.md` | riido-control-plane, riido-client |
 | `workspace-scoped-ai-agent-v2-api` | AI Agent v2 client API is scoped by workspace_id path parameters while workspace list/create remains outside the AI Agent contract | `riido-contracts:docs/20-domain/ai-agent-api-surface.md` | riido-control-plane, riido-client |
 
 ### `active-assignment-heartbeat-stale-lease`
@@ -256,10 +256,10 @@ A lower-layer contradiction must be recorded locally, escalated to the owning SS
 ### `workspace-assigned-agent-profile-map`
 
 - Human phrase: Workspace assigned-agent profile map
-- Owner: `riido-contracts:docs/20-domain/api-contract-projection.md`
+- Owner: `riido-contracts:docs/20-domain/ai-agent-assigned-profile-map.md`
 - Source refs:
-  - `riido-contracts:docs/20-domain/ai-agent-policy.md` requires `workspace assigned-agent profile map`
-  - `riido-contracts:docs/20-domain/api-contract-projection.md` requires `riido.v2.aiAgent.tasks.assignedAgentProfiles`
+  - `riido-contracts:docs/20-domain/ai-agent-assigned-profile-map.md` requires `assigned_agent_profiles is keyed by the exact component_id/task_id string`
+  - `riido-contracts:docs/20-domain/ai-agent-assigned-profile-map.md` requires `v2.aiAgent.tasks.assignedAgentProfiles`
 - Downstreams:
   - `riido-control-plane`: v2 HTTP route, current assignment projection, fixture color persistence, and generated-client handoff
   - `riido-client`: Task/card list avatar hints use the generated query without replacing participant dropdown or task-thread reads.

@@ -613,18 +613,18 @@
       "source_refs": [
         {
           "repo": "riido-contracts",
-          "path": "docs/20-domain/ai-agent-policy.md",
-          "required_phrase": "workspace assigned-agent profile map"
+          "path": "docs/20-domain/ai-agent-assigned-profile-map.md",
+          "required_phrase": "assigned_agent_profiles is keyed by the exact component_id/task_id string"
         },
         {
           "repo": "riido-contracts",
-          "path": "docs/20-domain/api-contract-projection.md",
-          "required_phrase": "riido.v2.aiAgent.tasks.assignedAgentProfiles"
+          "path": "docs/20-domain/ai-agent-assigned-profile-map.md",
+          "required_phrase": "v2.aiAgent.tasks.assignedAgentProfiles"
         }
       ],
       "owner": {
         "repo": "riido-contracts",
-        "path": "docs/20-domain/api-contract-projection.md"
+        "path": "docs/20-domain/ai-agent-assigned-profile-map.md"
       },
       "downstreams": [
         {
