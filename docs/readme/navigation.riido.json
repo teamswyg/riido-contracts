@@ -1,0 +1,28 @@
+{
+  "schema_version": "riido-contracts-repository-readme-fragment.v1",
+  "id": "contracts-readme-navigation",
+  "doc_links": [
+    {"topic": "이 레포가 왜 공유 계약만 소유하는지", "path": "docs/30-architecture/module-decomposition.md"},
+    {"topic": "bounded context와 각 package 책임", "path": "docs/20-domain/context-map.md"},
+    {"topic": "AI Agent 보편언어와 정책 단언", "path": "docs/20-domain/ai-agent-policy.md"},
+    {"topic": "API DSL -> IR -> OpenAPI projection 규칙", "path": "docs/20-domain/api-contract-projection.md"},
+    {"topic": "SSOT 간 의존 방향과 작업 루프", "path": "docs/30-architecture/ssot-dependency-map.md"},
+    {"topic": "SSOT 의존 방향의 기계 검증 manifest", "path": "docs/30-architecture/ssot-dependency-map.riido.json"},
+    {"topic": "Figma v1.22 AI Agent 화면 커버리지와 SSOT 흡수 상태", "path": "docs/30-architecture/figma-ai-agent-coverage.md"},
+    {"topic": "Figma 화면 커버리지의 기계 검증 manifest", "path": "docs/30-architecture/figma-ai-agent-coverage.riido.json"},
+    {"topic": "계약을 언제 public module로 승격할지", "path": "docs/30-architecture/contract-promotion-policy.md"},
+    {"topic": "레포 간 어떤 artifact를 주고받는지", "path": "docs/30-architecture/integration-matrix.md"},
+    {"topic": "마이그레이션 중 남은 맥락", "path": "docs/migration/contracts.md"},
+    {"topic": "아직 결정되지 않은 질문", "path": "docs/50-roadmap/open-questions.md"}
+  ],
+  "packages": [
+    {"name": "assignment", "description": "SaaS assignment polling DTO, task event vocabulary, runtime binding DTO를 제공합니다."},
+    {"name": "apicontract", "description": "API DSL, API IR, OpenAPI projection fixture, enum/sum-type contract, drift verifier/generator를 소유합니다."},
+    {"name": "fsmmeta", "description": "public FSM pattern vocabulary와 conformance profile codegen 결과를 제공합니다."},
+    {"name": "ir", "description": "canonical event envelope, event catalog, reducer contract, envelope validation을 소유합니다."},
+    {"name": "hostintegration", "description": "distribution channel과 provider routing status vocabulary를 공유합니다."},
+    {"name": "progressmessage", "description": "AI Agent runtime progress message의 integer code, locale template, usage classification, append-only fixture를 소유합니다."},
+    {"name": "provider/capability", "description": "provider capability, protocol identifier, compatibility status, fingerprint vocabulary를 소유합니다."},
+    {"name": "task", "description": "task lifecycle state와 transition matrix를 소유합니다."}
+  ]
+}

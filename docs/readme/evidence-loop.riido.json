@@ -1,0 +1,11 @@
+{
+  "schema_version": "riido-contracts-repository-readme-fragment.v1",
+  "id": "contracts-readme-evidence-loop",
+  "loop": {
+    "observation": "루트 README가 contracts의 공유 계약 경계와 FSM 문서를 담고 있었지만 README 자체는 hand-maintained markdown이어서 executable knowledge coverage에서 manual reader로 남았다.",
+    "hypothesis": "README를 manifest에서 생성하고 fsmgen이 소유한 Mermaid 블록만 조합 입력으로 보존하면 루트 entrypoint도 실행 가능한 SSOT reader가 된다.",
+    "execute": "README.riido.json에서 README.md 골격을 생성하고, repositoryreadme tool이 링크, marker, forbidden literal, freshness, evidence artifact를 검증한다.",
+    "evaluate": "CI는 repository-readme evidence와 executable-knowledge coverage evidence를 업로드하고, coverage status가 verified/manual_count=0으로 돌아와야 한다.",
+    "retrospective": "contracts의 루트 entrypoint는 사람이 임의로 편집하는 설명문이 아니라 manifest + fsmgen block으로 조립되는 evidence-backed reader가 된다."
+  }
+}

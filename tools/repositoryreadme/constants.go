@@ -2,6 +2,7 @@ package main
 
 const (
 	manifestSchema  = "riido-contracts-repository-readme.v1"
+	fragmentSchema  = "riido-contracts-repository-readme-fragment.v1"
 	evidenceSchema  = "riido-contracts-repository-readme-evidence.v1"
 	defaultManifest = "README.riido.json"
 	generatedDoc    = "README.md"
