@@ -26,7 +26,7 @@
 | **G** | Upgrade / runtime change | cross-cutting | 부분 transition |
 | **H** | Administrative / audit | server / operator | 비-transition |
 
-“transition event” 인지 여부는 본 문서의 카탈로그 표(§3) 의 **Transition** 열이 SSOT 다. task-lifecycle.md §4 의 reference event 이름이 본 표에 있어야 하며, 불일치는 PR 단계에서 거절된다.
+“transition event” 인지 여부는 본 문서의 카탈로그 표(§3) 의 **Transition** 열이 SSOT 다. task-lifecycle.md 의 generated Transition Surface 에 있는 reference event 이름이 본 표에 있어야 하며, 불일치는 PR 단계에서 거절된다.
 
 ## 3. EventType 카탈로그
 
@@ -112,7 +112,7 @@ RunScope EventType 은 `NativeConfigVersion` 의무 여부에 따라 **세** 묶
 | `RunStarted` | ✓ | runtime (C4) | `runID`, `pid` (optional) | `Preparing → Running` 의 두 트리거 중 둘째. `RuntimePinned` 와 같은 `(RuntimeID, CapabilityFingerprint)` 를 가져야 한다 |
 | `InputRequested` | ✓ | runtime (C4) | `prompt`, `inputType` ("approval"/"clarify"/"choice") | `Running → NeedsInput` |
 | `InputProvided` | ✓ | server | `response` | `NeedsInput → Running` |
-| `BlockerRaised` | ✓ | runtime / scheduler | `category` (enum), `reason`, `subject` | `Running → Blocked` 또는 `Preparing → Blocked`. category 값은 `task-lifecycle.md` §8 표 |
+| `BlockerRaised` | ✓ | runtime / scheduler | `category` (enum), `reason`, `subject` | `Running → Blocked` 또는 `Preparing → Blocked`. category 값은 task lifecycle invariant anchor 의 외부 조건 범위와 맞아야 함 |
 | `BlockerResolved` | ✓ | scheduler | `category` (해소된 카테고리) | `Blocked → Running` |
 | `BlockerResolvedRequeue` | ✓ | scheduler | `category` | `Blocked → Queued` (다른 runtime 필요) |
 | `RunReportedDone` | ✓ | runtime (C4) | `summary` (optional) | `Running → Validating`. agent 자기보고 — 이것 자체로 완료 아님 (invariant 4) |
@@ -216,7 +216,7 @@ RunScope EventType 은 `NativeConfigVersion` 의무 여부에 따라 **세** 묶
 
 1. **transition event 만 FSM state 를 바꾼다.** 비-transition event 는 IR 에 append 되어도 `TaskState` 가 그대로다.
 2. **transition event 는 모두 `FSMVersion` 의무 필드를 가진다** (`ir-schema-versioning.md` §0 invariant 4).
-3. **task-lifecycle.md §4 의 reference event 이름은 본 §3.1 표와 정확히 매칭** 되어야 한다. 둘 중 하나만 갱신되는 PR 은 거절.
+3. **task-lifecycle.md 의 generated Transition Surface reference event 이름은 본 §3.1 표와 정확히 매칭** 되어야 한다. 둘 중 하나만 갱신되는 PR 은 거절.
 4. **알려지지 않은 raw event type** 은 `ProviderUnknownEvent` 로만 흡수된다. 정의되지 않은 새 `EventType` 식별자를 임의로 발행하는 코드는 PR 단계에서 거절.
 
 ## 5. reducer dispatch + 보존
@@ -289,7 +289,7 @@ reducer 는 `(Type, EventSchemaVersion) → state_delta + view_delta` 로 dispat
 
 | 인접 SSOT | 본 문서가 요구/제공 |
 | --- | --- |
-| [`./task-lifecycle.md`](./task-lifecycle.md) (C1) | §3.1 의 transition event 이름이 §4 reference 표와 1:1 매칭. transition 여부의 정식 분류는 본 문서. |
+| [`./task-lifecycle.md`](./task-lifecycle.md) (C1) | §3.1 의 transition event 이름이 generated Transition Surface 와 1:1 매칭. transition 여부의 정식 분류는 본 문서. |
 | [`./ir-schema-versioning.md`](./ir-schema-versioning.md) | `CanonicalEvent` 필수 필드(9+2+FSMVersion) 규칙은 그 문서가 소유. 본 문서는 카탈로그와 dispatch 만. |
 | [`./provider-capability.md`](./provider-capability.md) (C3) | Cat B/G 의 capability 관련 이벤트는 capability fingerprint 변경 흐름에 대응 |
 | [`./provider-runtime.md`](./provider-runtime.md) (C4) | Cat C 가 어댑터 ACL 의 출력. raw → canonical 매핑 표는 C4 가 소유. 본 문서는 canonical 의 EventType 명만 소유 |
@@ -322,5 +322,5 @@ reducer 는 `(Type, EventSchemaVersion) → state_delta + view_delta` 로 dispat
 - 새 EventType 추가: `change:additive` (transition 표 / reference 표 동시 갱신 시).
 - 기존 EventType payload 필수 키 추가: `change:additive` (옛 reducer 와 호환 유지).
 - 기존 EventType payload 의 의미 변경: `change:breaking-ir` + `EventSchemaVersion` 증가 + 옛 reducer 보존.
-- transition ↔ 비-transition 분류 변경: `change:breaking-ir` + `FSMSchemaVersion` 증가 + task-lifecycle.md §4 와 동시 갱신.
+- transition ↔ 비-transition 분류 변경: `change:breaking-ir` + `FSMSchemaVersion` 증가 + task-lifecycle generated Transition Surface 와 동시 갱신.
 - Category 자체 변경(추가/통합/제거): `change:breaking-policy` + module-decomposition.md 갱신.

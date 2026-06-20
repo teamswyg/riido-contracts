@@ -1,0 +1,55 @@
+name: task-lifecycle
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/task-lifecycle.yml"
+      - "docs/20-domain/task-lifecycle.md"
+      - "docs/20-domain/task-lifecycle.riido.json"
+      - "enumgen/**"
+      - "ir/**"
+      - "task/**"
+      - "tools/enumgen/**"
+      - "tools/fsmgen/**"
+      - "tools/tasklifecycle/**"
+      - "go.mod"
+  pull_request:
+    paths:
+      - ".github/workflows/task-lifecycle.yml"
+      - "docs/20-domain/task-lifecycle.md"
+      - "docs/20-domain/task-lifecycle.riido.json"
+      - "enumgen/**"
+      - "ir/**"
+      - "task/**"
+      - "tools/enumgen/**"
+      - "tools/fsmgen/**"
+      - "tools/tasklifecycle/**"
+      - "go.mod"
+
+jobs:
+  task-lifecycle:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: false
+      - name: Verify stdlib-only module
+        run: test "$(go list -m all | wc -l | tr -d ' ')" = "1"
+      - name: Verify task lifecycle
+        run: |
+          mkdir -p out
+          go run ./tools/enumgen verify
+          go run ./tools/fsmgen verify
+          go test ./task ./tools/tasklifecycle -count=1
+          go run ./tools/tasklifecycle \
+            -check-doc \
+            -evidence-out out/task-lifecycle-evidence.json
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: task-lifecycle-evidence
+          path: out/task-lifecycle-evidence.json
+          if-no-files-found: error
