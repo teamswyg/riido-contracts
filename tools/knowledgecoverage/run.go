@@ -55,6 +55,9 @@ func run(args []string) error {
 			return err
 		}
 	}
+	if err := verifyReport(report); err != nil {
+		return err
+	}
 	fmt.Printf("knowledgecoverage: %s scanned=%d manual=%d\n", status(report), report.ScannedCount, report.ManualCount)
 	return nil
 }
