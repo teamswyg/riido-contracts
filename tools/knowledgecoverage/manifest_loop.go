@@ -2,7 +2,7 @@ package main
 
 const manifestLoopSampleLimit = 3
 
-func scanManifestLoops(root string) (manifestLoopReport, error) {
+func scanManifestLoops(root string, sources []manifestLoopSource) (manifestLoopReport, error) {
 	report := manifestLoopReport{}
 	missingByGroup := map[string]int{}
 	missingSamples := map[string][]string{}
@@ -12,7 +12,7 @@ func scanManifestLoops(root string) (manifestLoopReport, error) {
 	}
 	for _, path := range paths {
 		group := manifestGroup(root, path)
-		switch manifestLoopStatus(root, path) {
+		switch manifestLoopStatusWithSources(root, path, sources) {
 		case "direct":
 			report.Complete++
 			report.Direct++

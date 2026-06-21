@@ -25,6 +25,9 @@ func verifyManifest(root string, m manifest) error {
 			return err
 		}
 	}
+	if err := verifyManifestLoopSources(root, m.ManifestLoopSources); err != nil {
+		return err
+	}
 	return verifyWorkflow(root, m)
 }
 

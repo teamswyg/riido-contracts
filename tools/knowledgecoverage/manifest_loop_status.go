@@ -3,6 +3,10 @@ package main
 import "path/filepath"
 
 func manifestLoopStatus(root, path string) string {
+	return manifestLoopStatusWithSources(root, path, nil)
+}
+
+func manifestLoopStatusWithSources(root, path string, sources []manifestLoopSource) string {
 	var doc map[string]any
 	if !readManifestDoc(path, &doc) {
 		return "missing"
@@ -11,6 +15,9 @@ func manifestLoopStatus(root, path string) string {
 		return "direct"
 	}
 	if source, ok := doc["loop_source"].(string); ok && manifestSourceHasLoop(root, path, source) {
+		return "delegated"
+	}
+	if externalManifestSourceHasLoop(root, path, sources) {
 		return "delegated"
 	}
 	return "missing"

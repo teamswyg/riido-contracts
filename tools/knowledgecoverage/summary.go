@@ -39,7 +39,7 @@ func summarize(root string, m manifest, docs []docRecord) (scanReport, error) {
 	if err != nil {
 		return report, err
 	}
-	report.ManifestLoops, err = scanManifestLoops(root)
+	report.ManifestLoops, err = scanManifestLoops(root, m.ManifestLoopSources)
 	report.ManifestLoopBudget = m.ManifestLoopBudget
 	report.Problems = manifestLoopBudgetProblems(report.ManifestLoops, m.ManifestLoopBudget)
 	return report, err
