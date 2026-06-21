@@ -21,6 +21,8 @@ type evidence struct {
 	ManifestMissingLoopCount   int                   `json:"manifest_missing_loop_count"`
 	ManifestMissingLoopByGroup []manifestGroupCount  `json:"manifest_missing_loop_by_group"`
 	ManifestMissingLoopSamples []manifestGroupSample `json:"manifest_missing_loop_samples"`
+	ManifestLoopBudget         manifestLoopBudget    `json:"manifest_loop_budget"`
+	ProblemSummaries           []string              `json:"problem_summaries"`
 	EvidenceArtifact           string                `json:"evidence_artifact"`
 	Workflow                   string                `json:"workflow"`
 	Loop                       evidenceLoop          `json:"loop"`
@@ -47,6 +49,8 @@ func newEvidence(m manifest, report scanReport) evidence {
 		ManifestMissingLoopCount:   report.ManifestLoops.Missing,
 		ManifestMissingLoopByGroup: report.ManifestLoops.MissingGroups,
 		ManifestMissingLoopSamples: report.ManifestLoops.MissingSamples,
+		ManifestLoopBudget:         m.ManifestLoopBudget,
+		ProblemSummaries:           report.Problems,
 		EvidenceArtifact:           m.EvidenceArtifact,
 		Workflow:                   m.Workflow, Loop: m.Loop,
 	}
@@ -60,7 +64,7 @@ func manualSamples(report scanReport) []docRecord {
 }
 
 func status(report scanReport) string {
-	if report.ManualCount > 0 {
+	if report.ManualCount > 0 || len(report.Problems) > 0 {
 		return "failed"
 	}
 	return "verified"

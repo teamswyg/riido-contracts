@@ -5,7 +5,7 @@ const (
 	manifestSampleLimit = 3
 )
 
-func summarize(root string, docs []docRecord) (scanReport, error) {
+func summarize(root string, m manifest, docs []docRecord) (scanReport, error) {
 	report := scanReport{Docs: docs, ScannedCount: len(docs)}
 	for _, doc := range docs {
 		switch doc.Classification {
@@ -40,5 +40,7 @@ func summarize(root string, docs []docRecord) (scanReport, error) {
 		return report, err
 	}
 	report.ManifestLoops, err = scanManifestLoops(root)
+	report.ManifestLoopBudget = m.ManifestLoopBudget
+	report.Problems = manifestLoopBudgetProblems(report.ManifestLoops, m.ManifestLoopBudget)
 	return report, err
 }
