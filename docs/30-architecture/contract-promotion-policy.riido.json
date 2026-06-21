@@ -2,6 +2,15 @@
   "schema_version": "riido-contract-promotion-policy.v1",
   "id": "contract-promotion-policy",
   "riido_task": "RIID-4713",
+  "workflow": ".github/workflows/architecture-docs.yml",
+  "evidence_artifact": "architecture-docs-evidence",
+  "loop": {
+    "observation": "Contract promotion policy is machine-readable architecture policy and architecture-docs CI already emits promotionpolicy evidence, but executable knowledge coverage still treated the policy manifest as loop-less.",
+    "hypothesis": "Embedding the promotion policy evidence loop in the policy manifest will make promotion governance executable without duplicating the policy in hand-written reader prose.",
+    "execute": "Strictly decode the promotion policy manifest, verify promotion conditions, version axes, runtime tag rules, breaking-change rules, generated reader drift, and workflow evidence binding, then publish promotionpolicy evidence in architecture-docs CI.",
+    "evaluate": "The verifier fails on malformed policy JSON, incomplete loop metadata, stale generated reader, missing migration-doc promotion condition, missing version/tag rules, missing breaking-change rules, or missing workflow evidence binding.",
+    "retrospective": "Contract promotion governance remains a generated architecture reader backed by one policy manifest and public CI evidence."
+  },
   "generated_doc": "docs/30-architecture/contract-promotion-policy.md",
   "summary": "This policy decides when a fact belongs in riido-contracts.",
   "promotion_conditions": [

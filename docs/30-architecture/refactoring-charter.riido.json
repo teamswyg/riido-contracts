@@ -2,6 +2,9 @@
   "schema_version": "riido-refactoring-charter.v1",
   "id": "surface-area-refactoring-charter",
   "riido_task": "RIID-4964",
+  "workflow": ".github/workflows/architecture-docs.yml",
+  "evidence_artifact": "architecture-docs-evidence",
+  "loop": {"observation": "The refactoring charter defines executable surface-area rules and architecture-docs CI already emits refactorcharter evidence, but executable knowledge coverage still treated the charter manifest as loop-less.", "hypothesis": "Adding the evidence loop to the charter manifest and verifying workflow binding will keep the charter as executable policy rather than narrative guidance.", "execute": "Strictly decode the charter, verify semantic units and required artifact categories, scan configured repository roots for files over the target line budget, and publish refactorcharter evidence in architecture-docs CI.", "evaluate": "The verifier fails on malformed charter JSON, incomplete loop metadata, invalid mode, missing semantic units, missing artifact categories, invalid scan roots, missing workflow evidence binding, or enforced over-budget files.", "retrospective": "Refactoring guidance remains an evidence-producing policy: advisory findings are observable and can be promoted to enforced gates when the repository is ready."},
   "mode": "advisory",
   "line_budget": {
     "target_max_lines": 75,

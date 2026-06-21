@@ -33,6 +33,9 @@ func runVerify(args []string, out io.Writer) error {
 	if err := verifyManifest(m); err != nil {
 		return err
 	}
+	if err := verifyWorkflowBinding(root, m); err != nil {
+		return err
+	}
 	if *checkDoc {
 		if err := verifyRenderedDoc(root, m); err != nil {
 			return err
@@ -43,10 +46,13 @@ func runVerify(args []string, out io.Writer) error {
 			SchemaVersion:              evidenceSchemaVersion,
 			ID:                         m.ID,
 			Status:                     "verified",
+			Workflow:                   m.Workflow,
+			EvidenceArtifact:           m.EvidenceArtifact,
 			PromotionConditionsChecked: len(m.PromotionConditions),
 			BreakingRulesChecked:       len(m.BreakingChangeRules),
 			RuntimeTagRulesChecked:     len(m.RuntimeTagModel),
 			CheckDoc:                   *checkDoc,
+			Loop:                       m.Loop,
 		}); err != nil {
 			return err
 		}

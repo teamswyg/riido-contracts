@@ -10,13 +10,16 @@ import (
 const evidenceSchemaVersion = "riido-promotion-policy-evidence.v1"
 
 type evidence struct {
-	SchemaVersion              string `json:"schema_version"`
-	ID                         string `json:"id"`
-	Status                     string `json:"status"`
-	PromotionConditionsChecked int    `json:"promotion_conditions_checked"`
-	BreakingRulesChecked       int    `json:"breaking_rules_checked"`
-	RuntimeTagRulesChecked     int    `json:"runtime_tag_rules_checked"`
-	CheckDoc                   bool   `json:"check_doc"`
+	SchemaVersion              string       `json:"schema_version"`
+	ID                         string       `json:"id"`
+	Status                     string       `json:"status"`
+	Workflow                   string       `json:"workflow"`
+	EvidenceArtifact           string       `json:"evidence_artifact"`
+	PromotionConditionsChecked int          `json:"promotion_conditions_checked"`
+	BreakingRulesChecked       int          `json:"breaking_rules_checked"`
+	RuntimeTagRulesChecked     int          `json:"runtime_tag_rules_checked"`
+	CheckDoc                   bool         `json:"check_doc"`
+	Loop                       evidenceLoop `json:"loop"`
 }
 
 func writeEvidence(path string, value evidence) error {

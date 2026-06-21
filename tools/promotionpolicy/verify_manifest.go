@@ -13,6 +13,12 @@ func verifyManifest(m manifest) error {
 	if blank(m.ID) || blank(m.RiidoTask) || blank(m.GeneratedDoc) || blank(m.Summary) {
 		return errors.New("id, riido_task, generated_doc, and summary are required")
 	}
+	if blank(m.Workflow) || blank(m.EvidenceArtifact) {
+		return errors.New("workflow and evidence_artifact are required")
+	}
+	if !completeLoop(m.Loop) {
+		return errors.New("complete evidence loop is required")
+	}
 	if len(m.PromotionConditions) != 5 {
 		return fmt.Errorf("promotion_conditions=%d, want 5", len(m.PromotionConditions))
 	}

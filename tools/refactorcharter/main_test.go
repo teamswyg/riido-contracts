@@ -25,12 +25,23 @@ func TestEnforcedModeFailsOnLongFile(t *testing.T) {
 		"schema_version":"riido-refactoring-charter.v1",
 		"id":"test-charter",
 		"riido_task":"RIID-TEST",
+		"workflow":".github/workflows/architecture-docs.yml",
+		"evidence_artifact":"architecture-docs-evidence",
+		"loop":{"observation":"o","hypothesis":"h","execute":"x","evaluate":"e","retrospective":"r"},
 		"mode":"enforced",
 		"line_budget":{"target_max_lines":3,"recommended_min_lines":1,"recommended_max_lines":2},
 		"semantic_units":["concept"],
 		"required_artifacts":["verification"],
 		"scan":{"roots":["src"],"include_extensions":[".go"],"generated_path_fragments":[],"generated_markers":[]}
 	}`
+	mustWrite(t, root, ".github/workflows/architecture-docs.yml", `steps:
+- run: go run ./tools/refactorcharter -evidence-out out/refactorcharter-evidence.json
+- uses: actions/upload-artifact@v4
+  with:
+    name: architecture-docs-evidence
+    path: out/*.json
+    if-no-files-found: error
+`)
 	manifestPath := filepath.Join(root, "charter.json")
 	if err := os.WriteFile(manifestPath, []byte(manifest), 0o644); err != nil {
 		t.Fatal(err)

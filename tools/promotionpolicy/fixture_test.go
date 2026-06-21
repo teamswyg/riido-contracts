@@ -3,6 +3,15 @@ package main
 func minimalManifest() manifest {
 	return manifest{
 		SchemaVersion: schemaVersion, ID: "promotion", RiidoTask: "RIID-TEST",
+		Workflow:         ".github/workflows/architecture-docs.yml",
+		EvidenceArtifact: "architecture-docs-evidence",
+		Loop: evidenceLoop{
+			Observation:   "observe",
+			Hypothesis:    "hypothesis",
+			Execute:       "execute",
+			Evaluate:      "evaluate",
+			Retrospective: "retro",
+		},
 		GeneratedDoc: "docs/30-architecture/contract-promotion-policy.md",
 		Summary:      "policy summary",
 		PromotionConditions: []string{
