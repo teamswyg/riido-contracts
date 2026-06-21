@@ -14,6 +14,9 @@ func verifyManifest(root string, m manifest) error {
 	if !filled(m.ID, m.Title, m.GeneratedDoc, m.Workflow, m.EvidenceArtifact) {
 		return errors.New("id, title, generated_doc, workflow, and evidence_artifact are required")
 	}
+	if len(m.WorkflowTriggerPaths) == 0 {
+		return errors.New("workflow_trigger_paths are required")
+	}
 	if len(m.ScanRoots) == 0 || len(m.GeneratedMarkers) == 0 {
 		return errors.New("scan_roots and generated_markers are required")
 	}
@@ -52,5 +55,5 @@ func verifyWorkflow(root string, m manifest) error {
 			return errors.New("workflow does not bind strict knowledge coverage evidence")
 		}
 	}
-	return nil
+	return verifyWorkflowTriggerPaths(text, m.WorkflowTriggerPaths)
 }

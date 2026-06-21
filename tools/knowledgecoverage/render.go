@@ -11,6 +11,7 @@ func renderDoc(m manifest, report scanReport) string {
 	fmt.Fprintf(&b, "Executable SSOT: [`%s`](%s).\n\n", defaultManifest, defaultManifest)
 	fmt.Fprintf(&b, "- Status: `%s`\n", status(report))
 	fmt.Fprintf(&b, "- Evidence artifact: `%s`\n", m.EvidenceArtifact)
+	fmt.Fprintf(&b, "- Workflow trigger paths: `%d`\n", len(m.WorkflowTriggerPaths))
 	fmt.Fprintf(&b, "- Markdown readers scanned: `%d`\n", report.ScannedCount)
 	fmt.Fprintf(&b, "- Generated readers: `%d`\n", report.GeneratedCount)
 	fmt.Fprintf(&b, "- Executable readers: `%d`\n", report.ExecutableCount)

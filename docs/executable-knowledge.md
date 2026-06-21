@@ -6,6 +6,7 @@ Executable SSOT: [`docs/executable-knowledge.riido.json`](docs/executable-knowle
 
 - Status: `verified`
 - Evidence artifact: `executable-knowledge-coverage`
+- Workflow trigger paths: `10`
 - Markdown readers scanned: `27`
 - Generated readers: `27`
 - Executable readers: `0`
@@ -57,6 +58,6 @@ None.
 | --- | --- |
 | Observe | riido-contracts has generated API/FSM/enum artifacts, but root entrypoint markdown, reader documents, and loop-less executable manifests can remain invisible unless the repository-wide coverage gate records both reader coverage and manifest loop coverage. |
 | Hypothesis | A repo-wide coverage manifest can make generated readers, executable readers, adjacent manifests, manifest inventory samples, manifest loop debt samples, root entrypoints, and remaining manual debt visible in public CI before individual docs and manifests are promoted to DSL/tool-backed SSOT. |
-| Execute | Scan configured documentation roots and explicit root entrypoint files, classify markdown readers, sample executable manifests by group, count manifests with direct or delegated evidence loops, sample loop-less manifests by group, verify this generated reader and workflow evidence binding, and publish a JSON evidence artifact in CI. |
-| Evaluate | The verifier fails on stale generated coverage docs, missing workflow binding, missing strict artifact upload, malformed coverage manifest, any manual reader candidate, or manifest loop debt above the configured baseline; it reports manifest loop debt counts and samples as observable migration evidence. |
-| Retrospective | This turns contracts documentation and manifest-loop migration into a measurable evidence loop, prevents new explanation-only reader docs or new loop-less manifests from entering through public CI, and gives future loop-backfill slices a bounded target list. |
+| Execute | Scan configured documentation roots and explicit root entrypoint files, classify markdown readers, sample executable manifests by group, count manifests with direct or delegated evidence loops, sample loop-less manifests by group, verify this generated reader, verify workflow evidence binding, verify push and pull_request trigger paths, and publish a JSON evidence artifact in CI. |
+| Evaluate | The verifier fails on stale generated coverage docs, missing workflow binding, missing strict artifact upload, missing workflow trigger paths, malformed coverage manifest, any manual reader candidate, or manifest loop debt above the configured baseline; it reports trigger path counts, manifest loop debt counts, and samples as observable migration evidence. |
+| Retrospective | This turns contracts documentation, manifest-loop migration, and coverage workflow trigger coverage into a measurable evidence loop, prevents new explanation-only reader docs or new loop-less manifests from entering through public CI, and gives future loop-backfill slices a bounded target list. |
