@@ -34,7 +34,7 @@ func scanDocs(root string, m manifest) (scanReport, error) {
 		docs = append(docs, record)
 	}
 	sort.Slice(docs, func(i, j int) bool { return docs[i].Path < docs[j].Path })
-	return summarize(root, docs)
+	return summarize(root, m, docs)
 }
 
 func classifyDoc(root, path string, markers []string) (docRecord, error) {
