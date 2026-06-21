@@ -30,15 +30,25 @@
         "progressmessage/catalog.messages/",
         "progressmessage/catalog.ir.messages/"
       ]
+    },
+    {
+      "id": "api-contract-projection-loop-source",
+      "loop_source": "docs/20-domain/api-contract-projection.riido.json",
+      "paths": [
+        "apicontract/fixtures/control-plane-agent-catalog.dsl.riido.json",
+        "apicontract/fixtures/control-plane-agent-catalog.ir.riido.json",
+        "apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json",
+        "apicontract/fixtures/control-plane-ai-agent-client.ir.riido.json"
+      ]
     }
   ],
   "manifest_loop_budget": {
-    "max_missing": 255,
+    "max_missing": 251,
     "max_missing_by_group": {
       "docs": 251,
       "assignment": 0,
       "progressmessage": 0,
-      "apicontract": 4,
+      "apicontract": 0,
       ".": 0
     }
   },
