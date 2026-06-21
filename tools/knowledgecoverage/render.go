@@ -15,11 +15,23 @@ func renderDoc(m manifest, report scanReport) string {
 	fmt.Fprintf(&b, "- Generated readers: `%d`\n", report.GeneratedCount)
 	fmt.Fprintf(&b, "- Executable readers: `%d`\n", report.ExecutableCount)
 	fmt.Fprintf(&b, "- Adjacent manifests: `%d`\n", report.AdjacentCount)
+	fmt.Fprintf(&b, "- Generated readers with adjacent manifests: `%d`\n", report.GeneratedAdjacentCount)
+	fmt.Fprintf(&b, "- Executable readers with adjacent manifests: `%d`\n", report.ExecutableAdjacentCount)
 	fmt.Fprintf(&b, "- Manual reader candidates: `%d`\n", report.ManualCount)
 	fmt.Fprintf(&b, "- Manifest inventory: `%d`\n\n", report.ManifestInventory)
+	renderManifestInventory(&b, report.ManifestInventoryByGroup)
 	renderManualSamples(&b, report.ManualSamples)
 	renderLoop(&b, m.Loop)
 	return b.String()
+}
+
+func renderManifestInventory(b *strings.Builder, groups []manifestGroupCount) {
+	b.WriteString("## Manifest Inventory\n\n")
+	b.WriteString("| Group | Count |\n| --- | ---: |\n")
+	for _, item := range groups {
+		fmt.Fprintf(b, "| `%s` | %d |\n", item.Group, item.Count)
+	}
+	b.WriteString("\n")
 }
 
 func renderManualSamples(b *strings.Builder, samples []docRecord) {

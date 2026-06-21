@@ -31,12 +31,20 @@ type docRecord struct {
 }
 
 type scanReport struct {
-	Docs              []docRecord
-	ScannedCount      int
-	GeneratedCount    int
-	ExecutableCount   int
-	AdjacentCount     int
-	ManualCount       int
-	ManualSamples     []docRecord
-	ManifestInventory int
+	Docs                     []docRecord
+	ScannedCount             int
+	GeneratedCount           int
+	ExecutableCount          int
+	GeneratedAdjacentCount   int
+	ExecutableAdjacentCount  int
+	AdjacentCount            int
+	ManualCount              int
+	ManualSamples            []docRecord
+	ManifestInventory        int
+	ManifestInventoryByGroup []manifestGroupCount
+}
+
+type manifestGroupCount struct {
+	Group string `json:"group"`
+	Count int    `json:"count"`
 }
