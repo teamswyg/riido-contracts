@@ -10,14 +10,17 @@ import (
 const evidenceSchemaVersion = "riido-ssotdeps-evidence.v1"
 
 type evidence struct {
-	SchemaVersion             string `json:"schema_version"`
-	ID                        string `json:"id"`
-	Status                    string `json:"status"`
-	FactFilesLoaded           int    `json:"fact_files_loaded"`
-	FactsVerified             int    `json:"facts_verified"`
-	RepoDependencyFilesLoaded int    `json:"repo_dependency_files_loaded"`
-	RepoDependenciesChecked   int    `json:"repo_dependencies_checked"`
-	CheckDoc                  bool   `json:"check_doc"`
+	SchemaVersion             string       `json:"schema_version"`
+	ID                        string       `json:"id"`
+	Status                    string       `json:"status"`
+	Workflow                  string       `json:"workflow"`
+	EvidenceArtifact          string       `json:"evidence_artifact"`
+	FactFilesLoaded           int          `json:"fact_files_loaded"`
+	FactsVerified             int          `json:"facts_verified"`
+	RepoDependencyFilesLoaded int          `json:"repo_dependency_files_loaded"`
+	RepoDependenciesChecked   int          `json:"repo_dependencies_checked"`
+	CheckDoc                  bool         `json:"check_doc"`
+	Loop                      evidenceLoop `json:"loop"`
 }
 
 func writeEvidence(path string, value evidence) error {

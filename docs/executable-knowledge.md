@@ -37,15 +37,15 @@ Executable SSOT: [`docs/executable-knowledge.riido.json`](docs/executable-knowle
 
 ## Manifest Loop Inventory
 
-- Complete manifest loops: `303`
-- Direct manifest loops: `24`
-- Delegated manifest loops: `279`
-- Missing manifest loops: `32`
-- Missing loop budget: `32`
+- Complete manifest loops: `329`
+- Direct manifest loops: `25`
+- Delegated manifest loops: `304`
+- Missing manifest loops: `6`
+- Missing loop budget: `6`
 
 | Group | Missing loops | Budget | Sample paths |
 | --- | ---: | ---: | --- |
-| `docs` | 32 | 32 | `docs/30-architecture/contract-promotion-policy.riido.json`<br>`docs/30-architecture/refactoring-charter.riido.json`<br>`docs/30-architecture/ssot-dependency-map.riido.json` |
+| `docs` | 6 | 6 | `docs/30-architecture/contract-promotion-policy.riido.json`<br>`docs/30-architecture/refactoring-charter.riido.json`<br>`docs/readme/fsm.riido.json` |
 
 ## Manual Reader Candidates
 

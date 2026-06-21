@@ -16,6 +16,12 @@ func verifyManifest(m manifest, root string) error {
 	if strings.TrimSpace(m.RiidoTask) == "" {
 		return errors.New("riido_task is required")
 	}
+	if strings.TrimSpace(m.Workflow) == "" || strings.TrimSpace(m.EvidenceArtifact) == "" {
+		return errors.New("workflow and evidence_artifact are required")
+	}
+	if !completeLoop(m.Loop) {
+		return errors.New("complete evidence loop is required")
+	}
 	humanDoc, err := readLocalRef(root, m.HumanDoc)
 	if err != nil {
 		return fmt.Errorf("human_doc: %w", err)
