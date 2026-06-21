@@ -21,6 +21,7 @@ func renderDoc(m manifest, report scanReport) string {
 	fmt.Fprintf(&b, "- Manifest inventory: `%d`\n\n", report.ManifestInventory)
 	renderManifestInventory(&b, report.ManifestInventoryByGroup)
 	renderManifestInventorySamples(&b, report.ManifestInventorySamples)
+	renderManifestLoopInventory(&b, report)
 	renderManualSamples(&b, report.ManualSamples)
 	renderLoop(&b, m.Loop)
 	return b.String()

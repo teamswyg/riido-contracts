@@ -36,5 +36,9 @@ func summarize(root string, docs []docRecord) (scanReport, error) {
 		return report, err
 	}
 	report.ManifestInventorySamples, err = manifestInventorySamples(root, groups, manifestSampleLimit)
+	if err != nil {
+		return report, err
+	}
+	report.ManifestLoops, err = scanManifestLoops(root)
 	return report, err
 }
