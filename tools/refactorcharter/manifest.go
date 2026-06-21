@@ -36,6 +36,12 @@ func verifyCharter(c charter) error {
 	if strings.TrimSpace(c.ID) == "" || strings.TrimSpace(c.RiidoTask) == "" {
 		return errors.New("id and riido_task are required")
 	}
+	if strings.TrimSpace(c.Workflow) == "" || strings.TrimSpace(c.EvidenceArtifact) == "" {
+		return errors.New("workflow and evidence_artifact are required")
+	}
+	if !completeLoop(c.Loop) {
+		return errors.New("complete evidence loop is required")
+	}
 	if c.Mode != "advisory" && c.Mode != "enforced" {
 		return fmt.Errorf("mode = %q, want advisory or enforced", c.Mode)
 	}

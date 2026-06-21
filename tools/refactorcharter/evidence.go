@@ -10,26 +10,32 @@ import (
 const evidenceSchemaVersion = "riido-refactor-charter-evidence.v1"
 
 type evidence struct {
-	SchemaVersion  string    `json:"schema_version"`
-	ID             string    `json:"id"`
-	Status         string    `json:"status"`
-	Mode           string    `json:"mode"`
-	FilesScanned   int       `json:"files_scanned"`
-	OverTarget     int       `json:"over_target"`
-	TargetMaxLines int       `json:"target_max_lines"`
-	Findings       []finding `json:"findings"`
+	SchemaVersion    string       `json:"schema_version"`
+	ID               string       `json:"id"`
+	Status           string       `json:"status"`
+	Workflow         string       `json:"workflow"`
+	EvidenceArtifact string       `json:"evidence_artifact"`
+	Mode             string       `json:"mode"`
+	FilesScanned     int          `json:"files_scanned"`
+	OverTarget       int          `json:"over_target"`
+	TargetMaxLines   int          `json:"target_max_lines"`
+	Findings         []finding    `json:"findings"`
+	Loop             evidenceLoop `json:"loop"`
 }
 
 func newEvidence(c charter, report scanReport) evidence {
 	return evidence{
-		SchemaVersion:  evidenceSchemaVersion,
-		ID:             c.ID,
-		Status:         evidenceStatus(c, report),
-		Mode:           c.Mode,
-		FilesScanned:   report.FilesScanned,
-		OverTarget:     len(report.Findings),
-		TargetMaxLines: c.LineBudget.TargetMaxLines,
-		Findings:       report.Findings,
+		SchemaVersion:    evidenceSchemaVersion,
+		ID:               c.ID,
+		Status:           evidenceStatus(c, report),
+		Workflow:         c.Workflow,
+		EvidenceArtifact: c.EvidenceArtifact,
+		Mode:             c.Mode,
+		FilesScanned:     report.FilesScanned,
+		OverTarget:       len(report.Findings),
+		TargetMaxLines:   c.LineBudget.TargetMaxLines,
+		Findings:         report.Findings,
+		Loop:             c.Loop,
 	}
 }
 

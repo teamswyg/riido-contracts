@@ -43,6 +43,9 @@ func run(args []string, out io.Writer) error {
 	if err := verifyCharter(c); err != nil {
 		return err
 	}
+	if err := verifyWorkflowBinding(scanRoot, c); err != nil {
+		return err
+	}
 	report, err := scan(scanRoot, c)
 	if err != nil {
 		return err

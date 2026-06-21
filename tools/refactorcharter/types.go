@@ -1,14 +1,17 @@
 package main
 
 type charter struct {
-	SchemaVersion     string     `json:"schema_version"`
-	ID                string     `json:"id"`
-	RiidoTask         string     `json:"riido_task"`
-	Mode              string     `json:"mode"`
-	LineBudget        lineBudget `json:"line_budget"`
-	SemanticUnits     []string   `json:"semantic_units"`
-	RequiredArtifacts []string   `json:"required_artifacts"`
-	Scan              scanConfig `json:"scan"`
+	SchemaVersion     string       `json:"schema_version"`
+	ID                string       `json:"id"`
+	RiidoTask         string       `json:"riido_task"`
+	Workflow          string       `json:"workflow"`
+	EvidenceArtifact  string       `json:"evidence_artifact"`
+	Loop              evidenceLoop `json:"loop"`
+	Mode              string       `json:"mode"`
+	LineBudget        lineBudget   `json:"line_budget"`
+	SemanticUnits     []string     `json:"semantic_units"`
+	RequiredArtifacts []string     `json:"required_artifacts"`
+	Scan              scanConfig   `json:"scan"`
 }
 
 type lineBudget struct {
