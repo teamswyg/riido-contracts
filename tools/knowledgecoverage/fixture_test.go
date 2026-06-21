@@ -25,11 +25,18 @@ func mustWrite(t *testing.T, path, body string) {
 }
 
 func fixtureManifest() string {
-	return `{"schema_version":"riido-contracts-executable-knowledge-coverage.v1","id":"fixture","title":"Fixture","generated_doc":"docs/executable-knowledge.md","workflow":".github/workflows/executable-knowledge-coverage.yml","evidence_artifact":"executable-knowledge-coverage","scan_roots":["docs"],"generated_markers":["Code generated"],"manifest_loop_budget":{"max_missing":1,"max_missing_by_group":{"docs":1}},"loop":{"observation":"o","hypothesis":"h","execute":"x","evaluate":"e","retrospective":"r"}}`
+	return `{"schema_version":"riido-contracts-executable-knowledge-coverage.v1","id":"fixture","title":"Fixture","generated_doc":"docs/executable-knowledge.md","workflow":".github/workflows/executable-knowledge-coverage.yml","evidence_artifact":"executable-knowledge-coverage","workflow_trigger_paths":["docs/**"],"scan_roots":["docs"],"generated_markers":["Code generated"],"manifest_loop_budget":{"max_missing":1,"max_missing_by_group":{"docs":1}},"loop":{"observation":"o","hypothesis":"h","execute":"x","evaluate":"e","retrospective":"r"}}`
 }
 
 func fixtureWorkflow() string {
-	return `steps:
+	return `on:
+  push:
+    paths:
+      - "docs/**"
+  pull_request:
+    paths:
+      - "docs/**"
+steps:
 - run: go run ./tools/knowledgecoverage -check-doc -evidence-out out/executable-knowledge-coverage.json
 - uses: actions/upload-artifact@v4
   with:
