@@ -13,6 +13,7 @@
     "assignment/**",
     "docs/**",
     "progressmessage/**",
+    "tools/cievidence/**",
     "tools/repositoryreadme/**",
     "tools/knowledgecoverage/**",
     "go.mod"
