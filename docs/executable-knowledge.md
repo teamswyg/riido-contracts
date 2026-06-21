@@ -37,17 +37,15 @@ Executable SSOT: [`docs/executable-knowledge.riido.json`](docs/executable-knowle
 
 ## Manifest Loop Inventory
 
-- Complete manifest loops: `24`
+- Complete manifest loops: `80`
 - Direct manifest loops: `23`
-- Delegated manifest loops: `1`
-- Missing manifest loops: `311`
-- Missing loop budget: `311`
+- Delegated manifest loops: `57`
+- Missing manifest loops: `255`
+- Missing loop budget: `255`
 
 | Group | Missing loops | Budget | Sample paths |
 | --- | ---: | ---: | --- |
 | `docs` | 251 | 251 | `docs/30-architecture/contract-promotion-policy.riido.json`<br>`docs/30-architecture/figma-ai-agent-coverage.riido.json`<br>`docs/30-architecture/figma-ai-agent-coverage/api-generated-annotations/153-8545.riido.json` |
-| `assignment` | 32 | 32 | `assignment/assignment_contract.riido.json`<br>`assignment/assignment_contract/approval-contract.riido.json`<br>`assignment/assignment_contract/execution-identity.riido.json` |
-| `progressmessage` | 24 | 24 | `progressmessage/catalog.dsl.riido.json`<br>`progressmessage/catalog.ir.messages/1001-agent-thinking.ir.riido.json`<br>`progressmessage/catalog.ir.messages/1002-assignment-queued-agent-busy.ir.riido.json` |
 | `apicontract` | 4 | 4 | `apicontract/fixtures/control-plane-agent-catalog.dsl.riido.json`<br>`apicontract/fixtures/control-plane-agent-catalog.ir.riido.json`<br>`apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json` |
 
 ## Manual Reader Candidates

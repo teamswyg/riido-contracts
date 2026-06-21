@@ -1,17 +1,18 @@
 package main
 
 type manifest struct {
-	SchemaVersion      string             `json:"schema_version"`
-	ID                 string             `json:"id"`
-	Title              string             `json:"title"`
-	GeneratedDoc       string             `json:"generated_doc"`
-	Workflow           string             `json:"workflow"`
-	EvidenceArtifact   string             `json:"evidence_artifact"`
-	ScanRoots          []string           `json:"scan_roots"`
-	ScanFiles          []string           `json:"scan_files"`
-	GeneratedMarkers   []string           `json:"generated_markers"`
-	ManifestLoopBudget manifestLoopBudget `json:"manifest_loop_budget"`
-	Loop               evidenceLoop       `json:"loop"`
+	SchemaVersion       string               `json:"schema_version"`
+	ID                  string               `json:"id"`
+	Title               string               `json:"title"`
+	GeneratedDoc        string               `json:"generated_doc"`
+	Workflow            string               `json:"workflow"`
+	EvidenceArtifact    string               `json:"evidence_artifact"`
+	ScanRoots           []string             `json:"scan_roots"`
+	ScanFiles           []string             `json:"scan_files"`
+	GeneratedMarkers    []string             `json:"generated_markers"`
+	ManifestLoopSources []manifestLoopSource `json:"manifest_loop_sources"`
+	ManifestLoopBudget  manifestLoopBudget   `json:"manifest_loop_budget"`
+	Loop                evidenceLoop         `json:"loop"`
 }
 
 type evidenceLoop struct {
