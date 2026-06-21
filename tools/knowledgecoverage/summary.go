@@ -1,11 +1,5 @@
 package main
 
-import (
-	"os"
-	"path/filepath"
-	"strings"
-)
-
 const manualSampleLimit = 10
 
 func summarize(root string, docs []docRecord) (scanReport, error) {
@@ -24,29 +18,16 @@ func summarize(root string, docs []docRecord) (scanReport, error) {
 		}
 		if doc.HasAdjacentManifest {
 			report.AdjacentCount++
+			if doc.Classification == "generated_reader" {
+				report.GeneratedAdjacentCount++
+			}
+			if doc.Classification == "executable_reader" {
+				report.ExecutableAdjacentCount++
+			}
 		}
 	}
-	count, err := countManifests(root)
+	count, groups, err := countManifests(root)
 	report.ManifestInventory = count
+	report.ManifestInventoryByGroup = groups
 	return report, err
-}
-
-func countManifests(root string) (int, error) {
-	count := 0
-	err := filepath.WalkDir(root, func(path string, entry os.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-		if entry.IsDir() && filepath.Base(path) == ".git" {
-			return filepath.SkipDir
-		}
-		if entry.IsDir() {
-			return nil
-		}
-		if strings.HasSuffix(path, ".riido.json") {
-			count++
-		}
-		return nil
-	})
-	return count, err
 }

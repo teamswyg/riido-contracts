@@ -10,8 +10,20 @@ Executable SSOT: [`docs/executable-knowledge.riido.json`](docs/executable-knowle
 - Generated readers: `27`
 - Executable readers: `0`
 - Adjacent manifests: `25`
+- Generated readers with adjacent manifests: `25`
+- Executable readers with adjacent manifests: `0`
 - Manual reader candidates: `0`
 - Manifest inventory: `335`
+
+## Manifest Inventory
+
+| Group | Count |
+| --- | ---: |
+| `docs` | 274 |
+| `assignment` | 32 |
+| `progressmessage` | 24 |
+| `apicontract` | 4 |
+| `.` | 1 |
 
 ## Manual Reader Candidates
 

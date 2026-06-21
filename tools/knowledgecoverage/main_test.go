@@ -25,6 +25,9 @@ func TestRunWritesAdvisoryEvidence(t *testing.T) {
 	if got.Status != "advisory_findings" || got.ManualCount != 1 || got.GeneratedCount != 1 {
 		t.Fatalf("unexpected evidence: %+v", got)
 	}
+	if got.ManifestInventory != 1 || len(got.ManifestInventoryByGroup) != 1 {
+		t.Fatalf("missing manifest inventory breakdown: %+v", got)
+	}
 }
 
 func TestCheckDocRejectsStaleReader(t *testing.T) {
