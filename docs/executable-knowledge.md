@@ -25,6 +25,16 @@ Executable SSOT: [`docs/executable-knowledge.riido.json`](docs/executable-knowle
 | `apicontract` | 4 |
 | `.` | 1 |
 
+## Manifest Inventory Samples
+
+| Group | Sample paths |
+| --- | --- |
+| `docs` | `docs/20-domain/README.riido.json`<br>`docs/20-domain/ai-agent-api-surface.riido.json`<br>`docs/20-domain/ai-agent-assigned-profile-map.riido.json` |
+| `assignment` | `assignment/assignment_contract/approval-contract.riido.json`<br>`assignment/assignment_contract/execution-identity.riido.json`<br>`assignment/assignment_contract/payload-fields/agent-instruction.riido.json` |
+| `progressmessage` | `progressmessage/catalog.dsl.riido.json`<br>`progressmessage/catalog.ir.messages/1001-agent-thinking.ir.riido.json`<br>`progressmessage/catalog.ir.messages/1002-assignment-queued-agent-busy.ir.riido.json` |
+| `apicontract` | `apicontract/fixtures/control-plane-agent-catalog.dsl.riido.json`<br>`apicontract/fixtures/control-plane-agent-catalog.ir.riido.json`<br>`apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json` |
+| `.` | `README.riido.json` |
+
 ## Manual Reader Candidates
 
 None.
@@ -34,7 +44,7 @@ None.
 | Step | Evidence |
 | --- | --- |
 | Observe | riido-contracts has generated API/FSM/enum artifacts, but root entrypoint markdown and reader documents can still exist as hand-maintained prose without a repository-wide executable-knowledge coverage gate. |
-| Hypothesis | A repo-wide coverage manifest can make generated readers, executable readers, adjacent manifests, root entrypoints, and remaining manual debt visible in public CI before individual docs are promoted to DSL/tool-backed SSOT. |
-| Execute | Scan configured documentation roots and explicit root entrypoint files, classify markdown readers, verify this generated reader and workflow evidence binding, and publish a JSON evidence artifact in CI. |
+| Hypothesis | A repo-wide coverage manifest can make generated readers, executable readers, adjacent manifests, manifest inventory samples, root entrypoints, and remaining manual debt visible in public CI before individual docs are promoted to DSL/tool-backed SSOT. |
+| Execute | Scan configured documentation roots and explicit root entrypoint files, classify markdown readers, sample executable manifests by group, verify this generated reader and workflow evidence binding, and publish a JSON evidence artifact in CI. |
 | Evaluate | The verifier fails on stale generated coverage docs, missing workflow binding, missing strict artifact upload, malformed coverage manifest, or any manual reader candidate. |
 | Retrospective | This turns contracts documentation migration into a measurable evidence loop and prevents new explanation-only reader docs from entering through public CI. |

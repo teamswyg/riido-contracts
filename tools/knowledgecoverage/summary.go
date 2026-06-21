@@ -1,6 +1,9 @@
 package main
 
-const manualSampleLimit = 10
+const (
+	manualSampleLimit   = 10
+	manifestSampleLimit = 3
+)
 
 func summarize(root string, docs []docRecord) (scanReport, error) {
 	report := scanReport{Docs: docs, ScannedCount: len(docs)}
@@ -29,5 +32,9 @@ func summarize(root string, docs []docRecord) (scanReport, error) {
 	count, groups, err := countManifests(root)
 	report.ManifestInventory = count
 	report.ManifestInventoryByGroup = groups
+	if err != nil {
+		return report, err
+	}
+	report.ManifestInventorySamples, err = manifestInventorySamples(root, groups, manifestSampleLimit)
 	return report, err
 }

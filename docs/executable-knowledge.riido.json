@@ -14,8 +14,8 @@
   ],
   "loop": {
     "observation": "riido-contracts has generated API/FSM/enum artifacts, but root entrypoint markdown and reader documents can still exist as hand-maintained prose without a repository-wide executable-knowledge coverage gate.",
-    "hypothesis": "A repo-wide coverage manifest can make generated readers, executable readers, adjacent manifests, root entrypoints, and remaining manual debt visible in public CI before individual docs are promoted to DSL/tool-backed SSOT.",
-    "execute": "Scan configured documentation roots and explicit root entrypoint files, classify markdown readers, verify this generated reader and workflow evidence binding, and publish a JSON evidence artifact in CI.",
+    "hypothesis": "A repo-wide coverage manifest can make generated readers, executable readers, adjacent manifests, manifest inventory samples, root entrypoints, and remaining manual debt visible in public CI before individual docs are promoted to DSL/tool-backed SSOT.",
+    "execute": "Scan configured documentation roots and explicit root entrypoint files, classify markdown readers, sample executable manifests by group, verify this generated reader and workflow evidence binding, and publish a JSON evidence artifact in CI.",
     "evaluate": "The verifier fails on stale generated coverage docs, missing workflow binding, missing strict artifact upload, malformed coverage manifest, or any manual reader candidate.",
     "retrospective": "This turns contracts documentation migration into a measurable evidence loop and prevents new explanation-only reader docs from entering through public CI."
   }
