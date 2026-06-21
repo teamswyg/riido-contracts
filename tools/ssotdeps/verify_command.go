@@ -33,6 +33,9 @@ func runVerify(args []string, out io.Writer) error {
 	if err := verifyManifest(m, root); err != nil {
 		return err
 	}
+	if err := verifyWorkflowBinding(root, m); err != nil {
+		return err
+	}
 	if *checkDoc {
 		if err := verifyRenderedDoc(root, m); err != nil {
 			return err
@@ -43,11 +46,14 @@ func runVerify(args []string, out io.Writer) error {
 			SchemaVersion:             evidenceSchemaVersion,
 			ID:                        m.ID,
 			Status:                    "verified",
+			Workflow:                  m.Workflow,
+			EvidenceArtifact:          m.EvidenceArtifact,
 			FactFilesLoaded:           len(m.FactFiles),
 			FactsVerified:             len(m.Facts),
 			RepoDependencyFilesLoaded: len(m.RepoDependencyFiles),
 			RepoDependenciesChecked:   len(m.RepoDependencies),
 			CheckDoc:                  *checkDoc,
+			Loop:                      m.Loop,
 		}); err != nil {
 			return err
 		}

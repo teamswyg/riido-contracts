@@ -2,6 +2,15 @@
   "schema_version": "riido-ssot-dependency-map.v1",
   "id": "ai-agent-setting-ssot-dependency-map",
   "riido_task": "RIID-4754",
+  "workflow": ".github/workflows/architecture-docs.yml",
+  "evidence_artifact": "architecture-docs-evidence",
+  "loop": {
+    "observation": "SSOT dependency facts and downstream repository dependencies are machine-readable architecture evidence, and architecture-docs CI already emits ssotdeps evidence, but executable knowledge coverage still treated the map and included fact files as loop-less.",
+    "hypothesis": "Making the SSOT dependency map manifest the evidence-loop source and delegating fact/repo-dependency leaf manifests to it will keep durable ownership facts centralized while avoiding duplicate loop prose in every leaf.",
+    "execute": "Strictly load the dependency map and include files, verify source references, owner/downstream consistency, rendered reader drift, and workflow evidence binding, then publish ssotdeps evidence in architecture-docs CI.",
+    "evaluate": "The verifier fails on malformed map JSON, incomplete loop metadata, stale generated reader, missing include files, broken source references, duplicate facts, dependency cycles, missing workflow evidence binding, or child loop debt above the configured budget.",
+    "retrospective": "SSOT dependency knowledge becomes a generated evidence graph: leaf facts stay atomic, the parent loop owns verification, and downstream repos can consume one explicit ownership map."
+  },
   "human_doc": "docs/30-architecture/ssot-dependency-map.md",
   "fact_files": [
     "ssot-dependency-map/facts/active-assignment-heartbeat-stale-lease.riido.json",
