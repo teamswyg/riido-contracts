@@ -7,12 +7,12 @@ import (
 	"testing"
 )
 
-func TestRunWritesAdvisoryEvidence(t *testing.T) {
+func TestRunRejectsManualReaderAndWritesEvidence(t *testing.T) {
 	root := fixtureRepo(t)
 	out := filepath.Join(root, "out", "coverage.json")
 	err := run([]string{"-root", root, "-write-doc", "-check-doc", "-evidence-out", out})
-	if err != nil {
-		t.Fatalf("run: %v", err)
+	if err == nil {
+		t.Fatal("expected manual reader failure")
 	}
 	body, err := os.ReadFile(out)
 	if err != nil {
@@ -22,7 +22,7 @@ func TestRunWritesAdvisoryEvidence(t *testing.T) {
 	if err := json.Unmarshal(body, &got); err != nil {
 		t.Fatalf("decode evidence: %v", err)
 	}
-	if got.Status != "advisory_findings" || got.ManualCount != 1 || got.GeneratedCount != 1 {
+	if got.Status != "failed" || got.ManualCount != 1 || got.GeneratedCount != 1 {
 		t.Fatalf("unexpected evidence: %+v", got)
 	}
 	if got.ManifestInventory != 1 || len(got.ManifestInventoryByGroup) != 1 {

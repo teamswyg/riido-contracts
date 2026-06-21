@@ -35,16 +35,23 @@ func newEvidence(m manifest, report scanReport) evidence {
 		ScannedCount: report.ScannedCount, GeneratedCount: report.GeneratedCount,
 		ExecutableCount: report.ExecutableCount, GeneratedAdjacentCount: report.GeneratedAdjacentCount,
 		ExecutableAdjacentCount: report.ExecutableAdjacentCount, AdjacentCount: report.AdjacentCount,
-		ManualCount: report.ManualCount, ManualSamples: report.ManualSamples,
+		ManualCount: report.ManualCount, ManualSamples: manualSamples(report),
 		ManifestInventory: report.ManifestInventory, ManifestInventoryByGroup: report.ManifestInventoryByGroup,
 		EvidenceArtifact: m.EvidenceArtifact,
 		Workflow:         m.Workflow, Loop: m.Loop,
 	}
 }
 
+func manualSamples(report scanReport) []docRecord {
+	if report.ManualSamples == nil {
+		return []docRecord{}
+	}
+	return report.ManualSamples
+}
+
 func status(report scanReport) string {
 	if report.ManualCount > 0 {
-		return "advisory_findings"
+		return "failed"
 	}
 	return "verified"
 }
