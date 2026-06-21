@@ -1,29 +1,14 @@
 package main
 
-import (
-	"os"
-	"path/filepath"
-	"strings"
-)
-
 func manifestInventorySamples(root string, groups []manifestGroupCount, limit int) ([]manifestGroupSample, error) {
 	byGroup := map[string][]string{}
-	err := filepath.WalkDir(root, func(path string, entry os.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-		if entry.IsDir() && filepath.Base(path) == ".git" {
-			return filepath.SkipDir
-		}
-		if entry.IsDir() || !strings.HasSuffix(path, ".riido.json") {
-			return nil
-		}
+	paths, err := manifestPaths(root)
+	for _, path := range paths {
 		group := manifestGroup(root, path)
 		if len(byGroup[group]) < limit {
 			byGroup[group] = append(byGroup[group], rel(root, path))
 		}
-		return nil
-	})
+	}
 	return orderedManifestSamples(groups, byGroup), err
 }
 

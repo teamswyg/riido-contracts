@@ -43,6 +43,7 @@ type scanReport struct {
 	ManifestInventory        int
 	ManifestInventoryByGroup []manifestGroupCount
 	ManifestInventorySamples []manifestGroupSample
+	ManifestLoops            manifestLoopReport
 }
 
 type manifestGroupCount struct {

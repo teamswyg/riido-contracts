@@ -25,11 +25,14 @@ func TestRunRejectsManualReaderAndWritesEvidence(t *testing.T) {
 	if got.Status != "failed" || got.ManualCount != 1 || got.GeneratedCount != 1 {
 		t.Fatalf("unexpected evidence: %+v", got)
 	}
-	if got.ManifestInventory != 1 || len(got.ManifestInventoryByGroup) != 1 {
+	if got.ManifestInventory != 2 || len(got.ManifestInventoryByGroup) != 1 {
 		t.Fatalf("missing manifest inventory breakdown: %+v", got)
 	}
-	if len(got.ManifestInventorySamples) != 1 || len(got.ManifestInventorySamples[0].Paths) != 1 {
+	if len(got.ManifestInventorySamples) != 1 || len(got.ManifestInventorySamples[0].Paths) == 0 {
 		t.Fatalf("missing manifest inventory samples: %+v", got)
+	}
+	if got.ManifestMissingLoopCount == 0 || len(got.ManifestMissingLoopSamples) == 0 {
+		t.Fatalf("missing manifest loop debt evidence: %+v", got)
 	}
 }
 

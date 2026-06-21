@@ -1,32 +1,17 @@
 package main
 
 import (
-	"os"
-	"path/filepath"
 	"sort"
 	"strings"
 )
 
 func countManifests(root string) (int, []manifestGroupCount, error) {
-	count := 0
 	byGroup := map[string]int{}
-	err := filepath.WalkDir(root, func(path string, entry os.DirEntry, err error) error {
-		if err != nil {
-			return err
-		}
-		if entry.IsDir() && filepath.Base(path) == ".git" {
-			return filepath.SkipDir
-		}
-		if entry.IsDir() {
-			return nil
-		}
-		if strings.HasSuffix(path, ".riido.json") {
-			count++
-			byGroup[manifestGroup(root, path)]++
-		}
-		return nil
-	})
-	return count, manifestGroups(byGroup), err
+	paths, err := manifestPaths(root)
+	for _, path := range paths {
+		byGroup[manifestGroup(root, path)]++
+	}
+	return len(paths), manifestGroups(byGroup), err
 }
 
 func manifestGroup(root, path string) string {

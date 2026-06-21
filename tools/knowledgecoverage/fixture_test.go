@@ -12,6 +12,7 @@ func fixtureRepo(t *testing.T) string {
 	mustWrite(t, filepath.Join(root, "docs", "manual.md"), "# Manual\n")
 	mustWrite(t, filepath.Join(root, "docs", "generated.md"), "# Generated\n\n<!-- Code generated; DO NOT EDIT. -->\n")
 	mustWrite(t, filepath.Join(root, "docs", "executable-knowledge.riido.json"), fixtureManifest())
+	mustWrite(t, filepath.Join(root, "docs", "loopless.riido.json"), `{"schema_version":"fixture.v1"}`)
 	mustWrite(t, filepath.Join(root, ".github", "workflows", "executable-knowledge-coverage.yml"), fixtureWorkflow())
 	return root
 }
