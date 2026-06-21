@@ -2,11 +2,20 @@ package main
 
 func minimalManifest() manifest {
 	return manifest{
-		SchemaVersion: schemaVersion,
-		ID:            "figma-test",
-		RiidoTask:     "RIID-TEST",
-		HumanDoc:      "docs/30-architecture/figma-ai-agent-coverage.md",
-		StabilizedBy:  []string{"teamswyg/riido-contracts#1"},
+		SchemaVersion:    schemaVersion,
+		ID:               "figma-test",
+		RiidoTask:        "RIID-TEST",
+		Workflow:         ".github/workflows/architecture-docs.yml",
+		EvidenceArtifact: "architecture-docs-evidence",
+		Loop: evidenceLoop{
+			Observation:   "observe",
+			Hypothesis:    "hypothesis",
+			Execute:       "execute",
+			Evaluate:      "evaluate",
+			Retrospective: "retro",
+		},
+		HumanDoc:     "docs/30-architecture/figma-ai-agent-coverage.md",
+		StabilizedBy: []string{"teamswyg/riido-contracts#1"},
 		Figma: figmaSource{
 			FileKey: "file-key", FileName: "AI Agent", PageID: "1:1", PageName: "UI",
 			InspectedAt: "2026-06-02", InspectionSource: "test",

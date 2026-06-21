@@ -4,6 +4,9 @@ type manifest struct {
 	SchemaVersion                   string                  `json:"schema_version"`
 	ID                              string                  `json:"id"`
 	RiidoTask                       string                  `json:"riido_task"`
+	Workflow                        string                  `json:"workflow"`
+	EvidenceArtifact                string                  `json:"evidence_artifact"`
+	Loop                            evidenceLoop            `json:"loop"`
 	StabilizedBy                    []string                `json:"stabilized_by"`
 	HumanDoc                        string                  `json:"human_doc"`
 	RelatedManifests                []string                `json:"related_manifests"`

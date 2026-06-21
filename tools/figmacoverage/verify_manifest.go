@@ -10,8 +10,11 @@ func verifyManifest(m manifest) error {
 	if m.SchemaVersion != schemaVersion {
 		return fmt.Errorf("schema_version = %q, want %q", m.SchemaVersion, schemaVersion)
 	}
-	if blank(m.ID) || blank(m.RiidoTask) || blank(m.HumanDoc) {
-		return errors.New("id, riido_task, and human_doc are required")
+	if blank(m.ID) || blank(m.RiidoTask) || blank(m.HumanDoc) || blank(m.Workflow) || blank(m.EvidenceArtifact) {
+		return errors.New("id, riido_task, human_doc, workflow, and evidence_artifact are required")
+	}
+	if !completeLoop(m.Loop) {
+		return errors.New("complete evidence loop is required")
 	}
 	if err := verifyFigmaSource(m.Figma); err != nil {
 		return err

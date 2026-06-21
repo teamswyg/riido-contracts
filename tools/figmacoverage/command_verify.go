@@ -33,6 +33,9 @@ func runVerify(args []string, out io.Writer) error {
 	if err := verifyManifest(m); err != nil {
 		return err
 	}
+	if err := verifyWorkflowBinding(root, m); err != nil {
+		return err
+	}
 	if *checkDoc {
 		if err := verifyRenderedDoc(root, m); err != nil {
 			return err
@@ -43,6 +46,8 @@ func runVerify(args []string, out io.Writer) error {
 			SchemaVersion:                     evidenceSchemaVersion,
 			ID:                                m.ID,
 			Status:                            "verified",
+			Workflow:                          m.Workflow,
+			EvidenceArtifact:                  m.EvidenceArtifact,
 			ToolLimitationFilesLoaded:         len(m.ToolLimitationFiles),
 			ExpectedTopLevelNodeFilesLoaded:   len(m.ExpectedTopLevelNodeFiles),
 			PageInventoryFilesLoaded:          len(m.PageInventoryFiles),
@@ -55,6 +60,7 @@ func runVerify(args []string, out io.Writer) error {
 			GeneratedAnnotationsChecked:       len(m.APIGeneratedAnnotationInventory),
 			EvidenceNodesVerified:             len(m.VerifiedEvidenceNodes),
 			CheckDoc:                          *checkDoc,
+			Loop:                              m.Loop,
 		}); err != nil {
 			return err
 		}
