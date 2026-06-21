@@ -20,6 +20,7 @@ func renderDoc(m manifest, report scanReport) string {
 	fmt.Fprintf(&b, "- Manual reader candidates: `%d`\n", report.ManualCount)
 	fmt.Fprintf(&b, "- Manifest inventory: `%d`\n\n", report.ManifestInventory)
 	renderManifestInventory(&b, report.ManifestInventoryByGroup)
+	renderManifestInventorySamples(&b, report.ManifestInventorySamples)
 	renderManualSamples(&b, report.ManualSamples)
 	renderLoop(&b, m.Loop)
 	return b.String()

@@ -28,6 +28,9 @@ func TestRunRejectsManualReaderAndWritesEvidence(t *testing.T) {
 	if got.ManifestInventory != 1 || len(got.ManifestInventoryByGroup) != 1 {
 		t.Fatalf("missing manifest inventory breakdown: %+v", got)
 	}
+	if len(got.ManifestInventorySamples) != 1 || len(got.ManifestInventorySamples[0].Paths) != 1 {
+		t.Fatalf("missing manifest inventory samples: %+v", got)
+	}
 }
 
 func TestCheckDocRejectsStaleReader(t *testing.T) {
