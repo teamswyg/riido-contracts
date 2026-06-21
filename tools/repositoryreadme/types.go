@@ -10,6 +10,7 @@ type manifest struct {
 	EvidenceArtifact  string       `json:"evidence_artifact"`
 	ModulePath        string       `json:"module_path"`
 	License           string       `json:"license"`
+	LoopSource        string       `json:"loop_source"`
 	Fragments         []string     `json:"fragments"`
 	Summary           []string     `json:"summary"`
 	Owns              []string     `json:"owns"`

@@ -18,6 +18,8 @@ type evidence struct {
 	ManifestInventoryByGroup   []manifestGroupCount  `json:"manifest_inventory_by_group"`
 	ManifestInventorySamples   []manifestGroupSample `json:"manifest_inventory_samples"`
 	ManifestLoopCount          int                   `json:"manifest_loop_count"`
+	ManifestDirectLoopCount    int                   `json:"manifest_direct_loop_count"`
+	ManifestDelegatedLoopCount int                   `json:"manifest_delegated_loop_count"`
 	ManifestMissingLoopCount   int                   `json:"manifest_missing_loop_count"`
 	ManifestMissingLoopByGroup []manifestGroupCount  `json:"manifest_missing_loop_by_group"`
 	ManifestMissingLoopSamples []manifestGroupSample `json:"manifest_missing_loop_samples"`
@@ -46,6 +48,8 @@ func newEvidence(m manifest, report scanReport) evidence {
 		ManifestInventory: report.ManifestInventory, ManifestInventoryByGroup: report.ManifestInventoryByGroup,
 		ManifestInventorySamples:   report.ManifestInventorySamples,
 		ManifestLoopCount:          report.ManifestLoops.Complete,
+		ManifestDirectLoopCount:    report.ManifestLoops.Direct,
+		ManifestDelegatedLoopCount: report.ManifestLoops.Delegated,
 		ManifestMissingLoopCount:   report.ManifestLoops.Missing,
 		ManifestMissingLoopByGroup: report.ManifestLoops.MissingGroups,
 		ManifestMissingLoopSamples: report.ManifestLoops.MissingSamples,

@@ -1,10 +1,5 @@
 package main
 
-import (
-	"encoding/json"
-	"os"
-)
-
 const manifestLoopSampleLimit = 3
 
 func scanManifestLoops(root string) (manifestLoopReport, error) {
@@ -17,8 +12,14 @@ func scanManifestLoops(root string) (manifestLoopReport, error) {
 	}
 	for _, path := range paths {
 		group := manifestGroup(root, path)
-		if manifestHasLoop(path) {
+		switch manifestLoopStatus(root, path) {
+		case "direct":
 			report.Complete++
+			report.Direct++
+			continue
+		case "delegated":
+			report.Complete++
+			report.Delegated++
 			continue
 		}
 		report.Missing++
@@ -32,11 +33,7 @@ func scanManifestLoops(root string) (manifestLoopReport, error) {
 	return report, nil
 }
 
-func manifestHasLoop(path string) bool {
-	var doc map[string]any
-	if err := readJSON(path, &doc); err != nil {
-		return false
-	}
+func manifestDocHasLoop(doc map[string]any) bool {
 	loop, ok := doc["loop"].(map[string]any)
 	if !ok {
 		return false
@@ -48,12 +45,4 @@ func manifestHasLoop(path string) bool {
 		}
 	}
 	return true
-}
-
-func readJSON(path string, v any) error {
-	body, err := os.ReadFile(path)
-	if err != nil {
-		return err
-	}
-	return json.Unmarshal(body, v)
 }

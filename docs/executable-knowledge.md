@@ -37,9 +37,11 @@ Executable SSOT: [`docs/executable-knowledge.riido.json`](docs/executable-knowle
 
 ## Manifest Loop Inventory
 
-- Complete manifest loops: `23`
-- Missing manifest loops: `312`
-- Missing loop budget: `312`
+- Complete manifest loops: `24`
+- Direct manifest loops: `23`
+- Delegated manifest loops: `1`
+- Missing manifest loops: `311`
+- Missing loop budget: `311`
 
 | Group | Missing loops | Budget | Sample paths |
 | --- | ---: | ---: | --- |
@@ -47,7 +49,6 @@ Executable SSOT: [`docs/executable-knowledge.riido.json`](docs/executable-knowle
 | `assignment` | 32 | 32 | `assignment/assignment_contract.riido.json`<br>`assignment/assignment_contract/approval-contract.riido.json`<br>`assignment/assignment_contract/execution-identity.riido.json` |
 | `progressmessage` | 24 | 24 | `progressmessage/catalog.dsl.riido.json`<br>`progressmessage/catalog.ir.messages/1001-agent-thinking.ir.riido.json`<br>`progressmessage/catalog.ir.messages/1002-assignment-queued-agent-busy.ir.riido.json` |
 | `apicontract` | 4 | 4 | `apicontract/fixtures/control-plane-agent-catalog.dsl.riido.json`<br>`apicontract/fixtures/control-plane-agent-catalog.ir.riido.json`<br>`apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json` |
-| `.` | 1 | 1 | `README.riido.json` |
 
 ## Manual Reader Candidates
 
@@ -59,6 +60,6 @@ None.
 | --- | --- |
 | Observe | riido-contracts has generated API/FSM/enum artifacts, but root entrypoint markdown, reader documents, and loop-less executable manifests can remain invisible unless the repository-wide coverage gate records both reader coverage and manifest loop coverage. |
 | Hypothesis | A repo-wide coverage manifest can make generated readers, executable readers, adjacent manifests, manifest inventory samples, manifest loop debt samples, root entrypoints, and remaining manual debt visible in public CI before individual docs and manifests are promoted to DSL/tool-backed SSOT. |
-| Execute | Scan configured documentation roots and explicit root entrypoint files, classify markdown readers, sample executable manifests by group, count manifests with complete evidence loops, sample loop-less manifests by group, verify this generated reader and workflow evidence binding, and publish a JSON evidence artifact in CI. |
+| Execute | Scan configured documentation roots and explicit root entrypoint files, classify markdown readers, sample executable manifests by group, count manifests with direct or delegated evidence loops, sample loop-less manifests by group, verify this generated reader and workflow evidence binding, and publish a JSON evidence artifact in CI. |
 | Evaluate | The verifier fails on stale generated coverage docs, missing workflow binding, missing strict artifact upload, malformed coverage manifest, any manual reader candidate, or manifest loop debt above the configured baseline; it reports manifest loop debt counts and samples as observable migration evidence. |
 | Retrospective | This turns contracts documentation and manifest-loop migration into a measurable evidence loop, prevents new explanation-only reader docs or new loop-less manifests from entering through public CI, and gives future loop-backfill slices a bounded target list. |
