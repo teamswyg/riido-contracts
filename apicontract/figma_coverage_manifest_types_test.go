@@ -4,6 +4,9 @@ type figmaCoverageManifest struct {
 	SchemaVersion                        string                                 `json:"schema_version"`
 	ID                                   string                                 `json:"id"`
 	RiidoTask                            string                                 `json:"riido_task"`
+	Workflow                             string                                 `json:"workflow"`
+	EvidenceArtifact                     string                                 `json:"evidence_artifact"`
+	Loop                                 figmaCoverageEvidenceLoop              `json:"loop"`
 	StabilizedBy                         []string                               `json:"stabilized_by"`
 	HumanDoc                             string                                 `json:"human_doc"`
 	RelatedManifests                     []string                               `json:"related_manifests"`
@@ -28,4 +31,12 @@ type figmaCoverageManifest struct {
 	APIGeneratedAnnotations              []figmaAPIGeneratedAnnotation          `json:"api_generated_annotations"`
 	APIGeneratedAnnotationInventory      []figmaAPIGeneratedAnnotationGroup     `json:"api_generated_annotation_inventory"`
 	Entries                              []figmaCoverageEntry                   `json:"entries"`
+}
+
+type figmaCoverageEvidenceLoop struct {
+	Observation   string `json:"observation"`
+	Hypothesis    string `json:"hypothesis"`
+	Execute       string `json:"execute"`
+	Evaluate      string `json:"evaluate"`
+	Retrospective string `json:"retrospective"`
 }

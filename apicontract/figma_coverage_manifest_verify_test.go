@@ -16,12 +16,29 @@ func (s *figmaCoverageTestScope) verifyManifestEnvelope(t *testing.T) {
 	if s.manifest.RiidoTask != "RIID-4809" {
 		t.Fatalf("riido_task = %q", s.manifest.RiidoTask)
 	}
+	if s.manifest.Workflow != ".github/workflows/architecture-docs.yml" {
+		t.Fatalf("workflow = %q", s.manifest.Workflow)
+	}
+	if s.manifest.EvidenceArtifact != "architecture-docs-evidence" {
+		t.Fatalf("evidence_artifact = %q", s.manifest.EvidenceArtifact)
+	}
+	verifyFigmaCoverageLoop(t, s.manifest.Loop)
 	verifyFigmaCoverageProvenance(t, s.manifest.StabilizedBy, s.docPath)
 	if s.manifest.HumanDoc != "docs/30-architecture/figma-ai-agent-coverage.md" {
 		t.Fatalf("human_doc = %q", s.manifest.HumanDoc)
 	}
 	if s.manifest.Figma.FileKey != "MUOd9lctoEHASUStN3vUuK" || s.manifest.Figma.PageID != "129:5215" {
 		t.Fatalf("figma source = %+v", s.manifest.Figma)
+	}
+}
+
+func verifyFigmaCoverageLoop(t *testing.T, loop figmaCoverageEvidenceLoop) {
+	t.Helper()
+	values := []string{loop.Observation, loop.Hypothesis, loop.Execute, loop.Evaluate, loop.Retrospective}
+	for _, value := range values {
+		if strings.TrimSpace(value) == "" {
+			t.Fatalf("figma coverage loop is incomplete: %+v", loop)
+		}
 	}
 }
 
