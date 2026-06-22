@@ -42,3 +42,16 @@ jobs:
         run: |
           npm ci
           npm run build
+      - name: Test contract UI golden screens
+        working-directory: contract-ui
+        run: |
+          npx playwright install chromium
+          npm run test:golden
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: contract-ui-golden-screens
+          path: |
+            contract-ui/golden/*.png
+            contract-ui/test-results/golden-current/*.png
+            contract-ui/test-results/golden-diff/*.png

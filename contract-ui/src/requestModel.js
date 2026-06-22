@@ -23,3 +23,9 @@ export function authLabel(operation) {
   if (operation.auth?.scheme === "bearer") return "Bearer token";
   return operation.auth?.header ?? "Auth token";
 }
+
+export function requestURL(baseURL, path, params) {
+  const target = baseURL.replace(/\/$/, "") + resolvePath(path, params);
+  if (!["localhost", "127.0.0.1"].includes(window.location.hostname)) return target;
+  return `/__riido_saas_proxy?url=${encodeURIComponent(target)}`;
+}

@@ -5,5 +5,6 @@
 /dist/
 /contract-ui/dist/
 /contract-ui/node_modules/
+/contract-ui/test-results/
 /coverage.out
 *.log

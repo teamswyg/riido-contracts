@@ -4,6 +4,7 @@ import { flattenOperations, operationKey } from "./contractModel.js";
 import Header from "./components/Header.jsx";
 import OperationList from "./components/OperationList.jsx";
 import OperationPanel from "./components/OperationPanel.jsx";
+import PresetBar from "./components/PresetBar.jsx";
 
 export default function App() {
   const operations = useMemo(() => flattenOperations(saasContractBundle), []);
@@ -15,6 +16,7 @@ export default function App() {
   return (
     <main className="app-shell">
       <Header bundle={saasContractBundle} operationCount={operations.length} />
+      <PresetBar onSelect={setQuery} />
       <section className="workspace">
         <OperationList
           operations={filtered}
