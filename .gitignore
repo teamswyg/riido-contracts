@@ -3,5 +3,7 @@
 /.vscode/
 /bin/
 /dist/
+/contract-ui/dist/
+/contract-ui/node_modules/
 /coverage.out
 *.log
