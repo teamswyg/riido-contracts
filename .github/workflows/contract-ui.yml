@@ -1,0 +1,44 @@
+name: contract-ui
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/contract-ui.yml"
+      - "apicontract/fixtures/*.ir.riido.json"
+      - "apicontract/fixtures/*.openapi.json"
+      - "contract-ui/**"
+      - "tools/contractui/**"
+      - "go.mod"
+  pull_request:
+    paths:
+      - ".github/workflows/contract-ui.yml"
+      - "apicontract/fixtures/*.ir.riido.json"
+      - "apicontract/fixtures/*.openapi.json"
+      - "contract-ui/**"
+      - "tools/contractui/**"
+      - "go.mod"
+
+jobs:
+  contract-ui:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version-file: go.mod
+          cache: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: contract-ui/package-lock.json
+      - name: Verify generated contract UI bundle
+        run: |
+          go test ./tools/contractui -count=1
+          go run ./tools/contractui verify
+      - name: Build contract UI
+        working-directory: contract-ui
+        run: |
+          npm ci
+          npm run build

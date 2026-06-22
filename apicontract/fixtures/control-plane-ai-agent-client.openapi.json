@@ -5585,6 +5585,10 @@
       "DeviceDaemonRecord": {
         "description": "runtime 설정 화면에서 agent 권한으로 접근 가능한 daemon 상세 표시와 제어 버튼 상태를 구성하는 read model입니다.",
         "properties": {
+          "app_version": {
+            "description": "daemon이 SaaS runtime snapshot에 신고한 Riido daemon app version 문자열입니다. UI 표시와 호환성 진단용 raw signal이며 capability/scheduling 분기 조건으로 사용하지 않습니다.",
+            "type": "string"
+          },
           "availability": {
             "$ref": "#/components/schemas/DaemonAvailability"
           },

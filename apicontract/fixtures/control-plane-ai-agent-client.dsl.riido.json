@@ -861,6 +861,11 @@
           "type": "string"
         },
         {
+          "name": "app_version",
+          "type": "string",
+          "description": "daemon이 SaaS runtime snapshot에 신고한 Riido daemon app version 문자열입니다. UI 표시와 호환성 진단용 raw signal이며 capability/scheduling 분기 조건으로 사용하지 않습니다."
+        },
+        {
           "name": "pid",
           "type": "integer"
         },
