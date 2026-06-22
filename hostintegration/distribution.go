@@ -1,5 +1,7 @@
 package hostintegration
 
+import "slices"
+
 // DistributionChannel is the package artifact identity that constrains which
 // host surfaces may be used.
 type DistributionChannel string
@@ -15,23 +17,13 @@ const (
 // Valid reports whether channel is one of the SSOT-defined distribution
 // channels.
 func (c DistributionChannel) Valid() bool {
-	for _, channel := range DistributionChannels() {
-		if c == channel {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(DistributionChannels(), c)
 }
 
 // StoreManaged reports whether the channel is subject to app store review
 // constraints.
 func (c DistributionChannel) StoreManaged() bool {
-	for _, channel := range StoreManagedDistributionChannels() {
-		if c == channel {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(StoreManagedDistributionChannels(), c)
 }
 
 func DistributionChannels() []DistributionChannel {
