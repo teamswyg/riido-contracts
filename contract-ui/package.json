@@ -6,13 +6,18 @@
   "scripts": {
     "dev": "vite --host 127.0.0.1",
     "build": "vite build",
-    "preview": "vite preview --host 127.0.0.1"
+    "preview": "vite preview --host 127.0.0.1",
+    "golden:update": "node scripts/golden.mjs --update",
+    "test:golden": "node scripts/golden.mjs"
   },
   "dependencies": {
     "react": "latest",
     "react-dom": "latest"
   },
   "devDependencies": {
+    "pixelmatch": "^7.2.0",
+    "playwright": "^1.61.0",
+    "pngjs": "^7.0.0",
     "vite": "latest"
   }
 }
