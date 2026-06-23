@@ -304,7 +304,7 @@ export const saasContractBundle = {
         "ir": "apicontract/fixtures/control-plane-ai-agent-client.ir.riido.json",
         "openapi": "apicontract/fixtures/control-plane-ai-agent-client.openapi.json"
       },
-      "operation_count": 55,
+      "operation_count": 56,
       "operations": [
         {
           "operation_id": "createAIAgent",
@@ -1880,7 +1880,8 @@ export const saasContractBundle = {
               "v2.aiAgent.agents.editability",
               "v2.aiAgent.tasks.assignableAgents",
               "v2.aiAgent.tasks.threads",
-              "v2.aiAgent.tasks.assignedAgentProfiles"
+              "v2.aiAgent.tasks.assignedAgentProfiles",
+              "v3.aiAgent.tasks.threads"
             ]
           },
           "auth": {
@@ -2642,7 +2643,8 @@ export const saasContractBundle = {
               "v2.aiAgent.bootstrap",
               "v2.aiAgent.tasks.assignableAgents",
               "v2.aiAgent.tasks.threads",
-              "v2.aiAgent.tasks.threadStreamSubscription"
+              "v2.aiAgent.tasks.threadStreamSubscription",
+              "v3.aiAgent.tasks.threads"
             ]
           },
           "auth": {
@@ -2700,7 +2702,8 @@ export const saasContractBundle = {
               "v2.aiAgent.bootstrap",
               "v2.aiAgent.tasks.assignableAgents",
               "v2.aiAgent.tasks.threads",
-              "v2.aiAgent.tasks.threadStreamSubscription"
+              "v2.aiAgent.tasks.threadStreamSubscription",
+              "v3.aiAgent.tasks.threads"
             ]
           },
           "auth": {
@@ -2755,7 +2758,8 @@ export const saasContractBundle = {
               "v2.aiAgent.bootstrap",
               "v2.aiAgent.tasks.assignableAgents",
               "v2.aiAgent.tasks.threads",
-              "v2.aiAgent.tasks.threadStreamSubscription"
+              "v2.aiAgent.tasks.threadStreamSubscription",
+              "v3.aiAgent.tasks.threads"
             ]
           },
           "auth": {
@@ -2845,7 +2849,8 @@ export const saasContractBundle = {
               "v2.aiAgent.bootstrap",
               "v2.aiAgent.tasks.assignableAgents",
               "v2.aiAgent.tasks.threads",
-              "v2.aiAgent.tasks.assignedAgentProfiles"
+              "v2.aiAgent.tasks.assignedAgentProfiles",
+              "v3.aiAgent.tasks.threads"
             ]
           },
           "auth": {
@@ -2891,7 +2896,8 @@ export const saasContractBundle = {
               "v2.aiAgent.bootstrap",
               "v2.aiAgent.tasks.assignableAgents",
               "v2.aiAgent.tasks.threads",
-              "v2.aiAgent.tasks.assignedAgentProfiles"
+              "v2.aiAgent.tasks.assignedAgentProfiles",
+              "v3.aiAgent.tasks.threads"
             ]
           },
           "auth": {
@@ -2948,7 +2954,8 @@ export const saasContractBundle = {
               "v2.aiAgent.bootstrap",
               "v2.aiAgent.tasks.assignableAgents",
               "v2.aiAgent.tasks.threads",
-              "v2.aiAgent.tasks.assignedAgentProfiles"
+              "v2.aiAgent.tasks.assignedAgentProfiles",
+              "v3.aiAgent.tasks.threads"
             ]
           },
           "auth": {
@@ -2992,7 +2999,8 @@ export const saasContractBundle = {
             "invalidates": [
               "v2.aiAgent.bootstrap",
               "v2.aiAgent.tasks.assignableAgents",
-              "v2.aiAgent.tasks.threads"
+              "v2.aiAgent.tasks.threads",
+              "v3.aiAgent.tasks.threads"
             ]
           },
           "auth": {
@@ -3127,7 +3135,8 @@ export const saasContractBundle = {
             "invalidates": [
               "v2.aiAgent.bootstrap",
               "v2.aiAgent.tasks.assignableAgents",
-              "v2.aiAgent.tasks.threads"
+              "v2.aiAgent.tasks.threads",
+              "v3.aiAgent.tasks.threads"
             ]
           },
           "auth": {
@@ -3150,6 +3159,60 @@ export const saasContractBundle = {
             "workspace_id",
             "task_id",
             "thread_id"
+          ]
+        },
+        {
+          "operation_id": "listAIAgentTaskThreadHistoryV3",
+          "kind": "query",
+          "method": "GET",
+          "path": "/v3/client/workspaces/{workspace_id}/ai-agent/tasks/{task_id}/threads",
+          "resource": "agent",
+          "action": "read",
+          "summary": "AI Agent task thread를 user/agent/progress message history로 조회합니다 (v3 workspace-scoped)",
+          "client": {
+            "module": "v3",
+            "facade_path": [
+              "aiAgent",
+              "tasks",
+              "threads"
+            ],
+            "generated_path": "v3.aiAgent.tasks.threads",
+            "cache_tag": "v3.aiAgent.tasks.threads"
+          },
+          "auth": {
+            "scheme": "apiKey",
+            "header": "X-Riido-AI-Agent-Token",
+            "scopes": [
+              "ai-agent:read",
+              "task:{task_id}:read"
+            ]
+          },
+          "rbac_policy": "task_thread_history_collection.v1",
+          "response": {
+            "status": 200,
+            "ref": "AIAgentTaskThreadHistoryCollectionResponse"
+          },
+          "scenario_ids": [
+            "listAIAgentTaskThreadHistoryV3.user-follow-up-survives-refresh",
+            "listAIAgentTaskThreadHistoryV3.agent-snapshot-is-referenced-once"
+          ],
+          "scenarios": [
+            {
+              "name": "user follow-up survives refresh",
+              "given": "a user posts a next instruction to an AI Agent thread and reloads the task screen",
+              "when": "the client calls riido.v3.aiAgent.tasks.threads",
+              "then": "the target thread messages array contains the user message and the agent projection messages in observed_at order"
+            },
+            {
+              "name": "agent snapshot is referenced once",
+              "given": "several historical threads share the same captured agent settings",
+              "when": "the client reads the v3 thread history collection",
+              "then": "each thread carries agent_snapshot_id and the repeated snapshot body is available once in agent_snapshots"
+            }
+          ],
+          "path_params": [
+            "workspace_id",
+            "task_id"
           ]
         }
       ],
@@ -3238,6 +3301,50 @@ export const saasContractBundle = {
           ],
           "type": "object"
         },
+        "AIAgentTaskThreadAgentSnapshot": {
+          "description": "thread 생성/실행 당시 agent 표시 정보를 고정한 snapshot입니다. v3에서는 thread마다 이 객체를 반복하지 않고 agent_snapshot_id로 참조합니다.",
+          "properties": {
+            "agent_id": {
+              "type": "string"
+            },
+            "captured_at": {
+              "format": "date-time",
+              "type": "string"
+            },
+            "model_id": {
+              "type": "string"
+            },
+            "model_label": {
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "owner_principal_id": {
+              "type": "string"
+            },
+            "profile_thumbnail_url": {
+              "format": "uri",
+              "type": "string"
+            },
+            "runtime_kind": {
+              "$ref": "#/components/schemas/RuntimeKind"
+            },
+            "tmp_color": {
+              "type": "string"
+            },
+            "visibility": {
+              "$ref": "#/components/schemas/AgentVisibility"
+            },
+            "workspace_id": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "agent_id"
+          ],
+          "type": "object"
+        },
         "AIAgentTaskThreadCollectionResponse": {
           "description": "task 화면 진입 시 먼저 읽는 AI Agent thread cold collection 응답입니다.",
           "properties": {
@@ -3281,6 +3388,146 @@ export const saasContractBundle = {
             }
           },
           "type": "object"
+        },
+        "AIAgentTaskThreadHistoryCollectionResponse": {
+          "description": "v3 task 화면 진입 시 thread별 user/agent/progress history와 deduplicated agent snapshot map을 함께 읽는 응답입니다.",
+          "properties": {
+            "active_stream": {
+              "$ref": "#/components/schemas/AIAgentTaskThreadStreamLink"
+            },
+            "agent_snapshots": {
+              "additionalProperties": {
+                "$ref": "#/components/schemas/AIAgentTaskThreadAgentSnapshot"
+              },
+              "description": "agent_snapshot_id를 key로 하는 snapshot map입니다. thread row는 이 map을 참조하여 snapshot 중복 전송을 줄입니다.",
+              "type": "object"
+            },
+            "schema_version": {
+              "type": "string"
+            },
+            "task_id": {
+              "type": "string"
+            },
+            "threads": {
+              "items": {
+                "$ref": "#/components/schemas/AIAgentTaskThreadHistoryRecord"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "schema_version",
+            "task_id",
+            "threads"
+          ],
+          "type": "object"
+        },
+        "AIAgentTaskThreadHistoryMessage": {
+          "description": "v3 task thread history에서 사용자 지시, agent 결과, runtime progress를 한 timeline 안에 보존하는 message row입니다.",
+          "properties": {
+            "assignment_id": {
+              "type": "string"
+            },
+            "body": {
+              "type": "string"
+            },
+            "comment_kind": {
+              "$ref": "#/components/schemas/AgentTaskCommentKind"
+            },
+            "message_id": {
+              "type": "string"
+            },
+            "observed_at": {
+              "format": "date-time",
+              "type": "string"
+            },
+            "result_message": {
+              "type": "string"
+            },
+            "role": {
+              "$ref": "#/components/schemas/AIAgentTaskThreadMessageRole"
+            },
+            "run_id": {
+              "type": "string"
+            },
+            "seq": {
+              "type": "integer"
+            },
+            "source_message_id": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "message_id",
+            "role"
+          ],
+          "type": "object"
+        },
+        "AIAgentTaskThreadHistoryRecord": {
+          "description": "v3 task 화면에서 한 AI Agent thread를 historical message timeline으로 복원하기 위한 record입니다.",
+          "properties": {
+            "active_stream": {
+              "$ref": "#/components/schemas/AIAgentTaskThreadStreamLink"
+            },
+            "agent_id": {
+              "type": "string"
+            },
+            "agent_snapshot_id": {
+              "description": "agent_snapshots map에서 표시 snapshot을 찾기 위한 key입니다.",
+              "type": "string"
+            },
+            "assignment_id": {
+              "type": "string"
+            },
+            "assignment_state": {
+              "$ref": "#/components/schemas/AgentAssignmentState"
+            },
+            "completed_at": {
+              "format": "date-time",
+              "type": "string"
+            },
+            "messages": {
+              "items": {
+                "$ref": "#/components/schemas/AIAgentTaskThreadHistoryMessage"
+              },
+              "type": "array"
+            },
+            "run_id": {
+              "type": "string"
+            },
+            "started_at": {
+              "format": "date-time",
+              "type": "string"
+            },
+            "task_id": {
+              "type": "string"
+            },
+            "thread_id": {
+              "type": "string"
+            },
+            "work_status": {
+              "$ref": "#/components/schemas/AgentWorkStatus"
+            }
+          },
+          "required": [
+            "thread_id",
+            "task_id",
+            "agent_id",
+            "run_id",
+            "work_status",
+            "assignment_state",
+            "messages"
+          ],
+          "type": "object"
+        },
+        "AIAgentTaskThreadMessageRole": {
+          "description": "v3 task thread history에서 한 message row의 작성 주체 또는 진행 로그 역할입니다.",
+          "enum": [
+            "user",
+            "agent",
+            "progress"
+          ],
+          "type": "string"
         },
         "AIAgentTaskThreadRecord": {
           "description": "task 화면에 표시할 AI Agent thread의 cold record입니다.",
