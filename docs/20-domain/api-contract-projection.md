@@ -10,7 +10,7 @@ Domain DSL -> canonical API IR -> OpenAPI projection rules for shared API contra
 
 - Evidence artifact: `api-contract-evidence`
 - Fixtures: `2`
-- Operations: `60`
+- Operations: `61`
 - Required generated paths: `3`
 
 ## Fixtures
@@ -18,7 +18,7 @@ Domain DSL -> canonical API IR -> OpenAPI projection rules for shared API contra
 | Contract | DSL | IR | OpenAPI | Ops | v2 ops | Generated paths |
 | --- | --- | --- | --- | --- | --- | --- |
 | `control-plane-agent-catalog-api.v1` | `apicontract/fixtures/control-plane-agent-catalog.dsl.riido.json` | `apicontract/fixtures/control-plane-agent-catalog.ir.riido.json` | `apicontract/fixtures/control-plane-agent-catalog.openapi.json` | `5` | `0` | `0` |
-| `control-plane-ai-agent-client-api.v2` | `apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json` | `apicontract/fixtures/control-plane-ai-agent-client.ir.riido.json` | `apicontract/fixtures/control-plane-ai-agent-client.openapi.json` | `55` | `30` | `55` |
+| `control-plane-ai-agent-client-api.v2` | `apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json` | `apicontract/fixtures/control-plane-ai-agent-client.ir.riido.json` | `apicontract/fixtures/control-plane-ai-agent-client.openapi.json` | `56` | `30` | `56` |
 
 ## Projection Invariants
 
