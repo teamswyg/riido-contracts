@@ -3194,7 +3194,8 @@ export const saasContractBundle = {
           },
           "scenario_ids": [
             "listAIAgentTaskThreadHistoryV3.user-follow-up-survives-refresh",
-            "listAIAgentTaskThreadHistoryV3.agent-snapshot-is-referenced-once"
+            "listAIAgentTaskThreadHistoryV3.agent-snapshot-is-referenced-once",
+            "listAIAgentTaskThreadHistoryV3.follow-up-and-reassignment-keep-separate-conversations"
           ],
           "scenarios": [
             {
@@ -3208,6 +3209,12 @@ export const saasContractBundle = {
               "given": "several historical threads share the same captured agent settings",
               "when": "the client reads the v3 thread history collection",
               "then": "each thread carries agent_snapshot_id and the repeated snapshot body is available once in agent_snapshots"
+            },
+            {
+              "name": "follow-up and reassignment keep separate conversations",
+              "given": "the same agent is assigned again from the participant dropdown and also receives a follow-up reply on an older thread",
+              "when": "the client calls riido.v3.aiAgent.tasks.threads",
+              "then": "the reassignment thread has a different conversation_id, while the follow-up thread inherits the original conversation_id and carries parent_thread_id"
             }
           ],
           "path_params": [
@@ -3486,11 +3493,19 @@ export const saasContractBundle = {
               "format": "date-time",
               "type": "string"
             },
+            "conversation_id": {
+              "description": "같은 AI Agent 댓글 카드 안에서 이어지는 reply chain을 묶는 stable key입니다. 새 배정은 새 conversation_id를 만들고, 기존 thread 답글은 기존 conversation_id를 상속합니다.",
+              "type": "string"
+            },
             "messages": {
               "items": {
                 "$ref": "#/components/schemas/AIAgentTaskThreadHistoryMessage"
               },
               "type": "array"
+            },
+            "parent_thread_id": {
+              "description": "후속 답글 실행이면 사용자가 답글을 단 원본/직전 thread_id입니다. 새 배정이면 생략합니다.",
+              "type": "string"
             },
             "run_id": {
               "type": "string"
@@ -3516,6 +3531,7 @@ export const saasContractBundle = {
             "run_id",
             "work_status",
             "assignment_state",
+            "conversation_id",
             "messages"
           ],
           "type": "object"

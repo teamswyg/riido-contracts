@@ -2541,12 +2541,23 @@
         "run_id",
         "work_status",
         "assignment_state",
+        "conversation_id",
         "messages"
       ],
       "properties": [
         {
           "name": "thread_id",
           "type": "string"
+        },
+        {
+          "name": "conversation_id",
+          "type": "string",
+          "description": "같은 AI Agent 댓글 카드 안에서 이어지는 reply chain을 묶는 stable key입니다. 새 배정은 새 conversation_id를 만들고, 기존 thread 답글은 기존 conversation_id를 상속합니다."
+        },
+        {
+          "name": "parent_thread_id",
+          "type": "string",
+          "description": "후속 답글 실행이면 사용자가 답글을 단 원본/직전 thread_id입니다. 새 배정이면 생략합니다."
         },
         {
           "name": "task_id",
@@ -4682,7 +4693,7 @@
       "operation_id": "listAIAgentTaskThreadHistoryV3",
       "kind": "query",
       "summary": "AI Agent task thread를 user/agent/progress message history로 조회합니다 (v3 workspace-scoped)",
-      "description": "v2 threads 응답은 thread별 최신 projection을 유지합니다. v3는 사용자가 thread에 남긴 다음 지시와 agent 결과를 messages[] timeline으로 보존하고, agent snapshot은 agent_snapshot_id와 agent_snapshots map으로 분리합니다.",
+      "description": "v2 threads 응답은 thread별 최신 projection을 유지합니다. v3는 사용자가 thread에 남긴 다음 지시와 agent 결과를 messages[] timeline으로 보존하고, agent snapshot은 agent_snapshot_id와 agent_snapshots map으로 분리합니다. conversation_id는 같은 댓글 카드 안의 reply chain을 묶고, parent_thread_id는 후속 답글 run의 원본 thread를 가리킵니다.",
       "method": "GET",
       "path": "/v3/client/workspaces/{workspace_id}/ai-agent/tasks/{task_id}/threads",
       "resource": "agent",
@@ -4721,6 +4732,12 @@
           "given": "several historical threads share the same captured agent settings",
           "when": "the client reads the v3 thread history collection",
           "then": "each thread carries agent_snapshot_id and the repeated snapshot body is available once in agent_snapshots"
+        },
+        {
+          "name": "follow-up and reassignment keep separate conversations",
+          "given": "the same agent is assigned again from the participant dropdown and also receives a follow-up reply on an older thread",
+          "when": "the client calls riido.v3.aiAgent.tasks.threads",
+          "then": "the reassignment thread has a different conversation_id, while the follow-up thread inherits the original conversation_id and carries parent_thread_id"
         }
       ]
     },
