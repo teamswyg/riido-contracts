@@ -21,9 +21,17 @@ func TestAIAgentTaskThreadHistoryV3Schemas(t *testing.T) {
 	history := openAPISchemaProperties(t, fixture.openAPI, "AIAgentTaskThreadHistoryCollectionResponse")
 	verifyHistoryThreads(t, history)
 	verifyHistorySnapshots(t, history)
+	verifyHistoryRecordConversationFields(t, fixture.openAPI)
 	message := openAPISchemaProperties(t, fixture.openAPI, "AIAgentTaskThreadHistoryMessage")
 	if message["role"].(map[string]any)["$ref"] != "#/components/schemas/AIAgentTaskThreadMessageRole" {
 		t.Fatalf("history message role schema = %#v", message["role"])
+	}
+}
+
+func TestAIAgentTaskThreadHistoryV3ConversationScenario(t *testing.T) {
+	fixture := loadAIAgentClientContractFixture(t)
+	if !scenarioExists(fixture.ir, "listAIAgentTaskThreadHistoryV3.follow-up-and-reassignment-keep-separate-conversations") {
+		t.Fatalf("v3 conversation grouping scenario missing")
 	}
 }
 
