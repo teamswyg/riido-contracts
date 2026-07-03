@@ -304,7 +304,7 @@ export const saasContractBundle = {
         "ir": "apicontract/fixtures/control-plane-ai-agent-client.ir.riido.json",
         "openapi": "apicontract/fixtures/control-plane-ai-agent-client.openapi.json"
       },
-      "operation_count": 56,
+      "operation_count": 58,
       "operations": [
         {
           "operation_id": "createAIAgent",
@@ -1131,6 +1131,52 @@ export const saasContractBundle = {
               "given": "the Figma runtime settings stop modal says local runtimes become offline",
               "when": "the device owner confirms stop for that device_id",
               "then": "the response accepts a stop daemon command and the following runtime read model shows that device's runtimes offline"
+            }
+          ],
+          "path_params": [
+            "device_id"
+          ]
+        },
+        {
+          "operation_id": "listAIAgentDeviceDaemons",
+          "kind": "query",
+          "method": "GET",
+          "path": "/v1/client/ai-agent/devices/{device_id}/daemons",
+          "resource": "device",
+          "action": "read",
+          "summary": "runtime 설정 화면의 내 기기 영역에서 device_id 기준 daemon instance 목록을 조회합니다",
+          "client": {
+            "module": "aiAgent",
+            "facade_path": [
+              "devices",
+              "daemons",
+              "list"
+            ],
+            "generated_path": "aiAgent.devices.daemons.list",
+            "cache_tag": "aiAgent.devices.daemons"
+          },
+          "auth": {
+            "scheme": "apiKey",
+            "header": "X-Riido-AI-Agent-Token",
+            "scopes": [
+              "ai-agent:device:read",
+              "ai-agent:device:{device_id}:read"
+            ]
+          },
+          "rbac_policy": "runtime_liveness.v1",
+          "response": {
+            "status": 200,
+            "ref": "DeviceDaemonListResponse"
+          },
+          "scenario_ids": [
+            "listAIAgentDeviceDaemons.figma-my-device-daemon-instance-list"
+          ],
+          "scenarios": [
+            {
+              "name": "figma my device daemon instance list",
+              "given": "the runtime settings current-device area can represent local, staging, development, and production daemon instances on the same device",
+              "when": "the device owner opens the 내 기기 daemon area",
+              "then": "the response returns every visible daemon instance instead of only the preferred daemon"
             }
           ],
           "path_params": [
@@ -2375,6 +2421,43 @@ export const saasContractBundle = {
           "response": {
             "status": 202,
             "ref": "DeviceDaemonCommandResponse"
+          },
+          "path_params": [
+            "workspace_id",
+            "device_id"
+          ]
+        },
+        {
+          "operation_id": "listAIAgentDeviceDaemonsV2",
+          "kind": "query",
+          "method": "GET",
+          "path": "/v2/client/workspaces/{workspace_id}/ai-agent/devices/{device_id}/daemons",
+          "resource": "device",
+          "action": "read",
+          "summary": "runtime 설정 화면의 내 기기 영역에서 device_id 기준 daemon instance 목록을 조회합니다 (v2 workspace-scoped)",
+          "client": {
+            "module": "v2",
+            "facade_path": [
+              "aiAgent",
+              "devices",
+              "daemons",
+              "list"
+            ],
+            "generated_path": "v2.aiAgent.devices.daemons.list",
+            "cache_tag": "v2.aiAgent.devices.daemons"
+          },
+          "auth": {
+            "scheme": "apiKey",
+            "header": "X-Riido-AI-Agent-Token",
+            "scopes": [
+              "ai-agent:device:read",
+              "ai-agent:device:{device_id}:read"
+            ]
+          },
+          "rbac_policy": "runtime_liveness.v1",
+          "response": {
+            "status": 200,
+            "ref": "DeviceDaemonListResponse"
           },
           "path_params": [
             "workspace_id",
@@ -4675,6 +4758,29 @@ export const saasContractBundle = {
           "required": [
             "schema_version",
             "daemon"
+          ],
+          "type": "object"
+        },
+        "DeviceDaemonListResponse": {
+          "description": "runtime 설정 화면의 내 기기 영역에서 하나의 device에 연결된 daemon instance 목록을 표시하는 read model입니다.",
+          "properties": {
+            "daemons": {
+              "items": {
+                "$ref": "#/components/schemas/DeviceDaemonRecord"
+              },
+              "type": "array"
+            },
+            "device_id": {
+              "type": "string"
+            },
+            "schema_version": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "schema_version",
+            "device_id",
+            "daemons"
           ],
           "type": "object"
         },

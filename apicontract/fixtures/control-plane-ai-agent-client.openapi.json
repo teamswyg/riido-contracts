@@ -1215,6 +1215,71 @@
         ]
       }
     },
+    "/v1/client/ai-agent/devices/{device_id}/daemons": {
+      "get": {
+        "operationId": "listAIAgentDeviceDaemons",
+        "summary": "runtime 설정 화면의 내 기기 영역에서 device_id 기준 daemon instance 목록을 조회합니다",
+        "tags": [
+          "ai_agent_client"
+        ],
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceDaemonListResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "riidoAIAgentToken": []
+          }
+        ],
+        "x-riido-auth-scopes": [
+          "ai-agent:device:read",
+          "ai-agent:device:{device_id}:read"
+        ],
+        "x-riido-rbac-policy": "runtime_liveness.v1",
+        "x-riido-operation-kind": "query",
+        "x-riido-client": {
+          "module": "aiAgent",
+          "facade_path": [
+            "devices",
+            "daemons",
+            "list"
+          ],
+          "generated_path": "aiAgent.devices.daemons.list",
+          "cache_tag": "aiAgent.devices.daemons"
+        },
+        "x-riido-scenarios": [
+          "listAIAgentDeviceDaemons.figma-my-device-daemon-instance-list"
+        ]
+      }
+    },
     "/v1/client/ai-agent/events": {
       "get": {
         "operationId": "streamAIAgentClientEvents",
@@ -3076,6 +3141,77 @@
             "v2.aiAgent.devices.daemon",
             "v2.aiAgent.devices.runtimes"
           ]
+        }
+      }
+    },
+    "/v2/client/workspaces/{workspace_id}/ai-agent/devices/{device_id}/daemons": {
+      "get": {
+        "operationId": "listAIAgentDeviceDaemonsV2",
+        "summary": "runtime 설정 화면의 내 기기 영역에서 device_id 기준 daemon instance 목록을 조회합니다 (v2 workspace-scoped)",
+        "tags": [
+          "ai_agent_client"
+        ],
+        "parameters": [
+          {
+            "name": "device_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "workspace_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/DeviceDaemonListResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ErrorEnvelope"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "riidoAIAgentToken": []
+          }
+        ],
+        "x-riido-auth-scopes": [
+          "ai-agent:device:read",
+          "ai-agent:device:{device_id}:read"
+        ],
+        "x-riido-rbac-policy": "runtime_liveness.v1",
+        "x-riido-operation-kind": "query",
+        "x-riido-client": {
+          "module": "v2",
+          "facade_path": [
+            "aiAgent",
+            "devices",
+            "daemons",
+            "list"
+          ],
+          "generated_path": "v2.aiAgent.devices.daemons.list",
+          "cache_tag": "v2.aiAgent.devices.daemons"
         }
       }
     },
@@ -5883,6 +6019,29 @@
         "required": [
           "schema_version",
           "daemon"
+        ],
+        "type": "object"
+      },
+      "DeviceDaemonListResponse": {
+        "description": "runtime 설정 화면의 내 기기 영역에서 하나의 device에 연결된 daemon instance 목록을 표시하는 read model입니다.",
+        "properties": {
+          "daemons": {
+            "items": {
+              "$ref": "#/components/schemas/DeviceDaemonRecord"
+            },
+            "type": "array"
+          },
+          "device_id": {
+            "type": "string"
+          },
+          "schema_version": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "schema_version",
+          "device_id",
+          "daemons"
         ],
         "type": "object"
       },
