@@ -16,6 +16,8 @@ func renderDoc(model model) string {
 	renderInlineList(&b, "Distribution channels", model.DistributionChannels)
 	renderInlineList(&b, "Store-managed channels", model.StoreManagedChannels)
 	renderInlineList(&b, "Provider routing statuses", model.ProviderStatuses)
+	renderInlineList(&b, "Provider health statuses", model.ProviderHealthStatuses)
+	renderInlineList(&b, "Provider diagnostic codes", model.ProviderDiagnosticCodes)
 	renderInlineList(&b, "Non-owned surfaces", model.NonOwnedSurfaces)
 	renderInlineList(&b, "Invariant anchors", m.Invariants)
 	renderLoop(&b, m.Loop)
@@ -24,8 +26,8 @@ func renderDoc(model model) string {
 
 func renderSummary(b *strings.Builder, model model) {
 	fmt.Fprintf(b, "- Evidence artifact: `%s`\n", model.Manifest.EvidenceArtifact)
-	fmt.Fprintf(b, "- Distribution valid: `%t`; provider routing valid: `%t`\n",
-		model.DistributionValid, model.ProviderRoutingValid)
+	fmt.Fprintf(b, "- Distribution valid: `%t`; provider routing valid: `%t`; provider health valid: `%t`\n",
+		model.DistributionValid, model.ProviderRoutingValid, model.ProviderHealthValid)
 	fmt.Fprintf(b, "- Store-managed classification exclusive: `%t`\n\n",
 		model.StoreManagedExclusive)
 }
