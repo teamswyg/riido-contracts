@@ -19,3 +19,18 @@ func allProviderStatusesValid() bool {
 	}
 	return !hostintegration.ProviderRoutingStatus("unknown").Valid()
 }
+
+func allProviderHealthVocabularyValid() bool {
+	for _, status := range hostintegration.ProviderHealthStatuses() {
+		if !status.Valid() {
+			return false
+		}
+	}
+	for _, code := range hostintegration.ProviderDiagnosticCodes() {
+		if !code.Valid() {
+			return false
+		}
+	}
+	return !hostintegration.ProviderHealthStatus("other").Valid() &&
+		!hostintegration.ProviderDiagnosticCode("raw-error").Valid()
+}

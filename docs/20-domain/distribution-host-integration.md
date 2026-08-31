@@ -9,7 +9,7 @@ Executable SSOT: `github.com/teamswyg/riido-contracts/hostintegration` plus `doc
 The hostintegration package owns public distribution-channel and provider-routing vocabulary only; runtime host behavior stays downstream.
 
 - Evidence artifact: `host-integration-evidence`
-- Distribution valid: `true`; provider routing valid: `true`
+- Distribution valid: `true`; provider routing valid: `true`; provider health valid: `true`
 - Store-managed classification exclusive: `true`
 
 ## Distribution channels
@@ -32,6 +32,22 @@ The hostintegration package owns public distribution-channel and provider-routin
 - `unsupported`
 - `store-blocked`
 
+## Provider health statuses
+
+- `healthy`
+- `degraded`
+- `unavailable`
+- `unknown`
+
+## Provider diagnostic codes
+
+- `none`
+- `executable-missing`
+- `login-required`
+- `version-unsupported`
+- `probe-failed`
+- `runtime-error`
+
 ## Non-owned surfaces
 
 - `app data root selection`
@@ -51,6 +67,7 @@ The hostintegration package owns public distribution-channel and provider-routin
 - `DistributionChannel.Valid is the executable gate for distribution channel vocabulary`
 - `DistributionChannel.StoreManaged is true only for app-store managed channels`
 - `ProviderRoutingStatus.Valid is the executable gate for server-facing provider routing status`
+- `ProviderHealthStatus and ProviderDiagnosticCode are bounded non-sensitive observation vocabulary`
 - `hostintegration never exposes provider paths, provider tokens, API keys, or raw environment values`
 
 ## Evidence Loop

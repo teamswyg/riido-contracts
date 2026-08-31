@@ -37,6 +37,22 @@ func TestProviderRoutingStatusContract(t *testing.T) {
 	}
 }
 
+func TestProviderHealthContract(t *testing.T) {
+	for _, status := range ProviderHealthStatuses() {
+		if !status.Valid() {
+			t.Fatalf("%q should be a valid provider health status", status)
+		}
+	}
+	for _, code := range ProviderDiagnosticCodes() {
+		if !code.Valid() {
+			t.Fatalf("%q should be a valid provider diagnostic code", code)
+		}
+	}
+	if ProviderHealthStatus("other").Valid() || ProviderDiagnosticCode("raw-error").Valid() {
+		t.Fatal("unknown provider health vocabulary should be invalid")
+	}
+}
+
 func TestHostIntegrationBoundaryContract(t *testing.T) {
 	if len(NonOwnedSurfaces()) == 0 {
 		t.Fatal("non-owned surfaces must be explicit")

@@ -10,6 +10,9 @@ func verifyModel(model model) error {
 	if !model.ProviderRoutingValid {
 		return errInvalidProviderRouting
 	}
+	if !model.ProviderHealthValid {
+		return errInvalidProviderHealth
+	}
 	if !model.StoreManagedExclusive {
 		return errInvalidStoreManaged
 	}
