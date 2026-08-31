@@ -4,7 +4,7 @@ import "testing"
 
 func (f aiAgentClientContractFixture) verifyIdentity(t *testing.T) {
 	t.Helper()
-	if got, want := len(f.ir.Enums), 13; got != want {
+	if got, want := len(f.ir.Enums), 15; got != want {
 		t.Fatalf("IR enums = %d, want %d", got, want)
 	}
 	if got, want := len(f.ir.SumTypes), 1; got != want {
