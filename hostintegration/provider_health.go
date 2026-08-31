@@ -34,12 +34,15 @@ func ProviderHealthStatuses() []ProviderHealthStatus {
 type ProviderDiagnosticCode string
 
 const (
-	ProviderDiagnosticNone               ProviderDiagnosticCode = "none"
-	ProviderDiagnosticExecutableMissing  ProviderDiagnosticCode = "executable-missing"
-	ProviderDiagnosticLoginRequired      ProviderDiagnosticCode = "login-required"
-	ProviderDiagnosticVersionUnsupported ProviderDiagnosticCode = "version-unsupported"
-	ProviderDiagnosticProbeFailed        ProviderDiagnosticCode = "probe-failed"
-	ProviderDiagnosticRuntimeError       ProviderDiagnosticCode = "runtime-error"
+	ProviderDiagnosticNone                  ProviderDiagnosticCode = "none"
+	ProviderDiagnosticExecutableMissing     ProviderDiagnosticCode = "executable-missing"
+	ProviderDiagnosticLoginRequired         ProviderDiagnosticCode = "login-required"
+	ProviderDiagnosticVersionUnsupported    ProviderDiagnosticCode = "version-unsupported"
+	ProviderDiagnosticProbeFailed           ProviderDiagnosticCode = "probe-failed"
+	ProviderDiagnosticAuthProbeFailed       ProviderDiagnosticCode = "auth-probe-failed"
+	ProviderDiagnosticVersionProbeFailed    ProviderDiagnosticCode = "version-probe-failed"
+	ProviderDiagnosticCapabilityProbeFailed ProviderDiagnosticCode = "capability-probe-failed"
+	ProviderDiagnosticRuntimeError          ProviderDiagnosticCode = "runtime-error"
 )
 
 func (c ProviderDiagnosticCode) Valid() bool {
@@ -58,6 +61,9 @@ func ProviderDiagnosticCodes() []ProviderDiagnosticCode {
 		ProviderDiagnosticLoginRequired,
 		ProviderDiagnosticVersionUnsupported,
 		ProviderDiagnosticProbeFailed,
+		ProviderDiagnosticAuthProbeFailed,
+		ProviderDiagnosticVersionProbeFailed,
+		ProviderDiagnosticCapabilityProbeFailed,
 		ProviderDiagnosticRuntimeError,
 	}
 }
