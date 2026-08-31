@@ -46,6 +46,9 @@ The hostintegration package owns public distribution-channel and provider-routin
 - `login-required`
 - `version-unsupported`
 - `probe-failed`
+- `auth-probe-failed`
+- `version-probe-failed`
+- `capability-probe-failed`
 - `runtime-error`
 
 ## Non-owned surfaces
