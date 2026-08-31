@@ -4963,6 +4963,28 @@ export const saasContractBundle = {
           ],
           "type": "object"
         },
+        "ProviderDiagnosticCode": {
+          "description": "원문 오류 대신 사용하는 비민감 provider 진단 코드입니다.",
+          "enum": [
+            "none",
+            "executable-missing",
+            "login-required",
+            "version-unsupported",
+            "probe-failed",
+            "runtime-error"
+          ],
+          "type": "string"
+        },
+        "ProviderHealthStatus": {
+          "description": "provider probe의 저카디널리티 상태입니다.",
+          "enum": [
+            "healthy",
+            "degraded",
+            "unavailable",
+            "unknown"
+          ],
+          "type": "string"
+        },
         "RuntimeAvailability": {
           "description": "client에 노출되는 runtime online/offline 상태입니다.",
           "enum": [
@@ -5022,8 +5044,18 @@ export const saasContractBundle = {
             "device_id": {
               "type": "string"
             },
+            "diagnostic_code": {
+              "$ref": "#/components/schemas/ProviderDiagnosticCode"
+            },
+            "diagnostic_summary": {
+              "description": "diagnostic_code에서 파생된 고정된 비민감 요약입니다.",
+              "type": "string"
+            },
             "has_assigned_agent": {
               "type": "boolean"
+            },
+            "health_status": {
+              "$ref": "#/components/schemas/ProviderHealthStatus"
             },
             "kind": {
               "$ref": "#/components/schemas/RuntimeKind"
