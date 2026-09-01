@@ -1,0 +1,49 @@
+{
+  "schema_version": "riido-provider-discovery-rollout.v1",
+  "id": "provider-discovery-policy-rollout",
+  "ownership": {
+    "contracts": "signed wire shape, bounded roots, lifetime and path safety",
+    "control_plane": "authenticated publication, signing, ETag, canary and rollback",
+    "daemon": "signature verification, local root resolution, last-known-good cache and executable probes",
+    "desktop": "bootstrap PATH and offline fallback only"
+  },
+  "http": {
+    "method": "GET",
+    "path": "/v1/daemon/provider-discovery-policy",
+    "request_headers": ["Authorization", "X-Riido-Device-ID", "If-None-Match"],
+    "success": ["200 signed envelope", "304 unchanged"],
+    "failure": "keep an unexpired last-known-good policy, otherwise use daemon-local fallback"
+  },
+  "security": {
+    "algorithm": "Ed25519",
+    "trust_anchor": "daemon-embedded public key ring",
+    "forbidden_payloads": ["absolute paths", "arbitrary executable names", "commands", "arguments", "environment values", "tokens", "customer paths"],
+    "maximum_lifetime": "168h",
+    "maximum_payload_bytes": 65536
+  },
+  "cache": {
+    "key": ["device profile", "os", "arch"],
+    "refresh": "ETag conditional request with bounded backoff",
+    "activation": "verify signature, schema, time window and every rule before atomic replacement",
+    "rollback": "control-plane republishes a prior signed payload with a new monotonic revision"
+  },
+  "telemetry": {
+    "allowed": ["revision", "key_id", "cache_state", "result_code", "provider", "os", "arch"],
+    "forbidden": ["resolved path", "candidate relative path", "raw payload", "signature", "device secret"]
+  },
+  "rollout": [
+    "publish contracts package without runtime consumers",
+    "add control-plane endpoint disabled by default and verify 200/304/auth/signing",
+    "add daemon shadow fetch that validates and reports bounded result codes without changing discovery",
+    "canary policy activation for one profile with local fallback retained",
+    "expand activation after provider smoke and rollback drills",
+    "reduce Desktop hardcoded candidates to bootstrap-only in a later Desktop release"
+  ],
+  "loop": {
+    "observation": "Provider search roots are compiled into Desktop and daemon, so vendor install-layout drift can require binary redistribution.",
+    "hypothesis": "A signed, bounded root-relative policy can move layout data to the control plane without allowing remote command or absolute-path injection.",
+    "execute": "Land the shared contract first, then add disabled publication, daemon shadow evaluation, canary activation and rollback as separate reviewed changes.",
+    "evaluate": "Contract tests reject unsafe paths and envelopes; integration tests prove 200/304, signature failure, expiry, cache fallback, canary and rollback behavior.",
+    "retrospective": "Only discovery data changes become server-managed; adapter protocol and parser changes still require daemon releases."
+  }
+}
