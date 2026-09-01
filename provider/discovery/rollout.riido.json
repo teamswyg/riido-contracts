@@ -8,11 +8,29 @@
     "desktop": "bootstrap PATH and offline fallback only"
   },
   "http": {
-    "method": "GET",
-    "path": "/v1/daemon/provider-discovery-policy",
-    "request_headers": ["Authorization", "X-Riido-Device-ID", "If-None-Match"],
-    "success": ["200 signed envelope", "304 unchanged"],
-    "failure": "keep an unexpired last-known-good policy, otherwise use daemon-local fallback"
+    "change_gate": "do not add or change a control-plane route until repository-wide evidence proves that riido-client and riido-client-v2 do not consume it",
+    "client_usage_evidence": {
+      "checked_consumers": ["riido-client", "riido-client-v2"],
+      "checked_commits": {
+        "riido-client": "867e4bf482dc4cbc0739fac3c0195212dbd1db40",
+        "riido-client-v2": "55d3dca863d9d0c84f48d4f94c8f192b7b752612"
+      },
+      "result": "no /v1/daemon/agent-bindings or /v1/daemon/runtime-snapshot usage",
+      "required_again": "before every daemon route or response change"
+    },
+    "v1": {
+      "method": "GET",
+      "path": "/v1/daemon/agent-bindings",
+      "compatibility": "immutable and supported during the complete v2 rollout"
+    },
+    "v2": {
+      "method": "GET",
+      "path": "/v2/daemon/agent-bindings",
+      "request_headers": ["Authorization", "X-Riido-Device-ID", "X-Riido-Provider-Policy-Revision"],
+      "response": "v1 bindings plus an optional signed provider_discovery_policy only when the requested revision differs",
+      "failure": "daemon retries v1 bindings and keeps an unexpired last-known-good policy, otherwise using daemon-local discovery"
+    },
+    "forbidden": ["a standalone provider-discovery endpoint", "in-place v1 response changes", "removing v1 before measured v2 adoption and rollback completion"]
   },
   "security": {
     "algorithm": "Ed25519",
@@ -28,13 +46,24 @@
     "rollback": "control-plane republishes a prior signed payload with a new monotonic revision"
   },
   "telemetry": {
-    "allowed": ["revision", "key_id", "cache_state", "result_code", "provider", "os", "arch"],
-    "forbidden": ["resolved path", "candidate relative path", "raw payload", "signature", "device secret"]
+    "metrics": {
+      "allowed_dimensions": ["provider", "os", "arch", "cache_state", "result_code"],
+      "forbidden_dimensions": ["device_id", "revision", "key_id", "resolved path", "error message"],
+      "instruments": ["policy_fetch_total", "policy_activation_total", "provider_discovery_total"]
+    },
+    "traces_and_logs": {
+      "emit": ["policy revision change", "cache fallback transition", "first provider failure", "provider recovery"],
+      "steady_success_sampling": "at most 1%",
+      "errors": "sample the first occurrence, then deduplicate the same provider, stage and error fingerprint for 10 minutes",
+      "unknown": "record bounded failure_stage, error_type, retryable and a redacted diagnostic_message of at most 256 bytes outside metric labels"
+    },
+    "forbidden_payloads": ["raw payload", "signature", "device secret", "resolved path", "candidate relative path", "token", "environment value"],
+    "cost_guard": "do not create spans or logs for unchanged five-second binding polls; alert from aggregated metrics and retain detailed evidence only for state changes or sampled failures"
   },
   "rollout": [
     "publish contracts package without runtime consumers",
-    "add control-plane endpoint disabled by default and verify 200/304/auth/signing",
-    "add daemon shadow fetch that validates and reports bounded result codes without changing discovery",
+    "prove daemon-only ownership again, keep v1 unchanged, and add a disabled v2 agent-bindings representation",
+    "add daemon v2-to-v1 fallback and shadow policy validation without changing discovery",
     "canary policy activation for one profile with local fallback retained",
     "expand activation after provider smoke and rollback drills",
     "reduce Desktop hardcoded candidates to bootstrap-only in a later Desktop release"
