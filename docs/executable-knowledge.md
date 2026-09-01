@@ -14,7 +14,7 @@ Executable SSOT: [`docs/executable-knowledge.riido.json`](docs/executable-knowle
 - Generated readers with adjacent manifests: `25`
 - Executable readers with adjacent manifests: `0`
 - Manual reader candidates: `0`
-- Manifest inventory: `336`
+- Manifest inventory: `337`
 
 ## Manifest Inventory
 
@@ -25,6 +25,7 @@ Executable SSOT: [`docs/executable-knowledge.riido.json`](docs/executable-knowle
 | `progressmessage` | 24 |
 | `apicontract` | 4 |
 | `.` | 1 |
+| `provider` | 1 |
 
 ## Manifest Inventory Samples
 
@@ -35,11 +36,12 @@ Executable SSOT: [`docs/executable-knowledge.riido.json`](docs/executable-knowle
 | `progressmessage` | `progressmessage/catalog.dsl.riido.json`<br>`progressmessage/catalog.ir.messages/1001-agent-thinking.ir.riido.json`<br>`progressmessage/catalog.ir.messages/1002-assignment-queued-agent-busy.ir.riido.json` |
 | `apicontract` | `apicontract/fixtures/control-plane-agent-catalog.dsl.riido.json`<br>`apicontract/fixtures/control-plane-agent-catalog.ir.riido.json`<br>`apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json` |
 | `.` | `README.riido.json` |
+| `provider` | `provider/discovery/rollout.riido.json` |
 
 ## Manifest Loop Inventory
 
-- Complete manifest loops: `336`
-- Direct manifest loops: `28`
+- Complete manifest loops: `337`
+- Direct manifest loops: `29`
 - Delegated manifest loops: `308`
 - Missing manifest loops: `0`
 - Missing loop budget: `0`
