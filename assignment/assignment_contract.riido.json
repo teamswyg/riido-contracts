@@ -57,6 +57,7 @@
     {"name": "AssignmentLeased", "value": "assignment_leased"},
     {"name": "AssignmentReady", "value": "assignment_ready"},
     {"name": "AssignmentRunning", "value": "assignment_running"},
+    {"name": "AssignmentWaitingForUser", "value": "assignment_waiting_for_user"},
     {"name": "AssignmentCancelling", "value": "assignment_cancelling"},
     {"name": "AssignmentCancelled", "value": "assignment_cancelled"},
     {"name": "AssignmentCompleted", "value": "assignment_completed"},

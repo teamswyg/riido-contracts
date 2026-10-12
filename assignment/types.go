@@ -119,6 +119,7 @@ func AllTaskEventTypes() []string {
 		EventAssignmentCompleted,
 		EventAssignmentFailed,
 		EventAssignmentStateUpdated,
+		EventAssignmentWaitingForUser,
 		EventRiidoLog,
 		EventProviderLog,
 		EventProviderWarning,
@@ -126,7 +127,21 @@ func AllTaskEventTypes() []string {
 	}
 }
 
+// ConfirmationReason describes human intervention within an active execution.
+type ConfirmationReason string
+
+const (
+	ConfirmationAnswerRequired    ConfirmationReason = "answer_required"
+	ConfirmationApprovalRequired  ConfirmationReason = "approval_required"
+	EventAssignmentWaitingForUser                    = "assignment_waiting_for_user"
+)
+
+func (reason ConfirmationReason) Valid() bool {
+	return reason == ConfirmationAnswerRequired || reason == ConfirmationApprovalRequired
+}
+
 type AssignRequest struct {
+	TeamID                   string `json:"team_id,omitempty"`
 	WorkspaceID              string `json:"workspace_id,omitempty"`
 	ComponentID              string `json:"component_id"`
 	AgentID                  string `json:"agent_id"`
@@ -139,22 +154,25 @@ type AssignRequest struct {
 }
 
 type Assignment struct {
-	WorkspaceID              string          `json:"workspace_id,omitempty"`
-	ID                       string          `json:"assignment_id"`
-	TaskID                   string          `json:"task_id"`
-	ComponentID              string          `json:"component_id"`
-	AgentID                  string          `json:"agent_id"`
-	RuntimeProvider          string          `json:"runtime_provider"`
-	ModelID                  string          `json:"model_id,omitempty"`
-	Prompt                   string          `json:"prompt"`
-	AgentInstruction         string          `json:"agent_instruction,omitempty"`
-	AllowExperimentalRuntime bool            `json:"allow_experimental_runtime,omitempty"`
-	State                    AssignmentState `json:"state"`
-	LeaseToken               string          `json:"lease_token,omitempty"`
-	ReplacesAssignmentID     string          `json:"replaces_assignment_id,omitempty"`
-	BlockedByAssignmentID    string          `json:"blocked_by_assignment_id,omitempty"`
-	CreatedAt                time.Time       `json:"created_at"`
-	UpdatedAt                time.Time       `json:"updated_at"`
+	TeamID                   string             `json:"team_id,omitempty"`
+	ConfirmationReason       ConfirmationReason `json:"confirmation_reason,omitempty"`
+	WorkspaceID              string             `json:"workspace_id,omitempty"`
+	CreatedBy                string             `json:"created_by,omitempty"`
+	ID                       string             `json:"assignment_id"`
+	TaskID                   string             `json:"task_id"`
+	ComponentID              string             `json:"component_id"`
+	AgentID                  string             `json:"agent_id"`
+	RuntimeProvider          string             `json:"runtime_provider"`
+	ModelID                  string             `json:"model_id,omitempty"`
+	Prompt                   string             `json:"prompt"`
+	AgentInstruction         string             `json:"agent_instruction,omitempty"`
+	AllowExperimentalRuntime bool               `json:"allow_experimental_runtime,omitempty"`
+	State                    AssignmentState    `json:"state"`
+	LeaseToken               string             `json:"lease_token,omitempty"`
+	ReplacesAssignmentID     string             `json:"replaces_assignment_id,omitempty"`
+	BlockedByAssignmentID    string             `json:"blocked_by_assignment_id,omitempty"`
+	CreatedAt                time.Time          `json:"created_at"`
+	UpdatedAt                time.Time          `json:"updated_at"`
 }
 
 type PollRequest struct {
@@ -191,15 +209,16 @@ type AgentHeartbeatResponse struct {
 }
 
 type AgentEventRequest struct {
-	AssignmentID string            `json:"assignment_id"`
-	TaskID       string            `json:"task_id"`
-	DaemonID     string            `json:"daemon_id,omitempty"`
-	DeviceID     string            `json:"device_id,omitempty"`
-	RuntimeID    string            `json:"runtime_id,omitempty"`
-	State        AssignmentState   `json:"state,omitempty"`
-	EventType    string            `json:"event_type,omitempty"`
-	Message      string            `json:"message,omitempty"`
-	Metadata     map[string]string `json:"metadata,omitempty"`
+	ConfirmationReason ConfirmationReason `json:"confirmation_reason,omitempty"`
+	AssignmentID       string             `json:"assignment_id"`
+	TaskID             string             `json:"task_id"`
+	DaemonID           string             `json:"daemon_id,omitempty"`
+	DeviceID           string             `json:"device_id,omitempty"`
+	RuntimeID          string             `json:"runtime_id,omitempty"`
+	State              AssignmentState    `json:"state,omitempty"`
+	EventType          string             `json:"event_type,omitempty"`
+	Message            string             `json:"message,omitempty"`
+	Metadata           map[string]string  `json:"metadata,omitempty"`
 }
 
 type AgentEventResponse struct {
@@ -209,15 +228,20 @@ type AgentEventResponse struct {
 }
 
 type TaskEvent struct {
-	Seq          int64             `json:"seq"`
-	TaskID       string            `json:"task_id"`
-	AssignmentID string            `json:"assignment_id"`
-	AgentID      string            `json:"agent_id"`
-	Type         string            `json:"type"`
-	State        AssignmentState   `json:"state,omitempty"`
-	Message      string            `json:"message,omitempty"`
-	Metadata     map[string]string `json:"metadata,omitempty"`
-	At           time.Time         `json:"at"`
+	TeamID             string             `json:"team_id,omitempty"`
+	EventID            string             `json:"event_id,omitempty"`
+	WorkspaceID        string             `json:"workspace_id,omitempty"`
+	CreatedBy          string             `json:"created_by,omitempty"`
+	ConfirmationReason ConfirmationReason `json:"confirmation_reason,omitempty"`
+	Seq                int64              `json:"seq"`
+	TaskID             string             `json:"task_id"`
+	AssignmentID       string             `json:"assignment_id"`
+	AgentID            string             `json:"agent_id"`
+	Type               string             `json:"type"`
+	State              AssignmentState    `json:"state,omitempty"`
+	Message            string             `json:"message,omitempty"`
+	Metadata           map[string]string  `json:"metadata,omitempty"`
+	At                 time.Time          `json:"at"`
 }
 
 // AgentRuntimeBinding is the shared DTO that binds a SaaS agent identity to a

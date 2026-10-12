@@ -826,3 +826,7 @@ sum-type shape, operation ids, paths, and BDD scenario ids.
 They do not own control-plane handlers, daemon runtime probing, client UI code,
 Orval output, store implementations, task cancellation workers, or provider CLI
 execution.
+
+## 실행 확인과 배정자 알림
+
+Assignment.created_by는 배정 요청의 인증 주체이며 에이전트 소유자와 다르다. 과거 레코드에 없으면 알림 수신자를 추정하지 않는다. 실행 상태 running에서 confirmation_reason(answer_required 또는 approval_required)을 보존하고 assignment_waiting_for_user 이벤트로 전달한다. assignment_running 재개 또는 종료 시 사유를 비운다. TaskEvent의 event_id, at, workspace_id, created_by는 서버가 생성한 실행 근거다. completed는 실행 결과 준비이며 Riido 업무 완료를 뜻하지 않는다.
