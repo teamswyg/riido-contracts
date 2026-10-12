@@ -3441,6 +3441,12 @@ export const saasContractBundle = {
             "active_stream": {
               "$ref": "#/components/schemas/AIAgentTaskThreadStreamLink"
             },
+            "assigned_agent_ids": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
             "schema_version": {
               "type": "string"
             },
@@ -3491,6 +3497,12 @@ export const saasContractBundle = {
               },
               "description": "agent_snapshot_id를 key로 하는 snapshot map입니다. thread row는 이 map을 참조하여 snapshot 중복 전송을 줄입니다.",
               "type": "object"
+            },
+            "assigned_agent_ids": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
             },
             "schema_version": {
               "type": "string"
@@ -4406,9 +4418,15 @@ export const saasContractBundle = {
           "type": "object"
         },
         "AssignAIAgentTaskRequest": {
-          "description": "task participant dropdown에서 agent를 배정하기 위한 요청입니다. 요청 body는 agent_id만 받으며 team_id/teamId/OpenAPI/Open API key는 이 계약의 입력이 아닙니다.",
+          "description": "task participant dropdown에서 agent를 배정하기 위한 요청입니다. 요청 body는 agent_id와 선택적 request_id·instruction을 받으며 team_id/teamId/OpenAPI/Open API key는 이 계약의 입력이 아닙니다.",
           "properties": {
             "agent_id": {
+              "type": "string"
+            },
+            "instruction": {
+              "type": "string"
+            },
+            "request_id": {
               "type": "string"
             }
           },

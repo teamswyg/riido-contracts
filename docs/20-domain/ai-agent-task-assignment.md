@@ -58,8 +58,8 @@ Task participant AI Agent assignment semantics are generated from API policy, sc
 
 - assignable agents include viewer-owned agents and other users' public agents only.
 - owned agents appear first, display names order inside each group, and equal names are tied by agent_id.
-- generated assignment requests carry agent_id only; task_id and workspace_id come from URL paths.
-- projects, milestones, intakes, AI property filler, and mention surfaces have no generated AI Agent assignment operations.
+- generated assignment requests carry agent_id and optional request_id/instruction; task_id and workspace_id come from URL paths.
+- projects, milestones, intakes and AI property filler have no generated AI Agent assignment operations; structured Agent mentions on task/subtask comments may request assignment.
 
 ## Evidence Loop
 
