@@ -63,6 +63,7 @@ This is the public generated reader for the C10 assignment polling contract shar
 - The control plane treats the active assignment lease as stale when it has not been refreshed for 20 seconds, and late heartbeats/events must not revive it.
 - `PollRequest.wait_ms` is an optional long-poll hint. Omitted or zero preserves the legacy short-poll wire shape.
 - `PollResponse.action=active` must include a self-contained assignment snapshot so a restarted daemon can recover local in-flight state without starting fresh.
+- RIID-5827: Optional AssignRequest.workspace_id and Assignment.workspace_id preserve the authenticated workspace/task identity for host execution bindings. Omission remains compatible with legacy senders and does not authorize filesystem access.
 
 ## Evidence Loop
 
