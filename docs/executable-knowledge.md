@@ -4,16 +4,16 @@
 
 Executable SSOT: [`docs/executable-knowledge.riido.json`](docs/executable-knowledge.riido.json).
 
-- Status: `failed`
+- Status: `verified`
 - Evidence artifact: `executable-knowledge-coverage`
 - Workflow trigger paths: `11`
-- Markdown readers scanned: `28`
+- Markdown readers scanned: `27`
 - Generated readers: `27`
 - Executable readers: `0`
 - Adjacent manifests: `25`
 - Generated readers with adjacent manifests: `25`
 - Executable readers with adjacent manifests: `0`
-- Manual reader candidates: `1`
+- Manual reader candidates: `0`
 - Manifest inventory: `337`
 
 ## Manifest Inventory
@@ -52,7 +52,7 @@ Executable SSOT: [`docs/executable-knowledge.riido.json`](docs/executable-knowle
 
 ## Manual Reader Candidates
 
-- `docs/20-domain/assignment-workspace.md` (8 lines)
+None.
 
 ## Evidence Loop
 
