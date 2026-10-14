@@ -11,7 +11,7 @@ This is the public generated reader for the C10 assignment polling contract shar
 - Evidence artifact: `assignment-contract-evidence`
 - Contract schema: `riido-ai-server-contract.v1`
 - Service schema: `riido-ai-server.v1`
-- States / poll actions / task events: `8 / 4 / 14`
+- States / poll actions / task events: `8 / 4 / 15`
 
 ## Responsibility
 
