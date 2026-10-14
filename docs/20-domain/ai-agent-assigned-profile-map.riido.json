@@ -2,8 +2,8 @@
   "schema_version": "riido-ai-agent-assigned-profile-map-evidence-manifest.v1",
   "id": "ai-agent-assigned-profile-map",
   "title": "AI Agent Assigned Profile Map",
-  "riido_task": "RIID-4720 [Contracts] AI Agent assigned profile map",
-  "summary": "Workspace task/card assigned-agent profile hints are generated from API policy, schema, DSL, IR, and OpenAPI fixtures.",
+  "riido_task": "RIID-5841 Agent task participants",
+  "summary": "Workspace maps expose active legacy avatar hints separately from persistent visible Agent membership.",
   "generated_doc": "docs/20-domain/ai-agent-assigned-profile-map.md",
   "workflow": ".github/workflows/ai-agent-assigned-profile-map.yml",
   "evidence_artifact": "ai-agent-assigned-profile-map-evidence",
@@ -11,9 +11,9 @@
   "ir_fixture": "apicontract/fixtures/control-plane-ai-agent-client.ir.riido.json",
   "openapi_fixture": "apicontract/fixtures/control-plane-ai-agent-client.openapi.json",
   "expected_operation_count": 1,
-  "expected_schema_count": 2,
-  "expected_policy_rule_count": 7,
-  "expected_scenario_count": 2,
+  "expected_schema_count": 4,
+  "expected_policy_rule_count": 10,
+  "expected_scenario_count": 3,
   "policy_id": "workspace_assigned_agent_profile_map.v1",
   "required_operation": {
     "operation_id": "listWorkspaceAssignedAgentProfilesV2",
@@ -25,29 +25,63 @@
     "generated_path": "v2.aiAgent.tasks.assignedAgentProfiles"
   },
   "required_policy_rules": [
-    "server: include only currently active queued/running/stopping AI Agent assignments in the workspace map",
-    "server: omit completed, stopped, failed, unassigned, and historical-only task threads from the map",
-    "server: use the actual Riido component_id/task_id string as the map key without renaming it to a literal component_id field",
-    "server: because a task/subtask can have only one active AI Agent assignment, each component_id maps to one AssignedAgentProfile value",
+    "server: include only currently active queued/running/stopping AI Agent assignments in assigned_agent_profiles",
+    "server: omit completed, stopped, failed, unassigned, and historical-only task threads from assigned_agent_profiles only",
+    "server: use the actual Riido component_id/task_id string as the key of both assigned_agent_profiles and task_agent_participants",
+    "server: assigned_agent_profiles maps each task to one legacy active AssignedAgentProfile value; task_agent_participants maps each task to a collection of visible persistent Agent participants",
     "profile: avatar_url is copied from the assigned agent's profile_thumbnail_url when present",
     "profile: tmp_color is the fixture-provided avatar fallback color copied into fixture-created agents; direct-created agents may omit it",
-    "client: use this query for list/card avatar hints, not for participant dropdown candidate selection or task-thread history"
+    "client: use task_agent_participants for assigned participants and assigned_agent_profiles for legacy active avatar hints; use separate APIs for candidate selection and task-thread history",
+    "server: retain completed, stopped, and failed Agents in task_agent_participants until explicit participant removal; execution status does not delete membership",
+    "server: explicit participant removal omits that Agent from task_agent_participants without deleting or rewriting terminal execution history",
+    "server: task_agent_participants preserves workspace/private visibility and reports is_stop_required from the current active execution"
   ],
   "required_schema_fields": [
-    {"schema": "AssignedAgentProfileMapResponse", "fields": ["schema_version", "workspace_id", "assigned_agent_profiles"]},
-    {"schema": "AssignedAgentProfile", "fields": ["avatar_url", "tmp_color"]}
+    {
+      "schema": "AssignedAgentProfileMapResponse",
+      "fields": [
+        "schema_version",
+        "workspace_id",
+        "assigned_agent_profiles",
+        "task_agent_participants"
+      ]
+    },
+    {
+      "schema": "AssignedAgentProfile",
+      "fields": [
+        "avatar_url",
+        "tmp_color"
+      ]
+    },
+    {
+      "schema": "TaskAgentParticipantCollection",
+      "fields": [
+        "agents"
+      ]
+    },
+    {
+      "schema": "TaskAgentParticipantRecord",
+      "fields": [
+        "agent_id",
+        "name",
+        "profile_thumbnail_url",
+        "is_owned_by_viewer",
+        "is_stop_required"
+      ]
+    }
   ],
   "invariants": [
-    "assigned_agent_profiles is keyed by the exact component_id/task_id string.",
-    "only queued/running/stopping AI Agent assignments appear in the map.",
-    "completed, stopped, failed, unassigned, and historical-only threads are omitted.",
-    "the query is for list/card avatar hints, not participant dropdown candidates or task-thread history."
+    "Both maps use exact task/component ID keys.",
+    "Only assigned_agent_profiles is filtered to queued/running/stopping execution.",
+    "task_agent_participants retains visible completed/stopped/failed Agent membership until explicit removal.",
+    "Removing a participant preserves terminal results, failure diagnostics, and execution history.",
+    "Workspace/private visibility applies to persistent participants; is_stop_required reflects the active run."
   ],
   "loop": {
-    "observation": "Workspace assigned-agent profile map meaning was split across policy prose and API projection prose while DSL policy, schemas, scenarios, and OpenAPI already defined the read model.",
-    "hypothesis": "A focused verifier can make assigned-profile-map drift observable and keep task/card avatar hints separate from participant dropdown and thread history APIs.",
-    "execute": "Verify the v2 query operation, generated path, response schemas, read-model policy rules, DSL/IR tuple parity, OpenAPI projection, and active-only map semantics.",
-    "evaluate": "CI fails when map key semantics, active-only filtering rules, schema fields, generated reader, or v2 OpenAPI projection drift.",
-    "retrospective": "Future assigned-profile list/card semantics should update API policy/schema fixtures and this manifest before reader text changes."
+    "observation": "The new persistent participant field conflicted with active-only policy/scenario/evidence descriptions shared with the legacy avatar map.",
+    "hypothesis": "Scoping execution filtering to assigned_agent_profiles and asserting persistent task_agent_participants prevents downstream readers from dropping terminal participants.",
+    "execute": "Verify separate map shapes, both participant schemas, policy/scenarios, DSL/IR/OpenAPI parity, and generated reader documentation.",
+    "evaluate": "CI rejects missing participant fields, wrong map references, contradictory active-only rules, and stale generated projections.",
+    "retrospective": "Execution status and task membership have separate meanings; future changes must preserve removal/history and visibility boundaries."
   }
 }

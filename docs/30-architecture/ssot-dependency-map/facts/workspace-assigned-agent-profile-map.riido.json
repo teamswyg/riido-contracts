@@ -2,13 +2,13 @@
   "schema_version": "riido-ssot-dependency-fact.v1",
   "fact": {
     "id": "workspace-assigned-agent-profile-map",
-    "fact": "Workspace task/card lists read current assigned AI Agent profile hints from a component_id keyed v2 map",
+    "fact": "Workspace task/card lists read active legacy profile hints separately from persistent Agent membership through task ID keyed v2 maps",
     "human_doc_phrase": "Workspace assigned-agent profile map",
     "source_refs": [
       {
         "repo": "riido-contracts",
         "path": "docs/20-domain/ai-agent-assigned-profile-map.md",
-        "required_phrase": "assigned_agent_profiles is keyed by the exact component_id/task_id string"
+        "required_phrase": "task_agent_participants retains visible completed/stopped/failed Agent membership until explicit removal"
       },
       {
         "repo": "riido-contracts",
@@ -23,11 +23,11 @@
     "downstreams": [
       {
         "repo": "riido-control-plane",
-        "local_scope": "v2 HTTP route, current assignment projection, fixture color persistence, and generated-client handoff"
+        "local_scope": "v2 HTTP route, persistent Agent membership, active profile projection, and generated client invalidation"
       },
       {
         "repo": "riido-client",
-        "local_scope": "Task/card list avatar hints use the generated query without replacing participant dropdown or task-thread reads."
+        "local_scope": "Task/card participant collections retain completed/stopped/failed Agents independently of active legacy avatar hints; dropdown candidates and execution history use separate reads."
       }
     ]
   }

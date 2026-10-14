@@ -2660,7 +2660,7 @@ export const saasContractBundle = {
           "path": "/v2/client/workspaces/{workspace_id}/ai-agent/tasks/assigned-agent-profiles",
           "resource": "agent",
           "action": "read",
-          "summary": "workspace task/card 목록에서 현재 배정된 AI Agent profile 표시값을 component_id key 해시맵으로 조회합니다 (v2 workspace-scoped)",
+          "summary": "workspace task/card에서 기존 active profile 힌트와 지속 Agent 참여자를 별도 맵으로 조회합니다 (v2 workspace-scoped)",
           "client": {
             "module": "v2",
             "facade_path": [
@@ -2685,7 +2685,8 @@ export const saasContractBundle = {
           },
           "scenario_ids": [
             "listWorkspaceAssignedAgentProfilesV2.component-id-keyed-assigned-profile-map",
-            "listWorkspaceAssignedAgentProfilesV2.historical-threads-are-omitted"
+            "listWorkspaceAssignedAgentProfilesV2.terminal-participants-persist-independently-of-legacy-active-hints",
+            "listWorkspaceAssignedAgentProfilesV2.explicit-removal-preserves-execution-history"
           ],
           "scenarios": [
             {
@@ -2695,10 +2696,16 @@ export const saasContractBundle = {
               "then": "assigned_agent_profiles is keyed by the exact component_id/task_id string and each value contains avatar_url and/or tmp_color for list/card presentation"
             },
             {
-              "name": "historical threads are omitted",
-              "given": "a task has completed, stopped, failed, unassigned, or historical-only AI Agent threads",
+              "name": "terminal participants persist independently of legacy active hints",
+              "given": "a task retains completed, stopped, or failed Agent membership without explicit removal",
               "when": "the client reads the workspace assigned profile map",
-              "then": "that component_id is omitted so the task/card list does not show an active assigned-agent avatar from history"
+              "then": "the task ID is omitted from assigned_agent_profiles when no active run remains but task_agent_participants still lists every visible retained Agent"
+            },
+            {
+              "name": "explicit removal preserves execution history",
+              "given": "one persistent task Agent participant is explicitly removed while other participants remain",
+              "when": "the client reads task_agent_participants and task-thread history",
+              "then": "only the removed Agent is absent from task_agent_participants; its completed result, failure diagnostics, and thread history remain unchanged"
             }
           ],
           "path_params": [
@@ -2726,6 +2733,7 @@ export const saasContractBundle = {
               "v2.aiAgent.bootstrap",
               "v2.aiAgent.tasks.assignableAgents",
               "v2.aiAgent.tasks.threads",
+              "v2.aiAgent.tasks.assignedAgentProfiles",
               "v2.aiAgent.tasks.threadStreamSubscription",
               "v3.aiAgent.tasks.threads"
             ]
@@ -2785,6 +2793,7 @@ export const saasContractBundle = {
               "v2.aiAgent.bootstrap",
               "v2.aiAgent.tasks.assignableAgents",
               "v2.aiAgent.tasks.threads",
+              "v2.aiAgent.tasks.assignedAgentProfiles",
               "v2.aiAgent.tasks.threadStreamSubscription",
               "v3.aiAgent.tasks.threads"
             ]
@@ -2841,6 +2850,7 @@ export const saasContractBundle = {
               "v2.aiAgent.bootstrap",
               "v2.aiAgent.tasks.assignableAgents",
               "v2.aiAgent.tasks.threads",
+              "v2.aiAgent.tasks.assignedAgentProfiles",
               "v2.aiAgent.tasks.threadStreamSubscription",
               "v3.aiAgent.tasks.threads"
             ]
