@@ -534,10 +534,18 @@
       "type": "string",
       "description": "provider probe의 저카디널리티 상태입니다.",
       "values": [
-        {"value": "healthy"},
-        {"value": "degraded"},
-        {"value": "unavailable"},
-        {"value": "unknown"}
+        {
+          "value": "healthy"
+        },
+        {
+          "value": "degraded"
+        },
+        {
+          "value": "unavailable"
+        },
+        {
+          "value": "unknown"
+        }
       ]
     },
     {
@@ -545,12 +553,24 @@
       "type": "string",
       "description": "원문 오류 대신 사용하는 비민감 provider 진단 코드입니다.",
       "values": [
-        {"value": "none"},
-        {"value": "executable-missing"},
-        {"value": "login-required"},
-        {"value": "version-unsupported"},
-        {"value": "probe-failed"},
-        {"value": "runtime-error"}
+        {
+          "value": "none"
+        },
+        {
+          "value": "executable-missing"
+        },
+        {
+          "value": "login-required"
+        },
+        {
+          "value": "version-unsupported"
+        },
+        {
+          "value": "probe-failed"
+        },
+        {
+          "value": "runtime-error"
+        }
       ]
     },
     {
@@ -1370,6 +1390,57 @@
       ]
     },
     {
+      "name": "TaskAgentParticipantRecord",
+      "type": "object",
+      "description": "A persistent Agent participant, independent of execution state.",
+      "required": [
+        "agent_id",
+        "name",
+        "is_owned_by_viewer",
+        "is_stop_required"
+      ],
+      "properties": [
+        {
+          "name": "agent_id",
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "profile_thumbnail_url",
+          "type": "string",
+          "format": "uri"
+        },
+        {
+          "name": "is_owned_by_viewer",
+          "type": "boolean"
+        },
+        {
+          "name": "is_stop_required",
+          "type": "boolean",
+          "description": "At least one active execution for this participant requires stopping before removal."
+        }
+      ]
+    },
+    {
+      "name": "TaskAgentParticipantCollection",
+      "type": "object",
+      "required": [
+        "agents"
+      ],
+      "properties": [
+        {
+          "name": "agents",
+          "type": "array",
+          "items": {
+            "ref": "TaskAgentParticipantRecord"
+          }
+        }
+      ]
+    },
+    {
       "name": "AssignedAgentProfileMapResponse",
       "description": "workspace 안에서 현재 AI Agent가 배정된 task/subtask component_id를 key로 하는 profile 표시용 해시맵 응답입니다.",
       "type": "object",
@@ -1392,6 +1463,12 @@
           "type": "object",
           "description": "실제 Riido component_id/task_id 문자열을 key로 사용합니다. 예: {\"23958923859\":{\"avatar_url\":\"https://...\",\"tmp_color\":\"#C9A452\"}}",
           "additional_properties_ref": "AssignedAgentProfile"
+        },
+        {
+          "name": "task_agent_participants",
+          "type": "object",
+          "description": "Task ID keyed persistent Agent membership collections. Includes completed and stopped Agents until explicit participant removal. The legacy assigned_agent_profiles field remains active-only.",
+          "additional_properties_ref": "TaskAgentParticipantCollection"
         }
       ]
     },

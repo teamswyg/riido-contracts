@@ -4445,6 +4445,13 @@ export const saasContractBundle = {
             "schema_version": {
               "type": "string"
             },
+            "task_agent_participants": {
+              "additionalProperties": {
+                "$ref": "#/components/schemas/TaskAgentParticipantCollection"
+              },
+              "description": "Task ID keyed persistent Agent membership collections. Includes completed and stopped Agents until explicit participant removal. The legacy assigned_agent_profiles field remains active-only.",
+              "type": "object"
+            },
             "workspace_id": {
               "type": "string"
             }
@@ -5125,6 +5132,49 @@ export const saasContractBundle = {
           "required": [
             "agent_id",
             "body"
+          ],
+          "type": "object"
+        },
+        "TaskAgentParticipantCollection": {
+          "properties": {
+            "agents": {
+              "items": {
+                "$ref": "#/components/schemas/TaskAgentParticipantRecord"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "agents"
+          ],
+          "type": "object"
+        },
+        "TaskAgentParticipantRecord": {
+          "description": "A persistent Agent participant, independent of execution state.",
+          "properties": {
+            "agent_id": {
+              "type": "string"
+            },
+            "is_owned_by_viewer": {
+              "type": "boolean"
+            },
+            "is_stop_required": {
+              "description": "At least one active execution for this participant requires stopping before removal.",
+              "type": "boolean"
+            },
+            "name": {
+              "type": "string"
+            },
+            "profile_thumbnail_url": {
+              "format": "uri",
+              "type": "string"
+            }
+          },
+          "required": [
+            "agent_id",
+            "name",
+            "is_owned_by_viewer",
+            "is_stop_required"
           ],
           "type": "object"
         },
