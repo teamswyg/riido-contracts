@@ -3093,7 +3093,8 @@ export const saasContractBundle = {
               "v2.aiAgent.bootstrap",
               "v2.aiAgent.tasks.assignableAgents",
               "v2.aiAgent.tasks.threads",
-              "v3.aiAgent.tasks.threads"
+              "v3.aiAgent.tasks.threads",
+              "v2.aiAgent.tasks.assignedAgentProfiles"
             ]
           },
           "auth": {
@@ -3229,6 +3230,7 @@ export const saasContractBundle = {
               "v2.aiAgent.bootstrap",
               "v2.aiAgent.tasks.assignableAgents",
               "v2.aiAgent.tasks.threads",
+              "v2.aiAgent.tasks.assignedAgentProfiles",
               "v3.aiAgent.tasks.threads"
             ]
           },

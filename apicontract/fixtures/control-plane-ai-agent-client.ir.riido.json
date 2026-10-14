@@ -4861,6 +4861,7 @@
           "v2.aiAgent.bootstrap",
           "v2.aiAgent.tasks.assignableAgents",
           "v2.aiAgent.tasks.threads",
+          "v2.aiAgent.tasks.assignedAgentProfiles",
           "v3.aiAgent.tasks.threads"
         ]
       },
@@ -4901,7 +4902,8 @@
           "v2.aiAgent.bootstrap",
           "v2.aiAgent.tasks.assignableAgents",
           "v2.aiAgent.tasks.threads",
-          "v3.aiAgent.tasks.threads"
+          "v3.aiAgent.tasks.threads",
+          "v2.aiAgent.tasks.assignedAgentProfiles"
         ]
       },
       "summary": "task thread의 stop action으로 AI agent 작업을 중단합니다 (v2 workspace-scoped)",
