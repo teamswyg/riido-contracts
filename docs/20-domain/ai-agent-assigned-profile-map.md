@@ -10,14 +10,14 @@ Workspace maps expose persistent Agent membership separately from execution owne
 
 - Evidence artifact: `ai-agent-assigned-profile-map-evidence`
 - Operations: `1`; schemas: `4`; policy rules: `13`
-- Scenarios: `5`
+- Scenarios: `4`
 - DSL/IR match: `true`; OpenAPI match: `true`; map shape pass: `true`
 
 ## Operation
 
-- `listWorkspaceAssignedAgentProfilesV2` `GET /v2/client/workspaces/{workspace_id}/ai-agent/tasks/assigned-agent-profiles` -> `200 AssignedAgentProfileMapResponse`; generated path `v2.aiAgent.tasks.assignedAgentProfiles`; scenarios `5`
+- `listWorkspaceAssignedAgentProfilesV2` `GET /v2/client/workspaces/{workspace_id}/ai-agent/tasks/assigned-agent-profiles` -> `200 AssignedAgentProfileMapResponse`; generated path `v2.aiAgent.tasks.assignedAgentProfiles`; scenarios `4`
 
-- Scenario names: `component id keyed assigned profile map`, `terminal participants persist independently of legacy active hints`, `explicit removal preserves execution history`, `latest removal guard is independent of historical waiting state`, `interleaved execution prevents participant removal`
+- Scenario names: `component id keyed assigned profile map`, `terminal participants persist independently of legacy active hints`, `explicit removal preserves execution history`, `latest removal guard is independent of historical waiting state`
 
 ## Read-model rules
 

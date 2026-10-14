@@ -13,7 +13,7 @@
   "expected_operation_count": 1,
   "expected_schema_count": 4,
   "expected_policy_rule_count": 13,
-  "expected_scenario_count": 5,
+  "expected_scenario_count": 4,
   "policy_id": "workspace_assigned_agent_profile_map.v1",
   "required_operation": {
     "operation_id": "listWorkspaceAssignedAgentProfilesV2",
