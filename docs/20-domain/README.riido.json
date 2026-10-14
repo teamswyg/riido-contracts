@@ -1,0 +1,33 @@
+{
+  "schema_version": "riido-domain-docs-index.v1",
+  "id": "domain-contract-docs-index",
+  "riido_task": "RIID-4713",
+  "generated_doc": "docs/20-domain/README.md",
+  "summary": "This directory carries public SSOT documents for contracts currently implemented in this module.",
+  "architecture_links": [
+    {"label":"Split-repo context map","path":"context-map.md"},
+    {"label":"Promotion policy","path":"../30-architecture/contract-promotion-policy.md"},
+    {"label":"Module decomposition","path":"../30-architecture/module-decomposition.md"},
+    {"label":"Integration matrix","path":"../30-architecture/integration-matrix.md"}
+  ],
+  "changes": [
+    {"task":"RIID-4641","verb":"migrates","items":["C1 Task Lifecycle contract into `task`","C2 IR Event Log contract into `ir`","C3 Provider Capability contract into `provider/capability`"]},
+    {"task":"RIID-4670","verb":"migrates","items":["C11/C10 distribution channel and provider routing status vocabulary into `hostintegration`"]},
+    {"task":"RIID-4687","verb":"migrates","items":["C10 assignment polling DTOs, service schema identifiers, assignment state transition predicates, poll actions, task event type values, and agent runtime binding DTOs into `assignment`"]},
+    {"task":"RIID-4718","verb":"adds","items":["C10 API contract projection fixtures into `apicontract`, where Domain DSL and API IR are SSOT and OpenAPI is generated"]},
+    {"task":"RIID-4720","verb":"adds","items":["C10 AI Agent policy vocabulary in [`ai-agent-policy.md`](ai-agent-policy.md)","generated AI Agent onboarding fixture evidence in [`ai-agent-onboarding.md`](ai-agent-onboarding.md)","generated AI Agent configuration and mutation-safety evidence in [`ai-agent-configuration.md`](ai-agent-configuration.md)","generated AI Agent RBAC and visibility evidence in [`ai-agent-visibility.md`](ai-agent-visibility.md)","generated AI Agent task participant assignment evidence in [`ai-agent-task-assignment.md`](ai-agent-task-assignment.md)","generated AI Agent assigned profile map evidence in [`ai-agent-assigned-profile-map.md`](ai-agent-assigned-profile-map.md)","`control-plane-ai-agent-client-api.v2` API projection fixtures, including top-level enum and sum-type definitions for client codegen safety"]},
+    {"task":"RIID-4868","verb":"adds","items":["device principal enrollment and daemon credential semantics in [`device-principal.md`](device-principal.md)"]},
+    {"task":"Current AI Agent progress-message work","verb":"adds","items":["fixed, translated, append-only runtime progress copy in [`progress-message-catalog.md`](progress-message-catalog.md), with the executable catalog under `progressmessage/catalog.dsl.riido.json`"]}
+  ],
+  "external_boundaries": ["The EventIngestor implementation, policy redaction catalog, provider adapters, server stores, and Terraform deployment code remain outside this repository.", "They may consume these contracts, but they do not become contract module implementation details."],
+  "open_questions": {"label":"Unresolved promotion/versioning questions","path":"../50-roadmap/open-questions.md"},
+  "workflow": ".github/workflows/architecture-docs.yml",
+  "evidence_artifact": "domain-docs-index-evidence",
+  "loop": {
+    "observation": "The domain README was a hand-maintained index of contract migration facts even though those facts steer generated reader discovery and architecture CI.",
+    "hypothesis": "A compact domain docs index manifest can generate the README and verify migration entries, architecture links, external boundaries, and workflow evidence binding in public CI.",
+    "execute": "Render docs/20-domain/README.md from this manifest and publish domain-docs-index evidence from the architecture-docs workflow.",
+    "evaluate": "The verifier fails on stale generated README, missing workflow binding, missing migration entries, missing architecture links, or incomplete evidence loop metadata.",
+    "retrospective": "The domain document index becomes executable navigation evidence instead of prose maintained by memory."
+  }
+}

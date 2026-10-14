@@ -1,0 +1,17 @@
+{
+  "schema_version": "riido-ssot-repo-dependency.v1",
+  "repo_dependency": {
+    "id": "infra-imports-contracts-policy",
+    "from_repo": "riido-infra",
+    "to_repo": "riido-contracts",
+    "fact_ids": [
+      "fixture-created-agent-normal-lifecycle",
+      "generated-assignment-excludes-team-openapi-key",
+      "instruction",
+      "onboarding-draft-ordering",
+      "profile-thumbnail-url",
+      "storage-topology"
+    ],
+    "local_scope": "Infra decides whether contract facts require topology, secret, media, or evidence changes."
+  }
+}

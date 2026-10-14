@@ -1,0 +1,20 @@
+{
+  "schema_version": "riido-ssot-repo-dependency.v1",
+  "repo_dependency": {
+    "id": "daemon-imports-contracts-policy",
+    "from_repo": "riido-daemon",
+    "to_repo": "riido-contracts",
+    "fact_ids": [
+      "active-assignment-heartbeat-stale-lease",
+      "agent-concept",
+      "device-runtime-liveness-stale-projection",
+      "fixture-created-agent-normal-lifecycle",
+      "generated-assignment-excludes-team-openapi-key",
+      "instruction",
+      "onboarding-draft-ordering",
+      "profile-thumbnail-url",
+      "progress-message-catalog"
+    ],
+    "local_scope": "Daemon consumes assigned agent settings only at runtime boundaries."
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "schema_version": "riido-ssot-dependency-fact.v1",
+  "fact": {
+    "id": "active-assignment-heartbeat-stale-lease",
+    "fact": "Daemon sends active assignment heartbeats every 5 seconds; control-plane treats 20 seconds without refresh as stale and must not let late traffic revive the lease",
+    "human_doc_phrase": "Active assignment heartbeat and stale lease fencing",
+    "source_refs": [
+      {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/assignment-polling.md",
+        "required_phrase": "assignment heartbeat every 5 seconds"
+      },
+      {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/assignment-polling.md",
+        "required_phrase": "not been refreshed for 20 seconds"
+      }
+    ],
+    "owner": {
+      "repo": "riido-contracts",
+      "path": "docs/20-domain/assignment-polling.md"
+    },
+    "downstreams": [
+      {
+        "repo": "riido-control-plane",
+        "local_scope": "uses a 20 second default active-assignment lease, fails stale active assignments during poll/heartbeat, and does not refresh expired leases"
+      },
+      {
+        "repo": "riido-daemon",
+        "local_scope": "uses a 5 second default heartbeat cadence and cancels local provider runs when heartbeat response omits a requested active assignment"
+      },
+      {
+        "repo": "riido-client",
+        "local_scope": "no generated client or visible thread API change; frontend sees existing typed thread/SSE state changes"
+      }
+    ]
+  }
+}

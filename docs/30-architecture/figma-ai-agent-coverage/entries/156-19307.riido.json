@@ -1,0 +1,26 @@
+{
+  "schema_version": "riido-figma-ai-agent-coverage-entry.v1",
+  "entry": {
+    "node_id": "156:19307",
+    "name": "메뉴바",
+    "coverage_status": "covered",
+    "evidence_kind": "figma_section",
+    "ssot_docs": [
+      "docs/20-domain/ai-agent-policy.md",
+      "docs/30-architecture/ssot-dependency-map.md"
+    ],
+    "owner_repos": [
+      "riido-client",
+      "riido-control-plane",
+      "riido-contracts"
+    ],
+    "covered_facts": [
+      "AI Agent, runtime, and agent-management menu placement is a client route affordance",
+      "route rendering does not create a new daemon or infra fact"
+    ],
+    "direction_loop": {
+      "top_down": "A route that needs data must point to an existing generated API path or create a policy/API change.",
+      "bottom_up": "A client navigation mismatch remains client-local unless it changes the data contract."
+    }
+  }
+}

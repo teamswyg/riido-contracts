@@ -1,0 +1,40 @@
+{
+  "schema_version": "riido-figma-ai-agent-coverage-entry.v1",
+  "entry": {
+    "page_id": "42:3014",
+    "node_id": "432:46849",
+    "name": "Ex AI - 온보딩 순서 변경 메모",
+    "coverage_status": "covered",
+    "evidence_kind": "figma_planning_section",
+    "ssot_docs": [
+      "docs/20-domain/ai-agent-policy.md",
+      "docs/20-domain/api-contract-projection.md",
+      "docs/30-architecture/ssot-dependency-map.md",
+      "apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json"
+    ],
+    "owner_repos": [
+      "riido-contracts",
+      "riido-control-plane",
+      "riido-daemon",
+      "riido-client",
+      "riido-desktop"
+    ],
+    "generated_paths": [
+      "aiAgent.onboarding.fixtures",
+      "aiAgent.onboarding.fixtures.createAgent",
+      "aiAgent.agents.create",
+      "v2.aiAgent.onboarding.fixtures",
+      "v2.aiAgent.onboarding.fixtures.createAgent",
+      "v2.aiAgent.agents.create"
+    ],
+    "covered_facts": [
+      "Figma revised the onboarding explanation order to agent creation, runtime selection, then workspace selection",
+      "the first step is a client-local onboarding draft/selection state, not a durable workspace-less Agent record",
+      "durable v2 fixture/direct create still happens only after the client has selected workspace_id and runtime_id for final submit"
+    ],
+    "direction_loop": {
+      "top_down": "A future onboarding order change updates ai-agent-policy and the API DSL before generated clients, control-plane, daemon, or desktop behavior changes.",
+      "bottom_up": "If client implementation needs a persisted draft or workspace-less create, it must escalate to contracts instead of overloading the final create routes."
+    }
+  }
+}

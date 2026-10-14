@@ -1,0 +1,34 @@
+{
+  "schema_version": "riido-ssot-dependency-fact.v1",
+  "fact": {
+    "id": "participant-dropdown-agent-ordering",
+    "fact": "Participant dropdown agent ordering is owned-first, display-name ordered, then agent_id tied",
+    "human_doc_phrase": "Participant dropdown agent ordering is owned-first, display-name ordered, then `agent_id` tied",
+    "source_refs": [
+      {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/ai-agent-task-assignment.md",
+        "required_phrase": "owned agents appear first"
+      },
+      {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/ai-agent-task-assignment.md",
+        "required_phrase": "equal names are tied by agent_id"
+      }
+    ],
+    "owner": {
+      "repo": "riido-contracts",
+      "path": "docs/20-domain/ai-agent-task-assignment.md"
+    },
+    "downstreams": [
+      {
+        "repo": "riido-control-plane",
+        "local_scope": "assignable-agent response sorting and black-box HTTP coverage"
+      },
+      {
+        "repo": "riido-client",
+        "local_scope": "participant dropdown renders the returned order and handles long labels locally"
+      }
+    ]
+  }
+}

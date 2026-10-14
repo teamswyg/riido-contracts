@@ -1,0 +1,15 @@
+{
+  "schema_version": "riido-figma-ai-agent-api-annotation.v1",
+  "annotation": {
+    "node_id": "153:8545",
+    "top_level_node_id": "153:15931",
+    "coverage_entry_node_id": "153:15931",
+    "category_id": "700:0",
+    "category_label": "API Generated",
+    "figma_label": "riido.v2.aiAgent.events.stream\n종류: SSE Stream\n배경: threads 조회 결과에 active_stream이 있을 때만 연결해 진행 상태와 thread 갱신 이벤트를 받습니다.",
+    "figma_generated_path": "riido.v2.aiAgent.events.stream",
+    "canonical_generated_path": "aiAgent.events.stream",
+    "resolution_status": "resolved_consumption_hint",
+    "resolution": "The Figma handoff note now keeps the facade path on the first line, marks it as an SSE Stream, and explains that clients connect only when the task-thread cold collection returns an active_stream link."
+  }
+}

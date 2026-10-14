@@ -1,0 +1,42 @@
+{
+  "schema_version": "riido-figma-ai-agent-coverage-entry.v1",
+  "entry": {
+    "node_id": "164:30658",
+    "name": "데스크탑앱 온보딩-런타임 감지 O",
+    "coverage_status": "covered",
+    "evidence_kind": "figma_section",
+    "ssot_docs": [
+      "docs/20-domain/ai-agent-policy.md",
+      "docs/30-architecture/ssot-dependency-map.md",
+      "apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json"
+    ],
+    "owner_repos": [
+      "riido-contracts",
+      "riido-control-plane",
+      "riido-daemon",
+      "riido-client",
+      "riido-desktop"
+    ],
+    "generated_paths": [
+      "aiAgent.bootstrap",
+      "aiAgent.devices.runtimes",
+      "aiAgent.onboarding.fixtures",
+      "aiAgent.onboarding.fixtures.createAgent",
+      "aiAgent.agents.create",
+      "v2.aiAgent.bootstrap",
+      "v2.aiAgent.devices.runtimes",
+      "v2.aiAgent.onboarding.fixtures",
+      "v2.aiAgent.onboarding.fixtures.createAgent",
+      "v2.aiAgent.agents.create"
+    ],
+    "covered_facts": [
+      "desktop webview chooses a workspace before workspace-scoped agent creation",
+      "fixture selection creates an agent, not a template entity",
+      "direct setting maps to the normal agent create fields"
+    ],
+    "direction_loop": {
+      "top_down": "Onboarding fixture or workspace-scoped creation changes contracts before control-plane/client implementation.",
+      "bottom_up": "Desktop launch/runtime detection issues stay daemon or desktop-local unless they change the SaaS read model."
+    }
+  }
+}

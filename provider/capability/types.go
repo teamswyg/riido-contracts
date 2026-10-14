@@ -13,14 +13,15 @@
 package capability
 
 // RuntimeID is the stable identifier of a registered runtime slot.
-// It persists across re-detection. See docs/20-domain/provider-capability.md §2.
+// It persists across re-detection. See the Provider Capability generated reader
+// and package invariants.
 //
 // NOTE: a single ambiguous identifier merging runtime slot + vendor family
 // + protocol selection is intentionally NOT used. RuntimeID is the runtime
 // slot, ProviderKind is the vendor family, ProtocolKind is the
 // adapter/protocol selection — three distinct concepts.
-// See docs/20-domain/provider-capability.md §0 invariant 1 and the
-// doc-consistency-audit-2026-05-19.md §9 banned-name rule.
+// See the Provider Capability invariant that ProtocolKind is the adapter key
+// and the doc-consistency-audit-2026-05-19.md §9 banned-name rule.
 type RuntimeID string
 
 // CapabilityFingerprint is the SHA-256 hex of the effective capability
@@ -28,7 +29,7 @@ type RuntimeID string
 // binary with a different runtime eligibility policy yields a different
 // fingerprint. NativeConfigVersion is intentionally excluded because it is
 // task/run execution context, not runtime capability. See
-// provider-capability.md §2.1.
+// provider-capability generated reader's fingerprint invariant.
 type CapabilityFingerprint string
 
 // DetectedFingerprint is the hash of the provider binary itself (checksum +
@@ -42,7 +43,7 @@ type DetectedFingerprint string
 type ProviderKind string
 
 // ProtocolKind is the primary key for adapter selection.
-// See provider-capability.md §0 invariant 1: ProviderKind alone does NOT
+// See provider-capability invariant anchors: ProviderKind alone does NOT
 // determine the adapter — same ProviderKind may host multiple ProtocolKinds
 // (e.g., codex-exec-jsonl vs codex-app-server).
 type ProtocolKind string

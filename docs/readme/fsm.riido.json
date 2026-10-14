@@ -1,0 +1,20 @@
+{
+  "schema_version": "riido-contracts-repository-readme-fragment.v1",
+  "id": "contracts-readme-fsm",
+  "fsm": {
+    "intro": [
+      "`enumgen/enums.lisp`는 enum 값만이 아니라 public FSM 전이의 Common Lisp SSOT입니다. `fsmgen/patterns.lisp`는 FSM 패턴 sum type과 conformance profile의 별도 Common Lisp source입니다. `tools/enumgen`이 iota 기반 enum/transition 코드를 만들고, `tools/fsmgen`은 같은 원천의 전이를 Go SPI, `fsmmeta` 패턴 vocabulary, Mermaid 문서 블록으로 투영합니다.",
+      "각 `transitions` 블록은 `:fsm-type-union`, `:pattern-source`, `:conformance-profile`, `:patterns`, `:start-points`, `:end-points`, `:readme-section` 메타를 가져야 합니다. runtime에서 경로를 조립하지 않고 build 시점에 상태/전이 경로가 확정되어야 합니다."
+    ],
+    "sections": [
+      {"id": "task", "title": "Task lifecycle"},
+      {"id": "assignment", "title": "Assignment polling"}
+    ]
+  },
+  "decisions": [
+    "Go dependency는 표준 라이브러리만 허용합니다.",
+    "`task -> ir` 방향은 허용하지만, `ir`이 `task`를 import하면 안 됩니다.",
+    "Terraform/AWS/Docker/provider 실행 정보는 이 레포에 들어오면 안 됩니다.",
+    "generated OpenAPI가 DSL/IR과 다르면 OpenAPI를 고치는 것이 아니라 DSL에서 다시 생성해야 합니다."
+  ]
+}

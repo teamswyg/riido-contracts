@@ -1,0 +1,25 @@
+{
+  "schema_version": "riido-ssot-dependency-fact.v1",
+  "fact": {
+    "id": "runtime-prompt-consumption",
+    "fact": "Runtime prompt and native-config consumption",
+    "human_doc_phrase": "Runtime prompt/native-config consumption",
+    "source_refs": [
+      {
+        "repo": "riido-daemon",
+        "path": "docs/20-domain/workspace.md",
+        "required_phrase": "agent instruction"
+      }
+    ],
+    "owner": {
+      "repo": "riido-daemon",
+      "path": "docs/20-domain/workspace.md"
+    },
+    "downstreams": [
+      {
+        "repo": "riido-control-plane",
+        "local_scope": "assignment payload carries the instruction value"
+      }
+    ]
+  }
+}

@@ -1,0 +1,34 @@
+{
+  "schema_version": "riido-figma-ai-agent-coverage-entry.v1",
+  "entry": {
+    "node_id": "435:60050",
+    "name": "데스크탑앱 온보딩-런타임 감지 X",
+    "coverage_status": "covered",
+    "evidence_kind": "figma_section",
+    "ssot_docs": [
+      "docs/20-domain/ai-agent-policy.md",
+      "docs/30-architecture/ssot-dependency-map.md",
+      "apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json"
+    ],
+    "owner_repos": [
+      "riido-contracts",
+      "riido-control-plane",
+      "riido-daemon",
+      "riido-client",
+      "riido-desktop"
+    ],
+    "generated_paths": [
+      "aiAgent.devices.runtimes",
+      "v2.aiAgent.devices.runtimes"
+    ],
+    "covered_facts": [
+      "no selectable runtime is derived from device/runtime liveness",
+      "provider install-card rendering is client/product presentation",
+      "skipping runtime selection does not create a new AI Agent command"
+    ],
+    "direction_loop": {
+      "top_down": "A new no-runtime server action requires a separate owning SSOT before API expansion.",
+      "bottom_up": "Provider detection failures are daemon evidence unless they require new client-facing liveness fields."
+    }
+  }
+}

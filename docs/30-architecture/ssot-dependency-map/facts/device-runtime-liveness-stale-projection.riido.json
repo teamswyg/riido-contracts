@@ -1,0 +1,48 @@
+{
+  "schema_version": "riido-ssot-dependency-fact.v1",
+  "fact": {
+    "id": "device-runtime-liveness-stale-projection",
+    "fact": "Daemon refreshes device/runtime liveness every 5 seconds and carries daemon process facts in the same snapshot; control-plane projects device/runtime read models offline after 20 seconds without a refreshed runtime snapshot",
+    "human_doc_phrase": "Device/runtime liveness snapshot and stale projection",
+    "source_refs": [
+      {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/device-principal.md",
+        "required_phrase": "daemon runtime snapshot every 5 seconds"
+      },
+      {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/device-principal.md",
+        "required_phrase": "daemon process facts"
+      },
+      {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/device-principal.md",
+        "required_phrase": "not been refreshed for 20 seconds"
+      },
+      {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/device-principal.md",
+        "required_phrase": "stale runtimes must not be used for newly derived `AgentRuntimeBinding`"
+      }
+    ],
+    "owner": {
+      "repo": "riido-contracts",
+      "path": "docs/20-domain/device-principal.md"
+    },
+    "downstreams": [
+      {
+        "repo": "riido-control-plane",
+        "local_scope": "projects daemon process facts, stale device daemons/runtimes as offline/missing in client reads, and excludes stale runtimes from newly derived daemon agent bindings"
+      },
+      {
+        "repo": "riido-daemon",
+        "local_scope": "sends daemon process facts inside the aggregated daemon runtime snapshot on the 5 second heartbeat cadence even when no assignment is active"
+      },
+      {
+        "repo": "riido-client",
+        "local_scope": "no generated route or response-shape change; existing runtime availability, detection, and daemon-detail fields drive UI state"
+      }
+    ]
+  }
+}

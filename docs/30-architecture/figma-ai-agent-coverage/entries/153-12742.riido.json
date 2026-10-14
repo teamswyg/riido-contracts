@@ -1,0 +1,36 @@
+{
+  "schema_version": "riido-figma-ai-agent-coverage-entry.v1",
+  "entry": {
+    "node_id": "153:12742",
+    "name": "컴포넌트 참여자 드롭다운",
+    "coverage_status": "covered",
+    "evidence_kind": "figma_section",
+    "ssot_docs": [
+      "docs/20-domain/ai-agent-policy.md",
+      "docs/30-architecture/ssot-dependency-map.md",
+      "apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json"
+    ],
+    "owner_repos": [
+      "riido-contracts",
+      "riido-control-plane",
+      "riido-client"
+    ],
+    "generated_paths": [
+      "aiAgent.tasks.assignableAgents",
+      "aiAgent.tasks.assign",
+      "aiAgent.tasks.unassign",
+      "v2.aiAgent.tasks.assignableAgents",
+      "v2.aiAgent.tasks.assign",
+      "v2.aiAgent.tasks.unassign"
+    ],
+    "covered_facts": [
+      "visible agents are viewer-owned agents plus other users' public agents",
+      "agent ordering is owned-first, display-name ordered, then agent_id tied",
+      "task participant assignment and unassignment are command operations"
+    ],
+    "direction_loop": {
+      "top_down": "A new participant dropdown business rule changes ai-agent-policy and the API DSL before control-plane/client code.",
+      "bottom_up": "A frontend or server sorting mismatch escalates to the participant-dropdown fact in contracts before local patches diverge."
+    }
+  }
+}

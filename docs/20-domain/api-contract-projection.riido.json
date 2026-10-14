@@ -1,0 +1,53 @@
+{
+  "schema_version": "riido-contracts-api-projection-doc.v1",
+  "id": "api-contract-projection",
+  "title": "API Contract Projection",
+  "riido_task": "RIID-4718",
+  "summary": "Domain DSL -> canonical API IR -> OpenAPI projection rules for shared API contract fixtures in riido-contracts.",
+  "generated_doc": "docs/20-domain/api-contract-projection.md",
+  "workflow": ".github/workflows/api-contract.yml",
+  "evidence_artifact": "api-contract-evidence",
+  "fixtures": [
+    {
+      "contract_id": "control-plane-agent-catalog-api.v1",
+      "dsl": "apicontract/fixtures/control-plane-agent-catalog.dsl.riido.json",
+      "ir": "apicontract/fixtures/control-plane-agent-catalog.ir.riido.json",
+      "openapi": "apicontract/fixtures/control-plane-agent-catalog.openapi.json"
+    },
+    {
+      "contract_id": "control-plane-ai-agent-client-api.v2",
+      "dsl": "apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json",
+      "ir": "apicontract/fixtures/control-plane-ai-agent-client.ir.riido.json",
+      "openapi": "apicontract/fixtures/control-plane-ai-agent-client.openapi.json"
+    }
+  ],
+  "invariants": [
+    "OpenAPI is not the SSOT; if OpenAPI disagrees with API IR, regenerate or reject the OpenAPI artifact.",
+    "AI Agent v2 client API keeps generated client paths under `riido.v2.aiAgent.*` and scopes operations with `workspace_id` path parameters.",
+    "Fixture-created agents enter the normal agent lifecycle after creation; duplicate display names are allowed and are not auto-suffixed.",
+    "Figma onboarding order is client-local draft state; the API DSL must not add persisted draft state or workspace-less create.",
+    "Workspace assigned-agent profile map uses `riido.v2.aiAgent.tasks.assignedAgentProfiles` and returns current active assignment profile hints only."
+  ],
+  "delivery_rules": [
+    "Generated client delivery PRs are review handoffs and must not be auto-merged by delivery automation.",
+    "Generated client path searchability is also a contract projection fact derived from `client.module` and `client.facade_path`.",
+    "Generated comments should expose both the full generated path and the module-local search path."
+  ],
+  "boundaries": [
+    "This contract owns DSL schema version `riido-api-dsl.v1`, IR schema version `riido-api-ir.v1`, OpenAPI projection generation, operation ids, paths, schemas, enums, sum types, auth scope patterns, RBAC policy ids, BDD scenario ids, and generated-client lifecycle semantics.",
+    "This contract does not own control-plane HTTP handlers, request authorization implementation, RBAC evaluator implementation, persistence, stores, metrics, SSE fan-out, generated client branch mechanics, Terraform, production bearer tokens, or deployment evidence.",
+    "Device credential enrollment is a Desktop/Daemon boundary; device secrets must not be projected into generated browser clients, OpenAPI examples, events, logs, or status responses."
+  ],
+  "required_generated_paths": [
+    "v2.aiAgent.tasks.assignedAgentProfiles",
+    "v2.aiAgent.tasks.agentAssignments.create",
+    "v2.aiAgent.tasks.threadStreamSubscription"
+  ],
+  "loop": {
+    "observation": "API contract fixtures already have DSL, IR, OpenAPI, and drift tests, but the projection reader was hand-maintained prose and api-contract CI did not publish JSON evidence.",
+    "hypothesis": "Generating the reader and evidence from checked-in API IR fixtures makes projection governance inspectable without rereading large DSL/OpenAPI files.",
+    "execute": "Strictly decode API IR fixtures, verify required generated paths, render the generated reader, check reader drift, and publish API contract evidence in public CI.",
+    "evaluate": "The verifier fails on stale generated reader, missing workflow evidence binding, missing fixture files, invalid IR, missing required generated path, or missing strict artifact upload.",
+    "retrospective": "API projection knowledge becomes an executable loop: DSL and IR remain the contract, generated reader explains it, and CI evidence exposes the current surface."
+  }
+}

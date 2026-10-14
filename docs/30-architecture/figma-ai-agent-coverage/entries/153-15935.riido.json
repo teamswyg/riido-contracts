@@ -1,0 +1,43 @@
+{
+  "schema_version": "riido-figma-ai-agent-coverage-entry.v1",
+  "entry": {
+    "node_id": "153:15935",
+    "name": "추가 기획 내용",
+    "coverage_status": "covered",
+    "evidence_kind": "figma_planning_section",
+    "ssot_docs": [
+      "docs/20-domain/ai-agent-policy.md",
+      "docs/30-architecture/ssot-dependency-map.md",
+      "apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json"
+    ],
+    "owner_repos": [
+      "riido-contracts",
+      "riido-control-plane",
+      "riido-daemon",
+      "riido-client"
+    ],
+    "generated_paths": [
+      "aiAgent.tasks.assignableAgents",
+      "aiAgent.tasks.assign",
+      "aiAgent.tasks.unassign",
+      "aiAgent.agents.create",
+      "aiAgent.agents.updateConfiguration",
+      "aiAgent.agents.delete",
+      "v2.aiAgent.tasks.assignableAgents",
+      "v2.aiAgent.tasks.assign",
+      "v2.aiAgent.tasks.unassign",
+      "v2.aiAgent.agents.create",
+      "v2.aiAgent.agents.updateConfiguration",
+      "v2.aiAgent.agents.delete"
+    ],
+    "covered_facts": [
+      "only task/subtask surfaces receive AI Agent assignment",
+      "admin/owner/public/private visibility controls read and mutation behavior",
+      "device and runtime operations stay account-owned while agents are workspace-scoped"
+    ],
+    "direction_loop": {
+      "top_down": "Planning text becomes canonical only after it lands in ai-agent-policy and the API DSL.",
+      "bottom_up": "If implementation finds that a planning sentence is ambiguous, resolve the policy wording before adding new generated operations."
+    }
+  }
+}

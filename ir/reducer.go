@@ -2,7 +2,7 @@ package ir
 
 // Reducer is the pure-function contract over an IR event log.
 //
-// PURITY INVARIANT (docs/20-domain/ir-event-log.md §5.0):
+// PURITY INVARIANT from the generated IR Event Log reader:
 // Reducer implementations MUST:
 //   - read events only;
 //   - perform NO I/O;

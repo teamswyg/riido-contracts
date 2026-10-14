@@ -1,0 +1,37 @@
+{
+  "schema_version": "riido-figma-ai-agent-coverage-entry.v1",
+  "entry": {
+    "page_id": "0:1",
+    "node_id": "17:3111",
+    "name": "런타임 상세",
+    "coverage_status": "covered",
+    "evidence_kind": "figma_legacy_wireframe_section",
+    "absorbed_by_top_level_node_id": "162:23090",
+    "ssot_docs": [
+      "docs/20-domain/ai-agent-policy.md",
+      "docs/30-architecture/ssot-dependency-map.md",
+      "apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json"
+    ],
+    "owner_repos": [
+      "riido-contracts",
+      "riido-control-plane",
+      "riido-daemon",
+      "riido-client"
+    ],
+    "generated_paths": [
+      "aiAgent.devices.runtimes",
+      "aiAgent.agents.daemon.details",
+      "v2.aiAgent.devices.runtimes",
+      "v2.aiAgent.agents.daemon.details"
+    ],
+    "covered_facts": [
+      "legacy runtime detail wireframe is absorbed by the current UI runtime settings section",
+      "runtime detail is read from the device/runtime model, device-bound 내 기기 daemon detail projection, and agent-bound selected-agent daemon detail projection",
+      "runtime detail rendering does not create a standalone runtime-detail operation"
+    ],
+    "direction_loop": {
+      "top_down": "A revived runtime-detail rule updates the current runtime settings contract before downstream code changes.",
+      "bottom_up": "A read-model mismatch is fixed in control-plane/daemon projection and escalates only if shared runtime semantics change."
+    }
+  }
+}

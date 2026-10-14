@@ -1,0 +1,50 @@
+name: Go CI
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  lint-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache: false
+
+      - name: Download modules
+        run: go mod download
+
+      - name: Install golangci-lint
+        run: go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@v2.12.2
+
+      - name: Lint
+        run: golangci-lint run ./... --timeout=5m
+
+      - name: Verify generated enum drift
+        run: go run ./tools/enumgen verify
+
+      - name: Verify generated FSM drift
+        run: go run ./tools/fsmgen verify
+
+      - name: Test
+        run: go test ./...
+      - name: Write Go CI evidence
+        if: always()
+        run: |
+          mkdir -p out
+          go run ./tools/cievidence \
+            -workflow .github/workflows/go-ci.yml \
+            -id go-ci \
+            -evidence-out out/go-ci-evidence.json
+      - uses: actions/upload-artifact@v7
+        if: always()
+        with:
+          name: go-ci-evidence
+          path: out/go-ci-evidence.json
+          if-no-files-found: error

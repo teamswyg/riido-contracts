@@ -1,0 +1,39 @@
+{
+  "schema_version": "riido-contracts-task-lifecycle-doc.v1",
+  "id": "task-lifecycle",
+  "title": "Task Lifecycle",
+  "riido_task": "RIID-4687",
+  "summary": "Generated reader for the C1 Task Lifecycle FSM: TaskState set, start/end points, legal transitions, and invariant anchors.",
+  "generated_doc": "docs/20-domain/task-lifecycle.md",
+  "workflow": ".github/workflows/task-lifecycle.yml",
+  "evidence_artifact": "task-lifecycle-evidence",
+  "source_dsl": "enumgen/enums.lisp",
+  "expected_fsm_schema_version": 1,
+  "expected_state_count": 15,
+  "expected_start_state_count": 1,
+  "expected_terminal_state_count": 4,
+  "expected_transition_count": 43,
+  "responsibilities": [
+    "`task` owns TaskState, terminal definition, legal transition triples, and generated FSM SPI.",
+    "`enumgen/enums.lisp` is the executable source for states and transitions; markdown must be generated from it.",
+    "Transition event payloads, reducer dispatch, and event catalog semantics remain owned by `ir`."
+  ],
+  "invariants": [
+    "Task state is derived from append-only IR events, not direct state mutation.",
+    "`Running` requires runtime pinning and pre-execute preparation before `RunStarted`.",
+    "`Running` enters only after workspace preparation, native config injection, runtime pinning, and security pre-execute gate pass.",
+    "Runtime pin violation while active resolves to `Failed`; silent recovery is forbidden.",
+    "`Completed` requires validation plus approval or auto-approval; provider self-report is insufficient.",
+    "Terminal states have no outgoing transitions.",
+    "`ReworkQueued -> Queued` starts a new run identity while preserving old run events.",
+    "`NeedsInput` and `Blocked` are recoverable waiting states, not aliases for `Failed`.",
+    "`Blocked` categories are external conditions such as capability, policy, workspace, security, or missing validation input."
+  ],
+  "loop": {
+    "observation": "The task lifecycle FSM is generated from enumgen, but its public reader was a long hand-maintained markdown SSOT.",
+    "hypothesis": "Rendering the reader and evidence from the generated FSM SPI will remove interpretation drift between Lisp, Go, and documentation.",
+    "execute": "Load the generated task FSM, verify expected schema/counts, render the reader, and upload task-lifecycle evidence in CI.",
+    "evaluate": "The verifier fails on stale markdown, malformed manifest, workflow evidence gaps, or FSM count/schema drift.",
+    "retrospective": "Task lifecycle knowledge becomes executable: state and transition meaning is observed through generated code plus strict evidence."
+  }
+}

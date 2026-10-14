@@ -1,0 +1,31 @@
+{
+  "schema_version": "riido-figma-ai-agent-coverage-entry.v1",
+  "entry": {
+    "page_id": "0:1",
+    "node_id": "153:15934",
+    "name": "추가 기획 내용",
+    "coverage_status": "covered",
+    "evidence_kind": "figma_wireframe_section",
+    "absorbed_by_top_level_node_id": "153:15935",
+    "ssot_docs": [
+      "docs/20-domain/ai-agent-policy.md",
+      "docs/30-architecture/ssot-dependency-map.md",
+      "apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json"
+    ],
+    "owner_repos": [
+      "riido-contracts",
+      "riido-control-plane",
+      "riido-daemon",
+      "riido-client"
+    ],
+    "covered_facts": [
+      "legacy wireframe planning is resolved by the UI page 추가 기획 내용 section",
+      "task/subtask-only assignment scope remains the durable API boundary",
+      "non-task target surfaces still require a separate owning SSOT and generated operation"
+    ],
+    "direction_loop": {
+      "top_down": "A revived planning sentence from this wireframe must update ai-agent-policy and API DSL before implementation.",
+      "bottom_up": "A server/client mismatch in target scope escalates to the UI planning entry before local behavior diverges."
+    }
+  }
+}

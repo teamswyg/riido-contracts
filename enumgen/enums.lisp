@@ -1,0 +1,10 @@
+(enum-gen
+  (include "enums/task-state.lisp")
+  (include "enums/run-state.lisp")
+  (include "enums/event-type.lisp")
+  (include "enums/task-transition.lisp")
+  (include "enums/assignment-state.lisp")
+  (include "enums/assignment-transition.lisp")
+  (include "enums/poll-action.lisp")
+  (include "enums/approval-status.lisp")
+  (include "enums/approval-decision.lisp"))

@@ -1,0 +1,15 @@
+{
+  "schema_version": "riido-contracts-ci-evidence-loop.v1",
+  "id": "contracts-ci-evidence",
+  "workflow": ".github/workflows/ci.yml",
+  "related_workflow": ".github/workflows/go-ci.yml",
+  "evidence_artifacts": ["ci-evidence", "go-ci-evidence"],
+  "tool": "tools/cievidence",
+  "loop": {
+    "observation": "Contracts broad CI workflows verified dependency policy, enumgen, fsmgen, lint, and tests, but two workflows did not publish their own evidence JSON.",
+    "hypothesis": "Binding both broad CI workflows to a compact evidence tool makes previously implicit CI gates observable without changing contract runtime semantics.",
+    "execute": "Add tools/cievidence, run it from ci.yml and go-ci.yml with workflow-specific command expectations, and upload strict evidence artifacts.",
+    "evaluate": "Local and public CI verification must show both evidence artifacts are generated, command coverage is verified, and executable knowledge coverage still reports zero manual docs or loop debt.",
+    "retrospective": "Broad CI is now evidence-producing orchestration rather than an unstructured green check, leaving domain workflows to keep owning detailed contract semantics."
+  }
+}

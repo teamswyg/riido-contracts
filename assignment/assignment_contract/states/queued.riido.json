@@ -1,0 +1,13 @@
+{
+  "schema_version": "riido-ai-server-contract-assignment-state.v1",
+  "state": {
+    "name": "Queued",
+    "value": "queued",
+    "transitions": [
+      "leased",
+      "cancelling",
+      "cancelled",
+      "failed"
+    ]
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "schema_version": "riido-figma-ai-agent-coverage-entry.v1",
+  "entry": {
+    "page_id": "42:3014",
+    "node_id": "188:27708",
+    "name": "windows",
+    "coverage_status": "no_diff_product_surface",
+    "evidence_kind": "figma_platform_wireframe",
+    "ssot_docs": [
+      "docs/20-domain/ai-agent-policy.md",
+      "docs/30-architecture/ssot-dependency-map.md"
+    ],
+    "owner_repos": [
+      "riido-desktop",
+      "riido-client"
+    ],
+    "covered_facts": [
+      "Windows onboarding/install presentation is a desktop/client product surface",
+      "Windows waitlist or launch-notification actions remain outside the AI Agent generated API",
+      "no Windows-specific control-plane endpoint is created by this wireframe"
+    ],
+    "direction_loop": {
+      "top_down": "A Windows product action needs a separate product/marketing or desktop SSOT before it becomes a generated API.",
+      "bottom_up": "A Windows packaging or store-distribution finding stays outside AI Agent API unless it changes runtime liveness semantics."
+    }
+  }
+}

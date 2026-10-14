@@ -1,0 +1,33 @@
+{
+  "schema_version": "riido-ssot-dependency-fact.v1",
+  "fact": {
+    "id": "agent-concept",
+    "fact": "Agent means a task-assignable abstraction of a configured runtime",
+    "human_doc_phrase": "Agent means a task-assignable abstraction of a configured runtime",
+    "source_refs": [
+      {
+        "repo": "riido-contracts",
+        "path": "docs/20-domain/ai-agent-policy.md",
+        "required_phrase": "Agent"
+      }
+    ],
+    "owner": {
+      "repo": "riido-contracts",
+      "path": "docs/20-domain/ai-agent-policy.md"
+    },
+    "downstreams": [
+      {
+        "repo": "riido-control-plane",
+        "local_scope": "HTTP handlers, stores, fixture data, and generated client projection"
+      },
+      {
+        "repo": "riido-daemon",
+        "local_scope": "runtime execution after assignment"
+      },
+      {
+        "repo": "riido-infra",
+        "local_scope": "deployment requirement interpretation only"
+      }
+    ]
+  }
+}

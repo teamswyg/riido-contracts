@@ -1,0 +1,46 @@
+{
+  "schema_version": "riido-figma-ai-agent-coverage-entry.v1",
+  "entry": {
+    "node_id": "162:23090",
+    "name": "런타임 설정페이지",
+    "coverage_status": "covered",
+    "evidence_kind": "figma_section",
+    "ssot_docs": [
+      "docs/20-domain/ai-agent-policy.md",
+      "docs/30-architecture/ssot-dependency-map.md",
+      "apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json"
+    ],
+    "owner_repos": [
+      "riido-contracts",
+      "riido-control-plane",
+      "riido-daemon",
+      "riido-client"
+    ],
+    "generated_paths": [
+      "aiAgent.bootstrap",
+      "aiAgent.devices.runtimes",
+      "aiAgent.agents.daemon.details",
+      "aiAgent.agents.daemon.start",
+      "aiAgent.agents.daemon.restart",
+      "aiAgent.agents.daemon.stop",
+      "aiAgent.events.stream",
+      "v2.aiAgent.bootstrap",
+      "v2.aiAgent.devices.runtimes",
+      "v2.aiAgent.agents.daemon.details",
+      "v2.aiAgent.agents.daemon.start",
+      "v2.aiAgent.agents.daemon.restart",
+      "v2.aiAgent.agents.daemon.stop",
+      "v2.aiAgent.events.stream"
+    ],
+    "covered_facts": [
+      "device/runtime liveness is read from SaaS",
+      "daemon detail and control are agent-bound SaaS commands",
+      "public agent daemon control is available to workspace members, private control is admin/owner-scoped",
+      "Figma node-id=129:17930 is an endpoint-looking runtime settings label, not a canonical base URL, generated path, or live host export"
+    ],
+    "direction_loop": {
+      "top_down": "New daemon controls require contracts/API ownership before daemon or client behavior is added.",
+      "bottom_up": "A daemon lifecycle limitation changes daemon SSOT first, then contracts only when the client-facing command semantics change."
+    }
+  }
+}

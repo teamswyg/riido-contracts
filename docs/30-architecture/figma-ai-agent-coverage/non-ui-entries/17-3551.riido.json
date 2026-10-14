@@ -1,0 +1,45 @@
+{
+  "schema_version": "riido-figma-ai-agent-coverage-entry.v1",
+  "entry": {
+    "page_id": "0:1",
+    "node_id": "17:3551",
+    "name": "에이전트",
+    "coverage_status": "covered",
+    "evidence_kind": "figma_legacy_wireframe_section",
+    "absorbed_by_top_level_node_id": "432:37336",
+    "ssot_docs": [
+      "docs/20-domain/ai-agent-policy.md",
+      "docs/30-architecture/ssot-dependency-map.md",
+      "apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json"
+    ],
+    "owner_repos": [
+      "riido-contracts",
+      "riido-control-plane",
+      "riido-client",
+      "riido-daemon"
+    ],
+    "generated_paths": [
+      "aiAgent.bootstrap",
+      "aiAgent.agents.create",
+      "aiAgent.agents.updateConfiguration",
+      "aiAgent.agents.delete",
+      "aiAgent.agents.editability",
+      "aiAgent.devices.runtimes",
+      "v2.aiAgent.bootstrap",
+      "v2.aiAgent.agents.create",
+      "v2.aiAgent.agents.updateConfiguration",
+      "v2.aiAgent.agents.delete",
+      "v2.aiAgent.agents.editability",
+      "v2.aiAgent.devices.runtimes"
+    ],
+    "covered_facts": [
+      "legacy agent list wireframe is absorbed by the current UI agent settings section",
+      "agent identity, lifecycle, timestamps, and runtime/model fields are owned by agent settings policy and API DSL",
+      "legacy agent list rendering does not create an alternate agent read model"
+    ],
+    "direction_loop": {
+      "top_down": "A revived agent-list policy from this legacy frame updates the current agent settings policy/API entry first.",
+      "bottom_up": "A client or control-plane list mismatch escalates to the current agent settings entry, not to a duplicate legacy list SSOT."
+    }
+  }
+}

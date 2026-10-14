@@ -1,0 +1,35 @@
+{
+  "schema_version": "riido-contracts-provider-capability-doc.v1",
+  "id": "provider-capability",
+  "title": "Provider Capability",
+  "riido_task": "RIID-4687",
+  "summary": "Generated reader for the C3 Provider Capability domain: runtime capability snapshot model, protocol vocabulary, compatibility summary values, fingerprint input shape, and protocol-critical args.",
+  "generated_doc": "docs/20-domain/provider-capability.md",
+  "workflow": ".github/workflows/provider-capability.yml",
+  "evidence_artifact": "provider-capability-evidence",
+  "package": "provider/capability",
+  "expected_provider_capability_fields": 44,
+  "expected_fingerprint_input_fields": 11,
+  "expected_protocol_count": 6,
+  "expected_event_stream_format_count": 4,
+  "expected_protocol_maturity_count": 4,
+  "expected_compatibility_status_count": 4,
+  "expected_protocol_critical_arg_sets": 5,
+  "invariants": [
+    "`ProtocolKind` is the primary adapter-selection key; `ProviderKind` alone is insufficient.",
+    "`DetectedVersion` is raw signal only; runtime branching uses protocol and surface facts.",
+    "`CompatibilityStatus` is a lossy summary; gate decisions must also read maturity, opt-in, missing capability, blocked, and degraded reason fields.",
+    "`ExposesUnsafePermissionBypass` is a risk signal, not permission to enable bypass execution.",
+    "Event stream facts are provider-neutral: `SupportsStructuredEventStream` plus `EventStreamFormat`.",
+    "`CapabilityFingerprint` excludes `NativeConfigVersion`; native config is task execution context, not runtime capability.",
+    "Unknown provider surfaces are preserved instead of being dropped.",
+    "Protocol-critical CLI args are owned by `provider/capability.ProtocolCriticalArgs`."
+  ],
+  "loop": {
+    "observation": "Provider capability had an executable package and tests, but the public reader was a long hand-maintained SSOT.",
+    "hypothesis": "Generating the reader from the package catalog and reflective model counts will keep protocol/fingerprint governance aligned with code.",
+    "execute": "Load provider/capability catalogs, verify expected counts, render the reader, and upload provider-capability evidence in CI.",
+    "evaluate": "The verifier fails on stale markdown, malformed manifest, workflow gaps, package shape drift, or protocol-critical arg catalog drift.",
+    "retrospective": "Provider capability knowledge becomes executable while the rich details stay in package APIs and tests."
+  }
+}

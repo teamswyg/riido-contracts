@@ -1,0 +1,45 @@
+{
+  "schema_version": "riido-contracts-ir-schema-versioning-doc.v1",
+  "id": "ir-schema-versioning",
+  "title": "IR Schema Versioning",
+  "riido_task": "RIID-4687",
+  "summary": "Generated reader for C2 IR schema versioning: CanonicalEvent shape, scope-aware envelope validation, NativeConfigVersion dynamic checks, fake placeholder rejection, and reducer/version boundary anchors.",
+  "generated_doc": "docs/20-domain/ir-schema-versioning.md",
+  "workflow": ".github/workflows/ir-schema-versioning.yml",
+  "evidence_artifact": "ir-schema-versioning-evidence",
+  "package": "ir",
+  "expected_canonical_event_fields": 23,
+  "expected_event_scope_count": 4,
+  "expected_common_static_required_count": 7,
+  "expected_actor_id_conditional_count": 1,
+  "expected_run_required_field_count": 10,
+  "expected_fake_placeholder_field_count": 9,
+  "expected_fake_placeholder_value_count": 7,
+  "expected_violation_code_count": 5,
+  "expected_native_config_class_count": 4,
+  "expected_run_context_fields": 1,
+  "expected_validate_entrypoints": 2,
+  "scope_rules": [
+    {"scope": "system", "required": 0, "forbidden": 12, "conditional": 0},
+    {"scope": "runtime", "required": 1, "forbidden": 4, "conditional": 0},
+    {"scope": "task", "required": 1, "forbidden": 10, "conditional": 1},
+    {"scope": "run", "required": 10, "forbidden": 0, "conditional": 2}
+  ],
+  "invariants": [
+    "CanonicalEvent is append-only; shape changes introduce new schema versions instead of mutating existing events.",
+    "EventScope owns field presence: absent values are represented by lower scope, not placeholder strings.",
+    "ValidateEnvelope is the static gate; ValidateEnvelopeWithRunContext resolves phase-dependent NCV requirements.",
+    "TaskScope and RunScope transition events require FSMVersion.",
+    "SystemScope and RuntimeScope never carry FSMVersion.",
+    "RunScope requires runtime identity and capability surface fields before execution context checks.",
+    "Fake placeholder values are rejected before reducer semantics are considered.",
+    "TaskIR and snapshots are derived views; event log remains truth-of-record."
+  ],
+  "loop": {
+    "observation": "IR schema versioning had executable envelope validators and tests, but the reader was a long hand-maintained SSOT with rules that could drift from code.",
+    "hypothesis": "Generating the reader from validator probes, reflection, and explicit scope rule counts will make schema governance observable and prevent prose from overstating runtime enforcement.",
+    "execute": "Reflect CanonicalEvent and RunContext, probe scope validators, fake placeholders, FSMVersion, native-config context, render the reader, and upload evidence in CI.",
+    "evaluate": "The verifier fails on stale markdown, malformed manifest, workflow evidence gaps, scope rule drift, validation entrypoint drift, fake placeholder drift, or field-count drift.",
+    "retrospective": "IR schema versioning becomes an executable validator surface rather than a narrative description of intended enforcement."
+  }
+}

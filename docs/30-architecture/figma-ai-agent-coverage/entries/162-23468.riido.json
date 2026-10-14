@@ -1,0 +1,41 @@
+{
+  "schema_version": "riido-figma-ai-agent-coverage-entry.v1",
+  "entry": {
+    "node_id": "162:23468",
+    "name": "논의 필요",
+    "coverage_status": "covered",
+    "evidence_kind": "figma_planning_section",
+    "ssot_docs": [
+      "docs/20-domain/ai-agent-policy.md",
+      "docs/20-domain/api-contract-projection.md",
+      "docs/30-architecture/ssot-dependency-map.md",
+      "apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json"
+    ],
+    "owner_repos": [
+      "riido-contracts",
+      "riido-control-plane",
+      "riido-infra",
+      "riido-client"
+    ],
+    "generated_paths": [
+      "aiAgent.onboarding.fixtures.createAgent",
+      "aiAgent.tasks.assignableAgents",
+      "aiAgent.agents.updateConfiguration",
+      "aiAgent.agents.delete",
+      "v2.aiAgent.onboarding.fixtures.createAgent",
+      "v2.aiAgent.tasks.assignableAgents",
+      "v2.aiAgent.agents.updateConfiguration",
+      "v2.aiAgent.agents.delete"
+    ],
+    "covered_facts": [
+      "Figma node-id=162-23475 resolves fixture-created agent names as mutable and non-unique",
+      "fixture selection creates a normal agent and never creates a template entity",
+      "the control plane must not auto-suffix duplicate display names such as 리도(1); agent_id is the stable identity and tie-breaker",
+      "fixture-created agents follow normal agent editability, RBAC, update, and delete rules"
+    ],
+    "direction_loop": {
+      "top_down": "A future onboarding fixture identity change updates ai-agent-policy and the API DSL before generated clients or HTTP test servers change.",
+      "bottom_up": "If control-plane, infra, or client implementation finds fixture-created agents need special handling, it must first prove the normal-agent policy is wrong here."
+    }
+  }
+}

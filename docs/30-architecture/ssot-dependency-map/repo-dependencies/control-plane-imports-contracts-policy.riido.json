@@ -1,0 +1,27 @@
+{
+  "schema_version": "riido-ssot-repo-dependency.v1",
+  "repo_dependency": {
+    "id": "control-plane-imports-contracts-policy",
+    "from_repo": "riido-control-plane",
+    "to_repo": "riido-contracts",
+    "fact_ids": [
+      "active-assignment-heartbeat-stale-lease",
+      "agent-concept",
+      "agent-editability",
+      "api-projection",
+      "device-runtime-liveness-stale-projection",
+      "fixture-created-agent-normal-lifecycle",
+      "generated-assignment-excludes-team-openapi-key",
+      "generated-client-delivery-review-handoff",
+      "instruction",
+      "onboarding-draft-ordering",
+      "participant-dropdown-agent-ordering",
+      "profile-thumbnail-url",
+      "progress-message-catalog",
+      "rbac-vocabulary",
+      "workspace-assigned-agent-profile-map",
+      "workspace-scoped-ai-agent-v2-api"
+    ],
+    "local_scope": "Control-plane executes HTTP, fixture, authorization, and generated-client behavior without redefining canonical policy."
+  }
+}

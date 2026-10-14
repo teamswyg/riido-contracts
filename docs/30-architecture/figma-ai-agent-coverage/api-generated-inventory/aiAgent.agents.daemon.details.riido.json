@@ -1,0 +1,25 @@
+{
+  "schema_version": "riido-figma-ai-agent-api-annotation-inventory.v1",
+  "inventory": {
+    "ui_area": "Runtime settings",
+    "category_id": "700:0",
+    "category_label": "API Generated",
+    "figma_generated_path": "riido.v2.aiAgent.agents.daemon.details",
+    "canonical_generated_path": "aiAgent.agents.daemon.details",
+    "operation_kind": "Query",
+    "background": "Agent에 연결된 daemon/runtime 상세와 제어 가능 상태를 SaaS 기준으로 조회합니다.",
+    "annotation_count": 3,
+    "sources": [
+      {
+        "page_id": "129:5215",
+        "top_level_node_id": "162:23090",
+        "coverage_entry_node_id": "162:23090",
+        "node_ids": [
+          "160:10654",
+          "559:34714",
+          "129:17616"
+        ]
+      }
+    ]
+  }
+}

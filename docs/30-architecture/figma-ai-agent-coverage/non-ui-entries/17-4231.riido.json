@@ -1,0 +1,38 @@
+{
+  "schema_version": "riido-figma-ai-agent-coverage-entry.v1",
+  "entry": {
+    "page_id": "0:1",
+    "node_id": "17:4231",
+    "name": "에이전트 수정",
+    "coverage_status": "covered",
+    "evidence_kind": "figma_legacy_wireframe_section",
+    "absorbed_by_top_level_node_id": "432:37336",
+    "ssot_docs": [
+      "docs/20-domain/ai-agent-policy.md",
+      "docs/30-architecture/ssot-dependency-map.md",
+      "apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json"
+    ],
+    "owner_repos": [
+      "riido-contracts",
+      "riido-control-plane",
+      "riido-client"
+    ],
+    "generated_paths": [
+      "aiAgent.agents.updateConfiguration",
+      "aiAgent.agents.editability",
+      "aiAgent.devices.runtimes",
+      "v2.aiAgent.agents.updateConfiguration",
+      "v2.aiAgent.agents.editability",
+      "v2.aiAgent.devices.runtimes"
+    ],
+    "covered_facts": [
+      "legacy agent edit wireframe is absorbed by the current UI agent settings section",
+      "editability still requires zero assigned tasks and the generated updateConfiguration operation",
+      "legacy edit form layout does not redefine field limits or RBAC"
+    ],
+    "direction_loop": {
+      "top_down": "A revived edit-field rule from this legacy frame updates ai-agent-policy and the API DSL before generated-client changes.",
+      "bottom_up": "A validation or RBAC mismatch changes control-plane behavior first, then escalates only if the shared policy meaning changes."
+    }
+  }
+}

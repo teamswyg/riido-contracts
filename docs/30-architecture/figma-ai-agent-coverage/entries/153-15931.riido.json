@@ -1,0 +1,42 @@
+{
+  "schema_version": "riido-figma-ai-agent-coverage-entry.v1",
+  "entry": {
+    "node_id": "153:15931",
+    "name": "댓글 소통",
+    "coverage_status": "covered",
+    "evidence_kind": "figma_section",
+    "ssot_docs": [
+      "docs/20-domain/ai-agent-policy.md",
+      "docs/30-architecture/ssot-dependency-map.md",
+      "apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json"
+    ],
+    "owner_repos": [
+      "riido-contracts",
+      "riido-control-plane",
+      "riido-daemon",
+      "riido-client"
+    ],
+    "generated_paths": [
+      "aiAgent.tasks.threads",
+      "aiAgent.tasks.threadMessages.create",
+      "aiAgent.tasks.submitComment",
+      "aiAgent.tasks.stop",
+      "aiAgent.events.stream",
+      "v2.aiAgent.tasks.threads",
+      "v2.aiAgent.tasks.threadMessages.create",
+      "v2.aiAgent.tasks.submitComment",
+      "v2.aiAgent.tasks.stop",
+      "v2.aiAgent.events.stream"
+    ],
+    "covered_facts": [
+      "the Figma comment label is projected as task-thread messages",
+      "cold thread collection is fetched before following an advertised active stream",
+      "daemon progress is batched and projected through typed stream events",
+      "stop is a SaaS command consumed later by daemon polling"
+    ],
+    "direction_loop": {
+      "top_down": "A new thread state, message kind, or stop semantic changes the API DSL and stream event contract first.",
+      "bottom_up": "A daemon batching or client stream-cost finding updates daemon/control-plane evidence, then contracts if thread meaning changes."
+    }
+  }
+}

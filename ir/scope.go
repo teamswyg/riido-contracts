@@ -1,9 +1,9 @@
 package ir
 
 // EventScope classifies a CanonicalEvent by which identity fields it must
-// carry. See docs/20-domain/ir-schema-versioning.md §1.5.
+// carry. See docs/20-domain/ir-schema-versioning.md.
 //
-// Scope assignment rules (source of truth: ir-event-log.md §3.0):
+// Scope assignment rules are summarized by the generated IR Event Log reader:
 //   - SystemScope:  daemon / operator / policy-bundle events. No TaskID/RunID/RuntimeID.
 //   - RuntimeScope: runtime slot + capability snapshot events. RuntimeID present
 //     (CapabilityFingerprint present once capability is detected).

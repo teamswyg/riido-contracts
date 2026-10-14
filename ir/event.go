@@ -31,7 +31,7 @@ import "time"
 // protocol selection) is intentionally absent. Use RuntimeID for the runtime
 // slot, ProviderKind for the vendor family, and ProtocolKind for the
 // adapter/protocol selection — three distinct concepts.
-// See docs/20-domain/provider-capability.md §0 invariant 1.
+// See the provider-capability invariant that ProtocolKind is the adapter key.
 type CanonicalEvent struct {
 	// common envelope
 	EventID             string
@@ -39,7 +39,7 @@ type CanonicalEvent struct {
 	EventSchemaVersion  int
 	Scope               EventScope
 	Type                EventType
-	ActorKind           ActorKind // server-decided (ir-event-log.md §9)
+	ActorKind           ActorKind // server-decided attribution
 	ActorID             string    // server-decided
 	RiidoDaemonVersion  string
 	PolicyBundleVersion string

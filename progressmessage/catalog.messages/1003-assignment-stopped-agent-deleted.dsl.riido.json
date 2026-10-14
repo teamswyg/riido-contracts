@@ -1,0 +1,14 @@
+{
+  "schema_version": "riido-progress-message-dsl-message.v1",
+  "message": {
+    "code": 1003,
+    "key": "assignment.stopped.agent_deleted",
+    "usage": "required",
+    "category": "assignment",
+    "description": "The agent was deleted while the assignment was active.",
+    "locales": {
+      "ko": "에이전트가 삭제되어 진행 중이던 작업이 중지됐어요.",
+      "en": "The agent was deleted, so the active task was stopped."
+    }
+  }
+}

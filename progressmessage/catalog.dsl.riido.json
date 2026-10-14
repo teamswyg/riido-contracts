@@ -4,147 +4,17 @@
   "description": "AI Agent runtime progress messages are fixed, translated, integer-coded, and rendered by the control plane before public SSE delivery. The public client keeps receiving message strings.",
   "append_only": true,
   "max_messages": 15,
-  "messages": [
-    {
-      "code": 1001,
-      "key": "agent.thinking",
-      "usage": "required",
-      "category": "agent",
-      "description": "Provider has not produced a more specific structured tool/progress signal yet.",
-      "locales": {
-        "ko": "생각 중. . .",
-        "en": "Thinking. . ."
-      }
-    },
-    {
-      "code": 1002,
-      "key": "assignment.queued.agent_busy",
-      "usage": "required",
-      "category": "assignment",
-      "description": "The selected agent already owns another active assignment and this task is queued.",
-      "locales": {
-        "ko": "지금은 다른 작업을 처리 중이에요. 현재 작업이 끝나는 대로 바로 시작할게요.",
-        "en": "I am working on another task right now. I will start as soon as the current task finishes."
-      }
-    },
-    {
-      "code": 1003,
-      "key": "assignment.stopped.agent_deleted",
-      "usage": "required",
-      "category": "assignment",
-      "description": "The agent was deleted while the assignment was active.",
-      "locales": {
-        "ko": "에이전트가 삭제되어 진행 중이던 작업이 중지됐어요.",
-        "en": "The agent was deleted, so the active task was stopped."
-      }
-    },
-    {
-      "code": 1004,
-      "key": "assignment.stopped.by_user",
-      "usage": "active",
-      "category": "assignment",
-      "description": "A user explicitly stopped the active assignment.",
-      "args": [
-        {"name": "actor_name", "type": "string", "required": true}
-      ],
-      "locales": {
-        "ko": "{{actor_name}}님이 직접 종료하였습니다",
-        "en": "{{actor_name}} stopped this task."
-      }
-    },
-    {
-      "code": 1101,
-      "key": "tool.collecting",
-      "usage": "active",
-      "category": "tool",
-      "description": "A tool-backed collection/read operation is in progress. The label argument must be a state-neutral noun phrase and must not include rendered state copy such as collecting/running/completed.",
-      "args": [
-        {"name": "label", "type": "string", "required": true},
-        {"name": "description", "type": "string", "required": true}
-      ],
-      "locales": {
-        "ko": "{{label}} 수집 중 - {{description}}",
-        "en": "Collecting {{label}} - {{description}}"
-      }
-    },
-    {
-      "code": 1102,
-      "key": "tool.collection_completed_count",
-      "usage": "active",
-      "category": "tool",
-      "description": "A tool-backed collection/read operation completed with a count and representative title. The label argument must be a state-neutral noun phrase and must not include rendered state copy such as collecting/running/completed.",
-      "args": [
-        {"name": "label", "type": "string", "required": true},
-        {"name": "count", "type": "int", "required": true},
-        {"name": "representative_title", "type": "string"}
-      ],
-      "locales": {
-        "ko": "{{label}} 조회 완료 - {{count}}건({{representative_title}} 외)의 요약을 가져왔습니다. . .",
-        "en": "{{label}} lookup complete - fetched summaries for {{count}} items including {{representative_title}}. . ."
-      }
-    },
-    {
-      "code": 1103,
-      "key": "tool.running",
-      "usage": "active",
-      "category": "tool",
-      "description": "A tool/action is executing. The label argument must be a state-neutral noun phrase and must not include rendered state copy such as collecting/running/completed.",
-      "args": [
-        {"name": "label", "type": "string", "required": true},
-        {"name": "description", "type": "string", "required": true}
-      ],
-      "locales": {
-        "ko": "{{label}} 실행 중 - {{description}}",
-        "en": "Running {{label}} - {{description}}"
-      }
-    },
-    {
-      "code": 1104,
-      "key": "tool.completed",
-      "usage": "active",
-      "category": "tool",
-      "description": "A tool/action completed with a short summary. The label argument must be a state-neutral noun phrase and must not include rendered state copy such as collecting/running/completed.",
-      "args": [
-        {"name": "label", "type": "string", "required": true},
-        {"name": "summary", "type": "string", "required": true}
-      ],
-      "locales": {
-        "ko": "{{label}} 완료 - {{summary}}",
-        "en": "{{label}} complete - {{summary}}"
-      }
-    },
-    {
-      "code": 1201,
-      "key": "assignment.started",
-      "usage": "reserved",
-      "category": "assignment",
-      "description": "Reserved for future explicit start-copy once product copy is finalized.",
-      "locales": {
-        "ko": "작업을 시작했어요.",
-        "en": "The task has started."
-      }
-    },
-    {
-      "code": 1202,
-      "key": "assignment.completed",
-      "usage": "reserved",
-      "category": "assignment",
-      "description": "Reserved for future explicit completion-copy once product copy is finalized.",
-      "locales": {
-        "ko": "작업을 완료했어요.",
-        "en": "The task is complete."
-      }
-    },
-    {
-      "code": 1203,
-      "key": "assignment.failed",
-      "usage": "reserved",
-      "category": "assignment",
-      "description": "Reserved for future explicit failure-copy once product copy is finalized.",
-      "locales": {
-        "ko": "작업을 계속 진행하지 못했어요.",
-        "en": "The task could not continue."
-      }
-    }
+  "message_files": [
+    "catalog.messages/1001-agent-thinking.dsl.riido.json",
+    "catalog.messages/1002-assignment-queued-agent-busy.dsl.riido.json",
+    "catalog.messages/1003-assignment-stopped-agent-deleted.dsl.riido.json",
+    "catalog.messages/1004-assignment-stopped-by-user.dsl.riido.json",
+    "catalog.messages/1101-tool-collecting.dsl.riido.json",
+    "catalog.messages/1102-tool-collection-completed-count.dsl.riido.json",
+    "catalog.messages/1103-tool-running.dsl.riido.json",
+    "catalog.messages/1104-tool-completed.dsl.riido.json",
+    "catalog.messages/1201-assignment-started.dsl.riido.json",
+    "catalog.messages/1202-assignment-completed.dsl.riido.json",
+    "catalog.messages/1203-assignment-failed.dsl.riido.json"
   ]
 }

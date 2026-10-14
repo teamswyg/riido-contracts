@@ -1,0 +1,66 @@
+{
+  "schema_version": "riido-contracts-architecture.v1",
+  "id": "contracts-architecture",
+  "riido_task": "RIID-4713",
+  "summary": "github.com/teamswyg/riido-contracts is a public, standard-library-only Go module for shared Riido contracts.",
+  "generated_docs": {
+    "module_decomposition": "docs/30-architecture/module-decomposition.md",
+    "integration_matrix": "docs/30-architecture/integration-matrix.md"
+  },
+  "required_docs": ["docs/20-domain/context-map.md", "docs/20-domain/ai-agent-policy.md", "docs/30-architecture/module-decomposition.md", "docs/30-architecture/contract-promotion-policy.md", "docs/30-architecture/integration-matrix.md", "docs/50-roadmap/open-questions.md"],
+  "context_map_doc": "docs/20-domain/context-map.md",
+  "package_rules": {
+    "dependency": "Allowed dependencies are Go standard library, package-local tests, and task -> ir.",
+    "forbidden": "Third-party dependencies, runtime repo imports, Terraform/AWS/Docker/provider CLI/credential packages, and runtime adapter packages are forbidden.",
+    "tag_boundary": "The Go module tag is the distribution boundary; promotion requires at least one downstream import gate."
+  },
+  "packages": [
+    {"path":"contracts","display":"root `contracts`","role":"module identity constants","must_not_own":"runtime behavior, tag orchestration"},
+    {"path":"task","display":"`task`","role":"C1 task lifecycle states and transition matrix","must_not_own":"scheduler, local task DB, validation execution"},
+    {"path":"ir","display":"`ir`","role":"C2 canonical event envelope, event catalog, reducer contract","must_not_own":"event storage adapters, ingestion pipelines"},
+    {"path":"provider/capability","display":"`provider/capability`","role":"C3 provider capability and fingerprint vocabulary","must_not_own":"provider detection, process launch, real CLI probing"},
+    {"path":"hostintegration","display":"`hostintegration`","role":"C11/C10 distribution and provider routing status vocabulary","must_not_own":"app data roots, IPC, consent storage, store helper implementation"},
+    {"path":"assignment","display":"`assignment`","role":"C10 assignment polling DTOs and state vocabulary","must_not_own":"control-plane store actor, HTTP/SSE handlers, authorization, persistence"},
+    {"path":"apicontract","display":"`apicontract`","role":"C10 API DSL, API IR, generated OpenAPI projection fixtures, API enum/sum-type vocabulary","must_not_own":"control-plane handlers, frontend implementation, authorization/RBAC implementation, generated client code"},
+    {"path":"fsmmeta","display":"`fsmmeta`","role":"public FSM pattern vocabulary generated from Common Lisp pattern sources","must_not_own":"runtime state execution, provider-specific reducer policy, cloud/workflow orchestration"},
+    {"path":"progressmessage","display":"`progressmessage`","role":"C10 AI Agent runtime progress message DSL/IR, integer code catalog, locale templates, append-only validation","must_not_own":"provider output parsing, control-plane HTTP/SSE handlers, frontend rendering behavior"},
+    {"path":"tools/apicontract","display":"`tools/apicontract`","role":"deterministic fixture drift verifier/generator","must_not_own":"runtime code generation output, network calls, third-party parser dependencies"},
+    {"path":"tools/progressmessage","display":"`tools/progressmessage`","role":"deterministic progress-message DSL to IR drift verifier/generator","must_not_own":"daemon runtime emission, control-plane SSE rendering, frontend message rendering"},
+    {"path":"tools/fsmgen","display":"`tools/fsmgen`","role":"Common Lisp enum/transition/pattern projection into Go FSM SPI, fsmmeta, README Mermaid, conformance gates","must_not_own":"runtime path discovery, repository-local process orchestration, provider-specific reducer policy"},
+    {"path":"tools/gotmpl","display":"`tools/gotmpl`","role":"repository-local go tool gotmpl renderer for generated Go templates","must_not_own":"third-party template dependencies, runtime rendering, network calls"},
+    {"path":"tools/ssotdeps","display":"`tools/ssotdeps`","role":"deterministic verifier for SSOT dependency manifest and acyclic repo dependency graph","must_not_own":"downstream repository execution gates, live Riido task mutation, third-party graph parsers"}
+  ],
+  "contract_shape": {
+    "allowed": ["schema-version constants", "enum/string vocabulary", "DTO structs with JSON tags", "pure validation helpers", "pure transition/classification helpers", "generated projection fixtures", "generated FSM pattern/conformance vocabulary", "codegen-safe enum and sum-type contract shapes", "black-box fixture tests"],
+    "forbidden": ["network listeners", "process execution", "file-system persistence adapters", "secret lookup", "cloud API calls", "runtime-specific policy decisions"]
+  },
+  "public_gates": [
+    {"surface":"full contract module","verification":"go test ./...","external_dependency":"none"},
+    {"surface":"dependency boundary","verification":"go list -m all returns only this module","external_dependency":"none"},
+    {"surface":"task/IR coupling","verification":"task transition tests reference real IR event constants","external_dependency":"none"},
+    {"surface":"provider capability","verification":"fingerprint and protocol-args tests","external_dependency":"none"},
+    {"surface":"host integration","verification":"distribution/routing status vocabulary tests","external_dependency":"none"},
+    {"surface":"assignment polling","verification":"contract JSON and generated Go constants alignment","external_dependency":"none"},
+    {"surface":"generated FSM projection","verification":"tools/enumgen and tools/fsmgen verify Common Lisp metadata, Go SPI, fsmmeta, and README Mermaid drift","external_dependency":"none"},
+    {"surface":"API contract projection","verification":"DSL/IR/OpenAPI drift verification plus AI Agent projection tests","external_dependency":"none"},
+    {"surface":"SSOT dependency direction","verification":"tools/ssotdeps verifies manifest source phrases and acyclic repo graph","external_dependency":"none"},
+    {"surface":"architecture docs","verification":"tools/architecturedocs verifies required docs, generated readers, package coverage, and stale runtime wording","external_dependency":"none"}
+  ],
+  "downstream_gates": [
+    {"consumer":"riido-daemon","expected_gate":"imports tagged task/IR/provider/hostintegration/assignment packages and runs daemon compatibility tests"},
+    {"consumer":"riido-control-plane","expected_gate":"imports tagged assignment/provider/hostintegration packages and runs control-plane compatibility tests"},
+    {"consumer":"web frontend","expected_gate":"consumes generated OpenAPI projection and runs client/API compatibility tests"},
+    {"consumer":"desktop webview","expected_gate":"consumes the same generated AI Agent client OpenAPI projection as web"},
+    {"consumer":"riido-infra","expected_gate":"consumes only tagged public contracts or public facades; no private runtime imports"}
+  ],
+  "local_commands": ["go test ./...", "go list -m all", "go run ./tools/enumgen verify", "go run ./tools/fsmgen conformance", "go run ./tools/fsmgen verify", "go test ./assignment -run 'AssignmentContract|AssignmentTransition|AssignmentAPI' -count=1", "go test ./apicontract -run 'AgentCatalog|AIAgentClient' -count=1", "go run ./tools/apicontract verify", "go run ./tools/ssotdeps verify", "go run ./tools/architecturedocs verify -check-doc"],
+  "stale_scan_paths": ["docs/20-domain/context-map.md", "docs/30-architecture", "docs/50-roadmap"],
+  "stale_runtime_words": ["cmd/riido", "cmd/riido_ai_server", "internal/riidoaiserver", "internal/agentbridge", "packaging/terraform", "terraform.tfstate", "terraform.tfvars", "AWS_ACCESS_KEY", "AWS_SECRET", "provider CLI binaries"],
+  "loop": {
+    "observation": "Architecture reader docs and workflow bash checks duplicated package and integration facts without a single evidence artifact.",
+    "hypothesis": "A compact architecture manifest can generate reader docs and verify required docs, package coverage, stale runtime wording, and downstream gate declarations in public CI.",
+    "execute": "Render module decomposition and integration matrix docs from this manifest and publish architecturedocs evidence.",
+    "evaluate": "The verifier fails on stale generated docs, missing required docs, missing package coverage, forbidden runtime wording, or malformed gate declarations.",
+    "retrospective": "Architecture documentation becomes executable repository topology evidence instead of prose maintained by memory."
+  }
+}
