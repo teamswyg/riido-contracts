@@ -2686,7 +2686,9 @@ export const saasContractBundle = {
           "scenario_ids": [
             "listWorkspaceAssignedAgentProfilesV2.component-id-keyed-assigned-profile-map",
             "listWorkspaceAssignedAgentProfilesV2.terminal-participants-persist-independently-of-legacy-active-hints",
-            "listWorkspaceAssignedAgentProfilesV2.explicit-removal-preserves-execution-history"
+            "listWorkspaceAssignedAgentProfilesV2.explicit-removal-preserves-execution-history",
+            "listWorkspaceAssignedAgentProfilesV2.latest-removal-guard-is-independent-of-historical-waiting-state",
+            "listWorkspaceAssignedAgentProfilesV2.interleaved-execution-prevents-participant-removal"
           ],
           "scenarios": [
             {
@@ -2706,6 +2708,18 @@ export const saasContractBundle = {
               "given": "one persistent task Agent participant is explicitly removed while other participants remain",
               "when": "the client reads task_agent_participants and task-thread history",
               "then": "only the removed Agent is absent from task_agent_participants; its completed result, failure diagnostics, and thread history remain unchanged"
+            },
+            {
+              "name": "latest removal guard is independent of historical waiting state",
+              "given": "a retained waiting-for-user execution A is followed by the same Agent execution B, which may be running, completed, or failed",
+              "when": "the client reads the workspace task Agent participants",
+              "then": "membership stays selected and latest_assignment_id is B; is_stop_required reflects only current active execution; no retained history omits the optional ID"
+            },
+            {
+              "name": "interleaved execution prevents participant removal",
+              "given": "a DELETE has cancelled observed execution A while a new execution B is created before membership removal",
+              "when": "the DELETE commits membership removal with or without an assignment_id",
+              "then": "the DELETE returns 409 and preserves membership and B projection; the cancelled A remains cancelled and other task/Agent executions are unaffected"
             }
           ],
           "path_params": [
@@ -5171,8 +5185,12 @@ export const saasContractBundle = {
               "type": "boolean"
             },
             "is_stop_required": {
-              "description": "At least one active execution for this participant requires stopping before removal.",
+              "description": "At least one current active execution must be cancelled as part of participant removal; does not determine membership or the latest observed execution ID.",
               "type": "boolean"
+            },
+            "latest_assignment_id": {
+              "description": "Latest retained execution ID for an observed-removal guard, independent of execution status; absent when no execution history is retained.",
+              "type": "string"
             },
             "name": {
               "type": "string"

@@ -6,18 +6,18 @@
 
 Executable SSOT: `apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json`, `apicontract/fixtures/control-plane-ai-agent-client.ir.riido.json`, and `apicontract/fixtures/control-plane-ai-agent-client.openapi.json`.
 
-Workspace maps expose active legacy avatar hints separately from persistent visible Agent membership.
+Workspace maps expose persistent Agent membership separately from execution ownership and report the latest observed execution for guarded removal.
 
 - Evidence artifact: `ai-agent-assigned-profile-map-evidence`
-- Operations: `1`; schemas: `4`; policy rules: `10`
-- Scenarios: `3`
+- Operations: `1`; schemas: `4`; policy rules: `13`
+- Scenarios: `5`
 - DSL/IR match: `true`; OpenAPI match: `true`; map shape pass: `true`
 
 ## Operation
 
-- `listWorkspaceAssignedAgentProfilesV2` `GET /v2/client/workspaces/{workspace_id}/ai-agent/tasks/assigned-agent-profiles` -> `200 AssignedAgentProfileMapResponse`; generated path `v2.aiAgent.tasks.assignedAgentProfiles`; scenarios `3`
+- `listWorkspaceAssignedAgentProfilesV2` `GET /v2/client/workspaces/{workspace_id}/ai-agent/tasks/assigned-agent-profiles` -> `200 AssignedAgentProfileMapResponse`; generated path `v2.aiAgent.tasks.assignedAgentProfiles`; scenarios `5`
 
-- Scenario names: `component id keyed assigned profile map`, `terminal participants persist independently of legacy active hints`, `explicit removal preserves execution history`
+- Scenario names: `component id keyed assigned profile map`, `terminal participants persist independently of legacy active hints`, `explicit removal preserves execution history`, `latest removal guard is independent of historical waiting state`, `interleaved execution prevents participant removal`
 
 ## Read-model rules
 
@@ -31,13 +31,16 @@ Workspace maps expose active legacy avatar hints separately from persistent visi
 - server: retain completed, stopped, and failed Agents in task_agent_participants until explicit participant removal; execution status does not delete membership
 - server: explicit participant removal omits that Agent from task_agent_participants without deleting or rewriting terminal execution history
 - server: task_agent_participants preserves workspace/private visibility and reports is_stop_required from the current active execution
+- server: latest_assignment_id identifies the latest retained execution of this task Agent regardless of execution status; omit it when no execution is retained
+- client: use latest_assignment_id only as the observed removal guard; membership and execution ownership are independent of this identifier
+- server: participant removal cancels the observed active executions before removing membership and returns 409 without removing membership if a new execution appears before the removal commit, including requests without assignment_id
 
 ## Schemas
 
 - `AssignedAgentProfileMapResponse`: `schema_version`, `workspace_id`, `assigned_agent_profiles`, `task_agent_participants`
 - `AssignedAgentProfile`: `avatar_url`, `tmp_color`
 - `TaskAgentParticipantCollection`: `agents`
-- `TaskAgentParticipantRecord`: `agent_id`, `name`, `profile_thumbnail_url`, `is_owned_by_viewer`, `is_stop_required`
+- `TaskAgentParticipantRecord`: `agent_id`, `name`, `profile_thumbnail_url`, `is_owned_by_viewer`, `is_stop_required`, `latest_assignment_id`
 
 ## Invariant anchors
 
@@ -46,11 +49,13 @@ Workspace maps expose active legacy avatar hints separately from persistent visi
 - task_agent_participants retains visible completed/stopped/failed Agent membership until explicit removal.
 - Removing a participant preserves terminal results, failure diagnostics, and execution history.
 - Workspace/private visibility applies to persistent participants; is_stop_required reflects the active run.
+- latest_assignment_id observes the latest retained execution, including waiting/completed/failed executions, and is optional when execution history is absent.
+- A new execution between cancellation and participant removal yields 409 and preserves membership, including ID-less removal requests.
 
 ## Evidence Loop
 
-- Observe: The new persistent participant field conflicted with active-only policy/scenario/evidence descriptions shared with the legacy avatar map.
-- Hypothesis: Scoping execution filtering to assigned_agent_profiles and asserting persistent task_agent_participants prevents downstream readers from dropping terminal participants.
-- Execute: Verify separate map shapes, both participant schemas, policy/scenarios, DSL/IR/OpenAPI parity, and generated reader documentation.
-- Evaluate: CI rejects missing participant fields, wrong map references, contradictory active-only rules, and stale generated projections.
-- Retrospective: Execution status and task membership have separate meanings; future changes must preserve removal/history and visibility boundaries.
+- Observe: Historical waiting executions could select an outdated removal ID, and ID-less removal could erase membership while an interleaved new execution remained runnable.
+- Hypothesis: Separating the latest observed execution ID from membership/status and checking the observed execution generation at removal commit protects explicit removal without retaining execution ownership.
+- Execute: Verify optional latest assignment metadata, state-independent selection, guarded removal policy/scenarios, and DSL/IR/OpenAPI projections; verify runtime interleavings in control-plane.
+- Evaluate: CI rejects missing optional guard metadata, drifted removal policy/scenarios, and stale generated projections; runtime regression rejects removal after a new execution appears.
+- Retrospective: Membership remains durable while execution ownership is released; removal metadata only protects the observed execution generation.
