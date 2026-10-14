@@ -399,15 +399,18 @@
     {
       "policy_id": "workspace_assigned_agent_profile_map.v1",
       "kind": "read_model",
-      "description": "Workspace task/card 목록은 workspace_id 하나로 현재 배정된 AI Agent profile 표시값을 component_id key 해시맵으로 조회합니다.",
+      "description": "Workspace task/card lists read active legacy profile hints and persistent Agent participants through separate task ID keyed maps.",
       "rules": [
-        "server: include only currently active queued/running/stopping AI Agent assignments in the workspace map",
-        "server: omit completed, stopped, failed, unassigned, and historical-only task threads from the map",
-        "server: use the actual Riido component_id/task_id string as the map key without renaming it to a literal component_id field",
-        "server: because a task/subtask can have only one active AI Agent assignment, each component_id maps to one AssignedAgentProfile value",
+        "server: include only currently active queued/running/stopping AI Agent assignments in assigned_agent_profiles",
+        "server: omit completed, stopped, failed, unassigned, and historical-only task threads from assigned_agent_profiles only",
+        "server: use the actual Riido component_id/task_id string as the key of both assigned_agent_profiles and task_agent_participants",
+        "server: assigned_agent_profiles maps each task to one legacy active AssignedAgentProfile value; task_agent_participants maps each task to a collection of visible persistent Agent participants",
         "profile: avatar_url is copied from the assigned agent's profile_thumbnail_url when present",
         "profile: tmp_color is the fixture-provided avatar fallback color copied into fixture-created agents; direct-created agents may omit it",
-        "client: use this query for list/card avatar hints, not for participant dropdown candidate selection or task-thread history"
+        "client: use task_agent_participants for assigned participants and assigned_agent_profiles for legacy active avatar hints; use separate APIs for candidate selection and task-thread history",
+        "server: retain completed, stopped, and failed Agents in task_agent_participants until explicit participant removal; execution status does not delete membership",
+        "server: explicit participant removal omits that Agent from task_agent_participants without deleting or rewriting terminal execution history",
+        "server: task_agent_participants preserves workspace/private visibility and reports is_stop_required from the current active execution"
       ]
     },
     {
@@ -534,10 +537,18 @@
       "type": "string",
       "description": "provider probe의 저카디널리티 상태입니다.",
       "values": [
-        {"value": "healthy"},
-        {"value": "degraded"},
-        {"value": "unavailable"},
-        {"value": "unknown"}
+        {
+          "value": "healthy"
+        },
+        {
+          "value": "degraded"
+        },
+        {
+          "value": "unavailable"
+        },
+        {
+          "value": "unknown"
+        }
       ]
     },
     {
@@ -545,12 +556,24 @@
       "type": "string",
       "description": "원문 오류 대신 사용하는 비민감 provider 진단 코드입니다.",
       "values": [
-        {"value": "none"},
-        {"value": "executable-missing"},
-        {"value": "login-required"},
-        {"value": "version-unsupported"},
-        {"value": "probe-failed"},
-        {"value": "runtime-error"}
+        {
+          "value": "none"
+        },
+        {
+          "value": "executable-missing"
+        },
+        {
+          "value": "login-required"
+        },
+        {
+          "value": "version-unsupported"
+        },
+        {
+          "value": "probe-failed"
+        },
+        {
+          "value": "runtime-error"
+        }
       ]
     },
     {
@@ -1370,6 +1393,57 @@
       ]
     },
     {
+      "name": "TaskAgentParticipantRecord",
+      "type": "object",
+      "description": "A persistent Agent participant, independent of execution state.",
+      "required": [
+        "agent_id",
+        "name",
+        "is_owned_by_viewer",
+        "is_stop_required"
+      ],
+      "properties": [
+        {
+          "name": "agent_id",
+          "type": "string"
+        },
+        {
+          "name": "name",
+          "type": "string"
+        },
+        {
+          "name": "profile_thumbnail_url",
+          "type": "string",
+          "format": "uri"
+        },
+        {
+          "name": "is_owned_by_viewer",
+          "type": "boolean"
+        },
+        {
+          "name": "is_stop_required",
+          "type": "boolean",
+          "description": "At least one active execution for this participant requires stopping before removal."
+        }
+      ]
+    },
+    {
+      "name": "TaskAgentParticipantCollection",
+      "type": "object",
+      "required": [
+        "agents"
+      ],
+      "properties": [
+        {
+          "name": "agents",
+          "type": "array",
+          "items": {
+            "ref": "TaskAgentParticipantRecord"
+          }
+        }
+      ]
+    },
+    {
       "name": "AssignedAgentProfileMapResponse",
       "description": "workspace 안에서 현재 AI Agent가 배정된 task/subtask component_id를 key로 하는 profile 표시용 해시맵 응답입니다.",
       "type": "object",
@@ -1392,6 +1466,12 @@
           "type": "object",
           "description": "실제 Riido component_id/task_id 문자열을 key로 사용합니다. 예: {\"23958923859\":{\"avatar_url\":\"https://...\",\"tmp_color\":\"#C9A452\"}}",
           "additional_properties_ref": "AssignedAgentProfile"
+        },
+        {
+          "name": "task_agent_participants",
+          "type": "object",
+          "description": "Task ID keyed persistent Agent membership collections. Includes completed and stopped Agents until explicit participant removal. The legacy assigned_agent_profiles field remains active-only.",
+          "additional_properties_ref": "TaskAgentParticipantCollection"
         }
       ]
     },
@@ -4629,7 +4709,7 @@
     {
       "operation_id": "listWorkspaceAssignedAgentProfilesV2",
       "kind": "query",
-      "summary": "workspace task/card 목록에서 현재 배정된 AI Agent profile 표시값을 component_id key 해시맵으로 조회합니다 (v2 workspace-scoped)",
+      "summary": "workspace task/card에서 기존 active profile 힌트와 지속 Agent 참여자를 별도 맵으로 조회합니다 (v2 workspace-scoped)",
       "method": "GET",
       "path": "/v2/client/workspaces/{workspace_id}/ai-agent/tasks/assigned-agent-profiles",
       "resource": "agent",
@@ -4663,10 +4743,16 @@
           "then": "assigned_agent_profiles is keyed by the exact component_id/task_id string and each value contains avatar_url and/or tmp_color for list/card presentation"
         },
         {
-          "name": "historical threads are omitted",
-          "given": "a task has completed, stopped, failed, unassigned, or historical-only AI Agent threads",
+          "name": "terminal participants persist independently of legacy active hints",
+          "given": "a task retains completed, stopped, or failed Agent membership without explicit removal",
           "when": "the client reads the workspace assigned profile map",
-          "then": "that component_id is omitted so the task/card list does not show an active assigned-agent avatar from history"
+          "then": "the task ID is omitted from assigned_agent_profiles when no active run remains but task_agent_participants still lists every visible retained Agent"
+        },
+        {
+          "name": "explicit removal preserves execution history",
+          "given": "one persistent task Agent participant is explicitly removed while other participants remain",
+          "when": "the client reads task_agent_participants and task-thread history",
+          "then": "only the removed Agent is absent from task_agent_participants; its completed result, failure diagnostics, and thread history remain unchanged"
         }
       ]
     },
@@ -4937,6 +5023,7 @@
           "v2.aiAgent.bootstrap",
           "v2.aiAgent.tasks.assignableAgents",
           "v2.aiAgent.tasks.threads",
+          "v2.aiAgent.tasks.assignedAgentProfiles",
           "v3.aiAgent.tasks.threads"
         ]
       },
@@ -4976,7 +5063,8 @@
           "v2.aiAgent.bootstrap",
           "v2.aiAgent.tasks.assignableAgents",
           "v2.aiAgent.tasks.threads",
-          "v3.aiAgent.tasks.threads"
+          "v3.aiAgent.tasks.threads",
+          "v2.aiAgent.tasks.assignedAgentProfiles"
         ]
       },
       "auth": {
@@ -5253,6 +5341,7 @@
           "v2.aiAgent.bootstrap",
           "v2.aiAgent.tasks.assignableAgents",
           "v2.aiAgent.tasks.threads",
+          "v2.aiAgent.tasks.assignedAgentProfiles",
           "v2.aiAgent.tasks.threadStreamSubscription",
           "v3.aiAgent.tasks.threads"
         ]
@@ -5304,6 +5393,7 @@
           "v2.aiAgent.bootstrap",
           "v2.aiAgent.tasks.assignableAgents",
           "v2.aiAgent.tasks.threads",
+          "v2.aiAgent.tasks.assignedAgentProfiles",
           "v2.aiAgent.tasks.threadStreamSubscription",
           "v3.aiAgent.tasks.threads"
         ]
@@ -5351,6 +5441,7 @@
           "v2.aiAgent.bootstrap",
           "v2.aiAgent.tasks.assignableAgents",
           "v2.aiAgent.tasks.threads",
+          "v2.aiAgent.tasks.assignedAgentProfiles",
           "v2.aiAgent.tasks.threadStreamSubscription",
           "v3.aiAgent.tasks.threads"
         ]

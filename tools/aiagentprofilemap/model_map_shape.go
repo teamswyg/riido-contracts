@@ -5,10 +5,14 @@ func assignedProfileMapShapePass(schemas []schema) bool {
 	if response.Name == "" {
 		return false
 	}
+	active, participants := false, false
 	for _, prop := range response.Properties {
 		if prop.Name == "assigned_agent_profiles" {
-			return prop.AdditionalPropertiesRef == "AssignedAgentProfile"
+			active = prop.AdditionalPropertiesRef == "AssignedAgentProfile"
+		}
+		if prop.Name == "task_agent_participants" {
+			participants = prop.AdditionalPropertiesRef == "TaskAgentParticipantCollection"
 		}
 	}
-	return false
+	return active && participants
 }
