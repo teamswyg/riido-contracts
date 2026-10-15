@@ -3,10 +3,11 @@ package assignment
 import "time"
 
 type Assignment struct {
-	RequestID   string `json:"request_id,omitempty"`
-	WorkspaceID string `json:"workspace_id,omitempty"`
-	CreatedBy   string `json:"created_by,omitempty"`
-
+	RequestID                string              `json:"request_id,omitempty"`
+	TeamID                   string              `json:"team_id,omitempty"`
+	ConfirmationReason       ConfirmationReason  `json:"confirmation_reason,omitempty"`
+	CreatedBy                string              `json:"created_by,omitempty"`
+	WorkspaceID              string              `json:"workspace_id,omitempty"`
 	ID                       string              `json:"assignment_id"`
 	TaskID                   string              `json:"task_id"`
 	ComponentID              string              `json:"component_id"`

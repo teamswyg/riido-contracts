@@ -7,21 +7,21 @@ Executable SSOT: [`docs/executable-knowledge.riido.json`](docs/executable-knowle
 - Status: `verified`
 - Evidence artifact: `executable-knowledge-coverage`
 - Workflow trigger paths: `11`
-- Markdown readers scanned: `27`
+- Markdown readers scanned: `28`
 - Generated readers: `27`
-- Executable readers: `0`
-- Adjacent manifests: `25`
+- Executable readers: `1`
+- Adjacent manifests: `26`
 - Generated readers with adjacent manifests: `25`
-- Executable readers with adjacent manifests: `0`
+- Executable readers with adjacent manifests: `1`
 - Manual reader candidates: `0`
-- Manifest inventory: `337`
+- Manifest inventory: `339`
 
 ## Manifest Inventory
 
 | Group | Count |
 | --- | ---: |
-| `docs` | 275 |
-| `assignment` | 32 |
+| `docs` | 276 |
+| `assignment` | 33 |
 | `progressmessage` | 24 |
 | `apicontract` | 4 |
 | `.` | 1 |
@@ -40,9 +40,9 @@ Executable SSOT: [`docs/executable-knowledge.riido.json`](docs/executable-knowle
 
 ## Manifest Loop Inventory
 
-- Complete manifest loops: `337`
+- Complete manifest loops: `339`
 - Direct manifest loops: `29`
-- Delegated manifest loops: `308`
+- Delegated manifest loops: `310`
 - Missing manifest loops: `0`
 - Missing loop budget: `0`
 

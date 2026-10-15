@@ -19,4 +19,5 @@
   (value StateFailed "failed" :terminal true)
   (value StateCancelled "cancelled" :terminal true)
   (value StateTimedOut "timed_out" :terminal true)
-  (value StateIdleStopped "idle_stopped" :terminal true))
+  (value StateIdleStopped "idle_stopped" :terminal true)
+  (value StateWaitingUserInput "waiting_user_input"))

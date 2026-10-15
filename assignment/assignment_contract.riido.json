@@ -22,6 +22,7 @@
     "assignment_contract/task-events/assignment-leased.riido.json",
     "assignment_contract/task-events/assignment-ready.riido.json",
     "assignment_contract/task-events/assignment-running.riido.json",
+    "assignment_contract/task-events/assignment-waiting-for-user.riido.json",
     "assignment_contract/task-events/assignment-cancelling.riido.json",
     "assignment_contract/task-events/assignment-cancelled.riido.json",
     "assignment_contract/task-events/assignment-completed.riido.json",

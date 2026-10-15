@@ -634,3 +634,7 @@ sum-type shape, operation ids, paths, and BDD scenario ids.
 They do not own control-plane handlers, daemon runtime probing, client UI code,
 Orval output, store implementations, task cancellation workers, or provider CLI
 execution.
+
+RIID-5829: actionable assignment events carry authenticated created_by and workspace_id, stable event_id, and optional team_id. Only the assigning principal receives live result-ready, answer-required, approval-required, or terminal-failure notifications. Historical connections never replay task notifications.
+Human confirmation is a non-terminal running assignment with confirmation_reason answer_required or approval_required. Explicit resume and terminal events clear the reason.
+runstate.StateWaitingUserInput is an additive non-terminal state for human answers. Its enum entry is appended to preserve existing numeric codes; daemon owns the reducer and assignment confirmation projection.

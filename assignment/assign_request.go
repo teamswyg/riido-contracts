@@ -1,9 +1,9 @@
 package assignment
 
 type AssignRequest struct {
-	RequestID   string `json:"request_id,omitempty"`
-	WorkspaceID string `json:"workspace_id,omitempty"`
-
+	RequestID                string              `json:"request_id,omitempty"`
+	TeamID                   string              `json:"team_id,omitempty"`
+	WorkspaceID              string              `json:"workspace_id,omitempty"`
 	ComponentID              string              `json:"component_id"`
 	AgentID                  string              `json:"agent_id"`
 	RuntimeProvider          string              `json:"runtime_provider"`

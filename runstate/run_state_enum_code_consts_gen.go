@@ -18,4 +18,5 @@ const (
 	RunStateCodeCancelled
 	RunStateCodeTimedOut
 	RunStateCodeIdleStopped
+	RunStateCodeWaitingUserInput
 )

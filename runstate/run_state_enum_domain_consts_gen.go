@@ -17,4 +17,5 @@ const (
 	StateCancelled           RunState = RunState(RunStateStringCancelled)
 	StateTimedOut            RunState = RunState(RunStateStringTimedOut)
 	StateIdleStopped         RunState = RunState(RunStateStringIdleStopped)
+	StateWaitingUserInput    RunState = RunState(RunStateStringWaitingUserInput)
 )

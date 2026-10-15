@@ -1,0 +1,21 @@
+{
+  "schema_version": "riido-task-request-identity.v1",
+  "id": "task-request-identity",
+  "riido_task": "RIID-5828",
+  "reader_doc": "docs/20-domain/task-request-identity.md",
+  "loop_source": "docs/20-domain/ai-agent-task-assignment.riido.json",
+  "scope": [
+    "workspace",
+    "task",
+    "agent",
+    "authenticated_author",
+    "request_id"
+  ],
+  "retry": "return original accepted execution without restoring removed membership",
+  "new_request": "queue a separate execution and preserve instruction while agent is busy",
+  "membership": "required assigned_agent_ids array; empty for no active membership; independent of execution history",
+  "verification": {
+    "test": "apicontract/ai_agent_request_identity_review_test.go",
+    "command": "go test ./apicontract ./assignment ./tools/aiagenttaskassignment -count=1"
+  }
+}

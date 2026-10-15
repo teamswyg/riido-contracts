@@ -9,21 +9,21 @@ Executable SSOT: `apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.j
 Task participant AI Agent assignment semantics are generated from API policy, schema, DSL, IR, and OpenAPI fixtures.
 
 - Evidence artifact: `ai-agent-task-assignment-evidence`
-- Operations: `9`; schemas: `5`; policies: `2`
-- Scenarios: `11`
+- Operations: `9`; schemas: `6`; policies: `2`
+- Scenarios: `18`
 - DSL/IR match: `true`; OpenAPI match: `true`
 - Forbidden request fields absent: `true`; non-target paths absent: `true`
 
 ## Operations
 
 - `listAIAgentTaskAssignableAgents` `GET /v1/client/ai-agent/tasks/{task_id}/assignable-agents` -> `200 AgentClientListResponse`; scenarios `3`
-- `assignAIAgentTask` `POST /v1/client/ai-agent/tasks/{task_id}/assignment` -> `202 AIAgentTaskActionResponse`; request `AssignAIAgentTaskRequest`; scenarios `3`
-- `unassignAIAgentTask` `DELETE /v1/client/ai-agent/tasks/{task_id}/assignment` -> `202 AIAgentTaskActionResponse`; request `UnassignAIAgentTaskRequest`; scenarios `1`
+- `assignAIAgentTask` `POST /v1/client/ai-agent/tasks/{task_id}/assignment` -> `202 AIAgentTaskActionResponse`; request `AssignAIAgentTaskRequest`; scenarios `5`
+- `unassignAIAgentTask` `DELETE /v1/client/ai-agent/tasks/{task_id}/assignment` -> `202 AIAgentTaskActionResponse`; request `UnassignAIAgentTaskRequest`; scenarios `2`
 - `listAIAgentTaskAssignableAgentsV2` `GET /v2/client/workspaces/{workspace_id}/ai-agent/tasks/{task_id}/assignable-agents` -> `200 AgentClientListResponseV2`; scenarios `0`
-- `assignAIAgentTaskV2` `POST /v2/client/workspaces/{workspace_id}/ai-agent/tasks/{task_id}/assignment` -> `202 AIAgentTaskActionResponse`; request `AssignAIAgentTaskRequest`; scenarios `1`
-- `unassignAIAgentTaskV2` `DELETE /v2/client/workspaces/{workspace_id}/ai-agent/tasks/{task_id}/assignment` -> `202 AIAgentTaskActionResponse`; request `UnassignAIAgentTaskRequest`; scenarios `0`
+- `assignAIAgentTaskV2` `POST /v2/client/workspaces/{workspace_id}/ai-agent/tasks/{task_id}/assignment` -> `202 AIAgentTaskActionResponse`; request `AssignAIAgentTaskRequest`; scenarios `3`
+- `unassignAIAgentTaskV2` `DELETE /v2/client/workspaces/{workspace_id}/ai-agent/tasks/{task_id}/assignment` -> `202 AIAgentTaskActionResponse`; request `UnassignAIAgentTaskRequest`; scenarios `1`
 - `createAIAgentTaskAgentAssignmentV2` `POST /v2/client/workspaces/{workspace_id}/ai-agent/tasks/{task_id}/agent-assignments` -> `202 AIAgentTaskActionResponse`; request `AssignAIAgentTaskRequest`; scenarios `1`
-- `deleteAIAgentTaskAgentAssignmentV2` `DELETE /v2/client/workspaces/{workspace_id}/ai-agent/tasks/{task_id}/agent-assignments/{agent_id}` -> `202 AIAgentTaskActionResponse`; scenarios `1`
+- `deleteAIAgentTaskAgentAssignmentV2` `DELETE /v2/client/workspaces/{workspace_id}/ai-agent/tasks/{task_id}/agent-assignments/{agent_id}` -> `202 AIAgentTaskActionResponse`; request `DeleteAIAgentTaskAgentAssignmentRequest`; scenarios `2`
 - `stopAIAgentTaskAgentAssignmentV2` `POST /v2/client/workspaces/{workspace_id}/ai-agent/tasks/{task_id}/agent-assignments/{agent_id}/stop` -> `202 AIAgentTaskActionResponse`; scenarios `1`
 
 ## Schemas
@@ -31,7 +31,8 @@ Task participant AI Agent assignment semantics are generated from API policy, sc
 - `AgentClientListResponse`: `schema_version`, `agents`
 - `AgentClientListResponseV2`: `schema_version`, `agents`
 - `AssignAIAgentTaskRequest`: `agent_id`
-- `UnassignAIAgentTaskRequest`: `agent_id`, `reason`
+- `UnassignAIAgentTaskRequest`: `agent_id`, `assignment_id`, `reason`
+- `DeleteAIAgentTaskAgentAssignmentRequest`: `assignment_id`, `reason`
 - `AIAgentTaskActionResponse`: `schema_version`, `task_id`, `agent_id`, `thread_id`, `run_id`, `work_status`, `assignment_state`, `comment_kind`, `message`
 
 ## Policies
@@ -60,6 +61,10 @@ Task participant AI Agent assignment semantics are generated from API policy, sc
 - owned agents appear first, display names order inside each group, and equal names are tied by agent_id.
 - generated assignment requests carry agent_id and optional request_id/instruction; task_id and workspace_id come from URL paths.
 - projects, milestones, intakes and AI property filler have no generated AI Agent assignment operations; structured Agent mentions on task/subtask comments may request assignment.
+- participant DELETE accepts an optional assignment_id removal guard and reason; ID-less and body-less path-Agent removal remain supported.
+- participant removal cancels all observed active executions for the task Agent and preserves terminal results and failure diagnostics.
+- a new execution before removal commit returns 409 and preserves membership; this mutation scenario belongs to every participant DELETE operation.
+- thread and history collections require assigned_agent_ids, including an empty array when no persistent memberships exist; execution history does not infer current membership.
 
 ## Evidence Loop
 
