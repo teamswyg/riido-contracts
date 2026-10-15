@@ -304,7 +304,7 @@ export const saasContractBundle = {
         "ir": "apicontract/fixtures/control-plane-ai-agent-client.ir.riido.json",
         "openapi": "apicontract/fixtures/control-plane-ai-agent-client.openapi.json"
       },
-      "operation_count": 58,
+      "operation_count": 59,
       "operations": [
         {
           "operation_id": "createAIAgent",
@@ -3137,6 +3137,73 @@ export const saasContractBundle = {
           ]
         },
         {
+          "operation_id": "completeAIAgentOnboardingTaskV2",
+          "kind": "command",
+          "method": "POST",
+          "path": "/v2/client/workspaces/{workspace_id}/ai-agent/tasks/{task_id}/onboarding-completion",
+          "resource": "agent",
+          "action": "assign",
+          "summary": "온보딩 첫 작업 완료 결과를 task에 기록합니다. 실행 배정을 만들지 않습니다 (v2 workspace-scoped)",
+          "client": {
+            "module": "v2",
+            "facade_path": [
+              "aiAgent",
+              "tasks",
+              "onboardingCompletion",
+              "create"
+            ],
+            "generated_path": "v2.aiAgent.tasks.onboardingCompletion.create",
+            "invalidates": [
+              "v2.aiAgent.bootstrap",
+              "v2.aiAgent.tasks.assignableAgents",
+              "v2.aiAgent.tasks.threads",
+              "v2.aiAgent.tasks.assignedAgentProfiles",
+              "v2.aiAgent.tasks.threadStreamSubscription",
+              "v3.aiAgent.tasks.threads"
+            ]
+          },
+          "auth": {
+            "scheme": "apiKey",
+            "header": "X-Riido-AI-Agent-Token",
+            "scopes": [
+              "ai-agent:write",
+              "task:{task_id}:assign",
+              "task:{task_id}:write"
+            ]
+          },
+          "rbac_policy": "api_codegen_safety.v1",
+          "request": {
+            "ref": "CompleteAIAgentOnboardingTaskRequest",
+            "required": true
+          },
+          "response": {
+            "status": 202,
+            "ref": "AIAgentTaskActionResponse"
+          },
+          "scenario_ids": [
+            "completeAIAgentOnboardingTaskV2.onboarding-completion-records-a-participant-and-a-completed-agent-comment-without-execution",
+            "completeAIAgentOnboardingTaskV2.onboarding-completion-is-idempotent"
+          ],
+          "scenarios": [
+            {
+              "name": "onboarding completion records a participant and a completed agent comment without execution",
+              "given": "an onboarding-created agent is visible in the workspace and the task has no active execution for it",
+              "when": "client calls riido.v2.aiAgent.tasks.onboardingCompletion.create with a template_key",
+              "then": "control-plane adds the agent as a task participant and records one completed task_completed agent message; no queued or leasable assignment is created"
+            },
+            {
+              "name": "onboarding completion is idempotent",
+              "given": "the same task and agent, or the same request_id, already has an onboarding completion",
+              "when": "client repeats the completion request",
+              "then": "control-plane returns the existing completion response without adding participants or messages"
+            }
+          ],
+          "path_params": [
+            "workspace_id",
+            "task_id"
+          ]
+        },
+        {
           "operation_id": "stopAIAgentTaskV2",
           "kind": "command",
           "method": "POST",
@@ -3442,6 +3509,23 @@ export const saasContractBundle = {
             "next_action"
           ],
           "type": "object"
+        },
+        "AIAgentOnboardingLocale": {
+          "description": "온보딩 완료 문구의 언어입니다. 생략하면 ko를 사용합니다.",
+          "enum": [
+            "ko",
+            "en"
+          ],
+          "type": "string"
+        },
+        "AIAgentOnboardingTaskTemplateKey": {
+          "description": "앱 온보딩 첫 작업 결과 템플릿 3종입니다. 결과 본문은 서버가 가진 승인된 문구를 사용합니다.",
+          "enum": [
+            "schedule",
+            "interview",
+            "launch"
+          ],
+          "type": "string"
         },
         "AIAgentTaskActionResponse": {
           "description": "task thread action 요청 이후 client가 즉시 반영할 agent 작업 상태 응답입니다.",
@@ -4771,6 +4855,32 @@ export const saasContractBundle = {
               "$ref": "#/components/schemas/AgentThreadProgressEvent"
             }
           ]
+        },
+        "CompleteAIAgentOnboardingTaskRequest": {
+          "description": "앱 온보딩의 첫 작업 결과를 workspace task에 기록하는 요청입니다. 서버는 실행 큐에 배정을 만들지 않고, agent를 task 참여자로 추가한 뒤 agent가 남긴 완료 댓글 한 건을 기록합니다.",
+          "properties": {
+            "agent_id": {
+              "description": "온보딩으로 깨운 agent의 안정 식별자입니다.",
+              "type": "string"
+            },
+            "locale": {
+              "$ref": "#/components/schemas/AIAgentOnboardingLocale",
+              "description": "완료 문구 언어입니다. 생략하면 ko입니다."
+            },
+            "request_id": {
+              "description": "같은 완료 요청을 다시 보낼 때 쓰는 idempotency key입니다. 같은 값이면 기존 결과를 돌려줍니다.",
+              "type": "string"
+            },
+            "template_key": {
+              "$ref": "#/components/schemas/AIAgentOnboardingTaskTemplateKey",
+              "description": "완료 결과 템플릿입니다."
+            }
+          },
+          "required": [
+            "agent_id",
+            "template_key"
+          ],
+          "type": "object"
         },
         "ControlDeviceDaemonRequest": {
           "description": "agent 권한으로 접근 가능한 daemon start/restart/stop command 요청입니다. reason은 audit 표시용이며 화면 표시 정책은 client가 결정합니다.",
