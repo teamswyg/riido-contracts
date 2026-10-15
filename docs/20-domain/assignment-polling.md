@@ -65,6 +65,10 @@ This is the public generated reader for the C10 assignment polling contract shar
 - `PollRequest.wait_ms` is an optional long-poll hint. Omitted or zero preserves the legacy short-poll wire shape.
 - `PollResponse.action=active` must include a self-contained assignment snapshot so a restarted daemon can recover local in-flight state without starting fresh.
 - RIID-5827: Optional AssignRequest.workspace_id and Assignment.workspace_id preserve the authenticated workspace/task identity for host execution bindings. Omission remains compatible with legacy senders and does not authorize filesystem access.
+- ProviderRecoveryPolicy.MaxElapsedSeconds excludes the initial normal AssignmentWorktree clone/workspace preparation; host preparation limits and cancellation still apply, and time already consumed by provider recovery is not reset.
+- Provider dispatch requires an accepted Ready ACK for the original assignment/execution and lease. A known-unstarted pending task retains its identity across bounded Ready-report retries; cancellation, lease loss, stale ACKs, or an exhausted/invalid report cannot authorize dispatch.
+- An assignment terminal event with a stable metadata event key has a durable receipt across server replicas. An identical normalized semantic payload returns the original TaskEvent event_id/seq/at without another mutation, outbox message, log, or error span; a conflicting payload reusing that key is rejected without changing the receipt.
+- The recovery budget and Ready/terminal ACK rules are defined in provider-recovery.riido.json; they preserve the existing public DTO JSON shape and do not authorize replay after provider dispatch.
 
 ## Evidence Loop
 

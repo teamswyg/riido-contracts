@@ -58,6 +58,23 @@ journal 필드: incident_id, execution_id, attempt_id, previous/next_state, even
 
 기존 전체 FSM 설계를 완료로 바꾸지 않고 유한 실행 전 프로파일을 구현한다. Provider 검증은 actor 외부의 단일 in-flight probe이며 generation/fingerprint가 일치할 때만 snapshot을 반영한다. Status·Cancel·Stop을 probe가 막지 않으며 불확실한 인증 probe는 실행 실패나 전환 허가가 아니다. 기본 정책은 같은 Provider 실행 전 일시 실패에 총 3회(최초 포함)·30초이며 API 허용 최대는 3회·60초·1회 전환이다. 전환은 recovery_policy의 명시적 provider/model 후보(최대3), 동일 소유자·device inventory 및 모델 권한 검증 후 허용한다. nil 정책은 전환하지 않는다. native resume, 확장 권한/Provider 전용 설정, 실행 후 결과 불확실성은 자동 재실행·전환을 막고 사용자 조치로 넘긴다. 같은 assignment·prepared workspace·lease와 취소 fence를 유지하고, 재시작 후 미확정 attempt를 재실행하지 않는다. dispatched는 recovered가 아니며 실제 Provider 기능 결과 검증과 호스트 검사/의미적 완료는 별도다. 관측은 recovery_state/reason/provider/circuit/attempt/switch_count/outcome_certainty의 제한된 metadata만 저장하고 OTel trace/log로 연결한다. 무효 값은 unknown, 무효 숫자는0, 알려지지 않은 recovery_ 키는 제거한다. 저장 거절·중복 이벤트·늦은 run은 새 복구 전이로 기록하지 않는다. Repair 실행 파일 설치, 자격증명 갱신, 권한 확대와 외부 작업의 무조건 replay는 이 프로파일의 자동 조치가 아니다.
 
+## 14. 준비·수락·종결의 실행 안전 경계
+
+ProviderRecoveryPolicy.MaxElapsedSeconds는 Provider 실행 전 검증·재시도·backoff·전환의 유한 누적 예산이다. 정상 최초 AssignmentWorktree clone과 workspace 준비에는 기존 호스트 준비 정책과 작업 취소 기한을 적용하며 이 시간을 복구 예산에서 제외한다. 준비가 끝났다는 이유로 이미 소비한 복구 예산을 다시 채우지 않는다. Provider 실행 시작 뒤에는 이 복구 기한으로 정상 업무를 취소하거나 결과가 불명확한 업무를 재실행하지 않는다. Ready 보고는 같은 assignment·run·task·lease 및 stable event key를 유지한다. 서버가 해당 Ready를 수락한 유효 ACK를 확인하기 전에는 Provider에 dispatch하지 않는다. transport 실패 후 명백히 미실행인 pending 소유를 보존하고 별도 유한 예산으로 ACK를 재시도하되 취소·lease 상실·오래된 generation 응답은 실행 허가가 아니다. 재시도 소진이나 영구 거절은 명시적 실패/사용자 조치로 종결하며 무한 heartbeat 대기로 숨기지 않는다. 일반 terminal event도 안정적 key와 실행 identity를 기준으로 durable receipt를 보존한다. 다른 서버 replica가 같은 의미 payload의 재전송을 받아도 원 TaskEvent의 event_id·seq·at을 반환하고 상태·outbox·로그·오류 span을 다시 만들지 않는다. 같은 key의 다른 의미 payload는 충돌로 거절하고 원 receipt와 상태를 유지한다. transport lease token은 민감 진단에 노출하지 않으며 receipt payload 비교는 정규화된 의미 내용을 기준으로 한다. 이 규칙은 공개 JSON 필드나 기본 예산 값을 추가·변경하지 않는다.
+
+## 실행 전 프로파일의 검증 가능한 안전 규칙
+
+| 경계 | 규칙 |
+| --- | --- |
+| 정상 최초 workspace 준비 | `host-workspace-policy` |
+| Provider 복구 누적 기한 | `exclude-initial-workspace-preparation` |
+| Ready 수락과 dispatch | `accepted-original-execution-before-provider-dispatch` |
+| Ready 보고 재시도 | `bounded-with-same-execution-and-stable-event-key` |
+| terminal 중복 수신 | `durable-original-event-ack-across-replicas` |
+| terminal key 충돌 | `reject-without-state-change` |
+
+이 manifest 검증은 소비자 구현·배포·실모델 검증을 대신하지 않는다.
+
 ## 전체 책임 구조
 
 ```mermaid
