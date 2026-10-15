@@ -54,6 +54,7 @@ This is the public generated reader for the C10 assignment polling contract shar
 | `agent_instruction` | `agent.instruction` | `assignment-created` | `false` | riido-daemon provider-specific runtime instruction placement |
 | `allow_experimental_runtime` | `agent.runtime.requires_experimental_opt_in` | `assignment-created` | `false` | riido-daemon runtime scheduling experimental opt-in gate |
 | `model_id` | `agent.model_id` | `assignment-created` | `false` | riido-daemon provider runtime model selection |
+| `recovery_policy` | `authorized assignment request; same owner/device verified fallback inventory` | `assignment-created` | `false` | riido-daemon finite pre-dispatch retry/circuit and explicitly authorized provider/model fallback |
 
 ## Invariants
 

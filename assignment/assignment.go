@@ -3,6 +3,8 @@ package assignment
 import "time"
 
 type Assignment struct {
+	RecoveryPolicy *ProviderRecoveryPolicy `json:"recovery_policy,omitempty"`
+
 	RequestID                string              `json:"request_id,omitempty"`
 	TeamID                   string              `json:"team_id,omitempty"`
 	ConfirmationReason       ConfirmationReason  `json:"confirmation_reason,omitempty"`

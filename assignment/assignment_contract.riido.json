@@ -39,6 +39,7 @@
   "assignment_payload_field_files": [
     "assignment_contract/payload-fields/agent-instruction.riido.json",
     "assignment_contract/payload-fields/allow-experimental-runtime.riido.json",
-    "assignment_contract/payload-fields/model-id.riido.json"
+    "assignment_contract/payload-fields/model-id.riido.json",
+    "assignment_contract/payload-fields/recovery-policy.riido.json"
   ]
 }

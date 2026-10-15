@@ -1,0 +1,11 @@
+{
+  "schema_version": "riido-ai-server-contract-assignment-payload-field.v1",
+  "field": {
+    "name": "recovery_policy",
+    "source": "authorized assignment request; same owner/device verified fallback inventory",
+    "max_length": 2048,
+    "required": false,
+    "snapshot": "assignment-created",
+    "consumer": "riido-daemon finite pre-dispatch retry/circuit and explicitly authorized provider/model fallback"
+  }
+}
