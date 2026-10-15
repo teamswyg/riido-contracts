@@ -4,7 +4,7 @@ import "testing"
 
 func assertAssignmentPayloadFields(t *testing.T, contract executableContract) {
 	t.Helper()
-	if len(contract.AssignmentPayloadFields) != 3 {
+	if len(contract.AssignmentPayloadFields) != 4 {
 		t.Fatalf("assignment payload fields drifted: %#v", contract.AssignmentPayloadFields)
 	}
 	fields := map[string]contractAssignmentPayloadField{}
@@ -14,6 +14,10 @@ func assertAssignmentPayloadFields(t *testing.T, contract executableContract) {
 	assertAgentInstructionField(t, fields["agent_instruction"])
 	assertExperimentalRuntimeField(t, fields["allow_experimental_runtime"])
 	assertModelIDField(t, fields["model_id"])
+	field := fields["recovery_policy"]
+	if field.Name != "recovery_policy" || field.Required || field.MaxLength != 2048 || field.Snapshot != "assignment-created" || field.Source != "authorized assignment request; same owner/device verified fallback inventory" || field.Consumer != "riido-daemon finite pre-dispatch retry/circuit and explicitly authorized provider/model fallback" {
+		t.Fatalf("recovery policy assignment payload field drifted: %#v", field)
+	}
 }
 
 func assertAgentInstructionField(t *testing.T, field contractAssignmentPayloadField) {

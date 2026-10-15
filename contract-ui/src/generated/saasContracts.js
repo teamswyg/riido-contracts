@@ -4571,13 +4571,16 @@ export const saasContractBundle = {
           "type": "object"
         },
         "AssignAIAgentTaskRequest": {
-          "description": "task participant dropdown에서 agent를 배정하기 위한 요청입니다. 요청 body는 agent_id와 선택적 request_id·instruction을 받으며 team_id/teamId/OpenAPI/Open API key는 이 계약의 입력이 아닙니다.",
+          "description": "task participant dropdown에서 agent를 배정하기 위한 요청입니다. 요청 body는 agent_id와 선택적 request_id·instruction을 받으며 team_id/teamId/OpenAPI/Open API key는 이 계약의 입력이 아닙니다. 선택적 recovery_policy는 유한 실행 전 재시도 및 명시적으로 승인할 동일 소유자 기기의 Provider/model 후보이며 native 세션 이전이나 실행 후 replay 권한이 아닙니다.",
           "properties": {
             "agent_id": {
               "type": "string"
             },
             "instruction": {
               "type": "string"
+            },
+            "recovery_policy": {
+              "$ref": "#/components/schemas/ProviderRecoveryPolicy"
             },
             "request_id": {
               "type": "string"
@@ -5175,6 +5178,47 @@ export const saasContractBundle = {
             "unknown"
           ],
           "type": "string"
+        },
+        "ProviderRecoveryCandidate": {
+          "properties": {
+            "model_id": {
+              "description": "Explicit model present in target runtime inventory; max 128 bytes; no whitespace/control.",
+              "type": "string"
+            },
+            "provider": {
+              "description": "claude/codex/cursor/openclaw; validated against same owner and device inventory.",
+              "type": "string"
+            }
+          },
+          "required": [
+            "provider",
+            "model_id"
+          ],
+          "type": "object"
+        },
+        "ProviderRecoveryPolicy": {
+          "properties": {
+            "fallbacks": {
+              "description": "At most3 distinct providers, ordered; requires max_switches1.",
+              "items": {
+                "$ref": "#/components/schemas/ProviderRecoveryCandidate"
+              },
+              "type": "array"
+            },
+            "max_attempts": {
+              "description": "Including initial attempt; default3, bounds1..3.",
+              "type": "integer"
+            },
+            "max_elapsed_seconds": {
+              "description": "Pre-dispatch recovery only; default30, bounds1..60.",
+              "type": "integer"
+            },
+            "max_switches": {
+              "description": "0 by default; max1; explicit nonempty fallbacks required for1.",
+              "type": "integer"
+            }
+          },
+          "type": "object"
         },
         "RuntimeAvailability": {
           "description": "client에 노출되는 runtime online/offline 상태입니다.",
