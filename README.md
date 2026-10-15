@@ -33,6 +33,7 @@ Executable SSOT: [`README.riido.json`](README.riido.json).
 
 | 알고 싶은 것 | 문서 |
 | --- | --- |
+| Agent Provider 자동 복구 구조도·실행 환경/진단 경계 | [`docs/20-domain/provider-recovery.md`](docs/20-domain/provider-recovery.md) |
 | 이 레포가 왜 공유 계약만 소유하는지 | [`docs/30-architecture/module-decomposition.md`](docs/30-architecture/module-decomposition.md) |
 | bounded context와 각 package 책임 | [`docs/20-domain/context-map.md`](docs/20-domain/context-map.md) |
 | AI Agent 보편언어와 정책 단언 | [`docs/20-domain/ai-agent-policy.md`](docs/20-domain/ai-agent-policy.md) |

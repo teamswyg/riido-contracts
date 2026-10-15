@@ -2,6 +2,7 @@
   "schema_version": "riido-contracts-repository-readme-fragment.v1",
   "id": "contracts-readme-navigation",
   "doc_links": [
+    {"topic": "Agent Provider 자동 복구 구조도·실행 환경/진단 경계", "path": "docs/20-domain/provider-recovery.md"},
     {"topic": "이 레포가 왜 공유 계약만 소유하는지", "path": "docs/30-architecture/module-decomposition.md"},
     {"topic": "bounded context와 각 package 책임", "path": "docs/20-domain/context-map.md"},
     {"topic": "AI Agent 보편언어와 정책 단언", "path": "docs/20-domain/ai-agent-policy.md"},

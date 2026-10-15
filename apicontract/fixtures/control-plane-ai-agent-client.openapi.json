@@ -4593,6 +4593,65 @@
   },
   "components": {
     "schemas": {
+      "AIAgentExecutionContext": {
+        "description": "RIID-5820 호스트 실행 환경과 검증 상태. 로컬 절대 경로·명령·credential은 포함하지 않는다. 누락은 legacy/unknown이며 검증 통과가 아니다.",
+        "properties": {
+          "diagnostic_code": {
+            "enum": [
+              "none",
+              "user_cancelled",
+              "run_timeout",
+              "workspace_preparation_failed",
+              "session_scope_conflict",
+              "host_verification_failed",
+              "provider_blocked",
+              "provider_failed",
+              "process_aborted",
+              "unknown"
+            ],
+            "type": "string"
+          },
+          "next_action": {
+            "enum": [
+              "none",
+              "check_workspace",
+              "review_session",
+              "review_result",
+              "check_provider",
+              "review_permissions"
+            ],
+            "type": "string"
+          },
+          "verification_status": {
+            "enum": [
+              "not_configured",
+              "pending",
+              "passed",
+              "failed",
+              "cancelled",
+              "unknown"
+            ],
+            "type": "string"
+          },
+          "workspace_kind": {
+            "enum": [
+              "unknown",
+              "isolated",
+              "repository_clone",
+              "assignment_worktree",
+              "native_resume"
+            ],
+            "type": "string"
+          }
+        },
+        "required": [
+          "workspace_kind",
+          "verification_status",
+          "diagnostic_code",
+          "next_action"
+        ],
+        "type": "object"
+      },
       "AIAgentTaskActionResponse": {
         "description": "task thread action 요청 이후 client가 즉시 반영할 agent 작업 상태 응답입니다.",
         "properties": {
@@ -4611,6 +4670,9 @@
           },
           "comment_kind": {
             "$ref": "#/components/schemas/AgentTaskCommentKind"
+          },
+          "execution_context": {
+            "$ref": "#/components/schemas/AIAgentExecutionContext"
           },
           "failure_diagnostics": {
             "$ref": "#/components/schemas/AIAgentTaskThreadFailureDiagnostics"
@@ -4946,6 +5008,9 @@
           "completed_at": {
             "format": "date-time",
             "type": "string"
+          },
+          "execution_context": {
+            "$ref": "#/components/schemas/AIAgentExecutionContext"
           },
           "failure_diagnostics": {
             "$ref": "#/components/schemas/AIAgentTaskThreadFailureDiagnostics"
@@ -5673,6 +5738,9 @@
               "agent_work_status_changed"
             ],
             "type": "string"
+          },
+          "execution_context": {
+            "$ref": "#/components/schemas/AIAgentExecutionContext"
           },
           "failure_diagnostics": {
             "$ref": "#/components/schemas/AIAgentTaskThreadFailureDiagnostics"
