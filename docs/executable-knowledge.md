@@ -14,14 +14,14 @@ Executable SSOT: [`docs/executable-knowledge.riido.json`](docs/executable-knowle
 - Generated readers with adjacent manifests: `26`
 - Executable readers with adjacent manifests: `1`
 - Manual reader candidates: `0`
-- Manifest inventory: `340`
+- Manifest inventory: `341`
 
 ## Manifest Inventory
 
 | Group | Count |
 | --- | ---: |
 | `docs` | 277 |
-| `assignment` | 33 |
+| `assignment` | 34 |
 | `progressmessage` | 24 |
 | `apicontract` | 4 |
 | `.` | 1 |
@@ -40,9 +40,9 @@ Executable SSOT: [`docs/executable-knowledge.riido.json`](docs/executable-knowle
 
 ## Manifest Loop Inventory
 
-- Complete manifest loops: `340`
+- Complete manifest loops: `341`
 - Direct manifest loops: `30`
-- Delegated manifest loops: `310`
+- Delegated manifest loops: `311`
 - Missing manifest loops: `0`
 - Missing loop budget: `0`
 
