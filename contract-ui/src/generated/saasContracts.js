@@ -5592,6 +5592,10 @@ export const saasContractBundle = {
               "description": "agent 설정 화면의 이름 입력값입니다.",
               "type": "string"
             },
+            "profile_color": {
+              "$ref": "#/components/schemas/AgentProfileColor",
+              "description": "호환을 위해 받을 수 있는 무시되는 입력입니다. 생성 시 정해진 profile 색상은 이 요청으로 바뀌지 않습니다."
+            },
             "profile_thumbnail_url": {
               "description": "agent 프로필 사진 URL입니다. createAIAgentProfileThumbnailUpload 응답의 profile_thumbnail_url 값을 저장합니다.",
               "format": "uri",

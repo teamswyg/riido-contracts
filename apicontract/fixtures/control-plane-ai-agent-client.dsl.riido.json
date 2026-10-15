@@ -450,7 +450,8 @@
         "profile_color_onboarding: Agents created through the onboarding fixture create path use blue",
         "profile_color_other: other Agents created in a workspace take a color chosen at random among the least-used profile_color values in that workspace",
         "profile_color_backfill: Agents loaded from a snapshot without profile_color receive one deterministically from the snapshot (fixture-created agents with tmp_color get blue; the rest use the least-used rule in created_at and agent_id order) and keep it",
-        "profile_color_projection: profile_color is projected to agent records, task_agent_participants, assigned_agent_profiles, and thread agent snapshots; clients must not derive it from tmp_color"
+        "profile_color_projection: profile_color is projected to agent records, task_agent_participants, assigned_agent_profiles, and thread agent snapshots; clients must not derive it from tmp_color",
+        "profile_color_update: update requests accept profile_color for compatibility and ignore it; the stored color never changes"
       ]
     },
     {
@@ -2108,6 +2109,11 @@
           "name": "model_id",
           "type": "string",
           "description": "선택 runtime의 RuntimeRecord.models[]에서 고르는 모델 dropdown 선택값입니다. 생략하면 runtime 기본 모델로 저장됩니다."
+        },
+        {
+          "name": "profile_color",
+          "ref": "AgentProfileColor",
+          "description": "호환을 위해 받을 수 있는 무시되는 입력입니다. 생성 시 정해진 profile 색상은 이 요청으로 바뀌지 않습니다."
         }
       ]
     },

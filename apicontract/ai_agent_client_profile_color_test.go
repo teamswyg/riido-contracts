@@ -43,10 +43,12 @@ func verifyAgentProfileColorProjections(t *testing.T, openAPI OpenAPISpec) {
 			t.Fatalf("%s required must include profile_color: %#v", name, required)
 		}
 	}
-	// Create/update request bodies must not accept a client-chosen color.
-	for _, name := range []string{"CreateAgentConfigurationRequest", "UpdateAgentConfigurationRequest"} {
-		if _, ok := openAPISchemaProperties(t, openAPI, name)["profile_color"]; ok {
-			t.Fatalf("%s must not expose profile_color", name)
-		}
+	// Create must not accept a client-chosen color. Update accepts and ignores it
+	// for compatibility, so PATCH cannot change the stored color.
+	if _, ok := openAPISchemaProperties(t, openAPI, "CreateAgentConfigurationRequest")["profile_color"]; ok {
+		t.Fatalf("CreateAgentConfigurationRequest must not expose profile_color")
+	}
+	if _, ok := openAPISchemaProperties(t, openAPI, "UpdateAgentConfigurationRequest")["profile_color"]; !ok {
+		t.Fatalf("UpdateAgentConfigurationRequest must accept and ignore profile_color")
 	}
 }
