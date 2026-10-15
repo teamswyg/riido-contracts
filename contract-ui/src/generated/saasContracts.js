@@ -1514,7 +1514,8 @@ export const saasContractBundle = {
             "ref": "AIAgentTaskActionResponse"
           },
           "scenario_ids": [
-            "unassignAIAgentTask.participant-removal-stops-agent-work"
+            "unassignAIAgentTask.participant-removal-stops-agent-work",
+            "unassignAIAgentTask.interleaved-execution-prevents-participant-removal"
           ],
           "scenarios": [
             {
@@ -1522,6 +1523,12 @@ export const saasContractBundle = {
               "given": "AI Agent가 task participant로 active 또는 queued 상태입니다",
               "when": "client가 해당 agent를 task participant에서 제거합니다",
               "then": "response와 event stream은 stopped_by_user_request를 사용하고, 중지된 row를 숨길지는 client presentation이 결정합니다"
+            },
+            {
+              "name": "interleaved execution prevents participant removal",
+              "given": "a participant removal observes retained execution A while a newer durable execution B exists before removal commits, including B not yet published to the task-thread read model",
+              "when": "the DELETE commits membership removal with or without assignment_id, regardless of the new execution status",
+              "then": "the DELETE returns 409 and preserves membership and B; any already-cancelled A stays cancelled and other task/Agent executions are unaffected"
             }
           ],
           "path_params": [
@@ -2660,7 +2667,7 @@ export const saasContractBundle = {
           "path": "/v2/client/workspaces/{workspace_id}/ai-agent/tasks/assigned-agent-profiles",
           "resource": "agent",
           "action": "read",
-          "summary": "workspace task/card 목록에서 현재 배정된 AI Agent profile 표시값을 component_id key 해시맵으로 조회합니다 (v2 workspace-scoped)",
+          "summary": "workspace task/card에서 기존 active profile 힌트와 지속 Agent 참여자를 별도 맵으로 조회합니다 (v2 workspace-scoped)",
           "client": {
             "module": "v2",
             "facade_path": [
@@ -2685,7 +2692,9 @@ export const saasContractBundle = {
           },
           "scenario_ids": [
             "listWorkspaceAssignedAgentProfilesV2.component-id-keyed-assigned-profile-map",
-            "listWorkspaceAssignedAgentProfilesV2.historical-threads-are-omitted"
+            "listWorkspaceAssignedAgentProfilesV2.terminal-participants-persist-independently-of-legacy-active-hints",
+            "listWorkspaceAssignedAgentProfilesV2.explicit-removal-preserves-execution-history",
+            "listWorkspaceAssignedAgentProfilesV2.latest-removal-guard-is-independent-of-historical-waiting-state"
           ],
           "scenarios": [
             {
@@ -2695,10 +2704,22 @@ export const saasContractBundle = {
               "then": "assigned_agent_profiles is keyed by the exact component_id/task_id string and each value contains avatar_url and/or tmp_color for list/card presentation"
             },
             {
-              "name": "historical threads are omitted",
-              "given": "a task has completed, stopped, failed, unassigned, or historical-only AI Agent threads",
+              "name": "terminal participants persist independently of legacy active hints",
+              "given": "a task retains completed, stopped, or failed Agent membership without explicit removal",
               "when": "the client reads the workspace assigned profile map",
-              "then": "that component_id is omitted so the task/card list does not show an active assigned-agent avatar from history"
+              "then": "the task ID is omitted from assigned_agent_profiles when no active run remains but task_agent_participants still lists every visible retained Agent"
+            },
+            {
+              "name": "explicit removal preserves execution history",
+              "given": "one persistent task Agent participant is explicitly removed while other participants remain",
+              "when": "the client reads task_agent_participants and task-thread history",
+              "then": "only the removed Agent is absent from task_agent_participants; its completed result, failure diagnostics, and thread history remain unchanged"
+            },
+            {
+              "name": "latest removal guard is independent of historical waiting state",
+              "given": "a retained waiting-for-user execution A is followed by the same Agent execution B, which may be running, completed, or failed",
+              "when": "the client reads the workspace task Agent participants",
+              "then": "membership stays selected and latest_assignment_id is B; is_stop_required reflects only current active execution; no retained history omits the optional ID"
             }
           ],
           "path_params": [
@@ -2726,6 +2747,7 @@ export const saasContractBundle = {
               "v2.aiAgent.bootstrap",
               "v2.aiAgent.tasks.assignableAgents",
               "v2.aiAgent.tasks.threads",
+              "v2.aiAgent.tasks.assignedAgentProfiles",
               "v2.aiAgent.tasks.threadStreamSubscription",
               "v3.aiAgent.tasks.threads"
             ]
@@ -2771,7 +2793,7 @@ export const saasContractBundle = {
           "path": "/v2/client/workspaces/{workspace_id}/ai-agent/tasks/{task_id}/agent-assignments/{agent_id}",
           "resource": "agent",
           "action": "stop",
-          "summary": "task의 특정 AI agent assignment를 제거하고 해당 agent 작업만 중단합니다 (v2 workspace-scoped)",
+          "summary": "task의 특정 AI Agent 참여자를 제거하고 해당 Agent의 관측 active 실행을 모두 중단합니다 (v2 workspace-scoped)",
           "client": {
             "module": "v2",
             "facade_path": [
@@ -2785,6 +2807,7 @@ export const saasContractBundle = {
               "v2.aiAgent.bootstrap",
               "v2.aiAgent.tasks.assignableAgents",
               "v2.aiAgent.tasks.threads",
+              "v2.aiAgent.tasks.assignedAgentProfiles",
               "v2.aiAgent.tasks.threadStreamSubscription",
               "v3.aiAgent.tasks.threads"
             ]
@@ -2799,19 +2822,29 @@ export const saasContractBundle = {
             ]
           },
           "rbac_policy": "api_codegen_safety.v1",
+          "request": {
+            "ref": "DeleteAIAgentTaskAgentAssignmentRequest"
+          },
           "response": {
             "status": 202,
             "ref": "AIAgentTaskActionResponse"
           },
           "scenario_ids": [
-            "deleteAIAgentTaskAgentAssignmentV2.path-agent-id-selects-removed-assignment"
+            "deleteAIAgentTaskAgentAssignmentV2.path-agent-id-selects-removed-assignment",
+            "deleteAIAgentTaskAgentAssignmentV2.interleaved-execution-prevents-participant-removal"
           ],
           "scenarios": [
             {
               "name": "path agent id selects removed assignment",
-              "given": "a task has multiple active AI Agent threads",
+              "given": "a task has multiple active executions for one Agent and other Agent participants",
               "when": "client removes one agent through riido.v2.aiAgent.tasks.agentAssignments.delete",
-              "then": "only the path agent_id target is stopped and other active thread filters remain active"
+              "then": "all observed active executions for the path agent_id are cancelled and its membership is removed; other task/Agent executions and terminal results, failure diagnostics, and thread history remain unchanged"
+            },
+            {
+              "name": "interleaved execution prevents participant removal",
+              "given": "a participant removal observes retained execution A while a newer durable execution B exists before removal commits, including B not yet published to the task-thread read model",
+              "when": "the DELETE commits membership removal with or without assignment_id, regardless of the new execution status",
+              "then": "the DELETE returns 409 and preserves membership and B; any already-cancelled A stays cancelled and other task/Agent executions are unaffected"
             }
           ],
           "path_params": [
@@ -2841,6 +2874,7 @@ export const saasContractBundle = {
               "v2.aiAgent.bootstrap",
               "v2.aiAgent.tasks.assignableAgents",
               "v2.aiAgent.tasks.threads",
+              "v2.aiAgent.tasks.assignedAgentProfiles",
               "v2.aiAgent.tasks.threadStreamSubscription",
               "v3.aiAgent.tasks.threads"
             ]
@@ -2954,6 +2988,17 @@ export const saasContractBundle = {
             "status": 202,
             "ref": "AIAgentTaskActionResponse"
           },
+          "scenario_ids": [
+            "unassignAIAgentTaskV2.interleaved-execution-prevents-participant-removal"
+          ],
+          "scenarios": [
+            {
+              "name": "interleaved execution prevents participant removal",
+              "given": "a participant removal observes retained execution A while a newer durable execution B exists before removal commits, including B not yet published to the task-thread read model",
+              "when": "the DELETE commits membership removal with or without assignment_id, regardless of the new execution status",
+              "then": "the DELETE returns 409 and preserves membership and B; any already-cancelled A stays cancelled and other task/Agent executions are unaffected"
+            }
+          ],
           "path_params": [
             "workspace_id",
             "task_id"
@@ -3083,7 +3128,8 @@ export const saasContractBundle = {
               "v2.aiAgent.bootstrap",
               "v2.aiAgent.tasks.assignableAgents",
               "v2.aiAgent.tasks.threads",
-              "v3.aiAgent.tasks.threads"
+              "v3.aiAgent.tasks.threads",
+              "v2.aiAgent.tasks.assignedAgentProfiles"
             ]
           },
           "auth": {
@@ -3219,6 +3265,7 @@ export const saasContractBundle = {
               "v2.aiAgent.bootstrap",
               "v2.aiAgent.tasks.assignableAgents",
               "v2.aiAgent.tasks.threads",
+              "v2.aiAgent.tasks.assignedAgentProfiles",
               "v3.aiAgent.tasks.threads"
             ]
           },
@@ -4445,6 +4492,13 @@ export const saasContractBundle = {
             "schema_version": {
               "type": "string"
             },
+            "task_agent_participants": {
+              "additionalProperties": {
+                "$ref": "#/components/schemas/TaskAgentParticipantCollection"
+              },
+              "description": "Task ID keyed persistent Agent membership collections. Includes completed and stopped Agents until explicit participant removal. The legacy assigned_agent_profiles field remains active-only.",
+              "type": "object"
+            },
             "workspace_id": {
               "type": "string"
             }
@@ -4679,6 +4733,19 @@ export const saasContractBundle = {
             "failed"
           ],
           "type": "string"
+        },
+        "DeleteAIAgentTaskAgentAssignmentRequest": {
+          "description": "Optional body for explicit removal of the path task Agent participant; absence of assignment_id still requires the server to fence new executions before commit.",
+          "properties": {
+            "assignment_id": {
+              "description": "Optional latest retained execution ID observed before participant removal; independent of execution status and omitted when no execution is retained.",
+              "type": "string"
+            },
+            "reason": {
+              "type": "string"
+            }
+          },
+          "type": "object"
         },
         "DeleteAgentResponse": {
           "description": "agent 삭제로 정리된 queued/running task 수를 포함한 응답입니다.",
@@ -5128,10 +5195,61 @@ export const saasContractBundle = {
           ],
           "type": "object"
         },
+        "TaskAgentParticipantCollection": {
+          "properties": {
+            "agents": {
+              "items": {
+                "$ref": "#/components/schemas/TaskAgentParticipantRecord"
+              },
+              "type": "array"
+            }
+          },
+          "required": [
+            "agents"
+          ],
+          "type": "object"
+        },
+        "TaskAgentParticipantRecord": {
+          "description": "A persistent Agent participant, independent of execution state.",
+          "properties": {
+            "agent_id": {
+              "type": "string"
+            },
+            "is_owned_by_viewer": {
+              "type": "boolean"
+            },
+            "is_stop_required": {
+              "description": "At least one current active execution must be cancelled as part of participant removal; does not determine membership or the latest observed execution ID.",
+              "type": "boolean"
+            },
+            "latest_assignment_id": {
+              "description": "Latest retained execution ID for an observed-removal guard, independent of execution status; absent when no execution history is retained.",
+              "type": "string"
+            },
+            "name": {
+              "type": "string"
+            },
+            "profile_thumbnail_url": {
+              "format": "uri",
+              "type": "string"
+            }
+          },
+          "required": [
+            "agent_id",
+            "name",
+            "is_owned_by_viewer",
+            "is_stop_required"
+          ],
+          "type": "object"
+        },
         "UnassignAIAgentTaskRequest": {
           "description": "task participant에서 agent를 제거하며 active/queued 작업을 중단하기 위한 요청입니다.",
           "properties": {
             "agent_id": {
+              "type": "string"
+            },
+            "assignment_id": {
+              "description": "Optional latest retained execution ID observed before participant removal; guards removal generation without defining membership or execution ownership.",
               "type": "string"
             },
             "reason": {
