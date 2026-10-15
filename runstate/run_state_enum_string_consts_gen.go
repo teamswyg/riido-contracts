@@ -17,4 +17,5 @@ const (
 	RunStateStringCancelled           RunStateString = "cancelled"
 	RunStateStringTimedOut            RunStateString = "timed_out"
 	RunStateStringIdleStopped         RunStateString = "idle_stopped"
+	RunStateStringWaitingUserInput    RunStateString = "waiting_user_input"
 )

@@ -17,4 +17,5 @@ var runStateAllCodes = []RunStateCode{
 	RunStateCodeCancelled,
 	RunStateCodeTimedOut,
 	RunStateCodeIdleStopped,
+	RunStateCodeWaitingUserInput,
 }

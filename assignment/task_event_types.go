@@ -23,6 +23,7 @@ func AllTaskEventTypes() []string {
 		EventAssignmentLeased,
 		EventAssignmentReady,
 		EventAssignmentRunning,
+		EventAssignmentWaitingForUser,
 		EventAssignmentCancelling,
 		EventAssignmentCancelled,
 		EventAssignmentCompleted,

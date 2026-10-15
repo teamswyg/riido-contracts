@@ -17,4 +17,5 @@ var runStateStringByCode = map[RunStateCode]RunStateString{
 	RunStateCodeCancelled:           RunStateStringCancelled,
 	RunStateCodeTimedOut:            RunStateStringTimedOut,
 	RunStateCodeIdleStopped:         RunStateStringIdleStopped,
+	RunStateCodeWaitingUserInput:    RunStateStringWaitingUserInput,
 }
