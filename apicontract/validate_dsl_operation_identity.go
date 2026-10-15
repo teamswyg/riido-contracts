@@ -23,5 +23,8 @@ func validateDSLOperationIdentity(op DSLOperation, ops map[string]struct{}) erro
 	if !strings.HasPrefix(op.Path, "/") {
 		return fmt.Errorf("apicontract: operation %q path must start with /", op.OperationID)
 	}
+	if err := validateQueryParameters(op.QueryParameters); err != nil {
+		return err
+	}
 	return validateAuth(op.OperationID, op.Auth)
 }

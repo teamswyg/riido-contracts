@@ -16,6 +16,8 @@
   "membership": "required assigned_agent_ids array; empty for no active membership; independent of execution history",
   "verification": {
     "test": "apicontract/ai_agent_request_identity_review_test.go",
-    "command": "go test ./apicontract ./assignment ./tools/aiagenttaskassignment -count=1"
-  }
+    "command": "go test ./apicontract ./assignment ./tools/aiagenttaskassignment -count=1",
+    "query_test": "apicontract/query_parameters_test.go"
+  },
+  "query_parameters": "typed optional query parameters survive DSL/IR/OpenAPI; duplicate/unsupported names/types and inconsistent constraints are rejected"
 }

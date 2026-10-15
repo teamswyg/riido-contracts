@@ -1,20 +1,21 @@
 package apicontract
 
 type DSLOperation struct {
-	OperationID string      `json:"operation_id"`
-	Kind        string      `json:"kind"`
-	Summary     string      `json:"summary"`
-	Description string      `json:"description,omitempty"`
-	Method      string      `json:"method"`
-	Path        string      `json:"path"`
-	Resource    string      `json:"resource"`
-	Action      string      `json:"action"`
-	Client      *ClientMeta `json:"client,omitempty"`
-	Auth        Auth        `json:"auth"`
-	RBACPolicy  string      `json:"rbac_policy,omitempty"`
-	Request     *MessageRef `json:"request,omitempty"`
-	Response    ResponseRef `json:"response"`
-	Scenarios   []Scenario  `json:"scenarios,omitempty"`
+	QueryParameters []QueryParameter `json:"query_parameters,omitempty"`
+	OperationID     string           `json:"operation_id"`
+	Kind            string           `json:"kind"`
+	Summary         string           `json:"summary"`
+	Description     string           `json:"description,omitempty"`
+	Method          string           `json:"method"`
+	Path            string           `json:"path"`
+	Resource        string           `json:"resource"`
+	Action          string           `json:"action"`
+	Client          *ClientMeta      `json:"client,omitempty"`
+	Auth            Auth             `json:"auth"`
+	RBACPolicy      string           `json:"rbac_policy,omitempty"`
+	Request         *MessageRef      `json:"request,omitempty"`
+	Response        ResponseRef      `json:"response"`
+	Scenarios       []Scenario       `json:"scenarios,omitempty"`
 }
 
 type Auth struct {
