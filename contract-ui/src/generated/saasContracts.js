@@ -1577,7 +1577,9 @@ export const saasContractBundle = {
           "scenario_ids": [
             "assignAIAgentTask.participant-dropdown-assigns-agent",
             "assignAIAgentTask.only-one-active-assigned-agent-per-task",
-            "assignAIAgentTask.assignment-excludes-team-and-openapi-key"
+            "assignAIAgentTask.assignment-excludes-team-and-openapi-key",
+            "assignAIAgentTask.same-explicit-request-is-idempotent",
+            "assignAIAgentTask.new-explicit-request-preserves-busy-agent-instruction"
           ],
           "scenarios": [
             {
@@ -1596,7 +1598,19 @@ export const saasContractBundle = {
               "name": "assignment excludes team and OpenAPI key",
               "given": "the client knows the task_id from the current task route and selected a visible agent_id",
               "when": "client calls riido.aiAgent.tasks.assign",
-              "then": "the request body carries agent_id only; team_id, teamId, OpenAPI task-context paths, Open API keys, and X-Workspace-Api-Key are not generated assignment inputs"
+              "then": "the request body carries agent_id and optional request_id/instruction; team_id, teamId, OpenAPI task-context paths, Open API keys, and X-Workspace-Api-Key are not generated assignment inputs"
+            },
+            {
+              "name": "same explicit request is idempotent",
+              "given": "an authenticated author has already submitted request_id for this workspace, task and agent",
+              "when": "the same request_id is retried after a response loss",
+              "then": "return the original accepted execution and preserve its original instruction without creating another assignment or restoring explicitly removed membership"
+            },
+            {
+              "name": "new explicit request preserves busy agent instruction",
+              "given": "the same agent already has an active execution and the task keeps persistent membership",
+              "when": "the author submits a distinct request_id and instruction",
+              "then": "accept a separate queued execution without replacing other agents; apply its instruction when that execution starts"
             }
           ],
           "path_params": [
@@ -3047,14 +3061,28 @@ export const saasContractBundle = {
             "ref": "AIAgentTaskActionResponse"
           },
           "scenario_ids": [
-            "assignAIAgentTaskV2.workspace-scoped-assignment-excludes-team-and-openapi-key"
+            "assignAIAgentTaskV2.workspace-scoped-assignment-excludes-team-and-openapi-key",
+            "assignAIAgentTaskV2.same-explicit-request-is-idempotent",
+            "assignAIAgentTaskV2.new-explicit-request-preserves-busy-agent-instruction"
           ],
           "scenarios": [
             {
               "name": "workspace scoped assignment excludes team and OpenAPI key",
               "given": "the client has workspace_id from the existing workspace route, task_id from the task route, and selected a visible agent_id",
               "when": "client calls riido.v2.aiAgent.tasks.assign",
-              "then": "the URL scopes workspace_id and task_id while the request body carries agent_id only; team_id, teamId, OpenAPI task-context paths, Open API keys, and X-Workspace-Api-Key are not generated assignment inputs"
+              "then": "the URL scopes workspace_id and task_id while the request body carries agent_id and optional request_id/instruction; team_id, teamId, OpenAPI task-context paths, Open API keys, and X-Workspace-Api-Key are not generated assignment inputs"
+            },
+            {
+              "name": "same explicit request is idempotent",
+              "given": "an authenticated author has already submitted request_id for this workspace, task and agent",
+              "when": "the same request_id is retried after a response loss",
+              "then": "return the original accepted execution and preserve its original instruction without creating another assignment or restoring explicitly removed membership"
+            },
+            {
+              "name": "new explicit request preserves busy agent instruction",
+              "given": "the same agent already has an active execution and the task keeps persistent membership",
+              "when": "the author submits a distinct request_id and instruction",
+              "then": "accept a separate queued execution without replacing other agents; apply its instruction when that execution starts"
             }
           ],
           "path_params": [
@@ -3488,6 +3516,12 @@ export const saasContractBundle = {
             "active_stream": {
               "$ref": "#/components/schemas/AIAgentTaskThreadStreamLink"
             },
+            "assigned_agent_ids": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
             "schema_version": {
               "type": "string"
             },
@@ -3504,7 +3538,8 @@ export const saasContractBundle = {
           "required": [
             "schema_version",
             "task_id",
-            "threads"
+            "threads",
+            "assigned_agent_ids"
           ],
           "type": "object"
         },
@@ -3539,6 +3574,12 @@ export const saasContractBundle = {
               "description": "agent_snapshot_id를 key로 하는 snapshot map입니다. thread row는 이 map을 참조하여 snapshot 중복 전송을 줄입니다.",
               "type": "object"
             },
+            "assigned_agent_ids": {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
             "schema_version": {
               "type": "string"
             },
@@ -3555,7 +3596,8 @@ export const saasContractBundle = {
           "required": [
             "schema_version",
             "task_id",
-            "threads"
+            "threads",
+            "assigned_agent_ids"
           ],
           "type": "object"
         },
@@ -4453,9 +4495,15 @@ export const saasContractBundle = {
           "type": "object"
         },
         "AssignAIAgentTaskRequest": {
-          "description": "task participant dropdown에서 agent를 배정하기 위한 요청입니다. 요청 body는 agent_id만 받으며 team_id/teamId/OpenAPI/Open API key는 이 계약의 입력이 아닙니다.",
+          "description": "task participant dropdown에서 agent를 배정하기 위한 요청입니다. 요청 body는 agent_id와 선택적 request_id·instruction을 받으며 team_id/teamId/OpenAPI/Open API key는 이 계약의 입력이 아닙니다.",
           "properties": {
             "agent_id": {
+              "type": "string"
+            },
+            "instruction": {
+              "type": "string"
+            },
+            "request_id": {
               "type": "string"
             }
           },

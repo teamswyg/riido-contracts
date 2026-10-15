@@ -3,6 +3,7 @@ package assignment
 import "time"
 
 type Assignment struct {
+	RequestID                string              `json:"request_id,omitempty"`
 	TeamID                   string              `json:"team_id,omitempty"`
 	ConfirmationReason       ConfirmationReason  `json:"confirmation_reason,omitempty"`
 	CreatedBy                string              `json:"created_by,omitempty"`

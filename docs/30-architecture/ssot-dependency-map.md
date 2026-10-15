@@ -126,7 +126,7 @@ A lower-layer contradiction must be recorded locally, escalated to the owning SS
 - Human phrase: Generated assignment excludes team/OpenAPI key
 - Owner: `riido-contracts:docs/20-domain/ai-agent-task-assignment.md`
 - Source refs:
-  - `riido-contracts:docs/20-domain/ai-agent-task-assignment.md` requires `generated assignment requests carry agent_id only`
+  - `riido-contracts:docs/20-domain/ai-agent-task-assignment.md` requires `generated assignment requests carry agent_id and optional request_id/instruction`
   - `riido-contracts:docs/20-domain/ai-agent-task-assignment.md` requires `X-Workspace-Api-Key`
 - Downstreams:
   - `riido-control-plane`: private task context may resolve task location from task_id internally, but generated client requests and deployment/smoke criteria do not require team_id, OpenAPI keys, or Open API keys

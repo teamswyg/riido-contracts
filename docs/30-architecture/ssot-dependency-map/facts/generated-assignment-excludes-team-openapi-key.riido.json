@@ -8,7 +8,7 @@
       {
         "repo": "riido-contracts",
         "path": "docs/20-domain/ai-agent-task-assignment.md",
-        "required_phrase": "generated assignment requests carry agent_id only"
+        "required_phrase": "generated assignment requests carry agent_id and optional request_id/instruction"
       },
       {
         "repo": "riido-contracts",
