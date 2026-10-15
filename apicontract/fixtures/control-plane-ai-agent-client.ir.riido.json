@@ -827,6 +827,7 @@
             "type": "string",
             "enum": [
               "not_configured",
+              "not_run",
               "pending",
               "passed",
               "failed",
@@ -840,6 +841,7 @@
             "enum": [
               "none",
               "user_cancelled",
+              "run_cancelled",
               "run_timeout",
               "workspace_preparation_failed",
               "session_scope_conflict",
@@ -3026,6 +3028,14 @@
           {
             "name": "active_stream",
             "ref": "AIAgentTaskThreadStreamLink"
+          },
+          {
+            "name": "execution_context",
+            "ref": "AIAgentExecutionContext"
+          },
+          {
+            "name": "failure_diagnostics",
+            "ref": "AIAgentTaskThreadFailureDiagnostics"
           }
         ]
       }

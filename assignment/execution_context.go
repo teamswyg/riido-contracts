@@ -22,11 +22,11 @@ func ExecutionWorkspaceKinds() []string {
 }
 
 func ExecutionVerificationStatuses() []string {
-	return []string{"not_configured", "pending", "passed", "failed", "cancelled", "unknown"}
+	return []string{"not_configured", "not_run", "pending", "passed", "failed", "cancelled", "unknown"}
 }
 
 func ExecutionDiagnosticCodes() []string {
-	return []string{"none", "user_cancelled", "run_timeout", "workspace_preparation_failed", "session_scope_conflict", "host_verification_failed", "provider_blocked", "provider_failed", "process_aborted", "unknown"}
+	return []string{"none", "user_cancelled", "run_cancelled", "run_timeout", "workspace_preparation_failed", "session_scope_conflict", "host_verification_failed", "provider_blocked", "provider_failed", "process_aborted", "unknown"}
 }
 
 func ExecutionNextActions() []string {

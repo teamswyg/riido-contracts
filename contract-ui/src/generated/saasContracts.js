@@ -3389,6 +3389,7 @@ export const saasContractBundle = {
               "enum": [
                 "none",
                 "user_cancelled",
+                "run_cancelled",
                 "run_timeout",
                 "workspace_preparation_failed",
                 "session_scope_conflict",
@@ -3414,6 +3415,7 @@ export const saasContractBundle = {
             "verification_status": {
               "enum": [
                 "not_configured",
+                "not_run",
                 "pending",
                 "passed",
                 "failed",
@@ -3730,6 +3732,12 @@ export const saasContractBundle = {
             "conversation_id": {
               "description": "같은 AI Agent 댓글 카드 안에서 이어지는 reply chain을 묶는 stable key입니다. 새 배정은 새 conversation_id를 만들고, 기존 thread 답글은 기존 conversation_id를 상속합니다.",
               "type": "string"
+            },
+            "execution_context": {
+              "$ref": "#/components/schemas/AIAgentExecutionContext"
+            },
+            "failure_diagnostics": {
+              "$ref": "#/components/schemas/AIAgentTaskThreadFailureDiagnostics"
             },
             "messages": {
               "items": {
