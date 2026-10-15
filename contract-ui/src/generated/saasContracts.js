@@ -3182,7 +3182,10 @@ export const saasContractBundle = {
           },
           "scenario_ids": [
             "completeAIAgentOnboardingTaskV2.onboarding-completion-records-a-participant-and-a-completed-agent-comment-without-execution",
-            "completeAIAgentOnboardingTaskV2.onboarding-completion-is-idempotent"
+            "completeAIAgentOnboardingTaskV2.onboarding-completion-is-idempotent",
+            "completeAIAgentOnboardingTaskV2.onboarding-completion-requires-an-onboarding-created-owned-agent",
+            "completeAIAgentOnboardingTaskV2.onboarding-completion-is-one-time-per-agent",
+            "completeAIAgentOnboardingTaskV2.onboarding-request-id-rejects-reuse-for-another-target"
           ],
           "scenarios": [
             {
@@ -3196,6 +3199,24 @@ export const saasContractBundle = {
               "given": "the same task and agent, or the same request_id, already has an onboarding completion",
               "when": "client repeats the completion request",
               "then": "control-plane returns the existing completion response without adding participants or messages"
+            },
+            {
+              "name": "onboarding completion requires an onboarding-created owned agent",
+              "given": "the agent was not created through the onboarding fixture path, or it is owned by another principal",
+              "when": "client calls the onboarding completion for that agent",
+              "then": "control-plane rejects the request and records nothing; non-owned agents are reported as not found"
+            },
+            {
+              "name": "onboarding completion is one-time per agent",
+              "given": "the agent already completed onboarding on another task, or the target task already has assignment, thread, or membership history for the agent",
+              "when": "client submits a completion",
+              "then": "control-plane rejects the request with 409 conflict and records nothing"
+            },
+            {
+              "name": "onboarding request_id rejects reuse for another target",
+              "given": "the principal already used a request_id in this workspace for one task and agent",
+              "when": "client reuses that request_id for a different task or agent",
+              "then": "control-plane rejects the request with 409 conflict instead of returning the other record"
             }
           ],
           "path_params": [
