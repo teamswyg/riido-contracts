@@ -33,7 +33,7 @@ func GenerateOpenAPI(ir IRDocument) (OpenAPISpec, error) {
 			OperationID:    op.OperationID,
 			Summary:        op.Summary,
 			Tags:           []string{ir.Context},
-			Parameters:     pathParameters(op.Path),
+			Parameters:     operationParameters(op.Path, op.QueryParameters),
 			Responses:      responses,
 			Security:       securityForAuth(op.Auth),
 			RiidoScopes:    append([]string(nil), op.Auth.Scopes...),

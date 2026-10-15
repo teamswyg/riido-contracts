@@ -4,6 +4,9 @@ import "fmt"
 
 func validateIROperationRefs(operations []IROperation, components map[string]struct{}) error {
 	for _, op := range operations {
+		if err := validateQueryParameters(op.QueryParameters); err != nil {
+			return err
+		}
 		if err := validateAuth(op.OperationID, op.Auth); err != nil {
 			return err
 		}

@@ -40,19 +40,20 @@ func GenerateIR(dsl DSLDocument) (IRDocument, error) {
 			})
 		}
 		ir.Operations = append(ir.Operations, IROperation{
-			OperationID: op.OperationID,
-			Kind:        op.Kind,
-			Method:      strings.ToUpper(op.Method),
-			Path:        op.Path,
-			Resource:    op.Resource,
-			Action:      op.Action,
-			Client:      deriveClientMeta(op.Client),
-			Summary:     op.Summary,
-			Auth:        op.Auth,
-			RBACPolicy:  op.RBACPolicy,
-			Request:     op.Request,
-			Response:    op.Response,
-			ScenarioIDs: scenarioIDs,
+			QueryParameters: append([]QueryParameter(nil), op.QueryParameters...),
+			OperationID:     op.OperationID,
+			Kind:            op.Kind,
+			Method:          strings.ToUpper(op.Method),
+			Path:            op.Path,
+			Resource:        op.Resource,
+			Action:          op.Action,
+			Client:          deriveClientMeta(op.Client),
+			Summary:         op.Summary,
+			Auth:            op.Auth,
+			RBACPolicy:      op.RBACPolicy,
+			Request:         op.Request,
+			Response:        op.Response,
+			ScenarioIDs:     scenarioIDs,
 		})
 	}
 	return ir, nil
