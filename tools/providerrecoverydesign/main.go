@@ -23,21 +23,25 @@ type section struct {
 }
 
 type design struct {
-	SchemaVersion      string       `json:"schema_version"`
-	Title              string       `json:"title"`
-	Status             string       `json:"status"`
-	GeneratedDoc       string       `json:"generated_doc"`
-	States             []string     `json:"states"`
-	Start              string       `json:"start"`
-	Terminals          []string     `json:"terminals"`
-	UnknownEventTarget string       `json:"unknown_event_target"`
-	Transitions        []transition `json:"transitions"`
-	Sections           []section    `json:"sections"`
+	SchemaVersion      string         `json:"schema_version"`
+	Title              string         `json:"title"`
+	Status             string         `json:"status"`
+	GeneratedDoc       string         `json:"generated_doc"`
+	States             []string       `json:"states"`
+	Start              string         `json:"start"`
+	Terminals          []string       `json:"terminals"`
+	UnknownEventTarget string         `json:"unknown_event_target"`
+	Transitions        []transition   `json:"transitions"`
+	Sections           []section      `json:"sections"`
+	RuntimeProfile     runtimeProfile `json:"runtime_profile"`
 }
 
 func validate(d design) error {
 	if d.SchemaVersion != "riido-provider-recovery-design.v1" || d.GeneratedDoc != "docs/20-domain/provider-recovery.md" {
 		return errors.New("invalid recovery design identity")
+	}
+	if err := validateRuntimeProfile(d.RuntimeProfile); err != nil {
+		return err
 	}
 	states, ends := map[string]bool{}, map[string]bool{}
 	for _, state := range d.States {
@@ -102,6 +106,7 @@ func render(d design) string {
 	for _, s := range d.Sections {
 		fmt.Fprintf(&out, "## %s\n\n%s\n\n", s.Title, s.Body)
 	}
+	renderRuntimeProfile(&out, d.RuntimeProfile)
 	out.WriteString("## 전체 책임 구조\n\n```mermaid\nflowchart TD\n")
 	for _, edge := range [][2]string{{"Supervisor", "Discovery"}, {"Supervisor", "Installation"}, {"Supervisor", "Authentication"}, {"Supervisor", "Authorization"}, {"Supervisor", "Capability"}, {"Supervisor", "Execution"}, {"Execution", "Detection"}, {"Detection", "Diagnosis"}, {"Diagnosis", "Recovery"}, {"Recovery", "Performance"}, {"Recovery", "Failover"}, {"Recovery", "Notification"}, {"Failover", "Notification"}} {
 		fmt.Fprintf(&out, "  %s --> %s\n", edge[0], edge[1])
