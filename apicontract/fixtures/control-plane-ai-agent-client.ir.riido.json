@@ -446,7 +446,12 @@
         "required_form_controls: Figma node-id=417-21803 / 432-35544 says name, runtime, model, and visibility are required controls; profile_thumbnail_url, description, and instruction remain optional values",
         "agent_add_screen_field_set: Figma agent add/settings screen fields map to CreateAgentConfigurationRequest.name, profile_thumbnail_url, description, runtime_id, model_id, visibility, and instruction; model options come from RuntimeRecord.models and profile image upload uses createAIAgentProfileThumbnailUpload before saving profile_thumbnail_url",
         "create: client-facing agent creation stores the same profile fields, binds an authorized selectable runtime_id from the device/runtime read model, stamps owner_principal_id from authorization, and returns created_at and updated_at",
-        "mutation: profile fields follow agent_mutation_safety.v1 and ai_agent_rbac.v1"
+        "mutation: profile fields follow agent_mutation_safety.v1 and ai_agent_rbac.v1",
+        "profile_color: one of blue, orange, green, purple; set once at creation and never changed by create, update, or PATCH-style requests",
+        "profile_color_onboarding: Agents created through the onboarding fixture create path use blue",
+        "profile_color_other: other Agents created in a workspace take a color chosen at random among the least-used profile_color values in that workspace",
+        "profile_color_backfill: Agents loaded from a snapshot without profile_color receive one deterministically from the snapshot (fixture-created agents with tmp_color get blue; the rest use the least-used rule in created_at and agent_id order) and keep it",
+        "profile_color_projection: profile_color is projected to agent records, task_agent_participants, assigned_agent_profiles, and thread agent snapshots; clients must not derive it from tmp_color"
       ]
     },
     {
@@ -764,6 +769,29 @@
         },
         {
           "value": "desktop_webview"
+        }
+      ]
+    },
+    {
+      "name": "AgentProfileColor",
+      "type": "string",
+      "description": "AI Agent profile 색상 4종입니다.",
+      "values": [
+        {
+          "value": "blue",
+          "description": "파란색입니다. 온보딩으로 만든 Agent의 고정 색입니다."
+        },
+        {
+          "value": "orange",
+          "description": "주황색입니다."
+        },
+        {
+          "value": "green",
+          "description": "초록색입니다."
+        },
+        {
+          "value": "purple",
+          "description": "보라색입니다."
         }
       ]
     }
@@ -1270,6 +1298,11 @@
             "description": "fixture-created agent에 복사되는 avatar fallback color입니다. 예: #C9A452. 직접 설정 agent는 생략될 수 있습니다."
           },
           {
+            "name": "profile_color",
+            "description": "agent profile 색상입니다. 생성 시 정해지며 이후 설정 수정 요청으로 바뀌지 않습니다.",
+            "ref": "AgentProfileColor"
+          },
+          {
             "name": "description",
             "type": "string",
             "max_length": 160
@@ -1341,7 +1374,8 @@
           "editability",
           "assigned_task_count",
           "created_at",
-          "updated_at"
+          "updated_at",
+          "profile_color"
         ],
         "properties": [
           {
@@ -1375,6 +1409,11 @@
             "name": "tmp_color",
             "type": "string",
             "description": "fixture-created agent에 복사되는 avatar fallback color입니다. 예: #C9A452. 직접 설정 agent는 생략될 수 있습니다."
+          },
+          {
+            "name": "profile_color",
+            "description": "agent profile 색상입니다. 생성 시 정해지며 이후 설정 수정 요청으로 바뀌지 않습니다.",
+            "ref": "AgentProfileColor"
           },
           {
             "name": "description",
@@ -1500,6 +1539,11 @@
             "name": "tmp_color",
             "type": "string",
             "description": "fixture-created agent에 복사된 avatar fallback color입니다. 예: 리도 #C9A452."
+          },
+          {
+            "name": "profile_color",
+            "description": "배정된 Agent의 고정 profile 색상입니다. tmp_color와 독립적으로 항상 내려갑니다.",
+            "ref": "AgentProfileColor"
           }
         ]
       }
@@ -1514,7 +1558,8 @@
           "agent_id",
           "name",
           "is_owned_by_viewer",
-          "is_stop_required"
+          "is_stop_required",
+          "profile_color"
         ],
         "properties": [
           {
@@ -1529,6 +1574,11 @@
             "name": "profile_thumbnail_url",
             "type": "string",
             "format": "uri"
+          },
+          {
+            "name": "profile_color",
+            "description": "참여자 Agent의 고정 profile 색상입니다.",
+            "ref": "AgentProfileColor"
           },
           {
             "name": "is_owned_by_viewer",
@@ -2927,6 +2977,11 @@
           {
             "name": "tmp_color",
             "type": "string"
+          },
+          {
+            "name": "profile_color",
+            "description": "thread snapshot 시점의 profile 색상입니다.",
+            "ref": "AgentProfileColor"
           },
           {
             "name": "visibility",

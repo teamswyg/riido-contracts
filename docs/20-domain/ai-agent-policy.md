@@ -251,6 +251,11 @@ For agent settings specifically:
 - `tmp_color` is a fixture-provided avatar fallback color that may be copied
   into fixture-created agents. It is not a template id, not a UI-only magic
   constant, and not a durable template entity.
+- `profile_color` is the fixed agent profile color (`blue`, `orange`, `green`, or
+  `purple`). It is set at creation and never changed by update requests.
+  Onboarding-created agents use `blue`; other agents take one of the least-used
+  colors in the workspace. Clients read it from agent records, task participants,
+  and assigned profiles instead of deriving it from `tmp_color`.
 - `model_id` meaning starts here and in the same DSL fixture. It is validated
   against the selected runtime's `RuntimeModelRecord` catalog and defaults to
   the selected runtime's default model when omitted.

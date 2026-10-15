@@ -3552,6 +3552,10 @@ export const saasContractBundle = {
             "owner_principal_id": {
               "type": "string"
             },
+            "profile_color": {
+              "$ref": "#/components/schemas/AgentProfileColor",
+              "description": "thread snapshot 시점의 profile 색상입니다."
+            },
             "profile_thumbnail_url": {
               "format": "uri",
               "type": "string"
@@ -4039,6 +4043,10 @@ export const saasContractBundle = {
             "owner_principal_id": {
               "type": "string"
             },
+            "profile_color": {
+              "$ref": "#/components/schemas/AgentProfileColor",
+              "description": "agent profile 색상입니다. 생성 시 정해지며 이후 설정 수정 요청으로 바뀌지 않습니다."
+            },
             "profile_thumbnail_url": {
               "format": "uri",
               "type": "string"
@@ -4150,6 +4158,10 @@ export const saasContractBundle = {
             "owner_principal_id": {
               "type": "string"
             },
+            "profile_color": {
+              "$ref": "#/components/schemas/AgentProfileColor",
+              "description": "agent profile 색상입니다. 생성 시 정해지며 이후 설정 수정 요청으로 바뀌지 않습니다."
+            },
             "profile_thumbnail_url": {
               "format": "uri",
               "type": "string"
@@ -4190,7 +4202,8 @@ export const saasContractBundle = {
             "editability",
             "assigned_task_count",
             "created_at",
-            "updated_at"
+            "updated_at",
+            "profile_color"
           ],
           "type": "object"
         },
@@ -4329,6 +4342,16 @@ export const saasContractBundle = {
             "fixtures"
           ],
           "type": "object"
+        },
+        "AgentProfileColor": {
+          "description": "AI Agent profile 색상 4종입니다.",
+          "enum": [
+            "blue",
+            "orange",
+            "green",
+            "purple"
+          ],
+          "type": "string"
         },
         "AgentProfileThumbnailUploadFormField": {
           "description": "브라우저가 S3 POST upload form에 그대로 포함해야 하는 name/value field입니다.",
@@ -4598,6 +4621,10 @@ export const saasContractBundle = {
               "description": "agent profile_thumbnail_url에서 파생된 표시용 이미지 URL입니다.",
               "format": "uri",
               "type": "string"
+            },
+            "profile_color": {
+              "$ref": "#/components/schemas/AgentProfileColor",
+              "description": "배정된 Agent의 고정 profile 색상입니다. tmp_color와 독립적으로 항상 내려갑니다."
             },
             "tmp_color": {
               "description": "fixture-created agent에 복사된 avatar fallback color입니다. 예: 리도 #C9A452.",
@@ -5397,6 +5424,10 @@ export const saasContractBundle = {
             "name": {
               "type": "string"
             },
+            "profile_color": {
+              "$ref": "#/components/schemas/AgentProfileColor",
+              "description": "참여자 Agent의 고정 profile 색상입니다."
+            },
             "profile_thumbnail_url": {
               "format": "uri",
               "type": "string"
@@ -5406,7 +5437,8 @@ export const saasContractBundle = {
             "agent_id",
             "name",
             "is_owned_by_viewer",
-            "is_stop_required"
+            "is_stop_required",
+            "profile_color"
           ],
           "type": "object"
         },
