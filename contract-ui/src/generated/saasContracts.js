@@ -304,7 +304,7 @@ export const saasContractBundle = {
         "ir": "apicontract/fixtures/control-plane-ai-agent-client.ir.riido.json",
         "openapi": "apicontract/fixtures/control-plane-ai-agent-client.openapi.json"
       },
-      "operation_count": 59,
+      "operation_count": 60,
       "operations": [
         {
           "operation_id": "createAIAgent",
@@ -2249,6 +2249,64 @@ export const saasContractBundle = {
           ]
         },
         {
+          "operation_id": "getAIAgentDesktopPresenceV2",
+          "kind": "query",
+          "method": "GET",
+          "path": "/v2/client/workspaces/{workspace_id}/ai-agent/desktop-presence",
+          "resource": "device",
+          "action": "read",
+          "summary": "같은 계정의 데스크톱 앱 마지막 접속 시각을 조회합니다 (v2 workspace-scoped)",
+          "client": {
+            "module": "v2",
+            "facade_path": [
+              "aiAgent",
+              "desktopPresence"
+            ],
+            "generated_path": "v2.aiAgent.desktopPresence",
+            "cache_tag": "v2.aiAgent.desktopPresence"
+          },
+          "auth": {
+            "scheme": "apiKey",
+            "header": "X-Riido-AI-Agent-Token",
+            "scopes": [
+              "ai-agent:device:read"
+            ]
+          },
+          "rbac_policy": "desktop_presence.v1",
+          "response": {
+            "status": 200,
+            "ref": "AIAgentDesktopPresenceResponse"
+          },
+          "scenario_ids": [
+            "getAIAgentDesktopPresenceV2.web-onboarding-detects-the-desktop-app-opened-with-the-same-account",
+            "getAIAgentDesktopPresenceV2.no-desktop-connection-yet",
+            "getAIAgentDesktopPresenceV2.other-account-does-not-count"
+          ],
+          "scenarios": [
+            {
+              "name": "web onboarding detects the desktop app opened with the same account",
+              "given": "the user is on the web onboarding install or waiting screen and then signs in to the desktop app with the same account",
+              "when": "the client polls riido.v2.aiAgent.desktopPresence",
+              "then": "last_seen_at becomes later than the server-time watch start derived from checked_at and the client moves to the connected state"
+            },
+            {
+              "name": "no desktop connection yet",
+              "given": "the principal has never connected a desktop app",
+              "when": "the client reads desktop presence",
+              "then": "the response contains checked_at only and omits last_seen_at"
+            },
+            {
+              "name": "other account does not count",
+              "given": "the desktop app is signed in with a different account than the web session",
+              "when": "the client reads desktop presence for the web session principal",
+              "then": "last_seen_at does not advance, so the client keeps waiting and may show account guidance"
+            }
+          ],
+          "path_params": [
+            "workspace_id"
+          ]
+        },
+        {
           "operation_id": "listAIAgentDeviceRuntimesV2",
           "kind": "query",
           "method": "GET",
@@ -3470,6 +3528,25 @@ export const saasContractBundle = {
         }
       ],
       "schemas": {
+        "AIAgentDesktopPresenceResponse": {
+          "description": "같은 계정의 데스크톱 앱 마지막 접속 시각과 서버 응답 시각입니다. 웹 온보딩이 앱 연결을 확인할 때 씁니다.",
+          "properties": {
+            "checked_at": {
+              "description": "서버가 이 응답을 만든 시각입니다. 클라이언트는 브라우저 시계 대신 이 값으로 비교합니다.",
+              "format": "date-time",
+              "type": "string"
+            },
+            "last_seen_at": {
+              "description": "같은 계정이 데스크톱 앱에 마지막으로 접속한 서버 시각입니다. 접속 기록이 없으면 생략합니다.",
+              "format": "date-time",
+              "type": "string"
+            }
+          },
+          "required": [
+            "checked_at"
+          ],
+          "type": "object"
+        },
         "AIAgentExecutionContext": {
           "description": "RIID-5820 호스트 실행 환경과 검증 상태. 로컬 절대 경로·명령·credential은 포함하지 않는다. 누락은 legacy/unknown이며 검증 통과가 아니다.",
           "properties": {
