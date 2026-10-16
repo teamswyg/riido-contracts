@@ -511,11 +511,12 @@
       "description": "웹 온보딩은 같은 계정이 데스크톱 앱에 접속했는지를 서버 시각 기준의 마지막 접속 시각으로만 확인합니다.",
       "rules": [
         "server: last_seen_at is the latest last-seen time among desktop device connection grants owned by the authorized principal",
+        "server: last_seen_at advances whenever the signed-in desktop app calls devices/connect, which it does on every page open, or enrolls a device credential; daemon heartbeats do not advance it",
         "server: last_seen_at is omitted when the principal has no desktop device connection grant",
         "server: checked_at is the server time when the response was built; clients compare last_seen_at only against server time derived from checked_at, never against the browser clock",
         "scope: presence is principal-scoped; the workspace_id path segment selects the authorization scope and never exposes other members' devices",
         "privacy: the response carries no device_id, device name, platform, IP address, or app version",
-        "client: web onboarding treats a last_seen_at later than its server-time watch start as the desktop app being opened with the same account; account-mismatch guidance and polling cadence are client presentation"
+        "client: web onboarding sets its server-time watch start to checked_at minus the time it had already been watching when it sent that request, so a same-account connection made after watching starts counts even when it lands before the first response; a connection inside one request's network latency is caught on the desktop app's next page open; account-mismatch guidance and polling cadence are client presentation"
       ]
     }
   ],
