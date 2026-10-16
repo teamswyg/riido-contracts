@@ -3171,7 +3171,7 @@ export const saasContractBundle = {
               "task:{task_id}:write"
             ]
           },
-          "rbac_policy": "api_codegen_safety.v1",
+          "rbac_policy": "ai_agent_onboarding_completion.v1",
           "request": {
             "ref": "CompleteAIAgentOnboardingTaskRequest",
             "required": true
@@ -4736,6 +4736,9 @@ export const saasContractBundle = {
               "type": "string"
             }
           },
+          "required": [
+            "profile_color"
+          ],
           "type": "object"
         },
         "AssignedAgentProfileMapResponse": {
