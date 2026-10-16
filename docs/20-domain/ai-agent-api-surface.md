@@ -9,8 +9,8 @@ Executable SSOT: `apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.j
 AI Agent client API surface is generated from the DSL/IR/OpenAPI fixture set; manual route lists are not an authority.
 
 - Evidence artifact: `ai-agent-api-surface-evidence`
-- Operations: `58`; v1: `26`; v2: `31`; v2-only: `5`
-- OpenAPI paths: `54`; OpenAPI operations: `58`
+- Operations: `59`; v1: `26`; v2: `32`; v2-only: `6`
+- OpenAPI paths: `55`; OpenAPI operations: `59`
 - DSL/IR match: `true`; IR/OpenAPI match: `true`; v2 covers v1: `true`
 
 - V2 workspace prefix: `/v2/client/workspaces/{workspace_id}/ai-agent/...`
@@ -21,6 +21,7 @@ AI Agent client API surface is generated from the DSL/IR/OpenAPI fixture set; ma
 - `POST /v2/client/workspaces/{workspace_id}/ai-agent/tasks/{task_id}/agent-assignments` (`createAIAgentTaskAgentAssignmentV2`)
 - `DELETE /v2/client/workspaces/{workspace_id}/ai-agent/tasks/{task_id}/agent-assignments/{agent_id}` (`deleteAIAgentTaskAgentAssignmentV2`)
 - `POST /v2/client/workspaces/{workspace_id}/ai-agent/tasks/{task_id}/agent-assignments/{agent_id}/stop` (`stopAIAgentTaskAgentAssignmentV2`)
+- `POST /v2/client/workspaces/{workspace_id}/ai-agent/tasks/{task_id}/onboarding-completion` (`completeAIAgentOnboardingTaskV2`)
 - `GET /v2/client/workspaces/{workspace_id}/ai-agent/tasks/{task_id}/thread-stream-subscription` (`getAIAgentTaskThreadStreamSubscriptionV2`)
 
 ## ClientStreamEvent variants
