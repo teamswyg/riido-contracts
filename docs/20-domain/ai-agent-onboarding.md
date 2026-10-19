@@ -52,8 +52,8 @@ AI Agent onboarding fixture behavior is generated from the client API DSL/IR/Ope
 - `Runtime/provider install rows are presentation over device/runtime liveness, not provider-install commands.`
 - `Only fixture creates use CreateOnboardingAgentRequest; its optional request_id is 1..128 ASCII bytes matching ^[A-Za-z0-9._:-]{1,128}$. Direct configuration create keeps its existing seven fields.`
 - `The authorized principal, resolved workspace and fixture-create operation scope the key; identical full creation payload and fixture_id replay the same agent_id with HTTP 201 until 24 hours after the original server-recorded creation-attempt timestamp, including response loss or restart.`
-- `A changed payload or fixture_id, or a deleted replay target, returns HTTP 409 without creating or recreating an agent. v1/v2 aliases share the fixture-create scope; task completion receipts remain separate.`
-- `The private hashed receipt and agent/create-event intent commit together. Capacity exhaustion returns HTTP 503 before creation and never evicts unexpired receipts.`
+- `A changed payload or fixture_id, a deleted replay target, or the same agent_id reused with a different agent CreatedAt incarnation returns HTTP 409 without creating, recreating, or returning the replacement agent. v1/v2 aliases share the fixture-create scope; task completion receipts remain separate.`
+- `The private hashed receipt and agent creation commit together; fixture creation emits no create event and this contract adds none. Capacity exhaustion returns HTTP 503 before creation and never evicts unexpired receipts.`
 - `The guaranteed replay window ends 24 hours after the original server-recorded creation-attempt timestamp (receipt created_at), not after HTTP acknowledgement; after expiry a new create is possible. Callers without request_id retain independent-create behavior and have no duplicate-prevention guarantee.`
 
 ## No-diff route fragments
