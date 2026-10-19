@@ -34,6 +34,9 @@ func validateDSLSchemaProperties(schema Schema, components map[string]struct{}) 
 		if property.MaxLength != nil && *property.MaxLength <= 0 {
 			return fmt.Errorf("apicontract: schema %q property %q max_length must be positive", schema.Name, property.Name)
 		}
+		if err := validateStringConstraints(schema.Name, property); err != nil {
+			return err
+		}
 		if err := validatePropertyRef(schema.Name, property, components); err != nil {
 			return err
 		}

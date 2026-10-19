@@ -13,7 +13,9 @@ type Property struct {
 	Type                    string    `json:"type,omitempty"`
 	Description             string    `json:"description,omitempty"`
 	Format                  string    `json:"format,omitempty"`
+	MinLength               *int      `json:"min_length,omitempty"`
 	MaxLength               *int      `json:"max_length,omitempty"`
+	Pattern                 string    `json:"pattern,omitempty"`
 	Enum                    []string  `json:"enum,omitempty"`
 	Ref                     string    `json:"ref,omitempty"`
 	Items                   *Property `json:"items,omitempty"`

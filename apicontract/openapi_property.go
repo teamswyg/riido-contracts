@@ -32,8 +32,14 @@ func openAPIPropertyScalar(property Property) map[string]any {
 	if property.Format != "" {
 		out["format"] = property.Format
 	}
+	if property.MinLength != nil {
+		out["minLength"] = *property.MinLength
+	}
 	if property.MaxLength != nil {
 		out["maxLength"] = *property.MaxLength
+	}
+	if property.Pattern != "" {
+		out["pattern"] = property.Pattern
 	}
 	if len(property.Enum) > 0 {
 		out["enum"] = append([]string(nil), property.Enum...)

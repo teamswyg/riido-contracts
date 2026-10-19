@@ -14,35 +14,121 @@
   "expected_onboarding_operation_count": 4,
   "expected_direct_create_operation_count": 2,
   "expected_fixture_field_count": 9,
-  "expected_create_request_field_count": 7,
-  "expected_scenario_count": 14,
+  "expected_create_request_field_count": 8,
+  "expected_scenario_count": 22,
   "required_operations": [
-    {"operation_id": "listAIAgentOnboardingFixtures", "kind": "query", "method": "GET", "path": "/v1/client/ai-agent/onboarding/fixtures", "response_status": 200, "response_ref": "AgentOnboardingFixtureListResponse"},
-    {"operation_id": "createAIAgentFromOnboardingFixture", "kind": "command", "method": "POST", "path": "/v1/client/ai-agent/onboarding/fixtures/{fixture_id}/agents", "request_ref": "CreateAgentConfigurationRequest", "response_status": 201, "response_ref": "AgentClientRecordResponse"},
-    {"operation_id": "listAIAgentOnboardingFixturesV2", "kind": "query", "method": "GET", "path": "/v2/client/workspaces/{workspace_id}/ai-agent/onboarding/fixtures", "response_status": 200, "response_ref": "AgentOnboardingFixtureListResponse"},
-    {"operation_id": "createAIAgentFromOnboardingFixtureV2", "kind": "command", "method": "POST", "path": "/v2/client/workspaces/{workspace_id}/ai-agent/onboarding/fixtures/{fixture_id}/agents", "request_ref": "CreateAgentConfigurationRequest", "response_status": 201, "response_ref": "AgentClientRecordResponseV2"},
-    {"operation_id": "createAIAgent", "kind": "command", "method": "POST", "path": "/v1/client/ai-agent/agents", "request_ref": "CreateAgentConfigurationRequest", "response_status": 201, "response_ref": "AgentClientRecordResponse"},
-    {"operation_id": "createAIAgentV2", "kind": "command", "method": "POST", "path": "/v2/client/workspaces/{workspace_id}/ai-agent/agents", "request_ref": "CreateAgentConfigurationRequest", "response_status": 201, "response_ref": "AgentClientRecordResponseV2"}
+    {
+      "operation_id": "listAIAgentOnboardingFixtures",
+      "kind": "query",
+      "method": "GET",
+      "path": "/v1/client/ai-agent/onboarding/fixtures",
+      "response_status": 200,
+      "response_ref": "AgentOnboardingFixtureListResponse"
+    },
+    {
+      "operation_id": "createAIAgentFromOnboardingFixture",
+      "kind": "command",
+      "method": "POST",
+      "path": "/v1/client/ai-agent/onboarding/fixtures/{fixture_id}/agents",
+      "request_ref": "CreateOnboardingAgentRequest",
+      "response_status": 201,
+      "response_ref": "AgentClientRecordResponse"
+    },
+    {
+      "operation_id": "listAIAgentOnboardingFixturesV2",
+      "kind": "query",
+      "method": "GET",
+      "path": "/v2/client/workspaces/{workspace_id}/ai-agent/onboarding/fixtures",
+      "response_status": 200,
+      "response_ref": "AgentOnboardingFixtureListResponse"
+    },
+    {
+      "operation_id": "createAIAgentFromOnboardingFixtureV2",
+      "kind": "command",
+      "method": "POST",
+      "path": "/v2/client/workspaces/{workspace_id}/ai-agent/onboarding/fixtures/{fixture_id}/agents",
+      "request_ref": "CreateOnboardingAgentRequest",
+      "response_status": 201,
+      "response_ref": "AgentClientRecordResponseV2"
+    },
+    {
+      "operation_id": "createAIAgent",
+      "kind": "command",
+      "method": "POST",
+      "path": "/v1/client/ai-agent/agents",
+      "request_ref": "CreateAgentConfigurationRequest",
+      "response_status": 201,
+      "response_ref": "AgentClientRecordResponse"
+    },
+    {
+      "operation_id": "createAIAgentV2",
+      "kind": "command",
+      "method": "POST",
+      "path": "/v2/client/workspaces/{workspace_id}/ai-agent/agents",
+      "request_ref": "CreateAgentConfigurationRequest",
+      "response_status": 201,
+      "response_ref": "AgentClientRecordResponseV2"
+    }
   ],
-  "required_fixture_fields": ["fixture_id", "name", "role_label", "profile_thumbnail_url", "tmp_color", "description", "instruction", "default_visibility", "recommended_runtime_kind"],
-  "required_create_request_fields": ["name", "profile_thumbnail_url", "description", "instruction", "visibility", "runtime_id", "model_id"],
+  "required_fixture_fields": [
+    "fixture_id",
+    "name",
+    "role_label",
+    "profile_thumbnail_url",
+    "tmp_color",
+    "description",
+    "instruction",
+    "default_visibility",
+    "recommended_runtime_kind"
+  ],
+  "required_create_request_fields": [
+    "name",
+    "profile_thumbnail_url",
+    "description",
+    "instruction",
+    "visibility",
+    "runtime_id",
+    "model_id",
+    "request_id"
+  ],
   "fixture_rows": [
-    {"name": "리도", "tmp_color": "#C9A452"},
-    {"name": "영실", "tmp_color": "#6AA437"},
-    {"name": "홍도", "tmp_color": "#B87EAD"},
-    {"name": "지원", "tmp_color": "#2F84DE"}
+    {
+      "name": "리도",
+      "tmp_color": "#C9A452"
+    },
+    {
+      "name": "영실",
+      "tmp_color": "#6AA437"
+    },
+    {
+      "name": "홍도",
+      "tmp_color": "#B87EAD"
+    },
+    {
+      "name": "지원",
+      "tmp_color": "#2F84DE"
+    }
   ],
-  "no_diff_path_fragments": ["provider-install", "waitlist", "marketing"],
+  "no_diff_path_fragments": [
+    "provider-install",
+    "waitlist",
+    "marketing"
+  ],
   "invariants": [
     "client-local onboarding draft/configuration selection remains non-durable until workspace_id and runtime_id are known.",
     "fixture-created agents are ordinary agents with non-unique names; the control plane must not auto-suffix display names.",
     "Direct setting is client presentation, not an AgentOnboardingFixture.",
-    "Runtime/provider install rows are presentation over device/runtime liveness, not provider-install commands."
+    "Runtime/provider install rows are presentation over device/runtime liveness, not provider-install commands.",
+    "Only fixture creates use CreateOnboardingAgentRequest; its optional request_id is 1..128 ASCII bytes matching ^[A-Za-z0-9._:-]{1,128}$. Direct configuration create keeps its existing seven fields.",
+    "The authorized principal, resolved workspace and fixture-create operation scope the key; identical full creation payload and fixture_id replay the same agent_id with HTTP 201 until 24 hours after the original server-recorded creation-attempt timestamp, including response loss or restart.",
+    "A changed payload or fixture_id, or a deleted replay target, returns HTTP 409 without creating or recreating an agent. v1/v2 aliases share the fixture-create scope; task completion receipts remain separate.",
+    "The private hashed receipt and agent/create-event intent commit together. Capacity exhaustion returns HTTP 503 before creation and never evicts unexpired receipts.",
+    "The guaranteed replay window ends 24 hours after the original server-recorded creation-attempt timestamp (receipt created_at), not after HTTP acknowledgement; after expiry a new create is possible. Callers without request_id retain independent-create behavior and have no duplicate-prevention guarantee."
   ],
   "loop": {
-    "observation": "Onboarding fixture rules existed in the AI Agent policy prose and API fixture scenarios, but no focused CI artifact proved the fixture catalog, direct-setting boundary, and final create routes together.",
+    "observation": "A lost fixture-create response could cause an onboarding retry to create another ordinary agent because the original create request had no idempotency identity.",
     "hypothesis": "A small verifier can make onboarding drift observable by deriving a reader and evidence from DSL, IR, OpenAPI, and product fixture-row anchors.",
-    "execute": "Verify onboarding list/create routes, direct create routes, fixture schema fields, create request fields, scenario count, OpenAPI projections, and no-diff provider/waitlist boundaries.",
+    "execute": "Verify the fixture-only request_id schema, separate direct-create shape, durable scoped replay/conflict/retention/capacity scenarios, fixture catalog, DSL/IR/OpenAPI and generated reader.",
     "evaluate": "CI fails when onboarding operation tuples, schema fields, fixture row anchors, generated reader text, or no-diff route boundaries drift.",
     "retrospective": "Future onboarding behavior should update this manifest and API fixture first, then regenerate the reader instead of editing long-form policy prose."
   }
