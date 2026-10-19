@@ -17,7 +17,7 @@ func renderDoc(model model) string {
 	renderOperations(&b, "Onboarding operations", model.OnboardingOperations)
 	renderOperations(&b, "Direct configuration creates", model.DirectCreateOperations)
 	renderInlineList(&b, "Fixture schema fields", model.FixtureFields)
-	renderInlineList(&b, "Create request fields", model.CreateRequestFields)
+	renderInlineList(&b, "Fixture create request fields", model.CreateRequestFields)
 	renderFixtureRows(&b, m.FixtureRows)
 	renderList(&b, "Invariant anchors", m.Invariants)
 	renderInlineList(&b, "No-diff route fragments", m.NoDiffPathFragments)

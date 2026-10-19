@@ -16,7 +16,7 @@ func buildModel(root string, m manifest) (model, error) {
 	model := model{Manifest: m}
 	model.FixtureSchema = findSchema(dsl.Schemas, "AgentOnboardingFixture")
 	model.ListSchema = findSchema(dsl.Schemas, "AgentOnboardingFixtureListResponse")
-	model.CreateRequestSchema = findSchema(dsl.Schemas, "CreateAgentConfigurationRequest")
+	model.CreateRequestSchema = findSchema(dsl.Schemas, "CreateOnboardingAgentRequest")
 	model.FixtureFields = propertyNames(model.FixtureSchema)
 	model.CreateRequestFields = propertyNames(model.CreateRequestSchema)
 	model.NoDiffPathsClean = noDiffPathsClean(openapi, m.NoDiffPathFragments)

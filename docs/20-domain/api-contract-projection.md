@@ -27,6 +27,8 @@ Domain DSL -> canonical API IR -> OpenAPI projection rules for shared API contra
 - Fixture-created agents enter the normal agent lifecycle after creation; duplicate display names are allowed and are not auto-suffixed.
 - Figma onboarding order is client-local draft state; the API DSL must not add persisted draft state or workspace-less create.
 - Workspace assigned-agent profile map uses `riido.v2.aiAgent.tasks.assignedAgentProfiles` and returns current active assignment profile hints only.
+- Fixture create adds optional request_id through a separate CreateOnboardingAgentRequest schema without changing ordinary CreateAgentConfigurationRequest. Optional additions preserve unkeyed caller behavior and do not claim old clients are deduplicated.
+- API DSL string min_length/max_length/pattern constraints project into IR and OpenAPI; request_id ASCII validation makes character and byte limits identical.
 
 ## Generated Client Delivery
 

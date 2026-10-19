@@ -26,7 +26,9 @@
     "AI Agent v2 client API keeps generated client paths under `riido.v2.aiAgent.*` and scopes operations with `workspace_id` path parameters.",
     "Fixture-created agents enter the normal agent lifecycle after creation; duplicate display names are allowed and are not auto-suffixed.",
     "Figma onboarding order is client-local draft state; the API DSL must not add persisted draft state or workspace-less create.",
-    "Workspace assigned-agent profile map uses `riido.v2.aiAgent.tasks.assignedAgentProfiles` and returns current active assignment profile hints only."
+    "Workspace assigned-agent profile map uses `riido.v2.aiAgent.tasks.assignedAgentProfiles` and returns current active assignment profile hints only.",
+    "Fixture create adds optional request_id through a separate CreateOnboardingAgentRequest schema without changing ordinary CreateAgentConfigurationRequest. Optional additions preserve unkeyed caller behavior and do not claim old clients are deduplicated.",
+    "API DSL string min_length/max_length/pattern constraints project into IR and OpenAPI; request_id ASCII validation makes character and byte limits identical."
   ],
   "delivery_rules": [
     "Generated client delivery PRs are review handoffs and must not be auto-merged by delivery automation.",

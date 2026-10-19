@@ -10,7 +10,7 @@ AI Agent onboarding fixture behavior is generated from the client API DSL/IR/Ope
 
 - Evidence artifact: `ai-agent-onboarding-evidence`
 - Operations: `6`; onboarding: `4`; direct create: `2`
-- Fixture fields: `9`; create request fields: `7`; scenarios: `14`
+- Fixture fields: `9`; create request fields: `8`; scenarios: `22`
 - DSL/IR match: `true`; OpenAPI match: `true`; no-diff paths clean: `true`
 
 ## Onboarding operations
@@ -33,9 +33,9 @@ AI Agent onboarding fixture behavior is generated from the client API DSL/IR/Ope
 
 `fixture_id`, `name`, `role_label`, `profile_thumbnail_url`, `tmp_color`, `description`, `instruction`, `default_visibility`, `recommended_runtime_kind`
 
-## Create request fields
+## Fixture create request fields
 
-`name`, `profile_thumbnail_url`, `description`, `instruction`, `visibility`, `runtime_id`, `model_id`
+`name`, `profile_thumbnail_url`, `description`, `instruction`, `visibility`, `runtime_id`, `model_id`, `request_id`
 
 ## Product Fixture Rows
 
@@ -50,6 +50,11 @@ AI Agent onboarding fixture behavior is generated from the client API DSL/IR/Ope
 - `fixture-created agents are ordinary agents with non-unique names; the control plane must not auto-suffix display names.`
 - `Direct setting is client presentation, not an AgentOnboardingFixture.`
 - `Runtime/provider install rows are presentation over device/runtime liveness, not provider-install commands.`
+- `Only fixture creates use CreateOnboardingAgentRequest; its optional request_id is 1..128 ASCII bytes matching ^[A-Za-z0-9._:-]{1,128}$. Direct configuration create keeps its existing seven fields.`
+- `The authorized principal, resolved workspace and fixture-create operation scope the key; identical full creation payload and fixture_id replay the same agent_id with HTTP 201 until 24 hours after the original server-recorded creation-attempt timestamp, including response loss or restart.`
+- `A changed payload or fixture_id, or a deleted replay target, returns HTTP 409 without creating or recreating an agent. v1/v2 aliases share the fixture-create scope; task completion receipts remain separate.`
+- `The private hashed receipt and agent/create-event intent commit together. Capacity exhaustion returns HTTP 503 before creation and never evicts unexpired receipts.`
+- `The guaranteed replay window ends 24 hours after the original server-recorded creation-attempt timestamp (receipt created_at), not after HTTP acknowledgement; after expiry a new create is possible. Callers without request_id retain independent-create behavior and have no duplicate-prevention guarantee.`
 
 ## No-diff route fragments
 
@@ -57,8 +62,8 @@ AI Agent onboarding fixture behavior is generated from the client API DSL/IR/Ope
 
 ## Evidence Loop
 
-- Observe: Onboarding fixture rules existed in the AI Agent policy prose and API fixture scenarios, but no focused CI artifact proved the fixture catalog, direct-setting boundary, and final create routes together.
+- Observe: A lost fixture-create response could cause an onboarding retry to create another ordinary agent because the original create request had no idempotency identity.
 - Hypothesis: A small verifier can make onboarding drift observable by deriving a reader and evidence from DSL, IR, OpenAPI, and product fixture-row anchors.
-- Execute: Verify onboarding list/create routes, direct create routes, fixture schema fields, create request fields, scenario count, OpenAPI projections, and no-diff provider/waitlist boundaries.
+- Execute: Verify the fixture-only request_id schema, separate direct-create shape, durable scoped replay/conflict/retention/capacity scenarios, fixture catalog, DSL/IR/OpenAPI and generated reader.
 - Evaluate: CI fails when onboarding operation tuples, schema fields, fixture row anchors, generated reader text, or no-diff route boundaries drift.
 - Retrospective: Future onboarding behavior should update this manifest and API fixture first, then regenerate the reader instead of editing long-form policy prose.
