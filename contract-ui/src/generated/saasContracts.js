@@ -3921,6 +3921,8 @@ export const saasContractBundle = {
             },
             "display_message": {
               "description": "Optional server-projected user-facing progress summary, shared by live SSE and cold history. At most 180 Unicode characters of plain single-line text from known tool.collecting/tool.running description or tool.completed summary arguments only; omit for unknown/internal progress and assistant partials. This field is display copy, never an execution or authorization signal.",
+              "maxLength": 180,
+              "pattern": "^[^\\r\\n]*$",
               "type": "string"
             },
             "message_id": {
@@ -4744,6 +4746,8 @@ export const saasContractBundle = {
           "properties": {
             "display_message": {
               "description": "Optional server-projected user-facing progress summary, shared by live SSE and cold history. At most 180 Unicode characters of plain single-line text from known tool.collecting/tool.running description or tool.completed summary arguments only; omit for unknown/internal progress and assistant partials. This field is display copy, never an execution or authorization signal.",
+              "maxLength": 180,
+              "pattern": "^[^\\r\\n]*$",
               "type": "string"
             },
             "message": {
