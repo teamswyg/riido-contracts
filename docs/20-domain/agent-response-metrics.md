@@ -28,6 +28,11 @@ SSOT: [agent-response-metrics.riido.json](agent-response-metrics.riido.json).
 | `event_processing_ms` | server event 수신→durable commit 및 client projection. server 시계로만 측정; SSE 수명과 분리. |
 | `text_delta_events` | 병합 전 원본 TextDelta 수. 빈 event/공백도 포함하며 문자 수와 구분. |
 | `text_characters` | 원본 TextDelta의 Unicode code point 수. token 수·출력 품질이 아니다. |
+| `native_turn_ms` | 독립 native turn 시간; 독립 관측이 없으면 -1. adapter 시계에서 계산하거나 추론 시간으로 추정하지 않는다. |
+| `projection_lock_wait_ms` | server persistent projection의 operation lock 대기. |
+| `projection_reload_ms` | server snapshot 재조회/복구 호출 시간. 미호출은 -1. |
+| `projection_apply_ms` | server client read model 적용 시간. 미호출은 -1. |
+| `projection_save_ms` | server snapshot 소유권 병합/저장 호출 시간. 미호출은 -1. |
 
 ## 판정과 개선
 
@@ -37,6 +42,7 @@ SSOT: [agent-response-metrics.riido.json](agent-response-metrics.riido.json).
 - provider 변경·reasoning 하향·맥락 삭제·중복 모델 호출로 숫자를 맞추지 않는다. 실제 모델 실행은 승인된 격리 시나리오와 유한 비용/횟수에서만 수행한다.
 - 실행 시작 여부 불명/부작용 가능 작업은 성능 회귀라고 자동 재실행하지 않는다. 기존 recovery lease/CAS/session/ACK 경계를 유지한다.
 - 기존 짧은 Codex 답변의 로컬 완료 약7~13초, Claude 한 건 약18초는 제한된 역사적 기준이다. 고정 model 없는 소수 관측을 일반 정상 시간이나 현재92초의 직접 비교군으로 쓰지 않는다.
+- provider_clock_scope=adapter_including_backpressure를 명시하고 native_turn_ms는 독립 증거 없으면 -1이다. projection은 event/phase별로 비교하며 정상 최초 실행의 정확한 source·조건을 보존한다.
 
 ## 수집·분석·예약·배포
 

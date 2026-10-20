@@ -61,6 +61,26 @@
     {
       "name": "text_characters",
       "meaning": "원본 TextDelta의 Unicode code point 수. token 수·출력 품질이 아니다."
+    },
+    {
+      "name": "native_turn_ms",
+      "meaning": "독립 native turn 시간; 독립 관측이 없으면 -1. adapter 시계에서 계산하거나 추론 시간으로 추정하지 않는다."
+    },
+    {
+      "name": "projection_lock_wait_ms",
+      "meaning": "server persistent projection의 operation lock 대기."
+    },
+    {
+      "name": "projection_reload_ms",
+      "meaning": "server snapshot 재조회/복구 호출 시간. 미호출은 -1."
+    },
+    {
+      "name": "projection_apply_ms",
+      "meaning": "server client read model 적용 시간. 미호출은 -1."
+    },
+    {
+      "name": "projection_save_ms",
+      "meaning": "server snapshot 소유권 병합/저장 호출 시간. 미호출은 -1."
     }
   ],
   "acceptance": [
@@ -69,7 +89,8 @@
     "사용자 v93의 adapter 관측92.285초와 완료 후2.762초만으로 현재가 최선이거나 순수 모델 처리92초라고 판정하지 않는다. adapter 시작·프로토콜/도구·이벤트 역압력과 원 native 완료 시각을 따로 확인한다.",
     "provider 변경·reasoning 하향·맥락 삭제·중복 모델 호출로 숫자를 맞추지 않는다. 실제 모델 실행은 승인된 격리 시나리오와 유한 비용/횟수에서만 수행한다.",
     "실행 시작 여부 불명/부작용 가능 작업은 성능 회귀라고 자동 재실행하지 않는다. 기존 recovery lease/CAS/session/ACK 경계를 유지한다.",
-    "기존 짧은 Codex 답변의 로컬 완료 약7~13초, Claude 한 건 약18초는 제한된 역사적 기준이다. 고정 model 없는 소수 관측을 일반 정상 시간이나 현재92초의 직접 비교군으로 쓰지 않는다."
+    "기존 짧은 Codex 답변의 로컬 완료 약7~13초, Claude 한 건 약18초는 제한된 역사적 기준이다. 고정 model 없는 소수 관측을 일반 정상 시간이나 현재92초의 직접 비교군으로 쓰지 않는다.",
+    "provider_clock_scope=adapter_including_backpressure를 명시하고 native_turn_ms는 독립 증거 없으면 -1이다. projection은 event/phase별로 비교하며 정상 최초 실행의 정확한 source·조건을 보존한다."
   ],
   "evidence": [
     "client_untrusted: 로그인 없이 받은 enum·버전·숫자 제보. caller 신원/실제 실패를 증명하지 않고 server SLO와 분리한다.",
