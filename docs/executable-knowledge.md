@@ -7,20 +7,20 @@ Executable SSOT: [`docs/executable-knowledge.riido.json`](docs/executable-knowle
 - Status: `verified`
 - Evidence artifact: `executable-knowledge-coverage`
 - Workflow trigger paths: `11`
-- Markdown readers scanned: `29`
-- Generated readers: `28`
+- Markdown readers scanned: `30`
+- Generated readers: `29`
 - Executable readers: `1`
-- Adjacent manifests: `27`
-- Generated readers with adjacent manifests: `26`
+- Adjacent manifests: `28`
+- Generated readers with adjacent manifests: `27`
 - Executable readers with adjacent manifests: `1`
 - Manual reader candidates: `0`
-- Manifest inventory: `341`
+- Manifest inventory: `342`
 
 ## Manifest Inventory
 
 | Group | Count |
 | --- | ---: |
-| `docs` | 277 |
+| `docs` | 278 |
 | `assignment` | 34 |
 | `progressmessage` | 24 |
 | `apicontract` | 4 |
@@ -31,7 +31,7 @@ Executable SSOT: [`docs/executable-knowledge.riido.json`](docs/executable-knowle
 
 | Group | Sample paths |
 | --- | --- |
-| `docs` | `docs/20-domain/README.riido.json`<br>`docs/20-domain/ai-agent-api-surface.riido.json`<br>`docs/20-domain/ai-agent-assigned-profile-map.riido.json` |
+| `docs` | `docs/20-domain/README.riido.json`<br>`docs/20-domain/agent-response-metrics.riido.json`<br>`docs/20-domain/ai-agent-api-surface.riido.json` |
 | `assignment` | `assignment/assignment_contract.riido.json`<br>`assignment/assignment_contract/approval-contract.riido.json`<br>`assignment/assignment_contract/execution-identity.riido.json` |
 | `progressmessage` | `progressmessage/catalog.dsl.riido.json`<br>`progressmessage/catalog.ir.messages/1001-agent-thinking.ir.riido.json`<br>`progressmessage/catalog.ir.messages/1002-assignment-queued-agent-busy.ir.riido.json` |
 | `apicontract` | `apicontract/fixtures/control-plane-agent-catalog.dsl.riido.json`<br>`apicontract/fixtures/control-plane-agent-catalog.ir.riido.json`<br>`apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json` |
@@ -40,8 +40,8 @@ Executable SSOT: [`docs/executable-knowledge.riido.json`](docs/executable-knowle
 
 ## Manifest Loop Inventory
 
-- Complete manifest loops: `341`
-- Direct manifest loops: `30`
+- Complete manifest loops: `342`
+- Direct manifest loops: `31`
 - Delegated manifest loops: `311`
 - Missing manifest loops: `0`
 - Missing loop budget: `0`

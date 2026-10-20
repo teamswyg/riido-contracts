@@ -27,9 +27,9 @@ func TestMetricContractAndGeneratedDocument(t *testing.T) {
 		t.Fatal("baseline provenance changed")
 	}
 	for _, mutate := range []func(*contract){func(d *contract) { d.Unknown = 0 }, func(d *contract) { d.Minimum = 1 }, func(d *contract) { d.Target = 100000 }, func(d *contract) { d.Metrics = nil }} {
-		copy := d
-		mutate(&copy)
-		if validate(copy) == nil {
+		candidate := d
+		mutate(&candidate)
+		if validate(candidate) == nil {
 			t.Fatal("invalid metric boundary accepted")
 		}
 	}

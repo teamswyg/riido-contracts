@@ -78,5 +78,12 @@
     "S3 비공개·TLS·암호화·create-only·30일 보존, writer는 자기 prefix 쓰기만 가능하고 공개 조회는 제공하지 않는다. 조회는 한정된 날짜/prefix·객체 수·바이트 상한으로 한다.",
     "Codex 기존 안정성 예약은 읽기 전용 유지. 별도 성능 개선 예약은 새 회귀만 분석/검증/PR·서버/daemon 배포하고 반복 배포·모델 업무 replay·프론트/desktop 배포를 하지 않는다.",
     "배포는 정확한 PR head CI→merged source→staging→production→실행 이미지·ALB·TLS·archive checksum으로 확인한다. 합성 통합 테스트와 실제 Provider 실행 인수는 별도 장부다."
-  ]
+  ],
+  "loop": {
+    "observation": "User v92/v93 single samples show delivery backlog improvement but provider duration still exceeds the 10s goal; untrusted reports must not be counted as authenticated failures.",
+    "hypothesis": "Explicit phase clocks, provenance, unknown values and sample thresholds prevent false speedup/recovery claims and guide bounded followups.",
+    "execute": "Validate the owning manifest and generated reader; test missing metrics, zero-unknown, weakened thresholds and sample provenance; run CI plus cross-repository synthetic telemetry integrations.",
+    "evaluate": "Fail on document drift, missing phase fields, invalid target/unknown sentinel or undersampled percentile policy. Deployment and real model acceptance require separate source/runtime evidence.",
+    "retrospective": "Keep provider execution, daemon overhead, server projection, untrusted reports and synthetic tests distinct; never replay uncertain work to satisfy latency."
+  }
 }

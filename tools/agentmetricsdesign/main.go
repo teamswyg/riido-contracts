@@ -9,19 +9,23 @@ import (
 	"strings"
 )
 
-const manifestPath = "docs/20-domain/agent-response-metrics.riido.json"
-const docPath = "docs/20-domain/agent-response-metrics.md"
+const (
+	manifestPath = "docs/20-domain/agent-response-metrics.riido.json"
+	docPath      = "docs/20-domain/agent-response-metrics.md"
+)
 
-type metric struct{ Name, Meaning string }
-type sample struct {
-	Version    string
-	DaemonMS   int64 `json:"daemon_ms"`
-	ProviderMS int64 `json:"provider_ms"`
-	PostMS     int64 `json:"post_provider_ms"`
-	FirstMS    int64 `json:"first_nonblank_ms"`
-	Characters int   `json:"text_characters"`
-	Events     int   `json:"text_delta_events"`
-}
+type (
+	metric struct{ Name, Meaning string }
+	sample struct {
+		Version    string
+		DaemonMS   int64 `json:"daemon_ms"`
+		ProviderMS int64 `json:"provider_ms"`
+		PostMS     int64 `json:"post_provider_ms"`
+		FirstMS    int64 `json:"first_nonblank_ms"`
+		Characters int   `json:"text_characters"`
+		Events     int   `json:"text_delta_events"`
+	}
+)
 type contract struct {
 	Schema               string `json:"schema_version"`
 	Title                string
@@ -92,7 +96,7 @@ func main() {
 	if err == nil {
 		want := render(d)
 		if *write {
-			err = os.WriteFile(docPath, []byte(want), 0644)
+			err = os.WriteFile(docPath, []byte(want), 0o644)
 		} else {
 			var got []byte
 			got, err = os.ReadFile(docPath)
