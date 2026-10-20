@@ -16,7 +16,7 @@
     "`usage=required` messages are system-critical and must remain supported by daemon/control-plane fallbacks.",
     "`usage=active` messages may be emitted by current daemon runtime parsing.",
     "`usage=reserved` messages are not part of active daemon emission yet, but are held for compatibility or future product copy.",
-    "Public frontend SSE shape does not change. Generated/internal code may carry `message_code` and `message_args`, but public UI still consumes rendered `message`.",
+    "Public frontend SSE retains rendered `message`. Optional `display_message` is server-projected from known tool.collecting/tool.running description or tool.completed summary arguments as plain single-line text up to 180 Unicode characters, and is preserved in cold v3 history. Internal `message_code` and `message_args` remain excluded from public responses.",
     "Tool message `label` arguments are state-neutral nouns or noun phrases. They must not include rendered state suffixes such as `수집 중`, `조회 완료`, `실행 중`, `실행`, or `완료`.",
     "Daemon and control-plane renderers defensively normalize `label` before rendering so persisted/provider telemetry does not duplicate public state copy."
   ],
