@@ -4,7 +4,7 @@
 
 SSOT: [agent-response-metrics.riido.json](agent-response-metrics.riido.json).
 
-전체 목표: **10000ms 미만**. 누락 시간: **-1**. p95 최소 표본: **20**.
+비교 기준: **matched_native_vs_daemon** (고정 완료 시간 목표 없음). 누락 시간: **-1**. p95 최소 표본: **20**.
 
 ## 사용자 기준 표본
 
@@ -21,7 +21,7 @@ SSOT: [agent-response-metrics.riido.json](agent-response-metrics.riido.json).
 | --- | --- |
 | `claim_to_terminal_ms` | 같은 daemon 시계의 claim 수락→terminal ACK. 준비·실행·검증·전달 포함; UI 표시 완료는 별도. |
 | `claim_to_first_text_ms` | claim→첫 비공백 TextDelta가 runtime forwarding에 도착. actor 처리 시각과 분리; 실제 모델 첫 token 시각과 동일하다는 보장은 없다. |
-| `provider_elapsed_ms` | adapter Result.StartedAt→FinishedAt. provider startup/protocol/tool 시간 포함 가능. 순수 추론 시간으로 부르지 않는다. |
+| `provider_elapsed_ms` | adapter Result.StartedAt→FinishedAt. startup/protocol/tool 및 이벤트 역압력·종료 처리 포함 가능. native turn 시간 또는 순수 추론 시간과 구분한다. |
 | `post_provider_ms` | 원 adapter 결과 완료→terminal ACK. host 검증·대기열·journal·보고 재시도 포함. host 검증으로 원 완료 시각을 덮지 않는다. |
 | `mailbox_wait_max_ms` | runtime가 보낸 Text/Log 등 event의 forwarding 도착→actor 처리까지의 최대 관측 대기. 합산·p95가 아니다. |
 | `report_elapsed_ms` | 같은 actor에서 관측한 HTTP reporter 호출 소요의 합. 실패·재시도 포함; 네트워크만의 시간이 아니다. |
@@ -31,11 +31,12 @@ SSOT: [agent-response-metrics.riido.json](agent-response-metrics.riido.json).
 
 ## 판정과 개선
 
-- 전체 10초는 고정 answer-only scenario와 고정 provider/model에서 평가할 목표다. 긴 실제 코드 작업/인증·승인 대기의 완료 보증이 아니다.
+- 고정 완료 시간 목표를 두지 않는다. 짧은 답변·파일 수정/검증·장시간 도구 작업·승인 대기를 나누고, 같은 provider/CLI 버전/model/추론 설정/입력/맥락/session 재사용 조건의 native 직접 실행과 daemon 경로를 비교한다.
 - 최소20개 이상 동일 조건의 성공·실패·취소·첫 응답 누락을 함께 기록한다. median/max/n을 항상 표시하고 p95는20개 전에는 unknown이다. 성능 숫자만으로 의미적 수행·지침 준수를 통과 처리하지 않는다.
-- 사용자 v93 표본의 provider92.285초가 이미10초보다 길다. model/profile/context/작업 범위·부하를 고정한 별도 검증 없이는 daemon 최적화만으로 전체10초 달성을 주장하지 않는다.
+- 사용자 v93의 adapter 관측92.285초와 완료 후2.762초만으로 현재가 최선이거나 순수 모델 처리92초라고 판정하지 않는다. adapter 시작·프로토콜/도구·이벤트 역압력과 원 native 완료 시각을 따로 확인한다.
 - provider 변경·reasoning 하향·맥락 삭제·중복 모델 호출로 숫자를 맞추지 않는다. 실제 모델 실행은 승인된 격리 시나리오와 유한 비용/횟수에서만 수행한다.
 - 실행 시작 여부 불명/부작용 가능 작업은 성능 회귀라고 자동 재실행하지 않는다. 기존 recovery lease/CAS/session/ACK 경계를 유지한다.
+- 기존 짧은 Codex 답변의 로컬 완료 약7~13초, Claude 한 건 약18초는 제한된 역사적 기준이다. 고정 model 없는 소수 관측을 일반 정상 시간이나 현재92초의 직접 비교군으로 쓰지 않는다.
 
 ## 수집·분석·예약·배포
 
