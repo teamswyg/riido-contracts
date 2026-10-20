@@ -1,0 +1,20 @@
+name: agent-response-metrics
+on:
+  pull_request:
+    paths: ["docs/20-domain/agent-response-metrics*", "tools/agentmetricsdesign/**", ".github/workflows/agent-response-metrics.yml"]
+  push:
+    branches: [main]
+    paths: ["docs/20-domain/agent-response-metrics*", "tools/agentmetricsdesign/**", ".github/workflows/agent-response-metrics.yml"]
+permissions:
+  contents: read
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: go.mod
+          cache: false
+      - run: go test ./tools/agentmetricsdesign -count=1
+      - run: go run ./tools/agentmetricsdesign
