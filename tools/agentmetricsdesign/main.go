@@ -26,6 +26,7 @@ type (
 		Events     int   `json:"text_delta_events"`
 	}
 )
+
 type contract struct {
 	Schema               string `json:"schema_version"`
 	Title                string
