@@ -3813,6 +3813,10 @@ export const saasContractBundle = {
               ],
               "type": "string"
             },
+            "title": {
+              "description": "현재 조회자의 권한으로 확인한 자료 제목입니다. 과거 스냅샷 제목은 사용하지 않으며, 현재 이름이 없으면 생략합니다.",
+              "type": "string"
+            },
             "updated_at": {
               "format": "date-time",
               "type": "string"
