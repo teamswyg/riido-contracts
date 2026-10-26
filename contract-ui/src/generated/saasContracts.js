@@ -3780,7 +3780,8 @@ export const saasContractBundle = {
                 "related_intake",
                 "related_meeting",
                 "comment",
-                "target"
+                "target",
+                "agent"
               ],
               "type": "string"
             },
@@ -3794,7 +3795,8 @@ export const saasContractBundle = {
                 "task",
                 "tree",
                 "resources",
-                "comments"
+                "comments",
+                "profile"
               ],
               "type": "string"
             },
@@ -4740,7 +4742,8 @@ export const saasContractBundle = {
                 "related_intake",
                 "related_meeting",
                 "comment",
-                "target"
+                "target",
+                "agent"
               ],
               "type": "string"
             },
@@ -4754,7 +4757,8 @@ export const saasContractBundle = {
                 "task",
                 "tree",
                 "resources",
-                "comments"
+                "comments",
+                "profile"
               ],
               "type": "string"
             },
