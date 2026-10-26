@@ -13,6 +13,11 @@ This directory carries public SSOT documents for contracts currently implemented
 - Module decomposition: [`../30-architecture/module-decomposition.md`](../30-architecture/module-decomposition.md)
 - Integration matrix: [`../30-architecture/integration-matrix.md`](../30-architecture/integration-matrix.md)
 
+## RIID-5900 adds
+
+- work-context CLI JSON envelope and exit-code vocabulary in `contextcli`
+- the `agent_context_read` client stream variant
+
 ## RIID-4641 migrates
 
 - C1 Task Lifecycle contract into `task`

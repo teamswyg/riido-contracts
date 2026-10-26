@@ -10,6 +10,7 @@ github.com/teamswyg/riido-contracts is a public, standard-library-only Go module
 
 | Package/path | Role | Must not own |
 | --- | --- | --- |
+| `contextcli` | versioned work-context CLI JSON envelope, source/error vocabulary and exit codes | argument parsing, IPC, credentials, request ID generation or runtime execution |
 | root `contracts` | module identity constants | runtime behavior, tag orchestration |
 | `task` | C1 task lifecycle states and transition matrix | scheduler, local task DB, validation execution |
 | `ir` | C2 canonical event envelope, event catalog, reducer contract | event storage adapters, ingestion pipelines |

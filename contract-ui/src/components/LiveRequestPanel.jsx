@@ -1,23 +1,25 @@
 import { useEffect, useState } from "react";
 import { jsonText } from "../contractModel.js";
-import { authLabel, buildHeaders, pathParamDefaults, requestURL, shouldSendBody } from "../requestModel.js";
+import { authLabel, buildHeaders, pathParamDefaults, queryParamDefaults, requestURL, shouldSendBody } from "../requestModel.js";
 import { sampleForRef } from "../schemaSample.js";
 
 export default function LiveRequestPanel({ operation }) {
   const [baseURL, setBaseURL] = useState("https://development.ai-api.riido.io");
   const [token, setToken] = useState("");
   const [params, setParams] = useState(pathParamDefaults(operation));
+  const [queryParams, setQueryParams] = useState(queryParamDefaults(operation));
   const [body, setBody] = useState("{}");
   const [result, setResult] = useState("");
 
   useEffect(() => {
     setParams(pathParamDefaults(operation));
+    setQueryParams(queryParamDefaults(operation));
     setBody(jsonText(sampleForRef(operation.request?.ref, operation.schemas)));
     setResult("");
   }, [operation]);
 
   async function send() {
-    const url = requestURL(baseURL, operation.path, params);
+    const url = requestURL(baseURL, operation.path, params, queryParams);
     const init = { method: operation.method, headers: buildHeaders(operation, token) };
     if (shouldSendBody(operation)) init.body = body;
     const response = await fetch(url, init);
@@ -38,6 +40,9 @@ export default function LiveRequestPanel({ operation }) {
       <div className="form-row"><label>{authLabel(operation)}<input value={token} onChange={(e) => setToken(e.target.value)} type="password" /></label></div>
       {operation.path_params?.map((name) => (
         <div className="form-row" key={name}><label>{name}<input value={params[name] ?? ""} onChange={(e) => setParams({ ...params, [name]: e.target.value })} /></label></div>
+      ))}
+      {operation.query_parameters?.map(({ name, type, minimum }) => (
+        <div className="form-row" key={name}><label>{name}<input type={type === "integer" ? "number" : "text"} min={minimum} step={type === "integer" ? 1 : undefined} value={queryParams[name] ?? ""} onChange={(e) => setQueryParams({ ...queryParams, [name]: e.target.value })} /></label></div>
       ))}
       {shouldSendBody(operation) && <textarea value={body} onChange={(e) => setBody(e.target.value)} />}
       <button className="send" onClick={send}>Send real request</button>
