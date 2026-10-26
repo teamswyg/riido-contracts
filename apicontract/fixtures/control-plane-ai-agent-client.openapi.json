@@ -5038,7 +5038,8 @@
               "related_intake",
               "related_meeting",
               "comment",
-              "target"
+              "target",
+              "agent"
             ],
             "type": "string"
           },
@@ -5052,7 +5053,8 @@
               "task",
               "tree",
               "resources",
-              "comments"
+              "comments",
+              "profile"
             ],
             "type": "string"
           },
@@ -5998,7 +6000,8 @@
               "related_intake",
               "related_meeting",
               "comment",
-              "target"
+              "target",
+              "agent"
             ],
             "type": "string"
           },
@@ -6012,7 +6015,8 @@
               "task",
               "tree",
               "resources",
-              "comments"
+              "comments",
+              "profile"
             ],
             "type": "string"
           },
