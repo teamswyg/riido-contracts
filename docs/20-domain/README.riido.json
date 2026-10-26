@@ -11,6 +11,7 @@
     {"label":"Integration matrix","path":"../30-architecture/integration-matrix.md"}
   ],
   "changes": [
+    {"task":"RIID-5900","verb":"adds","items":["work-context CLI JSON envelope and exit-code vocabulary in `contextcli`","the `agent_context_read` client stream variant"]},
     {"task":"RIID-4641","verb":"migrates","items":["C1 Task Lifecycle contract into `task`","C2 IR Event Log contract into `ir`","C3 Provider Capability contract into `provider/capability`"]},
     {"task":"RIID-4670","verb":"migrates","items":["C11/C10 distribution channel and provider routing status vocabulary into `hostintegration`"]},
     {"task":"RIID-4687","verb":"migrates","items":["C10 assignment polling DTOs, service schema identifiers, assignment state transition predicates, poll actions, task event type values, and agent runtime binding DTOs into `assignment`"]},

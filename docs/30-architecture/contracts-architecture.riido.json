@@ -15,6 +15,7 @@
     "tag_boundary": "The Go module tag is the distribution boundary; promotion requires at least one downstream import gate."
   },
   "packages": [
+    {"path":"contextcli","display":"`contextcli`","role":"versioned work-context CLI JSON envelope, source/error vocabulary and exit codes","must_not_own":"argument parsing, IPC, credentials, request ID generation or runtime execution"},
     {"path":"contracts","display":"root `contracts`","role":"module identity constants","must_not_own":"runtime behavior, tag orchestration"},
     {"path":"task","display":"`task`","role":"C1 task lifecycle states and transition matrix","must_not_own":"scheduler, local task DB, validation execution"},
     {"path":"ir","display":"`ir`","role":"C2 canonical event envelope, event catalog, reducer contract","must_not_own":"event storage adapters, ingestion pipelines"},

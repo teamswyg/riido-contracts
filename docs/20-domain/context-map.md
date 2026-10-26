@@ -14,6 +14,7 @@ riido-contracts owns shared, versioned facts that more than one Riido repository
 
 | Context | Package | Responsibility |
 | --- | --- | --- |
+| Work-context CLI wire contract | `contextcli` | JSON envelope v1, source statuses, stable errors and process exit-code mapping shared by daemon output and client compatibility fixtures |
 | C1 Task Lifecycle | `task` | task states, terminal/active classification, legal transition matrix, FSM schema version |
 | C2 IR Event Log | `ir` | canonical event envelope, actor/scope/event type catalog, envelope validation, pure reducer contract |
 | C3 Provider Capability | `provider/capability` | provider capability model, protocol vocabulary, compatibility status, protocol-critical args, capability fingerprint |

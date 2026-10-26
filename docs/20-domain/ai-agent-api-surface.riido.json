@@ -11,19 +11,20 @@
   "dsl_fixture": "apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.json",
   "ir_fixture": "apicontract/fixtures/control-plane-ai-agent-client.ir.riido.json",
   "openapi_fixture": "apicontract/fixtures/control-plane-ai-agent-client.openapi.json",
-  "expected_operation_count": 60,
-  "expected_v1_operation_count": 26,
-  "expected_v2_operation_count": 33,
+  "expected_operation_count": 62,
+  "expected_v1_operation_count": 27,
+  "expected_v2_operation_count": 34,
   "expected_v2_workspace_only_operation_count": 7,
-  "expected_openapi_path_count": 56,
-  "expected_openapi_operation_count": 60,
-  "expected_client_stream_variant_count": 5,
+  "expected_openapi_path_count": 58,
+  "expected_openapi_operation_count": 62,
+  "expected_client_stream_variant_count": 6,
   "required_stream_variants": [
     "device_runtime_snapshot",
     "device_daemon_status_changed",
     "agent_editability_changed",
     "agent_work_status_changed",
-    "agent_thread_progress"
+    "agent_thread_progress",
+    "agent_context_read"
   ],
   "codegen_rules": [
     "Control-plane API enum values and sum-type variants are contract values, not free text.",

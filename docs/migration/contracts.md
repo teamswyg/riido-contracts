@@ -638,6 +638,19 @@ credential-bearing component rejection.
 
 This slice does not add a new `AssignmentWorktree` field, private repository authentication, a schema version bump, or generated client changes.
 
+### RIID-5900 — Work-context CLI and context-read audit contract
+
+Promote the daemon work-context CLI wire vocabulary into `contextcli` without importing daemon parsing, IPC, authentication or runtime code.
+Add the existing control-plane `agent_context_read` SSE variant to the shared DSL/IR/OpenAPI fixtures.
+
+This slice does:
+
+- Keep envelope schema version 1, source statuses and error-to-exit-code mappings unchanged.
+- Keep source bodies, URLs and requester/request identifiers out of the client read-audit stream.
+- Downstream gate: after an approved contracts merge and tag, riido-daemon must import `contextcli` and remove its duplicated wire definitions; riido-control-plane must regenerate and verify its client projection from the shared fixture.
+
+This change does not publish a module tag, migrate downstream module versions, enable staging, add user OAuth, or grant merge authority.
+
 ## Validation Gates
 
 Required for this repository:
