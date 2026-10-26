@@ -304,7 +304,7 @@ export const saasContractBundle = {
         "ir": "apicontract/fixtures/control-plane-ai-agent-client.ir.riido.json",
         "openapi": "apicontract/fixtures/control-plane-ai-agent-client.openapi.json"
       },
-      "operation_count": 60,
+      "operation_count": 62,
       "operations": [
         {
           "operation_id": "createAIAgent",
@@ -3522,6 +3522,122 @@ export const saasContractBundle = {
           ]
         },
         {
+          "operation_id": "addAIAgentTaskThreadMessageReactionV2",
+          "kind": "command",
+          "method": "POST",
+          "path": "/v2/client/workspaces/{workspace_id}/ai-agent/tasks/{task_id}/threads/{thread_id}/messages/{message_id}/reactions",
+          "resource": "agent",
+          "action": "create",
+          "summary": "task thread message에 사람 멤버의 emoji reaction을 남깁니다 (v2 workspace-scoped)",
+          "client": {
+            "module": "v2",
+            "facade_path": [
+              "aiAgent",
+              "tasks",
+              "threadMessages",
+              "reactions",
+              "add"
+            ],
+            "generated_path": "v2.aiAgent.tasks.threadMessages.reactions.add",
+            "invalidates": [
+              "v3.aiAgent.tasks.threads"
+            ]
+          },
+          "auth": {
+            "scheme": "bearer",
+            "scopes": [
+              "ai-agent:write",
+              "task:{task_id}:comment"
+            ]
+          },
+          "rbac_policy": "task_thread_message_reaction.v1",
+          "request": {
+            "ref": "AddAIAgentTaskThreadMessageReactionRequest",
+            "required": true
+          },
+          "response": {
+            "status": 200,
+            "ref": "AIAgentTaskThreadMessageReactionsResponse"
+          },
+          "scenario_ids": [
+            "addAIAgentTaskThreadMessageReactionV2.member-reaction-is-idempotent",
+            "addAIAgentTaskThreadMessageReactionV2.progress-message-is-not-reactable"
+          ],
+          "scenarios": [
+            {
+              "name": "member reaction is idempotent",
+              "given": "a member already reacted with 1f440 to a user or agent message",
+              "when": "the member calls riido.v2.aiAgent.tasks.threadMessages.reactions.add with the same emoji again",
+              "then": "the response returns the same reactions and no duplicate actor or notification is created"
+            },
+            {
+              "name": "progress message is not reactable",
+              "given": "a v3 history message has role progress",
+              "when": "a member tries to add a reaction to that message_id",
+              "then": "the command is rejected and no reaction is stored"
+            }
+          ],
+          "path_params": [
+            "workspace_id",
+            "task_id",
+            "thread_id",
+            "message_id"
+          ]
+        },
+        {
+          "operation_id": "deleteAIAgentTaskThreadMessageReactionV2",
+          "kind": "command",
+          "method": "DELETE",
+          "path": "/v2/client/workspaces/{workspace_id}/ai-agent/tasks/{task_id}/threads/{thread_id}/messages/{message_id}/reactions/{emoji}",
+          "resource": "agent",
+          "action": "delete",
+          "summary": "task thread message에서 사람 멤버 자신의 emoji reaction을 지웁니다 (v2 workspace-scoped)",
+          "client": {
+            "module": "v2",
+            "facade_path": [
+              "aiAgent",
+              "tasks",
+              "threadMessages",
+              "reactions",
+              "delete"
+            ],
+            "generated_path": "v2.aiAgent.tasks.threadMessages.reactions.delete",
+            "invalidates": [
+              "v3.aiAgent.tasks.threads"
+            ]
+          },
+          "auth": {
+            "scheme": "bearer",
+            "scopes": [
+              "ai-agent:write",
+              "task:{task_id}:comment"
+            ]
+          },
+          "rbac_policy": "task_thread_message_reaction.v1",
+          "response": {
+            "status": 200,
+            "ref": "AIAgentTaskThreadMessageReactionsResponse"
+          },
+          "scenario_ids": [
+            "deleteAIAgentTaskThreadMessageReactionV2.member-deletes-only-its-own-reaction"
+          ],
+          "scenarios": [
+            {
+              "name": "member deletes only its own reaction",
+              "given": "a member and an agent both reacted with 1f440 to the same message",
+              "when": "the member calls riido.v2.aiAgent.tasks.threadMessages.reactions.delete for 1f440",
+              "then": "only the member reaction is removed and the agent reaction remains"
+            }
+          ],
+          "path_params": [
+            "workspace_id",
+            "task_id",
+            "thread_id",
+            "message_id",
+            "emoji"
+          ]
+        },
+        {
           "operation_id": "listAIAgentTaskThreadHistoryV3",
           "kind": "query",
           "method": "GET",
@@ -3663,6 +3779,59 @@ export const saasContractBundle = {
             "next_action"
           ],
           "type": "object"
+        },
+        "AIAgentMessageReaction": {
+          "description": "한 message에 같은 emoji로 남은 reaction 묶음입니다. 사람과 AI Agent reaction을 함께 셉니다.",
+          "properties": {
+            "actors": {
+              "description": "reaction을 남긴 순서대로 정렬합니다.",
+              "items": {
+                "$ref": "#/components/schemas/AIAgentMessageReactionActor"
+              },
+              "type": "array"
+            },
+            "count": {
+              "description": "actors 수와 같습니다.",
+              "type": "integer"
+            },
+            "emoji": {
+              "description": "monolith 댓글 reaction과 같은 정규화 값입니다. 소문자 unified codepoint를 '-'로 이은 문자열이며 (예: 👀 1f440, ✅ 2705, ❌ 274c), 서버는 monolith reaction emoji catalog와 같은 규칙으로 정규화합니다.",
+              "maxLength": 64,
+              "pattern": "^[0-9a-f]{2,6}(-[0-9a-f]{2,6})*$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "emoji",
+            "count",
+            "actors"
+          ],
+          "type": "object"
+        },
+        "AIAgentMessageReactionActor": {
+          "description": "reaction 하나를 남긴 사람 멤버 또는 AI Agent입니다.",
+          "properties": {
+            "id": {
+              "description": "kind가 member이면 Riido user id, agent이면 agent_id입니다.",
+              "type": "string"
+            },
+            "kind": {
+              "$ref": "#/components/schemas/AIAgentMessageReactionActorKind"
+            }
+          },
+          "required": [
+            "kind",
+            "id"
+          ],
+          "type": "object"
+        },
+        "AIAgentMessageReactionActorKind": {
+          "description": "task thread message reaction을 남긴 주체 종류입니다. 화면은 두 종류를 같은 reaction chip에 함께 셉니다.",
+          "enum": [
+            "member",
+            "agent"
+          ],
+          "type": "string"
         },
         "AIAgentOnboardingLocale": {
           "description": "온보딩 완료 문구의 언어입니다. 생략하면 ko를 사용합니다.",
@@ -3932,6 +4101,13 @@ export const saasContractBundle = {
               "format": "date-time",
               "type": "string"
             },
+            "reactions": {
+              "description": "role이 user 또는 agent인 message에 남은 reaction 목록입니다. reaction이 없으면 생략하고, progress message에는 생기지 않습니다.",
+              "items": {
+                "$ref": "#/components/schemas/AIAgentMessageReaction"
+              },
+              "type": "array"
+            },
             "result_message": {
               "type": "string"
             },
@@ -4023,6 +4199,29 @@ export const saasContractBundle = {
             "assignment_state",
             "conversation_id",
             "messages"
+          ],
+          "type": "object"
+        },
+        "AIAgentTaskThreadMessageReactionsResponse": {
+          "description": "reaction 변경 뒤 대상 message의 전체 reaction 목록입니다. client는 이 응답으로 해당 message의 reaction chip을 바로 갱신합니다.",
+          "properties": {
+            "message_id": {
+              "type": "string"
+            },
+            "reactions": {
+              "items": {
+                "$ref": "#/components/schemas/AIAgentMessageReaction"
+              },
+              "type": "array"
+            },
+            "thread_id": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "thread_id",
+            "message_id",
+            "reactions"
           ],
           "type": "object"
         },
@@ -4191,6 +4390,21 @@ export const saasContractBundle = {
             "agent_id",
             "thread_id",
             "run_id"
+          ],
+          "type": "object"
+        },
+        "AddAIAgentTaskThreadMessageReactionRequest": {
+          "description": "사람 멤버가 task thread message에 emoji reaction을 남기는 요청입니다. AI Agent reaction은 이 요청으로 만들 수 없습니다.",
+          "properties": {
+            "emoji": {
+              "description": "monolith 댓글 reaction과 같은 정규화 값입니다. 소문자 unified codepoint를 '-'로 이은 문자열이며 (예: 👀 1f440, ✅ 2705, ❌ 274c), 서버는 monolith reaction emoji catalog와 같은 규칙으로 정규화합니다.",
+              "maxLength": 64,
+              "pattern": "^[0-9a-f]{2,6}(-[0-9a-f]{2,6})*$",
+              "type": "string"
+            }
+          },
+          "required": [
+            "emoji"
           ],
           "type": "object"
         },
