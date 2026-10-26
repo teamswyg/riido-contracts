@@ -41,6 +41,7 @@ jobs:
         working-directory: contract-ui
         run: |
           npm ci
+          npm run test:unit
           npm run build
       - name: Test contract UI golden screens
         working-directory: contract-ui

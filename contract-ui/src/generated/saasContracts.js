@@ -1444,6 +1444,14 @@ export const saasContractBundle = {
           ]
         },
         {
+          "query_parameters": [
+            {
+              "name": "page",
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          ],
           "operation_id": "listAIAgentRunReads",
           "kind": "query",
           "method": "GET",
@@ -2820,6 +2828,14 @@ export const saasContractBundle = {
           ]
         },
         {
+          "query_parameters": [
+            {
+              "name": "page",
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          ],
           "operation_id": "listAIAgentRunReadsV2",
           "kind": "query",
           "method": "GET",

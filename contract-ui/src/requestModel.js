@@ -2,6 +2,10 @@ export function pathParamDefaults(operation) {
   return Object.fromEntries((operation.path_params ?? []).map((name) => [name, ""]));
 }
 
+export function queryParamDefaults(operation) {
+  return Object.fromEntries((operation.query_parameters ?? []).map(({ name, default: value }) => [name, value ?? ""]));
+}
+
 export function resolvePath(path, params) {
   return path.replace(/\{([^}]+)\}/g, (_, name) => encodeURIComponent(params[name] ?? ""));
 }
@@ -24,8 +28,12 @@ export function authLabel(operation) {
   return operation.auth?.header ?? "Auth token";
 }
 
-export function requestURL(baseURL, path, params) {
-  const target = baseURL.replace(/\/$/, "") + resolvePath(path, params);
+export function requestURL(baseURL, path, params, queryParams = {}) {
+  const query = new URLSearchParams();
+  for (const [name, value] of Object.entries(queryParams)) {
+    if (value !== "" && value !== undefined && value !== null) query.set(name, String(value));
+  }
+  const target = baseURL.replace(/\/$/, "") + resolvePath(path, params) + (query.size ? `?${query}` : "");
   if (!["localhost", "127.0.0.1"].includes(window.location.hostname)) return target;
   return `/__riido_saas_proxy?url=${encodeURIComponent(target)}`;
 }

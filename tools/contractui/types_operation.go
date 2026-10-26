@@ -1,21 +1,24 @@
 package main
 
+import "github.com/teamswyg/riido-contracts/apicontract"
+
 type operation struct {
-	OperationID string      `json:"operation_id"`
-	Kind        string      `json:"kind"`
-	Method      string      `json:"method"`
-	Path        string      `json:"path"`
-	Resource    string      `json:"resource"`
-	Action      string      `json:"action"`
-	Summary     string      `json:"summary"`
-	Client      *clientMeta `json:"client,omitempty"`
-	Auth        auth        `json:"auth"`
-	RBACPolicy  string      `json:"rbac_policy,omitempty"`
-	Request     *messageRef `json:"request,omitempty"`
-	Response    responseRef `json:"response"`
-	ScenarioIDs []string    `json:"scenario_ids,omitempty"`
-	Scenarios   []scenario  `json:"scenarios,omitempty"`
-	PathParams  []string    `json:"path_params,omitempty"`
+	QueryParameters []apicontract.QueryParameter `json:"query_parameters,omitempty"`
+	OperationID     string                       `json:"operation_id"`
+	Kind            string                       `json:"kind"`
+	Method          string                       `json:"method"`
+	Path            string                       `json:"path"`
+	Resource        string                       `json:"resource"`
+	Action          string                       `json:"action"`
+	Summary         string                       `json:"summary"`
+	Client          *clientMeta                  `json:"client,omitempty"`
+	Auth            auth                         `json:"auth"`
+	RBACPolicy      string                       `json:"rbac_policy,omitempty"`
+	Request         *messageRef                  `json:"request,omitempty"`
+	Response        responseRef                  `json:"response"`
+	ScenarioIDs     []string                     `json:"scenario_ids,omitempty"`
+	Scenarios       []scenario                   `json:"scenarios,omitempty"`
+	PathParams      []string                     `json:"path_params,omitempty"`
 }
 
 type clientMeta struct {
