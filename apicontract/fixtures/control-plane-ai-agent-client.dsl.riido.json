@@ -458,8 +458,9 @@
         "status_reaction: an agent keeps at most one status reaction on the message that started its run (source_message_id for thread messages, source_comment_id for monolith comments)",
         "status_reaction: accepted, queued, ready, and running add 1f440; needs_input and waiting_for_user keep 1f440; completed replaces 1f440 with 2705; failed replaces 1f440 with 274c; cancelling and cancelled remove 1f440",
         "status_reaction: a retry or duplicate lifecycle event never adds a second reaction, and a failed reaction write never fails, blocks, or retries the agent run itself",
-        "notification: a member reaction notifies the message author as unread; an agent reaction notifies the message author already read; no notification is created when the author is an agent or the reacting actor itself",
-        "notification: control-plane asks monolith to create the Riido notification; Slack and Discord reaction sync does not apply to agent reactions",
+        "notification: a member reaction notifies the message author as an unread Riido notification that control-plane asks monolith to create; no notification is created when the author is an agent or the reacting actor itself",
+        "notification: an agent reaction never creates a Riido notification; the run requester is told only through the agent task desktop push of the same run lifecycle (1f440 started, 2705 result_ready, 274c failed), so one transition sends at most one push",
+        "notification: Slack and Discord reaction sync does not apply to agent reactions",
         "read_model: listAIAgentTaskThreadHistoryV3 returns reactions on each message, and every agent actor in reactions has a matching entry in agent_snapshots so clients render it with the same agent profile as agent comments",
         "client: render thread message reactions with the same reaction chip, picker, and tooltip as monolith comments; member actors resolve through the workspace member directory and agent actors through agent_snapshots",
         "client: there is no dedicated reaction SSE event in v1; after add or delete use the response and invalidate v3.aiAgent.tasks.threads, and agent status reactions appear on the next history read"
