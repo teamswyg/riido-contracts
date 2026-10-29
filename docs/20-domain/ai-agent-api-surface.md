@@ -9,8 +9,8 @@ Executable SSOT: `apicontract/fixtures/control-plane-ai-agent-client.dsl.riido.j
 AI Agent client API surface is generated from the DSL/IR/OpenAPI fixture set; manual route lists are not an authority.
 
 - Evidence artifact: `ai-agent-api-surface-evidence`
-- Operations: `62`; v1: `26`; v2: `35`; v2-only: `9`
-- OpenAPI paths: `58`; OpenAPI operations: `62`
+- Operations: `64`; v1: `27`; v2: `36`; v2-only: `9`
+- OpenAPI paths: `60`; OpenAPI operations: `64`
 - DSL/IR match: `true`; IR/OpenAPI match: `true`; v2 covers v1: `true`
 
 - V2 workspace prefix: `/v2/client/workspaces/{workspace_id}/ai-agent/...`
@@ -34,6 +34,7 @@ AI Agent client API surface is generated from the DSL/IR/OpenAPI fixture set; ma
 - `agent_editability_changed`
 - `agent_work_status_changed`
 - `agent_thread_progress`
+- `agent_context_read`
 
 ## Codegen rules
 

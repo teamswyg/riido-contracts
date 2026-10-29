@@ -304,7 +304,7 @@ export const saasContractBundle = {
         "ir": "apicontract/fixtures/control-plane-ai-agent-client.ir.riido.json",
         "openapi": "apicontract/fixtures/control-plane-ai-agent-client.openapi.json"
       },
-      "operation_count": 62,
+      "operation_count": 64,
       "operations": [
         {
           "operation_id": "createAIAgent",
@@ -1441,6 +1441,45 @@ export const saasContractBundle = {
               "when": "the upload intent is created",
               "then": "the public contract exposes only the upload intent and resulting profile_thumbnail_url while bucket, IAM, and lifecycle details stay in infra/operator configuration"
             }
+          ]
+        },
+        {
+          "query_parameters": [
+            {
+              "name": "page",
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          ],
+          "operation_id": "listAIAgentRunReads",
+          "kind": "query",
+          "method": "GET",
+          "path": "/v1/client/ai-agent/runs/{run_id}/reads",
+          "resource": "task",
+          "action": "read",
+          "summary": "실행에서 읽은 자료 기록을 현재 viewer 권한으로 조회합니다.",
+          "client": {
+            "module": "aiAgent",
+            "facade_path": [
+              "runs",
+              "reads"
+            ],
+            "generated_path": "aiAgent.runs.reads",
+            "cache_tag": "v1.runs.reads"
+          },
+          "auth": {
+            "scheme": "bearer",
+            "scopes": [
+              "ai-agent:read"
+            ]
+          },
+          "response": {
+            "status": 200,
+            "ref": "AIAgentRunReadsResponse"
+          },
+          "path_params": [
+            "run_id"
           ]
         },
         {
@@ -2789,6 +2828,47 @@ export const saasContractBundle = {
           ]
         },
         {
+          "query_parameters": [
+            {
+              "name": "page",
+              "type": "integer",
+              "minimum": 1,
+              "default": 1
+            }
+          ],
+          "operation_id": "listAIAgentRunReadsV2",
+          "kind": "query",
+          "method": "GET",
+          "path": "/v2/client/workspaces/{workspace_id}/ai-agent/runs/{run_id}/reads",
+          "resource": "task",
+          "action": "read",
+          "summary": "실행에서 읽은 자료 기록을 현재 viewer 권한으로 조회합니다.",
+          "client": {
+            "module": "v2",
+            "facade_path": [
+              "aiAgent",
+              "runs",
+              "reads"
+            ],
+            "generated_path": "v2.aiAgent.runs.reads",
+            "cache_tag": "v2.runs.reads"
+          },
+          "auth": {
+            "scheme": "bearer",
+            "scopes": [
+              "ai-agent:read"
+            ]
+          },
+          "response": {
+            "status": 200,
+            "ref": "AIAgentRunReadsResponse"
+          },
+          "path_params": [
+            "workspace_id",
+            "run_id"
+          ]
+        },
+        {
           "operation_id": "listWorkspaceAssignedAgentProfilesV2",
           "kind": "query",
           "method": "GET",
@@ -3850,6 +3930,136 @@ export const saasContractBundle = {
           ],
           "type": "string"
         },
+        "AIAgentRunRead": {
+          "description": "현재 viewer가 확인할 수 있는 실행별 읽기 메타데이터입니다. 과거 본문·URL·요청자 정보는 반환하지 않습니다.",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "kind": {
+              "enum": [
+                "task",
+                "project",
+                "milestone",
+                "parent_task",
+                "link",
+                "attachment",
+                "related_task",
+                "related_backlog",
+                "related_intake",
+                "related_meeting",
+                "comment",
+                "target",
+                "agent"
+              ],
+              "type": "string"
+            },
+            "modified_since_read": {
+              "description": "현재 조회자에게 보이는 자료와 기록된 조회 시점의 버전을 비교한 결과입니다. 수정이 확인되면 true, 비교 가능한 버전이 같으면 false이며, 부분 본문 등으로 비교할 수 없으면 생략합니다. 조회 시각만으로 수정 여부를 추정하지 않습니다.",
+              "type": "boolean"
+            },
+            "part": {
+              "enum": [
+                "body",
+                "summary",
+                "title",
+                "metadata",
+                "base",
+                "task",
+                "tree",
+                "resources",
+                "comments",
+                "profile"
+              ],
+              "type": "string"
+            },
+            "served_at": {
+              "format": "date-time",
+              "type": "string"
+            },
+            "status": {
+              "enum": [
+                "served",
+                "truncated",
+                "denied",
+                "unavailable"
+              ],
+              "type": "string"
+            },
+            "title": {
+              "description": "현재 조회자의 권한으로 확인한 자료 제목입니다. 과거 스냅샷 제목은 사용하지 않으며, 현재 이름이 없으면 생략합니다.",
+              "type": "string"
+            },
+            "updated_at": {
+              "format": "date-time",
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            },
+            "via": {
+              "enum": [
+                "prompt",
+                "cli"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "part",
+            "status",
+            "via",
+            "served_at"
+          ],
+          "type": "object"
+        },
+        "AIAgentRunReadsResponse": {
+          "properties": {
+            "assignment_id": {
+              "type": "string"
+            },
+            "has_more": {
+              "type": "boolean"
+            },
+            "page": {
+              "type": "integer"
+            },
+            "page_size": {
+              "type": "integer"
+            },
+            "reads": {
+              "items": {
+                "$ref": "#/components/schemas/AIAgentRunRead"
+              },
+              "type": "array"
+            },
+            "run_id": {
+              "type": "string"
+            },
+            "schema_version": {
+              "type": "string"
+            },
+            "task_id": {
+              "type": "string"
+            },
+            "thread_id": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "schema_version",
+            "run_id",
+            "task_id",
+            "thread_id",
+            "assignment_id",
+            "reads",
+            "page",
+            "page_size",
+            "has_more"
+          ],
+          "type": "object"
+        },
         "AIAgentTaskActionResponse": {
           "description": "task thread action 요청 이후 client가 즉시 반영할 agent 작업 상태 응답입니다.",
           "properties": {
@@ -4665,6 +4875,139 @@ export const saasContractBundle = {
           ],
           "type": "object"
         },
+        "AgentContextReadEvent": {
+          "description": "실행 중 에이전트가 읽은 자료를 client SSE로 전달하는 event입니다. 프롬프트로 넘긴 자료(via=prompt)는 실행 시작 때 한 번, 에이전트가 직접 조회한 자료(via=cli)는 조회할 때마다 전달됩니다.",
+          "properties": {
+            "agent_id": {
+              "type": "string"
+            },
+            "assignment_id": {
+              "type": "string"
+            },
+            "event_type": {
+              "enum": [
+                "agent_context_read"
+              ],
+              "type": "string"
+            },
+            "omitted_sources": {
+              "type": "integer"
+            },
+            "run_id": {
+              "type": "string"
+            },
+            "schema_version": {
+              "type": "string"
+            },
+            "served_at": {
+              "format": "date-time",
+              "type": "string"
+            },
+            "sources": {
+              "items": {
+                "$ref": "#/components/schemas/AgentContextReadSource"
+              },
+              "type": "array"
+            },
+            "task_id": {
+              "type": "string"
+            },
+            "thread_id": {
+              "type": "string"
+            },
+            "trigger_kind": {
+              "enum": [
+                "assign",
+                "thread_message",
+                "comment"
+              ],
+              "type": "string"
+            },
+            "via": {
+              "enum": [
+                "prompt",
+                "cli"
+              ],
+              "type": "string"
+            }
+          },
+          "required": [
+            "event_type",
+            "schema_version",
+            "agent_id",
+            "task_id",
+            "assignment_id",
+            "thread_id",
+            "run_id",
+            "via",
+            "served_at",
+            "sources"
+          ],
+          "type": "object"
+        },
+        "AgentContextReadSource": {
+          "description": "에이전트가 이번 실행에서 읽은 Riido 자료 한 건입니다. 본문 내용, URL, 토큰은 담지 않습니다.",
+          "properties": {
+            "id": {
+              "type": "string"
+            },
+            "kind": {
+              "enum": [
+                "task",
+                "project",
+                "milestone",
+                "parent_task",
+                "link",
+                "attachment",
+                "related_task",
+                "related_backlog",
+                "related_intake",
+                "related_meeting",
+                "comment",
+                "target",
+                "agent"
+              ],
+              "type": "string"
+            },
+            "part": {
+              "enum": [
+                "body",
+                "summary",
+                "title",
+                "metadata",
+                "base",
+                "task",
+                "tree",
+                "resources",
+                "comments",
+                "profile"
+              ],
+              "type": "string"
+            },
+            "status": {
+              "enum": [
+                "served",
+                "truncated",
+                "denied",
+                "unavailable"
+              ],
+              "type": "string"
+            },
+            "updated_at": {
+              "format": "date-time",
+              "type": "string"
+            },
+            "version": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "kind",
+            "part",
+            "status"
+          ],
+          "type": "object"
+        },
         "AgentEditability": {
           "description": "agent를 현재 수정할 수 있는지 나타냅니다.",
           "enum": [
@@ -5213,6 +5556,7 @@ export const saasContractBundle = {
           "description": "web과 desktop webview client가 소비하는 SSE event union입니다.",
           "discriminator": {
             "mapping": {
+              "agent_context_read": "#/components/schemas/AgentContextReadEvent",
               "agent_editability_changed": "#/components/schemas/AgentEditabilityChangedEvent",
               "agent_thread_progress": "#/components/schemas/AgentThreadProgressEvent",
               "agent_work_status_changed": "#/components/schemas/AgentWorkStatusChangedEvent",
@@ -5236,6 +5580,9 @@ export const saasContractBundle = {
             },
             {
               "$ref": "#/components/schemas/AgentThreadProgressEvent"
+            },
+            {
+              "$ref": "#/components/schemas/AgentContextReadEvent"
             }
           ]
         },

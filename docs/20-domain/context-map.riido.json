@@ -7,6 +7,7 @@
   "role": "riido-contracts owns shared, versioned facts that more than one Riido repository must agree on at build time or black-box test time. It is a contract module, not a runtime module.",
   "boundary_rule": "Contracts may describe shared DTOs and state vocabulary. They must not import or redefine runtime adapters, stores, Terraform modules, credentials, provider CLI invocation, or deployment evidence.",
   "owned_contexts": [
+    {"context":"Work-context CLI wire contract","package":"contextcli","responsibility":"JSON envelope v1, source statuses, stable errors and process exit-code mapping shared by daemon output and client compatibility fixtures"},
     {"context":"C1 Task Lifecycle","package":"task","responsibility":"task states, terminal/active classification, legal transition matrix, FSM schema version"},
     {"context":"C2 IR Event Log","package":"ir","responsibility":"canonical event envelope, actor/scope/event type catalog, envelope validation, pure reducer contract"},
     {"context":"C3 Provider Capability","package":"provider/capability","responsibility":"provider capability model, protocol vocabulary, compatibility status, protocol-critical args, capability fingerprint"},
