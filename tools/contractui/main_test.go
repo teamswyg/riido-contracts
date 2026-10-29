@@ -10,7 +10,7 @@ func TestBuildBundleCoversSaaSContracts(t *testing.T) {
 	if len(data.Contracts) != 2 {
 		t.Fatalf("contracts = %d", len(data.Contracts))
 	}
-	if totalOperations(data) != 67 {
+	if totalOperations(data) != 69 {
 		t.Fatalf("operation count = %d", totalOperations(data))
 	}
 	if !schemaHasProperty(data, "DeviceDaemonRecord", "app_version") {
