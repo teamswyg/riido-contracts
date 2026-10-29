@@ -1,0 +1,10 @@
+{
+  "schema_version": "riido-ai-server-contract-assignment-payload-field.v1",
+  "field": {
+    "name": "reference_folders",
+    "source": "agent.reference_folders",
+    "required": false,
+    "snapshot": "assignment-created",
+    "consumer": "riido-daemon local directory validation and provider reference context"
+  }
+}

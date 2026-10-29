@@ -4,12 +4,16 @@ import "testing"
 
 func assertAssignmentPayloadFields(t *testing.T, contract executableContract) {
 	t.Helper()
-	if len(contract.AssignmentPayloadFields) != 4 {
+	if len(contract.AssignmentPayloadFields) != 5 {
 		t.Fatalf("assignment payload fields drifted: %#v", contract.AssignmentPayloadFields)
 	}
 	fields := map[string]contractAssignmentPayloadField{}
 	for _, field := range contract.AssignmentPayloadFields {
 		fields[field.Name] = field
+	}
+	reference := fields["reference_folders"]
+	if reference.Source != "agent.reference_folders" || reference.Required || reference.Snapshot != "assignment-created" {
+		t.Fatalf("reference folders assignment payload drifted: %#v", reference)
 	}
 	assertAgentInstructionField(t, fields["agent_instruction"])
 	assertExperimentalRuntimeField(t, fields["allow_experimental_runtime"])

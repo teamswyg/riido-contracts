@@ -643,3 +643,5 @@ execution.
 RIID-5829: actionable assignment events carry authenticated created_by and workspace_id, stable event_id, and optional team_id. Only the assigning principal receives live result-ready, answer-required, approval-required, or terminal-failure notifications. Historical connections never replay task notifications.
 Human confirmation is a non-terminal running assignment with confirmation_reason answer_required or approval_required. Explicit resume and terminal events clear the reason.
 runstate.StateWaitingUserInput is an additive non-terminal state for human answers. Its enum entry is appended to preserve existing numeric codes; daemon owns the reducer and assignment confirmation projection.
+## Local reference folders
+Optional `reference_folders` binds `device_id`, `runtime_id`, and absolute `paths`. Configuration and assignment snapshots copy the list; omission preserves existing settings while an empty paths list clears it. Hosts validate access locally. Instructions and additional CLI directories do not change cwd or override OS or managed permission rules.

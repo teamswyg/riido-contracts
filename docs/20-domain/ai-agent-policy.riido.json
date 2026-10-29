@@ -689,6 +689,13 @@
         "runstate.StateWaitingUserInput is an additive non-terminal state for human answers. Its enum entry is appended to preserve existing numeric codes; daemon owns the reducer and assignment confirmation projection."
       ],
       "subsections": []
+    },
+    {
+      "title": "Local reference folders",
+      "body": [
+        "Optional `reference_folders` binds `device_id`, `runtime_id`, and absolute `paths`. Configuration and assignment snapshots copy the list; omission preserves existing settings while an empty paths list clears it. Hosts validate access locally. Instructions and additional CLI directories do not change cwd or override OS or managed permission rules."
+      ],
+      "subsections": []
     }
   ],
   "required_section_order": [
@@ -697,7 +704,8 @@
     "Ubiquitous Language",
     "Policy Assertions",
     "API Surface Projection",
-    "Boundary"
+    "Boundary",
+    "Local reference folders"
   ],
   "required_policy_assertions": [
     "Agent Deletion",

@@ -1,7 +1,8 @@
 package assignment
 
 type AssignRequest struct {
-	RecoveryPolicy *ProviderRecoveryPolicy `json:"recovery_policy,omitempty"`
+	ReferenceFolders *ReferenceFolders       `json:"reference_folders,omitempty"`
+	RecoveryPolicy   *ProviderRecoveryPolicy `json:"recovery_policy,omitempty"`
 
 	RequestID                string              `json:"request_id,omitempty"`
 	TeamID                   string              `json:"team_id,omitempty"`
