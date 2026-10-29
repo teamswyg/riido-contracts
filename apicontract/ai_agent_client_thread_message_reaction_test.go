@@ -145,6 +145,8 @@ func TestAIAgentClientThreadMessageReactionPolicy(t *testing.T) {
 		"an agent reaction never creates a Riido notification",
 		"agent task desktop push of the same run lifecycle",
 		"no notification is created when the author is an agent",
+		"agent-to-agent invocations and user cancellation never send desktop pushes",
+		"a started push is eligible only when the run has a source message or comment receiving 1f440",
 		"Slack and Discord reaction sync does not apply to agent reactions",
 		"has a matching entry in agent_snapshots",
 	} {

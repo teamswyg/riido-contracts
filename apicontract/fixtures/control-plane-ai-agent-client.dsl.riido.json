@@ -473,6 +473,7 @@
         "status_reaction: a retry or duplicate lifecycle event never adds a second reaction, and a failed reaction write never fails, blocks, or retries the agent run itself",
         "notification: a member reaction notifies the message author as an unread Riido notification that control-plane asks monolith to create; no notification is created when the author is an agent or the reacting actor itself",
         "notification: an agent reaction never creates a Riido notification; the run requester is told only through the agent task desktop push of the same run lifecycle (1f440 started, 2705 result_ready, 274c failed), so one transition sends at most one push",
+        "notification: agent-to-agent invocations and user cancellation never send desktop pushes; a started push is eligible only when the run has a source message or comment receiving 1f440",
         "notification: Slack and Discord reaction sync does not apply to agent reactions",
         "read_model: listAIAgentTaskThreadHistoryV3 returns reactions on each message, and every agent actor in reactions has a matching entry in agent_snapshots so clients render it with the same agent profile as agent comments",
         "client: render thread message reactions with the same reaction chip, picker, and tooltip as monolith comments; member actors resolve through the workspace member directory and agent actors through agent_snapshots",
