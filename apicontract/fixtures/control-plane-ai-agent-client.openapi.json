@@ -3393,6 +3393,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "dashboard_agent_id",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {

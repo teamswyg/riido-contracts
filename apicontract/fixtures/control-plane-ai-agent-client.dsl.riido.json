@@ -6522,7 +6522,14 @@
         "status": 200,
         "ref": "ClientStreamEvent",
         "content_type": "text/event-stream"
-      }
+      },
+      "description": "Set dashboard_agent_id to subscribe to one agent's authorized dashboard changes. The server opens the live-only SSE response after registering the subscriber. Fetch the snapshot when the connection opens and again after reconnect. Queued state changes are included for this subscriber.",
+      "query_parameters": [
+        {
+          "name": "dashboard_agent_id",
+          "type": "string"
+        }
+      ]
     },
     {
       "operation_id": "createAIAgentTaskAgentAssignmentV2",
