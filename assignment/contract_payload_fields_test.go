@@ -23,8 +23,8 @@ func assertAssignmentPayloadFields(t *testing.T, contract executableContract) {
 func assertAgentInstructionField(t *testing.T, field contractAssignmentPayloadField) {
 	t.Helper()
 	if field.Name != "agent_instruction" ||
-		field.Source != "agent.instruction" ||
-		field.MaxLength != 1000 ||
+		field.Source != "agent.instruction with server response guidelines for profile-based assignments" ||
+		field.UserInputMaxLength != 1000 || field.MaxLength != 0 ||
 		field.Required ||
 		field.Snapshot != "assignment-created" {
 		t.Fatalf("agent instruction assignment payload field drifted: %#v", field)

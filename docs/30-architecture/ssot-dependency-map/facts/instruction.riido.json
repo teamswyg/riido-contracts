@@ -2,7 +2,7 @@
   "schema_version": "riido-ssot-dependency-fact.v1",
   "fact": {
     "id": "instruction",
-    "fact": "instruction is optional client-authored provider-neutral agent guidance text capped at 1000 characters and snapshotted into Assignment.agent_instruction at assignment creation",
+    "fact": "instruction is optional client-authored provider-neutral agent guidance text capped at 1000 characters and snapshotted with server response guidelines into Assignment.agent_instruction; the cap applies only to the user text",
     "human_doc_phrase": "`instruction` is optional client-authored provider-neutral agent guidance text capped at 1000 characters",
     "source_refs": [
       {
