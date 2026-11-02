@@ -19,8 +19,10 @@ var skinVariants string
 
 type catalogEntry struct{ unified, slack string }
 
-var byCode, byName = loadCatalog()
-var skinCodes = loadSkinCodes()
+var (
+	byCode, byName = loadCatalog()
+	skinCodes      = loadSkinCodes()
+)
 
 func loadSkinCodes() map[string]struct{} {
 	codes := make(map[string]struct{})
@@ -160,7 +162,7 @@ func codeAliases(canonical string) []string {
 			_, standalone := byCode[part]
 			// Only catalog emoji bases can gain a presentation selector. Do not
 			// insert one after joiners, flag/tag components, or skin modifiers.
-			presentation := standalone && !(part >= "1f3fb" && part <= "1f3ff")
+			presentation := standalone && (part < "1f3fb" || part > "1f3ff")
 			if index+1 < len(parts) && parts[index+1] == "fe0f" {
 				presentation = true
 				index++
