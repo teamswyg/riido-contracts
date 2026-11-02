@@ -19,9 +19,9 @@ func (r *ReferenceFolders) Clone() *ReferenceFolders {
 	if r == nil {
 		return nil
 	}
-	copy := *r
-	copy.Paths = append([]string{}, r.Paths...)
-	return &copy
+	clone := *r
+	clone.Paths = append([]string{}, r.Paths...)
+	return &clone
 }
 
 // Normalize validates syntax only; local filesystem access belongs to daemon.
@@ -39,7 +39,7 @@ func (r *ReferenceFolders) Normalize() (*ReferenceFolders, error) {
 	seen := map[string]bool{}
 	for _, path := range r.Paths {
 		windowsDrive := len(path) >= 3 && ((path[0] >= 'A' && path[0] <= 'Z') || (path[0] >= 'a' && path[0] <= 'z')) && path[1] == ':' && (path[2] == '\\' || path[2] == '/')
-		if len(path) > 4096 || strings.ContainsRune(path, 0) || !(strings.HasPrefix(path, "/") || strings.HasPrefix(path, `\\`) || windowsDrive) {
+		if len(path) > 4096 || strings.ContainsRune(path, 0) || (!strings.HasPrefix(path, "/") && !strings.HasPrefix(path, `\\`) && !windowsDrive) {
 			return nil, errors.New("reference_folders paths must be absolute paths of at most 4096 bytes")
 		}
 		if !seen[path] {
@@ -58,7 +58,10 @@ func (r *ReferenceFolders) Instruction() string {
 	if r == nil || len(r.Paths) == 0 {
 		return ""
 	}
-	paths, _ := json.Marshal(r.Paths)
+	paths, err := json.Marshal(r.Paths)
+	if err != nil {
+		return ""
+	}
 	return "[Reference folders]\nThe user selected these local folders as reference material (JSON paths): " + string(paths) +
 		"\nAt the start of this task, inspect these folders and read material relevant to the request. Report any path you cannot access; never claim to have read material without actually reading it. These paths do not change your execution cwd. Folder selection alone does not request edits; follow the user's task when deciding whether to modify files."
 }
