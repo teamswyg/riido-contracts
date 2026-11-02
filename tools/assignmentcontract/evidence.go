@@ -24,12 +24,13 @@ type evidence struct {
 }
 
 type payloadEvidence struct {
-	Name      string `json:"name"`
-	Source    string `json:"source"`
-	MaxLength int    `json:"max_length"`
-	Required  bool   `json:"required"`
-	Snapshot  string `json:"snapshot"`
-	Consumer  string `json:"consumer"`
+	Name               string `json:"name"`
+	Source             string `json:"source"`
+	MaxLength          int    `json:"max_length"`
+	UserInputMaxLength int    `json:"user_input_max_length,omitempty"`
+	Required           bool   `json:"required"`
+	Snapshot           string `json:"snapshot"`
+	Consumer           string `json:"consumer"`
 }
 
 func writeEvidence(path string, m manifest, c contract) error {
