@@ -50,10 +50,11 @@ type contractStatusValue struct {
 }
 
 type contractAssignmentPayloadField struct {
-	Name      string `json:"name"`
-	Source    string `json:"source"`
-	MaxLength int    `json:"max_length"`
-	Required  bool   `json:"required"`
-	Snapshot  string `json:"snapshot"`
-	Consumer  string `json:"consumer"`
+	UserInputMaxLength int    `json:"user_input_max_length"`
+	Name               string `json:"name"`
+	Source             string `json:"source"`
+	MaxLength          int    `json:"max_length"`
+	Required           bool   `json:"required"`
+	Snapshot           string `json:"snapshot"`
+	Consumer           string `json:"consumer"`
 }

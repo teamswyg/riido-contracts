@@ -48,7 +48,7 @@ AI Agent profile/configuration and editability semantics are generated from API 
 
 ## Invariant anchors
 
-`agent edits are blocked when assigned_task_count is non-zero and editability is exposed by query plus SSE.`, `instruction is provider-neutral client-authored text capped at 1000 characters and later snapshotted into Assignment.agent_instruction.`, `agent create/update fields are ordinary configuration fields guarded by agent_mutation_safety.v1.`, `v2 creation stamps workspace_id from the URL path and owner_principal_id from authorization.`
+`agent edits are blocked when assigned_task_count is non-zero and editability is exposed by query plus SSE.`, `instruction is provider-neutral client-authored text capped at 1000 characters. The control plane appends its response guidelines after validating the user text and snapshots the full result in Assignment.agent_instruction.`, `agent create/update fields are ordinary configuration fields guarded by agent_mutation_safety.v1.`, `v2 creation stamps workspace_id from the URL path and owner_principal_id from authorization.`
 
 ## Evidence Loop
 
