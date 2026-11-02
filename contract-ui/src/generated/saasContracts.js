@@ -2611,6 +2611,12 @@ export const saasContractBundle = {
           ]
         },
         {
+          "query_parameters": [
+            {
+              "name": "dashboard_agent_id",
+              "type": "string"
+            }
+          ],
           "operation_id": "streamAIAgentClientEventsV2",
           "kind": "query",
           "method": "GET",
