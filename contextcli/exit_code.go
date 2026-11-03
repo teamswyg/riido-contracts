@@ -21,6 +21,8 @@ func (c ErrorCode) ExitCode() ExitCode {
 		return ExitIncomplete
 	case CodeConflict, CodeLeaseLost:
 		return ExitConflict
+	case CodeDataIntegrity:
+		return ExitDataIntegrity
 	default:
 		return ExitUnsupported
 	}

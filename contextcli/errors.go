@@ -14,6 +14,9 @@ const (
 	ExitUnsupported  ExitCode = 8
 	ExitIncomplete   ExitCode = 9
 	ExitConflict     ExitCode = 10
+	// ExitDataIntegrity means the stored data cannot be served safely.
+	// Retrying the same read will not succeed (RIID-6008).
+	ExitDataIntegrity ExitCode = 11
 )
 
 // ErrorCode is the stable machine-readable failure code in the envelope.
@@ -37,4 +40,5 @@ const (
 	CodeIncomplete              ErrorCode = "INCOMPLETE"
 	CodeConflict                ErrorCode = "CONFLICT"
 	CodeLeaseLost               ErrorCode = "LEASE_LOST"
+	CodeDataIntegrity           ErrorCode = "DATA_INTEGRITY"
 )
